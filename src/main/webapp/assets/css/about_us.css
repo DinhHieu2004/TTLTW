@@ -1,0 +1,137 @@
+:root {
+    --primary-color: #e7621b !important;
+    --primary-text-light: white  !important;
+    --primary-text-dark: black !important;
+
+  }
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+#about_us_container{
+    margin: 50px;
+}
+
+.title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: #6a6a6a solid 1px;
+    padding-bottom: 20px;
+}
+.about_us_title {
+    margin: 0;
+    font-size: 24px;
+}
+.social-icons {
+    display: flex;
+    gap: 10px;
+}
+.social-icons i {
+    font-size: 30px;
+    color: #555;
+    transition: color 0.3s;
+}
+.social-icons i:hover {
+    color: var(--primary-color);
+}
+
+.intro{
+    margin-top: 50px;
+}
+.intro_img {
+    display: block;
+    margin: 0 auto;
+    width: 25%;
+    max-width: 100%;
+    height: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.about_us_subtitle, .staff_title, .mission_title, .about_artists_title{
+    font-weight: bold;
+    font-size: 18px;
+}
+.content{
+    margin-top: 20px;
+}
+.end_about_us{
+    font-size: 20px;
+}
+.source{
+    text-align: center;
+    opacity: 0.5;
+    font-size: 12px;
+    font-style: italic;
+}
+
+.review_container {
+    margin-right: 100px;
+    display: flex; /* Đặt Flexbox để sắp xếp ngang */
+    align-items: center; /* Căn giữa các phần tử theo chiều dọc */
+    margin: 0 auto; /* Căn giữa container nếu cần */
+    padding: 10px;
+    gap: 20px;
+}
+
+#comment {
+    margin-right: 100px;
+    flex: 1;
+    margin: 0;
+    padding: 20px 20px 10px 50px;
+    color: #6a6a6a;
+    border: 1px solid #6a6a6a;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.send-button {
+    padding: 10px;
+    border: 1px solid #6a6a6a;
+    border-radius: 50%;
+    background-color: #eee;
+    color: #333333;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+#buyNow{
+    color: black;
+    background-color: white;
+}
+
+.send-button:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+.customer-comments {
+    border-top: 1px solid #ddd;
+    padding: 40px;
+}
+
+.comment-item {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #f1f1f1;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.comment-item strong {
+    color: var(--primary-color);
+}
+.btn{
+    background-color:  var(--primary-color) !important;
+    color: var(--primary-text-light) !important;
+}
+.login-btn {
+    background-color: var(--primary-color) !important;
+    color: var(--primary-text-light) !important;
+}
+

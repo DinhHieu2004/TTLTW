@@ -1,0 +1,62 @@
+.title{
+    color: #FFFFFF;
+    background-color: #e7621b;
+    text-align: center;
+    padding: 20px 20px 10px 20px;
+    margin: 0;
+}
+
+.sub_title{
+    color: #FFFFFF;
+    background-color: #e7621b;
+    text-align: center;
+    padding: 0 20px 20px 20px;
+    margin: 0;
+}
+
+#discount_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+
+.discount_item {
+    width: 250px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: block;
+}
+
+.discount_item:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.discount_item img {
+    width: 100%;
+    height: auto;
+    border-bottom: 1px solid #ddd;
+}
+
+.discount_item p {
+    margin: 10px 0;
+    padding: 0 10px;
+    color: #333;
+    font-size: 16px;
+}
+.discount_item{
+    text-decoration: none;
+}
+.login-btn {
+    background-color: var(--primary-color) !important;
+    color: var(--primary-text-light) !important;
+}

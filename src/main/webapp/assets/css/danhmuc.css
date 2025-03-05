@@ -1,0 +1,145 @@
+
+#danhmuc-pro .product-item {
+    width: calc(25% - 10px);
+}
+#danhmuc-pro  .product-item:nth-child(5n) {
+    margin-right: 10px;
+}
+#prolst{
+    background-color: #fff;
+    border-radius: 10px;
+}
+.product-list{
+    max-width: 1250px !important;
+    border-radius: 10px;
+    background-color: #fff;
+}
+.product-list .container .pro-lst{
+    border-radius: 0 !important;
+}
+
+.breadcrumb {
+    font-size: 15px;
+    width: 1250px;
+    margin: 1px auto 0 auto !important;
+    background-color: #e6e6e6 !important;
+    gap: 5px;
+}
+
+.breadcrumb a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+.breadcrumb .active {
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+.breadcrumb .active:hover {
+    text-decoration: none;
+}
+/* Phân trang*/
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0 20px 0;
+}
+.pagination a,  .pagination button{
+    color: #333;
+    padding: 8px 16px;
+    margin: 0 4px;
+    border: none;
+    text-decoration: none;
+    background-color: #ccc;
+    border-radius: 4px;
+}
+.pagination a.active {
+    background-color: #B5292F;
+    color: white;
+}
+.pagination a:hover, .pagination button:hover {
+    background-color: #ddd;
+}
+#page-numbers{
+    margin-top: 8px;
+}
+
+/*Lọc*/
+.filter-container{
+    max-width: 280px;
+    margin: 10px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fff;
+    height: 100%;
+    padding: 10px;
+}
+.filter-menu {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    justify-content: space-between;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+
+}
+
+.filter-item {
+    margin-bottom: 20px;
+}
+
+.filter-item label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+.filter-options{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    width: 80%;
+}
+.size-checkbox{
+    display: flex;
+    justify-content: center;
+
+}
+.size-checkbox input[type="checkbox"] {
+    transform: scale(2);
+    margin-right: 10px;
+}
+.filter-select, .filter-range {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.filter-colors {
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
+    flex-wrap: wrap;
+
+}
+.filter-colors label {
+    font-weight: normal;
+}
+
+.filter-color {
+    width: 18px;
+    height: 18px;
+    margin-top: 0;
+}
+
+#filter-btn{
+    width: 200px;
+    border-radius: 10px;
+}

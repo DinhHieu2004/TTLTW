@@ -1,0 +1,36 @@
+:root {
+    --primary-color: #e7621b !important;
+    --primary-text-light : white  !important;
+    --primary-text-dark : black  !important;
+
+}
+
+
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+
+
+}  
+.login-btn {
+    background-color: var(--primary-color) !important;
+    color: var(--primary-text-light) !important;
+}
+
+.page-title-inner{
+    margin-top: 30px;
+    display: flexbox;
+    width: 100%;
+    height: 50px;
+    margin-left: 50px;
+    align-items: center;
+}
+.login-btn {
+    background-color: var(--primary-color) !important;
+    color: var(--primary-text-light) !important;
+}
+.container{
+    margin-bottom: 400px;
+}

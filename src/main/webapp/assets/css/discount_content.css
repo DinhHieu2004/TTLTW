@@ -1,0 +1,160 @@
+#title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+}
+
+#title .content {
+    max-width: 100%;
+}
+
+#title img {
+    width: 100%;
+    height: auto;
+}
+
+#title h4 {
+    margin-top: 20px;
+    font-size: 24px;
+    color: #333;
+}
+#discount_content {
+    text-align: center;
+    padding: 20px;
+}
+
+.discount_products {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.product {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    max-width: 300px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.3s ease-in-out;
+}
+
+.card_artworks img {
+    width: 100%;
+    height: auto;
+}
+
+.card-body {
+    padding: 15px;
+}
+
+.card-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.card-text {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+
+.price_char {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.discount_price {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.discount_price p {
+    margin: 0;
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: #888;
+}
+
+.new-price {
+    color: #d32f2f;
+    font-weight: bold;
+}
+
+.product:hover {
+    transform: scale(1.05);
+}
+.end_discount{
+    text-align: center;
+    font-size: 20px;
+}
+.product {
+    text-decoration: none;
+}
+.login-btn {
+    background-color: var(--primary-color) !important;
+    color: var(--primary-text-light) !important;
+}
+#content-wrapper {
+    display: flex;
+    flex-wrap: wrap; /* Cho phép các phần tử con xuống dòng khi không đủ không gian */
+    gap: 20px; /* Giữa bộ lọc và sản phẩm */
+}
+
+.filter-section {
+    flex: 0 0 25%; /* Bộ lọc chiếm 25% của chiều rộng */
+    min-width: 250px; /* Đảm bảo chiều rộng tối thiểu cho bộ lọc */
+}
+
+#artworkGallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.card.artwork-card {
+    width: 100%;
+    max-width: 300px; /* Giới hạn chiều rộng của các thẻ sản phẩm */
+    height: 380px; /* Chiều cao cố định cho sản phẩm */
+}
+
+.card-body {
+    padding: 15px;
+}
+
+.card-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.card-text {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.discount_price {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: #888;
+}
+
+.new-price {
+    color: #d32f2f;
+    font-weight: bold;
+}
+
+.product:hover {
+    transform: scale(1.05);
+}

@@ -1,0 +1,12 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+#content{
+    margin: 70px;
+}
+p{
+    margin: 20px;
+    font-size: 18px;
+}

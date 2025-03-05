@@ -1,0 +1,90 @@
+/* Tổng thể phần đánh giá */
+.reviews-section {
+    margin-top: 2rem;
+    font-family: Arial, sans-serif;
+}
+
+.reviews-section h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: #333;
+    font-weight: bold;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 0.5rem;
+}
+
+/* Biểu mẫu đánh giá */
+#reviewForm {
+    background-color: #f9f9f9;
+    padding: 1.5rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#reviewForm textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px;
+    margin-top: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    resize: none;
+}
+
+#reviewForm button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 1rem;
+}
+
+#reviewForm button:hover {
+    background-color: #0056b3;
+}
+
+#starRating {
+    margin-bottom: 1rem;
+}
+
+#starRating .fa-star {
+    font-size: 1.5rem;
+    color: #ccc;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+#starRating .fa-star:hover,
+#starRating .fa-star.selected {
+    color: #ffc107;
+}
+
+/* Phần hiển thị đánh giá */
+.review-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.review-item p {
+    margin: 0.5rem 0;
+    color: #555;
+}
+
+.review-item p strong {
+    color: #333;
+}
+
+.review-item p small {
+    color: #888;
+    font-size: 0.9rem;
+}

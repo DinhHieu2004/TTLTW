@@ -1,0 +1,111 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+:root {
+    --primary-color: #e7621b !important;
+  }
+
+.footer_wrapper {
+    margin-top: 30px;
+    border-top: #333333 solid 1px;
+    background-color: #f6f6f6;
+    color: #ffffff;
+    padding:30px 10px 20px;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
+
+.footer_wrapper .background_footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-left: 20px;
+}
+
+.footer_wrapper .first_col,
+.footer_wrapper .second_col,
+.footer_wrapper .third_col,
+.footer_wrapper .fourth_col,
+.footer_wrapper .fifth_col {
+    flex: 1;
+    margin: 10px;
+    min-width: 200px;
+}
+.footer_wrapper .second_col{
+    margin-left: 30px;
+}
+.footer_wrapper h4 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #292929;
+}
+.footer_wrapper h4:hover,
+.footer_wrapper .contact_info:hover,
+.footer_wrapper .support_info:hover,
+.footer_wrapper .guide_info:hover {
+    color: var(--primary-color) !important;
+    transition: color 0.3s ease;
+}
+
+.footer_wrapper .contact_info,
+.footer_wrapper .support_info,
+.footer_wrapper .guide_info {
+    font-size: 14px;
+    color: #292929;
+    margin-bottom: 10px;
+}
+
+.footer_wrapper .contact_info i,
+.footer_wrapper .support_info i,
+.footer_wrapper .guide_info i {
+    margin-right: 10px;
+}
+
+.footer_wrapper .support_info,
+.footer_wrapper .guide_info {
+    cursor: pointer;
+}
+
+.footer_wrapper .support_info:hover,
+.footer_wrapper .guide_info:hover {
+    color: #292929;
+}
+
+.footer_wrapper .fanpage img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+}
+
+.footer_wrapper .end-footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    color: #A9A9A9;
+    border-top: 1px solid #444;
+    padding-top: 15px;
+}
+
+.footer_wrapper .payment i {
+    margin: 5px 10px;
+}
+a{
+    text-decoration: none;
+}
+.footer_wrapper .guide_info {
+    display: block;
+    font-size: 14px;
+    color: #292929;
+    margin-bottom: 10px;
+    text-decoration: none;
+}
+
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 768px) {
+    .footer_wrapper .background_footer {
+        flex-direction: column;
+        align-items: center;
+    }
+}

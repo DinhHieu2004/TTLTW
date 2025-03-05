@@ -1,0 +1,27 @@
+:root {
+    --primary-color: #e7621b !important;
+    --primary-text-light : white  !important;
+    --primary-text-dark : black  !important;
+
+  }
+.artist-photo, .artwork-image {
+    max-width: 100%;  
+    height: auto;    
+    object-fit: cover; 
+    border-radius: 8px; 
+}
+
+.container-product{
+    margin: 100px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.page-title-inner{
+    margin-top: 30px;
+    margin-left: 30px;
+}
+.btn{
+   background-color: var(--primary-color)!important;
+   color: white !important;
+}
