@@ -27,4 +27,8 @@ public class UserSerive {
         UserSerive userSerive = new UserSerive();
         System.out.println(userSerive.getListUser());
     }
+
+    public User findByUsername(String username) throws SQLException {
+        return userDao.findByUsername(username);
+    }
 }

@@ -16,6 +16,7 @@ import java.sql.SQLException;
 
 @WebServlet(name = "ChangePasswordController", value = "/change-password")
 public class ChangePasswordController extends HttpServlet {
+    AuthService auth = new AuthService();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -36,7 +37,7 @@ public class ChangePasswordController extends HttpServlet {
         try {
             // Lấy mật khẩu hiện tại từ cơ sở dữ liệu
             String storedPassword = userDao.getPasswordByUsername(currentUser.getUsername());
-            if (storedPassword == null || !userDao.hashPassword(currentPassword).equals(storedPassword)) {
+            if (storedPassword == null || !auth.hashPassword(currentPassword).equals(storedPassword)) {
                 // Mật khẩu hiện tại không đúng
                 request.setAttribute("errorMessage", "Mật khẩu hiện tại không đúng!");
                 request.getRequestDispatcher("/user/personal.jsp").forward(request, response);

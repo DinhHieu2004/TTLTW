@@ -45,7 +45,7 @@
 
                         <!-- Nút Quên mật khẩu -->
                         <div class="mt-3 text-center">
-                            <a href="../web_war/user/forgot_password.jsp" class="text-decoration-none">Quên mật khẩu?</a>
+                            <a href="${pageContext.request.contextPath}/user/forgot_password.jsp" class="text-decoration-none">Quên mật khẩu?</a>
                         </div>
                     </div>
 

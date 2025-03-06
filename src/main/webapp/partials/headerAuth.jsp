@@ -51,7 +51,7 @@
                     <i class="fa fa-search"></i>
                 </a>
 
-                <a href="../web_war/user/personal.jsp" class="icon_items user-icon me-3">
+                <a href="${pageContext.request.contextPath}/user/personal.jsp" class="icon_items user-icon me-3">
 
                     <i class="fa fa-user"></i>
                 </a>

@@ -19,10 +19,6 @@ import java.util.UUID;
 
 public class UserDao {
     Connection conn = DbConnect.getConnection();
-
-
-
-
     public List<User> getListUser() throws SQLException {
         List<User> users = new ArrayList<>();
         String sql = "select * from users";
@@ -76,14 +72,12 @@ public class UserDao {
 
     }
     public boolean updateUser(User user) throws SQLException {
-        String hashedPassword = hashPassword(user.getPassword());
-
         String updateQuery = "UPDATE users SET fullname = ?, username = ?, password = ?, address = ?, email = ? , phone = ?, role =? WHERE id = ?";
         PreparedStatement statement = conn.prepareStatement(updateQuery);
 
         statement.setString(1, user.getFullName());
         statement.setString(2, user.getUsername());
-        statement.setString(3, hashedPassword);
+        statement.setString(3, user.getPassword());
         statement.setString(4, user.getAddress());
         statement.setString(5, user.getEmail());
         statement.setString(6, user.getPhone());
@@ -138,12 +132,10 @@ public class UserDao {
     }
 
     //check login
-    public User checkLogin(String username, String password) throws SQLException {
-        String hashPass = hashPassword(password);
-        String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
+    public User findUser(String username) throws SQLException {
+        String sql = "SELECT * FROM users WHERE username = ?";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, username);
-        ps.setString(2, hashPass);
         try (ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int id = rs.getInt("id");
@@ -152,25 +144,25 @@ public class UserDao {
                 String address = rs.getString("address");
                 String email = rs.getString("email");
                 String phone = rs.getString("phone");
+                String password = rs.getString("password");
                 User.Role role = User.Role.valueOf(rs.getString("role"));
-                return new User(id, fullName, uname, address, email, phone, role);
+                return new User(id, fullName, uname, address, email, phone, role, password);
             }
         }
         return null;
 
     }
 
-    public boolean registerUser(String fullName, String username, String password, String address, String email, String phone, String role) throws SQLException {
+    public boolean registerUser(String fullName, String username, String hashPassword, String address, String email, String phone, String role) throws SQLException {
         if (findByUsername(username) != null) {
             return false;
         }
 
-        String hashedPassword = hashPassword(password);
         String sql = "INSERT INTO users (fullName, username, password, address, email, phone, role) VALUES (?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, fullName);
         ps.setString(2, username);
-        ps.setString(3, hashedPassword);
+        ps.setString(3, hashPassword);
         ps.setString(4, address);
         ps.setString(5, email);
         ps.setString(6, phone);
@@ -180,31 +172,10 @@ public class UserDao {
 
     }
 
-    public String hashPassword(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] hash = md.digest(password.getBytes());
-
-            StringBuilder hexString = new StringBuilder();
-            for (byte b : hash) {
-                String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) {
-                    hexString.append('0');
-                }
-                hexString.append(hex);
-            }
-
-            return hexString.toString(); // Trả về chuỗi mã hóa MD5
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Error while hashing password with MD5", e);
-        }
-    }
-
-    public boolean updatePassword(String username, String newPassword) throws SQLException {
+    public boolean updatePassword(String username, String hashPassword) throws SQLException {
         String sql = "UPDATE users SET password = ? WHERE username = ?";
-        String hashedPassword = hashPassword(newPassword);
              PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, hashedPassword);
+            ps.setString(1, hashPassword);
             ps.setString(2, username);
             return ps.executeUpdate() > 0;
 
