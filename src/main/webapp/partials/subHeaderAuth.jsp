@@ -31,10 +31,10 @@
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item"><a class="nav-link" href="../index.jsp">TRANG CHỦ</a></li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link" href="../web_war/user/about_us.jsp" id="navbarDropdown" >GIỚI THIỆU</a>
+                        <a class="nav-link" href="${pageContext.request.contextPath}/user/about_us.jsp" id="navbarDropdown" >GIỚI THIỆU</a>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="artwork">TÁC PHẨM</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../web_war/user/discount">CHƯƠNG TRÌNH GIẢM GIÁ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/user/discount">CHƯƠNG TRÌNH GIẢM GIÁ</a></li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#">HỌA SĨ</a>
                         <ul class="dropdown-menu">
@@ -51,7 +51,7 @@
                     <i class="fa fa-search"></i>
                 </a>
 
-                <a href="../web_war/user/personal.jsp" class="icon_items user-icon me-3">
+                <a href="${pageContext.request.contextPath}/user/personal.jsp" class="icon_items user-icon me-3">
 
                     <i class="fa fa-user"></i>
                 </a>

@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix = "f" uri = "http://java.sun.com/jsp/jstl/fmt" %>
-<div class="modal fade" id="authModal" tabindex="-1" data-bs-backdrop="static">
+<div class="modal fade" id="authModal">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -24,11 +24,7 @@
                 <div class="tab-content mt-3" id="authTabsContent">
                     <!-- Login Form -->
                     <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
-                        <c:if test="${not empty errorMessage}">
-                            <script type="text/javascript">
-                                alert("${errorMessage}");
-                            </script>
-                        </c:if>
+                        <div id="loginMessage" class="error"></div>
                         <form id="loginForm" method="post" action="login">
                             <div class="mb-3">
                                 <label for="username" class="form-label">Tên đăng nhập</label>
@@ -45,47 +41,9 @@
 
                         <!-- Nút Quên mật khẩu -->
                         <div class="mt-3 text-center">
-                            <a href="../web_war/user/forgot_password.jsp" class="text-decoration-none">Quên mật khẩu?</a>
+                            <a href="${pageContext.request.contextPath}/user/forgot_password.jsp" class="text-decoration-none">Quên mật khẩu?</a>
                         </div>
                     </div>
-
-
-                    <script>
-                        document.getElementById('loginForm').addEventListener('submit', function (e) {
-                            let isValid = true;
-
-                            // Lấy các phần tử input và thông báo lỗi
-                            const userName = document.getElementById('username');
-                            const userNameError = document.getElementById('usernameError');
-                            const password = document.getElementById('loginPassword');
-                            const passwordError = document.getElementById('passwordError');
-
-                            // Xóa thông báo lỗi cũ
-                            userNameError.textContent = '';
-                            userName.classList.remove('is-invalid');
-                            passwordError.textContent = '';
-                            password.classList.remove('is-invalid');
-
-                            // Kiểm tra tên đăng nhập
-                            if (userName.value.trim() === '') {
-                                userNameError.textContent = 'Vui lòng nhập tên đăng nhập!';
-                                userName.classList.add('is-invalid');
-                                isValid = false;
-                            }
-
-                            // Kiểm tra mật khẩu
-                            if (password.value.trim() === '') {
-                                passwordError.textContent = 'Vui lòng nhập mật khẩu!';
-                                password.classList.add('is-invalid');
-                                isValid = false;
-                            }
-
-                            // Ngăn form gửi nếu không hợp lệ
-                            if (!isValid) {
-                                e.preventDefault();
-                            }
-                        });
-                    </script>
 
                     <style>
                         .error {
@@ -263,4 +221,4 @@
         </div>
     </div>
 </div>
-<script src="../assets/js/authModal.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/authModal.js"></script>

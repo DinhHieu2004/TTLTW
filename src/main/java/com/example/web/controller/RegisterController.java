@@ -1,6 +1,8 @@
 package com.example.web.controller;
 
 import com.example.web.dao.UserDao;
+import com.example.web.service.AuthService;
+import com.example.web.service.UserSerive;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,7 +14,8 @@ import java.sql.SQLException;
 
 @WebServlet(name = "RegisterController", value = "/register")
 public class RegisterController extends HttpServlet {
-
+    AuthService auth = new AuthService();
+    UserSerive userSerive = new UserSerive();
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Lấy thông tin từ form đăng ký
@@ -38,10 +41,8 @@ public class RegisterController extends HttpServlet {
         }
 
         try {
-            UserDao userDao = new UserDao();
 
-            // Kiểm tra xem tên đăng nhập đã tồn tại chưa
-            if (userDao.findByUsername(username) != null) {
+            if (userSerive.findByUsername(username) != null) {
                 request.setAttribute("errorMessage", "Tên đăng nhập đã tồn tại. Vui lòng chọn tên đăng nhập khác.");
                 request.setAttribute("fullName", fullName);
                 request.setAttribute("username", username);
@@ -53,7 +54,7 @@ public class RegisterController extends HttpServlet {
             }
 
             // Đăng ký người dùng mới
-            boolean isRegistered = userDao.registerUser(fullName, username, password, address, email, phone, "user");
+            boolean isRegistered = auth.registerUser(fullName, username, password, address, email, phone, "user");
 
             if (isRegistered) {
                 // Đăng ký thành công, chuyển hướng tới trang đăng nhập

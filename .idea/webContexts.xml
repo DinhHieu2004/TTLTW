@@ -7,6 +7,7 @@
         <entry key="file://$PROJECT_DIR$/src/main/webapp/admin/discount.jsp" value="file://$PROJECT_DIR$/src/main/webapp/admin" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/admin/order-modals.jsp" value="file://$PROJECT_DIR$/src/main/webapp/admin" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/admin/products.jsp" value="file://$PROJECT_DIR$/src/main/webapp/admin" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/partials/authModal.jsp" value="file://$PROJECT_DIR$/src/main/webapp/partials" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/user/artWork.jsp" value="file://$PROJECT_DIR$/src/main/webapp/user" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/user/discount_content.jsp" value="file://$PROJECT_DIR$/src/main/webapp/user" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/user/forgot_password.jsp" value="file://$PROJECT_DIR$/src/main/webapp/user" />
