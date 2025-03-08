@@ -2,38 +2,44 @@ package com.example.web.controller;
 
 import com.example.web.dao.model.User;
 import com.example.web.service.AuthService;
+import com.google.gson.Gson;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+
 import jakarta.servlet.annotation.WebServlet;
 
 @WebServlet(name = "LoginController", value = "/login")
 public class LoginController extends HttpServlet {
-
+    AuthService service = new AuthService();
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-
-        AuthService service = new AuthService();
+        Map<String, String> responseMap = new HashMap<>();
         try {
             User user = service.checkLogin(username, password);
-            if (user != null && user.getRole() != null) { // Kiểm tra user có khác null và có role
+            if (user != null) {
                 HttpSession session = request.getSession();
+                user.setPassword(null);
                 session.setAttribute("user", user);
-                User currentUser = (User) session.getAttribute("user");
-                System.out.println(currentUser);
-                response.sendRedirect(request.getContextPath() + "/");
-
+                System.out.println(user);
+                responseMap.put("loginSuccess", "True");
             } else {
-                request.setAttribute("errorMessage", "Tên đăng nhập hoặc mật khẩu không đúng!");
-                response.sendRedirect(request.getContextPath() + "/");
+                responseMap.put("loginError", "Thông tin đăng nhập không đúng.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "Lỗi hệ thống, vui lòng thử lại sau!");
-            response.sendRedirect(request.getContextPath() + "/");
+            responseMap.put("errorMess","Lỗi hệ thống, vui lòng thử lại sau!");
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+        out.print(new Gson().toJson(responseMap));
+        out.flush();
     }
 }

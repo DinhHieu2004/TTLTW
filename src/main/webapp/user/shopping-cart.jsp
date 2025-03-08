@@ -112,7 +112,7 @@
         <a href="artwork" class="btn btn-secondary">Tiếp tục mua hàng</a>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#paymentModal" style="background: #e7621b !important;">Mua hàng</button>
     </div>
-    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal fade" id="paymentModal">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -178,8 +178,8 @@
         const isLoggedIn = ${sessionScope.user != null ? 'true' : 'false'};
         if (!isLoggedIn) {
             alert("Bạn cần đăng nhập để thực hiện thanh toán!");
-            // Điều hướng đến trang đăng nhập
-           // window.location.href = "${pageContext.request.contextPath}/login.jsp";
+            $("#paymentModal").modal("hide");
+            $("#authModal").modal("show");
         } else {
             window.location.href = "checkout";
         }
