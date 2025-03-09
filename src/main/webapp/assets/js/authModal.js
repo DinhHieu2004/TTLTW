@@ -84,7 +84,7 @@ $(document).ready(function () {
         let confirmPassword = $('#ConfirmRegisterPassword').val().trim();
 
         // Kiểm tra email hợp lệ
-        let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (email && !emailRegex.test(email)) {
             $('#emailError').text('Email không hợp lệ!').addClass('text-danger');
             $('#registerEmail').addClass('is-invalid');
@@ -134,12 +134,51 @@ $(document).ready(function () {
                 }
             },
             error: function(xhr){
-                var error = JSON.parse(xhr.responseText)
+                let errors = JSON.parse(xhr.responseText)
+                console.log("aaaa"+errors)
+                showServerErrors(errors);
 
             }
         })
     });
 });
+
+function showServerErrors(errors){
+    $('.text-danger').text('');
+    $('.is-invalid').removeClass('is-invalid');
+
+    Object.keys(errors).forEach(key => {
+        let inputId = convertErrorKeyToInputId(key);
+        let errorId = convertErrorKeyToErrorId(key);
+        showError(inputId, errorId, errors[key]);
+    });
+}
+
+function convertErrorKeyToInputId(errorKey) {
+    let mapping = {
+        "errorName": "registerName",
+        "errorUser": "registerUsername",
+        "errorEmail": "registerEmail",
+        "errorPassword": "registerPassword",
+        "errorPhone": "registerPhone"
+    };
+    return mapping[errorKey] || "";
+}
+function convertErrorKeyToErrorId(errorKey){
+    let mapping = {
+        "errorName": "fullNameError",
+        "errorUser": "usernamergError",
+        "errorEmail": "emailError",
+        "errorPassword": "passwordrgError",
+        "errorPhone": "phoneError"
+    };
+    return mapping[errorKey] || "";
+}
+// Hàm hiển thị lỗi lên UI
+function showError(inputId, errorId, message) {
+    $('#' + errorId).text(message).addClass('text-danger');
+    $('#' + inputId).addClass('is-invalid');
+}
 
 function resetLoginResForm() {
     $('#loginForm')[0].reset();
