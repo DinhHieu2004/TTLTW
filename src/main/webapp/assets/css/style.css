@@ -17,6 +17,8 @@ body, html {
 }
 
 .container-fluid{
+    /*margin: auto !important;*/
+    /*max-width: 1500px !important;*/
     padding: 0px;
     width: 100%;
     background-color: white;

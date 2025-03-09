@@ -29,8 +29,10 @@ public class LoginController extends HttpServlet {
                 session.setAttribute("user", user);
                 System.out.println(user);
                 responseMap.put("loginSuccess", "True");
+                response.setStatus(HttpServletResponse.SC_OK);
             } else {
                 responseMap.put("loginError", "Thông tin đăng nhập không đúng.");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
         } catch (SQLException e) {
             e.printStackTrace();

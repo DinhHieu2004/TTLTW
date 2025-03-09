@@ -158,15 +158,14 @@ public class UserDao {
             return false;
         }
 
-        String sql = "INSERT INTO users (fullName, username, password, address, email, phone, role) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (fullName, username, password, email, phone, role) VALUES (?, ?, ?, ?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, fullName);
         ps.setString(2, username);
         ps.setString(3, hashPassword);
-        ps.setString(4, address);
-        ps.setString(5, email);
-        ps.setString(6, phone);
-        ps.setString(7, role);
+        ps.setString(4, email);
+        ps.setString(5, phone);
+        ps.setString(6, role);
 
         return ps.executeUpdate() > 0;
 
