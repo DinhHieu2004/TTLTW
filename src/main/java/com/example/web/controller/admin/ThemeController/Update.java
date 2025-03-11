@@ -16,21 +16,35 @@ import java.sql.SQLException;
 
 @WebServlet("/admin/themes/update")
 public class Update extends HttpServlet {
-    private ThemeService themeService = new ThemeService();
+    private final ThemeService themeService = new ThemeService();
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json"); // Định dạng JSON
+        resp.setCharacterEncoding("UTF-8");
+
         String themeId = req.getParameter("themeId");
         String themeName = req.getParameter("themeName");
-        int id = Integer.parseInt(themeId);
+
+        if (themeId == null || themeName == null || themeId.trim().isEmpty() || themeName.trim().isEmpty()) {
+            resp.getWriter().write("{\"success\": false, \"message\": \"Dữ liệu không hợp lệ.\"}");
+            return;
+        }
+
         try {
+            int id = Integer.parseInt(themeId);
             boolean isUpdate = themeService.updateTheme(id, themeName);
+
             if (isUpdate) {
-                resp.sendRedirect("../products");
+                resp.getWriter().write("{\"success\": true, \"message\": \"Cập nhật thành công.\"}");
             } else {
                 resp.getWriter().write("{\"success\": false, \"message\": \"Cập nhật thất bại.\"}");
             }
+        } catch (NumberFormatException e) {
+            resp.getWriter().write("{\"success\": false, \"message\": \"ID không hợp lệ.\"}");
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            resp.getWriter().write("{\"success\": false, \"message\": \"Lỗi hệ thống: " + e.getMessage() + "\"}");
         }
     }
 }
+

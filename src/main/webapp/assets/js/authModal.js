@@ -30,7 +30,7 @@ $(document).ready(function () {
 
         // Gửi AJAX request
         $.ajax({
-            url: '/TTLTW_war/login',
+            url: 'login',
             type: 'POST',
             data: { username: username, password: password },
             dataType: 'json',

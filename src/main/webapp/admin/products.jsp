@@ -7,11 +7,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Panel</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
 
   <style> .sidebar {
     height: 100vh;
@@ -191,7 +191,7 @@
                 <td>${theme.themeName}</td>
                 <td>
                   <button class="btn btn-info btn-sm" data-bs-toggle="modal"
-                          data-bs-target="#editThemeModal" data-theme-id="${theme.id}">chi tiết</button>
+                          data-bs-target="#editThemeModal" data-theme-id="${theme.id}">Chi tiết</button>
                   <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
                           data-bs-target="#deleteThemeModal" data-theme-id="${theme.id}">Xóa</button>
                 </td>
@@ -447,7 +447,7 @@
 
 
 <!-- Modal thêm Theme -->
-<div class="modal fade" id="addThemeModal" tabindex="-1" aria-labelledby="addThemeModalLabel" aria-hidden="true">
+<div class="modal" id="addThemeModal" tabindex="-1" aria-labelledby="addThemeModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -455,7 +455,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="${pageContext.request.contextPath}/admin/themes/add" method="POST">
+        <form id="addThemeForm">
           <div class="mb-3">
             <label for="themeName" class="form-label">Tên Chủ Đề</label>
             <input type="text" class="form-control" id="themeName" name="themeName" required>
@@ -477,7 +477,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="${pageContext.request.contextPath}/admin/themes/update" method="POST">
+        <form id="editThemeForm">
           <input type="hidden" id="editThemeId" name="themeId" value="">
 
           <div class="mb-3">
@@ -503,7 +503,7 @@
         <h5 class="modal-title" id="deleteThemeModalLabel">Xác nhận xóa</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="${pageContext.request.contextPath}/admin/themes/delete" method="POST">
+      <form id="deleteThemeForm">
         <div class="modal-body">
           <p>Bạn có chắc chắn muốn xóa chủ đề này?</p>
           <input type="hidden" id="themeIdToDelete" name="themeId">
@@ -517,7 +517,7 @@
   </div>
 </div>
 
-
+<%--Thêm Size--%>
 <div class="modal fade" id="addSizeModal" tabindex="-1" aria-labelledby="addSizeModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -564,7 +564,7 @@
   </div>
 </div>
 
-<!-- Modal xóa Theme -->
+<!-- Modal xóa Size -->
 
 <div class="modal fade" id="deleteSizeModal" tabindex="-1" aria-labelledby="deleteSizeModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -586,12 +586,6 @@
     </div>
   </div>
 </div>
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-
 <script>
   $(document).ready(function () {
     $('#products').DataTable({
@@ -625,14 +619,12 @@
       document.getElementById('sizeIdToDelete').value = sizeId;
     });
   });
-
-
 </script>
+
+
+
 <script src="${pageContext.request.contextPath}/assets/js/admin/product.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/admin/theme.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/admin/sizes.js"></script>
-
-
-
 </body>
 </html>

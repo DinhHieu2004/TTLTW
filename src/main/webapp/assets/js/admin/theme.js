@@ -6,7 +6,7 @@ $(document).ready(function () {
         $.ajax({
             url: 'themes/detail',
             type: 'GET',
-            data: { themeId: themeId },
+            data: {themeId: themeId},
             dataType: 'json',
             success: function (response) {
                 console.log(response)
@@ -26,6 +26,6 @@ $(document).ready(function () {
         });
 
     });
-
-
 });
+
+
