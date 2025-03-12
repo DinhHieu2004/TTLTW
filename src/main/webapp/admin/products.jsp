@@ -733,25 +733,25 @@
   });
 </script>
 <script>
-  // thêm size
   $(document).ready(function () {
     var table = $('#sizes').DataTable();
 
+    // thêm size
     $("#addSizeForm").submit(function (event) {
       event.preventDefault();
-
-      var sizeName = $("#sizeName").val();
+      var sizeDescription = $("#sizeName").val();
 
       $.ajax({
         type: "POST",
         url: "sizes/add",
-        data: { description: sizeName },
+        data: { description: sizeDescription },
         dataType: "json",
         success: function (response) {
           if (response.success) {
+            // Thêm hàng mới
             table.row.add([
               response.id,
-              sizeName,
+              sizeDescription,
               '<button class="btn btn-info btn-sm edit-size" data-size-id="' + response.id + '">Chi tiết</button> ' +
               '<button class="btn btn-danger btn-sm delete-size" data-size-id="' + response.id + '">Xóa</button>'
             ]).draw();
@@ -763,7 +763,75 @@
           }
         },
         error: function () {
-          alert("Lỗi hệ thống.");
+          alert("Lỗi khi thêm kích thước.");
+        }
+      });
+    });
+
+    // Xóa size
+    $(document).on('click', '.delete-size', function () {
+      $('#sizeIdToDelete').val($(this).data('size-id'));
+      $('#deleteSizeModal').modal('show');
+    });
+
+    $('#deleteSizeForm').submit(function (event) {
+      event.preventDefault();
+      var sizeId = $('#sizeIdToDelete').val();
+
+      $.ajax({
+        type: 'POST',
+        url: 'sizes/delete',
+        data: { sizeId: sizeId },
+        dataType: 'json',
+        success: function (response) {
+          if (response.success) {
+            var $row = $('[data-size-id="' + sizeId + '"]').closest('tr');
+            table.row($row).remove().draw();
+            $('#deleteSizeModal').modal('hide');
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function () {
+          alert("Lỗi khi xóa kích thước.");
+        }
+      });
+    });
+
+    // sửa size
+    $(document).on('click', '.edit-size', function (event) {
+      event.preventDefault();
+      var sizeId = $(this).data('size-id');
+      var sizeDescription = $(this).closest('tr').find('td:eq(1)').text().trim();
+
+      $('#editSizeId').val(sizeId);
+      $('#editDescription').val(sizeDescription);
+      $('#idSize').text(sizeId);
+      $('#editSizeModal').modal('show');
+    });
+
+    // Cập nhật
+    $("#editSizeForm").submit(function (event) {
+      event.preventDefault();
+      var sizeId = $("#editSizeId").val();
+      var sizeDescription = $("#editDescription").val();
+
+      $.ajax({
+        type: "POST",
+        url: "sizes/update",
+        data: { sizeId: sizeId, description: sizeDescription },
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            var $row = $('button[data-size-id="' + sizeId + '"]').closest('tr');
+            table.cell($row, 1).data(sizeDescription).draw();
+            $('#editSizeModal').modal('hide');
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function () {
+          alert("Lỗi khi cập nhật kích thước.");
         }
       });
     });
