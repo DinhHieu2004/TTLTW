@@ -17,7 +17,7 @@ import java.sql.SQLException;
 
 @WebServlet("/admin/themes/detail")
 public class GetDetail extends HttpServlet {
-    private ThemeService themeService = new ThemeService();
+    private final ThemeService themeService = new ThemeService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -32,5 +32,4 @@ public class GetDetail extends HttpServlet {
             throw new RuntimeException(e);
         }
     }
-
 }

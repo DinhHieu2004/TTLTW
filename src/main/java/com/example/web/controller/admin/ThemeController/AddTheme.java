@@ -25,7 +25,6 @@ public class AddTheme extends HttpServlet {
         try {
             boolean isAdd = themeService.addTheme(themeName);
             if (isAdd) {
-                // Lấy ID lớn nhất của theme vừa thêm
                 int themeId = themeService.getLastInsertedId();
                 out.write("{\"success\": true, \"id\": " + themeId + ", \"message\": \"Thêm thành công.\"}");
             } else {

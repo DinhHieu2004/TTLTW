@@ -188,12 +188,16 @@
             <c:forEach var="theme" items="${t}">
               <tr>
                 <td>${theme.id}</td>
-                <td>${theme.themeName}</td>
+                <td class="theme-name">${theme.themeName}</td>
                 <td>
-                  <button class="btn btn-info btn-sm" data-bs-toggle="modal"
-                          data-bs-target="#editThemeModal" data-theme-id="${theme.id}">Chi tiết</button>
-                  <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                          data-bs-target="#deleteThemeModal" data-theme-id="${theme.id}">Xóa</button>
+                  <button class="btn btn-info btn-sm edit-theme"
+                          data-bs-toggle="modal"
+                          data-bs-target="#editThemeModal"
+                          data-theme-id="${theme.id}" >Chi tiết</button>
+                  <button class="btn btn-danger btn-sm delete-theme"
+                          data-bs-toggle="modal"
+                          data-bs-target="#deleteThemeModal"
+                          data-theme-id="${theme.id}">Xóa</button>
                 </td>
               </tr>
             </c:forEach>
@@ -485,7 +489,7 @@
             <strong id="idTheme"></strong>
           </div>
           <div class="mb-3">
-            <label for="themeName" class="form-label">Tên Chủ Đề</label>
+            <label for="editThemeName" class="form-label">Tên Chủ Đề</label>
             <input type="text" class="form-control" id="editThemeName" name="themeName" required>
           </div>
           <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
@@ -621,6 +625,110 @@
   });
 </script>
 
+<script>
+  // thêm theme
+  $(document).ready(function () {
+    var table = $('#themes').DataTable();
+
+    $("#addThemeForm").submit(function (event) {
+      event.preventDefault();
+      var themeName = $("#themeName").val();
+
+      $.ajax({
+        type: "POST",
+        url: "themes/add",
+        data: { themeName: themeName },
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            // Thêm hàng mới
+            table.row.add([
+              response.id,
+              themeName,
+              '<button class="btn btn-info btn-sm edit-theme" data-theme-id="' + response.id + '">Chi tiết</button> ' +
+              '<button class="btn btn-danger btn-sm delete-theme" data-theme-id="' + response.id + '">Xóa</button>'
+            ]).draw();
+            $('#addThemeModal').modal('hide');
+            $("#addThemeForm")[0].reset();
+          }
+        }
+      });
+    });
+  });
+
+  // xóa theme (event deligation)
+  $(document).ready(function () {
+    $(document).on('click', '.delete-theme', function () {
+      $('#themeIdToDelete').val($(this).data('theme-id'));
+      $('#deleteThemeModal').modal('show');
+    });
+
+    $('#deleteThemeForm').on('submit', function (event) {
+      event.preventDefault();
+      var themeId = $('#themeIdToDelete').val();
+
+      $.ajax({
+        type: 'POST',
+        url: 'themes/delete',
+        data: { themeId: themeId },
+        dataType: 'json',
+        success: function (response) {
+          if (response.success) {
+            var $row = $('[data-theme-id="' + themeId + '"]').closest('tr');
+            $('#themes').DataTable().row($row).remove().draw();
+            $('#deleteThemeModal').modal('hide');
+          }
+        }
+      });
+    });
+  });
+  // sửa theme
+  $(document).ready(function () {
+    var table = $('#themes').DataTable();
+
+    // Khi bấm nút "Chi tiết" để mở modal sửa theme
+    $(document).on('click', '.edit-theme', function (event) {
+      event.preventDefault();
+      var themeId = $(this).data('theme-id');
+      alert(themeId);
+      var themeName = $(this).closest('tr').find('td:eq(1)').text().trim();
+
+      // Gán dữ liệu vào modal chỉnh sửa
+      $('#editThemeId').val(themeId);
+      $('#editThemeName').val(themeName);
+      $('#idTheme').text(themeId);
+      $('#editThemeModal').modal('show');
+    });
+
+    // Xử lý cập nhật theme khi submit form
+    $("#editThemeForm").submit(function (event) {
+      event.preventDefault();
+      var themeId = $("#editThemeId").val();
+      var themeName = $("#editThemeName").val();
+
+      $.ajax({
+        type: "POST",
+        url: "themes/update",
+        data: { themeId: themeId, themeName: themeName },
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            // Cập nhật tên theme trong bảng DataTable
+            var $row = $('button[data-theme-id="' + themeId + '"]').closest('tr');
+            table.cell($row, 1).data(themeName).draw();
+
+            $('#editThemeModal').modal('hide'); // Đóng modal
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function () {
+          alert("Lỗi khi cập nhật theme.");
+        }
+      });
+    });
+  });
+</script>
 
 
 <script src="${pageContext.request.contextPath}/assets/js/admin/product.js"></script>
