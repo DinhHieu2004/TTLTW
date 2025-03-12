@@ -10,28 +10,30 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @WebServlet("/admin/sizes/delete")
 public class Delete extends HttpServlet {
-    private SizeService sizeService = new SizeService();
+    private final SizeService sizeService = new SizeService();
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
 
-        String sizeId = request.getParameter("sizeId");
-        int id = Integer.parseInt(sizeId);
         try {
+            int id = Integer.parseInt(request.getParameter("sizeId"));
             boolean isDeleted = sizeService.deleteSize(id);
+
             if (isDeleted) {
-                request.setAttribute("message", "Xóa kích thước thành công!");
+                out.write("{\"success\": true, \"message\": \"Xóa kích thước thành công!\"}");
             } else {
-                request.setAttribute("message", "Xóa kích thước thất bại!");
+                out.write("{\"success\": false, \"message\": \"Xóa kích thước thất bại!\"}");
             }
         } catch (Exception e) {
-            request.setAttribute("message", "Lỗi: " + e.getMessage());
+            out.write("{\"success\": false, \"message\": \"Lỗi: " + e.getMessage() + "\"}");
         }
-       response.sendRedirect("../products");
-       // request.getRequestDispatcher("../products.jsp").forward(request, response);
+        out.flush();
     }
-
-
 }

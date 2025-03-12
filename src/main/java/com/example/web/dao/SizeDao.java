@@ -56,6 +56,20 @@ public class SizeDao {
         return rowsInserted > 0;
 
     }
+    public int getLastInsertedId() throws SQLException {
+        String query = "SELECT MAX(id) FROM sizes";
+
+        try (
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return -1;
+    }
+
     public boolean updateSize(int id, String  sizeDescription) throws SQLException {
         String updateQuery = "UPDATE sizes SET sizeDescription = ? WHERE id = ?";
         PreparedStatement statement = conn.prepareStatement(updateQuery);

@@ -210,7 +210,7 @@
     <div class="col-6">
       <div class="card mb-4">
         <div class="card-header bg-secondary text-white">
-          <h4>Danh sách Kích Thước</h4> <!-- Sửa tên cho đúng -->
+          <h4>Danh sách Kích Thước</h4>
         </div>
         <div class="card-body">
           <table id="sizes" class="table table-bordered display">
@@ -230,10 +230,14 @@
                 <td>${s.idSize}</td>
                 <td>${s.sizeDescriptions}</td>
                 <td>
-                  <button class="btn btn-info btn-sm" data-bs-toggle="modal"
-                          data-bs-target="#editSizeModal" data-size-id="${s.idSize}">chi tiết</button>
-                  <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                          data-bs-target="#deleteSizeModal" data-size-id="${s.idSize}">Xóa</button>
+                  <button class="btn btn-info btn-sm edit-size"
+                          data-bs-toggle="modal"
+                          data-bs-target="#editSizeModal"
+                          data-size-id="${s.idSize}">Chi tiết</button>
+                  <button class="btn btn-danger btn-sm delete-size"
+                          data-bs-toggle="modal"
+                          data-bs-target="#deleteSizeModal"
+                          data-size-id="${s.idSize}">Xóa</button>
                 </td>
               </tr>
             </c:forEach>
@@ -530,7 +534,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="${pageContext.request.contextPath}/admin/sizes/add" method="POST">
+        <form id="addSizeForm">
           <div class="mb-3">
             <label for="sizeName" class="form-label">Tên Kích Thước</label>
             <input type="text" class="form-control" id="sizeName" name="description" required>
@@ -550,7 +554,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="${pageContext.request.contextPath}/admin/sizes/update" method="POST">
+        <form id="editSizeForm">
           <input type="hidden" id="editSizeId" name="sizeId" value="">
 
           <div class="mb-3">
@@ -577,7 +581,7 @@
         <h5 class="modal-title" id="deleteSizeModalLabel">Xác nhận xóa</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="${pageContext.request.contextPath}/admin/sizes/delete" method="POST">
+      <form id="deleteSizeForm">
         <div class="modal-body">
           <p>Bạn có chắc chắn muốn xóa kích thước này?</p>
           <input type="hidden" id="sizeIdToDelete" name="sizeId">
@@ -690,7 +694,6 @@
     $(document).on('click', '.edit-theme', function (event) {
       event.preventDefault();
       var themeId = $(this).data('theme-id');
-      alert(themeId);
       var themeName = $(this).closest('tr').find('td:eq(1)').text().trim();
 
       // Gán dữ liệu vào modal chỉnh sửa
@@ -729,10 +732,47 @@
     });
   });
 </script>
+<script>
+  // thêm size
+  $(document).ready(function () {
+    var table = $('#sizes').DataTable();
+
+    $("#addSizeForm").submit(function (event) {
+      event.preventDefault();
+
+      var sizeName = $("#sizeName").val();
+
+      $.ajax({
+        type: "POST",
+        url: "sizes/add",
+        data: { description: sizeName },
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            table.row.add([
+              response.id,
+              sizeName,
+              '<button class="btn btn-info btn-sm edit-size" data-size-id="' + response.id + '">Chi tiết</button> ' +
+              '<button class="btn btn-danger btn-sm delete-size" data-size-id="' + response.id + '">Xóa</button>'
+            ]).draw();
+
+            $('#addSizeModal').modal('hide');
+            $("#addSizeForm")[0].reset();
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function () {
+          alert("Lỗi hệ thống.");
+        }
+      });
+    });
+  });
+</script>
 
 
 <script src="${pageContext.request.contextPath}/assets/js/admin/product.js"></script>
-<script src="${pageContext.request.contextPath}/assets/js/admin/theme.js"></script>
-<script src="${pageContext.request.contextPath}/assets/js/admin/sizes.js"></script>
+<%--<script src="${pageContext.request.contextPath}/assets/js/admin/theme.js"></script>--%>
+<%--<script src="${pageContext.request.contextPath}/assets/js/admin/sizes.js"></script>--%>
 </body>
 </html>
