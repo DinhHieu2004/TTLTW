@@ -104,9 +104,10 @@
 
     <div id="search-bar" class="container mt-2">
         <div class="input-group">
-            <input  name="keyword" type="text" class="form-control" id="search-input" placeholder="Tìm kiếm...">
+            <input  name="keyword" type="text" class="form-control" id="search-input" placeholder="Tìm kiếm...", autocomplete="off">
             <button class="btn btn-primary" id="search-btn" style="background: #e7621b !important;">Tìm</button>
         </div>
+        <div id="suggestions"></div>
     </div>
     </form>
 
