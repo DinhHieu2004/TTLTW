@@ -104,3 +104,13 @@ $(document).ready(function() {
         }
     }
 });
+
+$(document).ready(function () {
+    let urlParams = new URLSearchParams(window.location.search);
+    let searchQuery = urlParams.get('search');
+
+    if (searchQuery) {
+        $("#search-input").val(searchQuery); // Hiển thị từ khóa đã tìm
+        searchArtwork(searchQuery); // Gọi API tìm kiếm tự động
+    }
+});

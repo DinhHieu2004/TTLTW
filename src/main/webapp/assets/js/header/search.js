@@ -1,16 +1,21 @@
 $("#search-input").on("input", function () {
+    const contextPath = '/web_war';
         let keyword = $(this).val().trim();
 
+    if (keyword) {
+        window.location.href = "/web_war/products.jsp?search=" + encodeURIComponent(keyword);
+    }
         if (keyword.length > 2) {
             $.ajax({
-                url: "artwork/suggestions",
+              //  url: "artwork/suggestions",
+                url: '${pageContext.request.contextPath}/artwork/suggestions',
                 method: "GET",
                 dataType: "json",
                 data: { keyword: keyword },
                 success: function (response) {
-                    console.log("API response:", response); // Debug dữ liệu trả về
+                    console.log("API response:", response);
 
-                    $("#suggestions").empty().show(); // Hiển thị box gợi ý
+                    $("#suggestions").empty().show();
 
                     if (Array.isArray(response) && response.length > 0) {
                         let suggestionList = "<ul class='list-group'>";
@@ -34,9 +39,10 @@ $("#search-input").on("input", function () {
 });
 
 function searchArtwork(keyword) {
-    let params = $("#filterForm").serialize() + "&keyword=" + encodeURIComponent(keyword);
+    let params = keyword ? "keyword=" + encodeURIComponent(keyword) : $("#filterForm").serialize();
+
     $.ajax({
-        url: "artwork",
+        url: '/web_war/artwork',
         type: "GET",
         data: params,
         headers: { "X-Requested-With": "XMLHttpRequest" },
