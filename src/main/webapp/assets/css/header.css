@@ -351,5 +351,28 @@ header{
 .suggestion-item:hover {
     background: #f0f0f0;
 }
+#search-bar {
+    position: relative; /* Để các phần tử con có thể dùng position: absolute */
+}
 
+#suggestions {
+    position: absolute;
+    top: 100%; /* Đẩy xuống dưới input */
+    left: 0;
+    width: 100%; /* Chiều rộng bằng input */
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    z-index: 1000;
+    display: none; /* Ẩn mặc định */
+}
+
+.list-group-item {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.list-group-item:hover {
+    background: #f0f0f0;
+}
 

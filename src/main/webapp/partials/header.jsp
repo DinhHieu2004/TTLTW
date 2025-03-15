@@ -102,18 +102,21 @@
     </div>
     <form action="artwork" method="GET">
 
-    <div id="search-bar" class="container mt-2">
-        <div class="input-group">
-            <input  name="keyword" type="text" class="form-control" id="search-input" placeholder="Tìm kiếm...", autocomplete="off">
+    <div id="search-bar" class="container mt-2 justify-content-center" style="">
+        <div class="input-group d-flex justify-content-center" style="width: 600px; top: 60px; right: 600px;">
+            <input style="padding: 12px;" name="keyword" type="text" class="form-control" id="search-input" placeholder="Tìm kiếm..." autocomplete="off">
             <button class="btn btn-primary" id="search-btn" style="background: #e7621b !important;">Tìm</button>
+            <div style="top:50px; width: 600px" id="suggestions"></div>
+
         </div>
-        <div id="suggestions"></div>
+
     </div>
     </form>
 
 </header>
 
 <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/header/search.js"></script>
 
 
 </script>
