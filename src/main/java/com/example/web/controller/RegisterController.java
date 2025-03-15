@@ -28,7 +28,6 @@ public class RegisterController extends HttpServlet {
         String email = getTrimmedParameter(request, "email");
         String password = getTrimmedParameter(request, "password");
         String fullName = getTrimmedParameter(request, "fullName");
-        String address = request.getParameter("address");
         String phone = getTrimmedParameter(request, "phone");
 
         Map<String, String> responseMap = new HashMap<>();
@@ -76,7 +75,7 @@ public class RegisterController extends HttpServlet {
             }
 
             // Đăng ký người dùng mới
-            boolean isRegistered = auth.registerUser(fullName, username, password, address, email, phone, "user");
+            boolean isRegistered = auth.registerUser(fullName, username, password, email, phone, "user");
 
             if (isRegistered) {
                 responseMap.put("success", "Đăng ký thành công!");

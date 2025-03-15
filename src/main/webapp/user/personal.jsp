@@ -52,7 +52,7 @@
                         <button class="btn btn-success btn-sm" data-bs-toggle="modal"
                                 data-bs-target="#editPersonalInfoModal">Chỉnh sửa
                         </button>
-                        <a href="${pageContext.request.contextPath}/logout" class="btn btn-danger btn-sm">Đăng xuất</a>
+                        <button class="btn btn-danger btn-sm" onclick="logout()">Đăng xuất</button>
 
                         <c:if test="${sessionScope.user.role == 'admin'}">
                             <a href="${pageContext.request.contextPath}/admin" class="btn btn-info btn-sm">Đến trang quản lý</a>

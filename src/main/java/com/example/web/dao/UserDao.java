@@ -153,22 +153,29 @@ public class UserDao {
 
     }
 
-    public boolean registerUser(String fullName, String username, String hashPassword, String address, String email, String phone, String role) throws SQLException {
+    public boolean registerUser(String fullName, String username, String hashPassword, String email, String phone, String role) throws SQLException {
         if (findByUsername(username) != null) {
             return false;
         }
+        String sql;
+        if (phone != null) {
+            sql = "INSERT INTO users (fullName, username, password, email, role, phone) VALUES (?, ?, ?, ?, ?, ?)";
+        } else {
+            sql = "INSERT INTO users (fullName, username, password, email, role) VALUES (?, ?, ?, ?, ?)";
+        }
 
-        String sql = "INSERT INTO users (fullName, username, password, email, phone, role) VALUES (?, ?, ?, ?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, fullName);
         ps.setString(2, username);
         ps.setString(3, hashPassword);
         ps.setString(4, email);
-        ps.setString(5, phone);
-        ps.setString(6, role);
+        ps.setString(5, role);
+
+        if (phone != null) {
+            ps.setString(6, phone);
+        }
 
         return ps.executeUpdate() > 0;
-
     }
 
     public boolean updatePassword(String username, String hashPassword) throws SQLException {

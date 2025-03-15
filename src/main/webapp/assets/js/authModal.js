@@ -6,6 +6,7 @@ $(document).ready(function () {
         let isValid = true;
         let username = $('#username').val().trim();
         let password = $('#loginPassword').val().trim();
+        let captcha = $('#captcha').val().trim();
 
         // Xóa thông báo lỗi cũ
         $('.text-danger').text('').removeClass('is-invalid');
@@ -31,11 +32,13 @@ $(document).ready(function () {
         $.ajax({
             url: 'login',
             type: 'POST',
-            data: { username: username, password: password },
+            data: { username: username, password: password, captcha: captcha },
             dataType: 'json',
             success: function () {
                 alert("Đăng nhập thành công!");
                 location.reload();
+                // $("#userIcon").show();
+                // $(".login-btn").hide();
             },
             error: function (xhr) {
                 try {
@@ -47,6 +50,10 @@ $(document).ready(function () {
                         $('#loginMessage').text(errors.errorMess).addClass('text-danger').show();
                     } else {
                         alert("Lỗi không xác định! Mã lỗi: " + xhr.status);
+                    }
+                    if (errors.captchaRequired) {
+                        $('#captchaContainer').show();
+                        $('#captchaImage').attr('src', 'captcha?' + new Date().getTime()); // Reload captcha
                     }
                 } catch (e) {
                     alert("Không thể xử lý phản hồi lỗi từ server.");
@@ -196,6 +203,24 @@ $('#register-tab, #login-tab').on('click', function () {
     resetLoginResForm();
 });
 
-
+function logout(){
+    $.ajax({
+        url: 'logout',
+        type: 'POST',
+        dataType: 'json',
+        success: function(response) {
+            if (response.success) {
+                alert("Đăng xuất thành công!");
+                location.reload();
+                // window.location.href = "index.jsp";
+            } else {
+                alert("Đăng xuất thất bại! Vui lòng thử lại.");
+            }
+        },
+        error: function() {
+            alert("Có lỗi xảy ra khi đăng xuất.");
+        }
+    });
+}
 
 

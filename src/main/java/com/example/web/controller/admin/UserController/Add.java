@@ -47,7 +47,7 @@ public class Add  extends HttpServlet {
                 return;
             }
 
-            boolean isRegistered = userDao.registerUser(fullName, username, password, address, email, phone, "user");
+            boolean isRegistered = userDao.registerUser(fullName, username, password, email, phone, "user");
 
             if (isRegistered) {
                 request.setAttribute("message", "Thêm người dùng thành công!");

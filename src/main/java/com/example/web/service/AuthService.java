@@ -19,8 +19,8 @@ public class AuthService {
         }
         return null;
     }
-    public boolean registerUser(String fullName, String username, String password, String address, String email, String phone, String role) throws SQLException {
-        return udao.registerUser(fullName, username, hashPassword(password), address, email, phone, role);
+    public boolean registerUser(String fullName, String username, String password, String email, String phone, String role) throws SQLException {
+        return udao.registerUser(fullName, username, hashPassword(password), email, phone, role);
     }
     public String hashPassword(String password) {
         try {
