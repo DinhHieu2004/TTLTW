@@ -122,7 +122,7 @@
     <div class="card-header bg-success text-white" style="background: #e7621b !important;">
       <h4>Tranh</h4>
 
-
+<%-- Thêm tranh--%>
     </div>
     <div class="card-body">
       <table id="products" class="table table-bordered display">
@@ -153,11 +153,15 @@
             <td>${p.price}</td>
             <td>${p.createDate}</td>
             <td>${p.artistName}</td>
-            <td><button class="btn btn-info btn-sm" data-bs-toggle="modal"
-                        data-bs-target="#viewAndEditModal" data-product-id="${p.id}">Xem Chi Tiết</button>
+            <td><button class="btn btn-info btn-sm edit-painting"
+                        data-bs-toggle="modal"
+                        data-bs-target="#viewAndEditModal"
+                        data-product-id="${p.id}">Xem Chi Tiết</button>
 
-              <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                      data-bs-target="#deleteProductModal" data-product-id="${p.id}">Xóa</button>
+              <button class="btn btn-danger btn-sm delete-painting"
+                      data-bs-toggle="modal"
+                      data-bs-target="#deleteProductModal"
+                      data-product-id="${p.id}">Xóa</button>
           </tr>
         </c:forEach>
         </tbody>
@@ -247,11 +251,12 @@
       </div>
     </div>
   </div>
+
 <!-- Modal thêm tranh -->
 <div class="modal fade" id="addPaintingModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form action="${pageContext.request.contextPath}/admin/paintings/add" method="post" enctype="multipart/form-data">
+      <form id="addPaintingForm" enctype="multipart/form-data">
         <div class="modal-header">
           <h5 class="modal-title">Thêm Tranh</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -332,11 +337,11 @@
   </div>
 </div>
 
-<!--view and edit -->
+<!-- sửa tranh -->
   <div class="modal fade" id="viewAndEditModal" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
-        <form action="${pageContext.request.contextPath}/admin/paintings/update" method="post" enctype="multipart/form-data">
+        <form id="updatePaintingForm" enctype="multipart/form-data">
           <input type="hidden" id="editProductId" name="pid" value="">
 
           <div class="modal-header">
@@ -423,13 +428,14 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Đóng</button>
-            <button type="submit" class="btn btn-primary btn-sm">Thêm</button>
+            <button type="submit" class="btn btn-primary btn-sm">Lưu thay đổi</button>
           </div>
         </form>
       </div>
     </div>
   </div>
 
+<%--  Xóa tranh --%>
   <div class="modal fade" id="deleteProductModal" tabindex="-1" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -437,7 +443,7 @@
           <h5 class="modal-title" id="deleteProductModalLabel">Xác nhận xóa</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form action="${pageContext.request.contextPath}/admin/products/delete" method="POST">
+        <form id="deletePaintingForm">
           <div class="modal-body">
             <p>Bạn có chắc chắn muốn xóa sản phẩm này?</p>
             <input type="hidden" id="pidToDelete" name="pid">
@@ -838,8 +844,53 @@
   });
 </script>
 
+<script>
+  $(document).ready(function () {
+    var table = $('#products').DataTable();
 
-<script src="${pageContext.request.contextPath}/assets/js/admin/product.js"></script>
+    $("#addPaintingForm").submit(function (event) {
+      event.preventDefault();
+
+      var formData = new FormData(this);
+
+      $.ajax({
+        type: "POST",
+        url: "paintings/add",
+        data: formData,
+        processData: false,
+        contentType: false,
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            var imageUrl = response.painting.imageUrl;
+            table.row.add([
+              response.painting.id,
+              '<img src="' + imageUrl + '" width="60">',
+              response.painting.title,
+              response.painting.available ? 'Không hoạt động' : 'Hoạt động',
+              response.painting.price.toFixed(1),
+              response.painting.createDate,
+              response.painting.artistName,
+              '<button class="btn btn-info btn-sm edit-painting" data-product-id="' + response.painting.id + '">Xem Chi Tiết</button>' +
+              '<button class="btn btn-danger btn-sm delete-painting" data-product-id="' + response.painting.id + '">Xóa</button>'
+            ]).draw();
+
+            $('#addPaintingModal').modal('hide');
+            $("#addPaintingForm")[0].reset();
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function(xhr) {
+          alert("Lỗi server: " + xhr.responseText);
+        }
+      });
+    });
+  });
+</script>
+
+
+<%--<script src="${pageContext.request.contextPath}/assets/js/admin/product.js"></script>--%>
 <%--<script src="${pageContext.request.contextPath}/assets/js/admin/theme.js"></script>--%>
 <%--<script src="${pageContext.request.contextPath}/assets/js/admin/sizes.js"></script>--%>
 </body>
