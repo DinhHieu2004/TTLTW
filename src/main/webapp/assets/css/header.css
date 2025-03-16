@@ -334,3 +334,7 @@ header{
     color: #666;
     margin-top: 5px;
 }
+#captchaImage{
+    border: #ccc solid 1px;
+    margin: 10px;
+}

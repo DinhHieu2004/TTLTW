@@ -17,7 +17,7 @@ import java.util.Random;
 public class CaptchaController extends HttpServlet {
 
     private static final int WIDTH = 160;
-    private static final int HEIGHT = 60;
+    private static final int HEIGHT = 30;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -43,9 +43,9 @@ public class CaptchaController extends HttpServlet {
         session.setAttribute("captcha", captchaText);
 
         g.setColor(Color.BLACK);
-        g.setFont(new Font("Arial", Font.BOLD, 32));
-        int x = 20;
-        int y = 40;
+        g.setFont(new Font("Arial", Font.BOLD, 24));
+        int x = 40;
+        int y = 23;
         g.drawString(captchaText, x, y);
 
         g.setColor(Color.BLACK);

@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    initializeErrorClearing()
     // Xử lí js phần đăng nhập
     $('#loginForm').on('submit', function (e) {
         e.preventDefault();
@@ -44,16 +45,24 @@ $(document).ready(function () {
                 try {
                     var errors = JSON.parse(xhr.responseText);
                     if (xhr.status === 401) {
-                        $('#loginMessage').text(errors.loginError).addClass('text-danger').show();
-                        $('#username, #loginPassword').addClass('is-invalid');
+                        if (errors.captchaRequired) {
+                            $('#captchaImage').attr('src', 'captcha?' + new Date().getTime());
+                            $('#captchaContainer').show();
+                            if (errors.loginCaptError) {
+                                $('#captchaError').text(errors.loginCaptError).show();
+                                $('#captcha').addClass('is-invalid');
+                            }else{
+                                $('#loginMessage').text(errors.loginError).addClass('text-danger').show();
+                                $('#username, #loginPassword').addClass('is-invalid');
+                            }
+                        }else {
+                            $('#loginMessage').text(errors.loginError).addClass('text-danger').show();
+                            $('#username, #loginPassword').addClass('is-invalid');
+                        }
                     } else if (xhr.status === 500) {
                         $('#loginMessage').text(errors.errorMess).addClass('text-danger').show();
                     } else {
                         alert("Lỗi không xác định! Mã lỗi: " + xhr.status);
-                    }
-                    if (errors.captchaRequired) {
-                        $('#captchaContainer').show();
-                        $('#captchaImage').attr('src', 'captcha?' + new Date().getTime()); // Reload captcha
                     }
                 } catch (e) {
                     alert("Không thể xử lý phản hồi lỗi từ server.");
@@ -148,6 +157,7 @@ $(document).ready(function () {
             }
         })
     });
+
 });
 
 function showServerErrors(errors){
@@ -194,12 +204,32 @@ function resetLoginResForm() {
     $('#loginMessage').text('').removeClass('text-danger').hide();
     $('input').removeClass('is-invalid');
 }
+const inputs = [
+    { id: "username", errorId: "usernameError" },
+    { id: "loginPassword", errorId: "passwordError" },
+    { id: "captcha", errorId: "captchaError" },
+    { id: "registerName", errorId: "fullNameError" },
+    { id: "registerUsername", errorId: "usernamergError" },
+    { id: "registerEmail", errorId: "emailError" },
+    { id: "registerPassword", errorId: "passwordrgError" },
+    { id: "ConfirmRegisterPassword", errorId: "confirmPasswordError" }
+];
+
+function initializeErrorClearing() {
+    inputs.forEach(input => {
+        $('#' + input.id).on('input', function() {
+            $(this).removeClass('is-invalid');
+            $('#' + input.errorId).text('');
+        });
+    });
+}
 $('#authModal').on('hidden.bs.modal', function () {
     resetLoginResForm();
 });
 
 // Khi chuyển tab giữa "Đăng nhập" và "Đăng ký" -> reset form
 $('#register-tab, #login-tab').on('click', function () {
+    $('#captchaImage').attr('src', 'captcha?' + new Date().getTime());
     resetLoginResForm();
 });
 

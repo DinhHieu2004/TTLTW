@@ -36,10 +36,11 @@
                                 <input type="password" class="form-control" id="loginPassword" name="password" placeholder="Nhập mật khẩu">
                                 <div class="error" id="passwordError"></div>
                             </div>
-                            <div id="captchaContainer" style="display: none;">
-                                <label for="captcha">Nhập CAPTCHA:</label>
+                            <div class="mb-3" id="captchaContainer" style="display: none;">
+                                <label for="captcha">Nhập captcha:</label>
                                 <img src="captcha" alt="Captcha Image" id="captchaImage"/>
                                 <input type="text" id="captcha" name="captcha" class="form-control">
+                                <div class="error" id="captchaError"></div>
                             </div>
                             <button type="submit" class="btn btn-primary w-100 login-btn">Đăng Nhập</button>
                         </form>
@@ -120,4 +121,4 @@
         </div>
     </div>
 </div>
-
+<script src="${pageContext.request.contextPath}/assets/js/authModal.js"></script>
