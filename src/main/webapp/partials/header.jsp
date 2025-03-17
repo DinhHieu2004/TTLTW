@@ -57,6 +57,11 @@
                     </a>
                 </c:when>
                 </c:choose>
+<%--                <div id="userIcon" style="display: none;">--%>
+<%--                    <a href="personal" class="icon_items user-icon me-3">--%>
+<%--                        <i class="fa fa-user"></i>--%>
+<%--                    </a>--%>
+<%--                </div>--%>
                 <div class="cart-icon position-relative">
                     <a href="#" class="icon_items position-relative"></a>
                         <a href="show-cart" class="icon_items user-icon me-3">
@@ -96,7 +101,11 @@
                 <c:when test="${empty sessionScope.user}">
                     <button class="btn login-btn" data-bs-toggle="modal" data-bs-target="#authModal" style="background: #e7621b !important;">Đăng nhập</button>
                 </c:when>
-
+                <c:when test="${not empty sessionScope.user}">
+                    <button class="btn logout-btn" onclick="logout()" style="background: #e7621b !important;">
+                        <i class="fa fa-sign-out-alt"></i> Đăng xuất
+                    </button>
+                </c:when>
             </c:choose>
         </nav>
     </div>
@@ -120,3 +129,4 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/authModal.js"></script>

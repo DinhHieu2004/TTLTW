@@ -41,14 +41,14 @@
 
 <body>
 
-<c:choose>
-    <c:when test="${not empty currentUser}">
-        <%@ include file="/partials/headerAuth.jsp" %>
-    </c:when>
-    <c:otherwise>
+<%--<c:choose>--%>
+<%--    <c:when test="${not empty currentUser}">--%>
+<%--        <%@ include file="/partials/headerAuth.jsp" %>--%>
+<%--    </c:when>--%>
+<%--    <c:otherwise>--%>
         <%@ include file="/partials/header.jsp" %>
-    </c:otherwise>
-</c:choose>
+<%--    </c:otherwise>--%>
+<%--</c:choose>--%>
 
 
     <div id="content-wrapper">
