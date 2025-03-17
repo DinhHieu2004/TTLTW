@@ -12,20 +12,20 @@ import java.io.IOException;
 public class LogoutController extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logout(request, response);
     }
     private void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // Lấy session hiện tại
-        HttpSession session = request.getSession(false); // Lấy session nếu có, không tạo mới
+        HttpSession session = request.getSession(false);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
         if (session != null) {
-            // Xóa session
             session.invalidate();
+            response.getWriter().write("{\"success\": true}");
+        } else {
+            response.getWriter().write("{\"success\": false}");
         }
-
-        // Chuyển hướng người dùng về trang đăng nhập hoặc trang chủ
-        response.sendRedirect(request.getContextPath() + "/");
     }
 }
 
