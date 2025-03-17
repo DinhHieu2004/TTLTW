@@ -29,6 +29,10 @@ public class SizeService {
         return sizeDao.deleteSize(id);
     }
 
+    public int getLastInsertedId() throws SQLException {
+        return sizeDao.getLastInsertedId();
+    }
+
 
 
     public static void main(String[] args) throws SQLException {

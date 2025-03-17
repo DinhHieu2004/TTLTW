@@ -27,4 +27,9 @@ public class ThemeService {
     public Theme getThemeById(int id) throws SQLException {
         return themeDao.getThemeById(id);
     }
+    public int getLastInsertedId() throws SQLException {
+        return themeDao.getLastInsertedId();
+    }
+
+
 }

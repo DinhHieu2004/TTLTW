@@ -7,11 +7,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Panel</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
 
   <style> .sidebar {
     height: 100vh;
@@ -122,7 +122,7 @@
     <div class="card-header bg-success text-white" style="background: #e7621b !important;">
       <h4>Tranh</h4>
 
-
+<%-- Thêm tranh--%>
     </div>
     <div class="card-body">
       <table id="products" class="table table-bordered display">
@@ -153,11 +153,15 @@
             <td>${p.price}</td>
             <td>${p.createDate}</td>
             <td>${p.artistName}</td>
-            <td><button class="btn btn-info btn-sm" data-bs-toggle="modal"
-                        data-bs-target="#viewAndEditModal" data-product-id="${p.id}">Xem Chi Tiết</button>
+            <td><button class="btn btn-info btn-sm edit-painting"
+                        data-bs-toggle="modal"
+                        data-bs-target="#viewAndEditModal"
+                        data-product-id="${p.id}">Xem Chi Tiết</button>
 
-              <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                      data-bs-target="#deleteProductModal" data-product-id="${p.id}">Xóa</button>
+              <button class="btn btn-danger btn-sm delete-painting"
+                      data-bs-toggle="modal"
+                      data-bs-target="#deleteProductModal"
+                      data-product-id="${p.id}">Xóa</button>
           </tr>
         </c:forEach>
         </tbody>
@@ -188,12 +192,16 @@
             <c:forEach var="theme" items="${t}">
               <tr>
                 <td>${theme.id}</td>
-                <td>${theme.themeName}</td>
+                <td class="theme-name">${theme.themeName}</td>
                 <td>
-                  <button class="btn btn-info btn-sm" data-bs-toggle="modal"
-                          data-bs-target="#editThemeModal" data-theme-id="${theme.id}">chi tiết</button>
-                  <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                          data-bs-target="#deleteThemeModal" data-theme-id="${theme.id}">Xóa</button>
+                  <button class="btn btn-info btn-sm edit-theme"
+                          data-bs-toggle="modal"
+                          data-bs-target="#editThemeModal"
+                          data-theme-id="${theme.id}" >Chi tiết</button>
+                  <button class="btn btn-danger btn-sm delete-theme"
+                          data-bs-toggle="modal"
+                          data-bs-target="#deleteThemeModal"
+                          data-theme-id="${theme.id}">Xóa</button>
                 </td>
               </tr>
             </c:forEach>
@@ -206,7 +214,7 @@
     <div class="col-6">
       <div class="card mb-4">
         <div class="card-header bg-secondary text-white">
-          <h4>Danh sách Kích Thước</h4> <!-- Sửa tên cho đúng -->
+          <h4>Danh sách Kích Thước</h4>
         </div>
         <div class="card-body">
           <table id="sizes" class="table table-bordered display">
@@ -226,10 +234,14 @@
                 <td>${s.idSize}</td>
                 <td>${s.sizeDescriptions}</td>
                 <td>
-                  <button class="btn btn-info btn-sm" data-bs-toggle="modal"
-                          data-bs-target="#editSizeModal" data-size-id="${s.idSize}">chi tiết</button>
-                  <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                          data-bs-target="#deleteSizeModal" data-size-id="${s.idSize}">Xóa</button>
+                  <button class="btn btn-info btn-sm edit-size"
+                          data-bs-toggle="modal"
+                          data-bs-target="#editSizeModal"
+                          data-size-id="${s.idSize}">Chi tiết</button>
+                  <button class="btn btn-danger btn-sm delete-size"
+                          data-bs-toggle="modal"
+                          data-bs-target="#deleteSizeModal"
+                          data-size-id="${s.idSize}">Xóa</button>
                 </td>
               </tr>
             </c:forEach>
@@ -239,11 +251,12 @@
       </div>
     </div>
   </div>
+
 <!-- Modal thêm tranh -->
 <div class="modal fade" id="addPaintingModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form action="${pageContext.request.contextPath}/admin/paintings/add" method="post" enctype="multipart/form-data">
+      <form id="addPaintingForm" enctype="multipart/form-data">
         <div class="modal-header">
           <h5 class="modal-title">Thêm Tranh</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -324,12 +337,12 @@
   </div>
 </div>
 
-<!--view and edit -->
+<!-- sửa tranh -->
   <div class="modal fade" id="viewAndEditModal" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
-        <form action="${pageContext.request.contextPath}/admin/paintings/update" method="post" enctype="multipart/form-data">
-          <input type="hidden" id="editProductId" name="pid" value="">
+        <form id="editPaintingForm" enctype="multipart/form-data">
+          <input type="hidden" id="editPaintingId" name="pid" value="">
 
           <div class="modal-header">
             <h5 class="modal-title">Chi tiết</h5>
@@ -339,12 +352,12 @@
             <div class="row mb-3">
               <div class="col-md-6">
                 <label class="form-label">Tiêu đề</label>
-                <input type="text" class="form-control form-control-sm" name="title" required>
+                <input type="text" class="form-control form-control-sm" name="title">
               </div>
 
               <div class="col-md-6">
                 <label class="form-label">Chủ đề</label>
-                <select class="form-select form-select-sm" name="themeId" required>
+                <select class="form-select form-select-sm" name="themeId">
                   <c:forEach var="t" items="${t}">
                     <option value="${t.id}">${t.themeName}</option>
                   </c:forEach>
@@ -365,11 +378,11 @@
             <div class="row mb-3">
               <div class="col-md-6">
                 <label class="form-label">Giá</label>
-                <input type="number" step="0.01" class="form-control form-control-sm" name="price" required>
+                <input type="number" step="0.01" class="form-control form-control-sm" name="price">
               </div>
               <div class="col-md-6">
                 <label class="form-label">Họa sĩ</label>
-                <select class="form-select form-select-sm" name="artistId" required>
+                <select class="form-select form-select-sm" name="artistId">
                   <c:forEach var="artist" items="${a}">
                     <option value="${artist.id}">${artist.name}</option>
                   </c:forEach>
@@ -380,7 +393,7 @@
 
             <div class="mb-3">
               <label class="form-label">Ảnh tranh</label>
-              <input type="file" class="form-control form-control-sm" name="image" accept="image/*" required>
+              <input type="file" class="form-control form-control-sm" name="image" accept="image/*">
             </div>
 
             <div class="mb-3">
@@ -415,13 +428,14 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Đóng</button>
-            <button type="submit" class="btn btn-primary btn-sm">Thêm</button>
+            <button type="submit" class="btn btn-primary btn-sm">Lưu thay đổi</button>
           </div>
         </form>
       </div>
     </div>
   </div>
 
+<%--  Xóa tranh --%>
   <div class="modal fade" id="deleteProductModal" tabindex="-1" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -429,7 +443,7 @@
           <h5 class="modal-title" id="deleteProductModalLabel">Xác nhận xóa</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form action="${pageContext.request.contextPath}/admin/products/delete" method="POST">
+        <form id="deletePaintingForm">
           <div class="modal-body">
             <p>Bạn có chắc chắn muốn xóa sản phẩm này?</p>
             <input type="hidden" id="pidToDelete" name="pid">
@@ -447,7 +461,7 @@
 
 
 <!-- Modal thêm Theme -->
-<div class="modal fade" id="addThemeModal" tabindex="-1" aria-labelledby="addThemeModalLabel" aria-hidden="true">
+<div class="modal" id="addThemeModal" tabindex="-1" aria-labelledby="addThemeModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -455,7 +469,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="${pageContext.request.contextPath}/admin/themes/add" method="POST">
+        <form id="addThemeForm">
           <div class="mb-3">
             <label for="themeName" class="form-label">Tên Chủ Đề</label>
             <input type="text" class="form-control" id="themeName" name="themeName" required>
@@ -477,7 +491,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="${pageContext.request.contextPath}/admin/themes/update" method="POST">
+        <form id="editThemeForm">
           <input type="hidden" id="editThemeId" name="themeId" value="">
 
           <div class="mb-3">
@@ -485,7 +499,7 @@
             <strong id="idTheme"></strong>
           </div>
           <div class="mb-3">
-            <label for="themeName" class="form-label">Tên Chủ Đề</label>
+            <label for="editThemeName" class="form-label">Tên Chủ Đề</label>
             <input type="text" class="form-control" id="editThemeName" name="themeName" required>
           </div>
           <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
@@ -503,7 +517,7 @@
         <h5 class="modal-title" id="deleteThemeModalLabel">Xác nhận xóa</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="${pageContext.request.contextPath}/admin/themes/delete" method="POST">
+      <form id="deleteThemeForm">
         <div class="modal-body">
           <p>Bạn có chắc chắn muốn xóa chủ đề này?</p>
           <input type="hidden" id="themeIdToDelete" name="themeId">
@@ -517,7 +531,7 @@
   </div>
 </div>
 
-
+<%--Thêm Size--%>
 <div class="modal fade" id="addSizeModal" tabindex="-1" aria-labelledby="addSizeModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -526,7 +540,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="${pageContext.request.contextPath}/admin/sizes/add" method="POST">
+        <form id="addSizeForm">
           <div class="mb-3">
             <label for="sizeName" class="form-label">Tên Kích Thước</label>
             <input type="text" class="form-control" id="sizeName" name="description" required>
@@ -546,7 +560,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="${pageContext.request.contextPath}/admin/sizes/update" method="POST">
+        <form id="editSizeForm">
           <input type="hidden" id="editSizeId" name="sizeId" value="">
 
           <div class="mb-3">
@@ -564,7 +578,7 @@
   </div>
 </div>
 
-<!-- Modal xóa Theme -->
+<!-- Modal xóa Size -->
 
 <div class="modal fade" id="deleteSizeModal" tabindex="-1" aria-labelledby="deleteSizeModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -573,7 +587,7 @@
         <h5 class="modal-title" id="deleteSizeModalLabel">Xác nhận xóa</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="${pageContext.request.contextPath}/admin/sizes/delete" method="POST">
+      <form id="deleteSizeForm">
         <div class="modal-body">
           <p>Bạn có chắc chắn muốn xóa kích thước này?</p>
           <input type="hidden" id="sizeIdToDelete" name="sizeId">
@@ -586,12 +600,6 @@
     </div>
   </div>
 </div>
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-
 <script>
   $(document).ready(function () {
     $('#products').DataTable({
@@ -625,14 +633,360 @@
       document.getElementById('sizeIdToDelete').value = sizeId;
     });
   });
-
-
 </script>
-<script src="${pageContext.request.contextPath}/assets/js/admin/product.js"></script>
-<script src="${pageContext.request.contextPath}/assets/js/admin/theme.js"></script>
-<script src="${pageContext.request.contextPath}/assets/js/admin/sizes.js"></script>
+
+<script>
+  // thêm theme
+  $(document).ready(function () {
+    var table = $('#themes').DataTable();
+
+    $("#addThemeForm").submit(function (event) {
+      event.preventDefault();
+      var themeName = $("#themeName").val();
+
+      $.ajax({
+        type: "POST",
+        url: "themes/add",
+        data: { themeName: themeName },
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            // Thêm hàng mới
+            table.row.add([
+              response.id,
+              themeName,
+              '<button class="btn btn-info btn-sm edit-theme" data-theme-id="' + response.id + '">Chi tiết</button> ' +
+              '<button class="btn btn-danger btn-sm delete-theme" data-theme-id="' + response.id + '">Xóa</button>'
+            ]).draw();
+            $('#addThemeModal').modal('hide');
+            $("#addThemeForm")[0].reset();
+          }
+        }
+      });
+    });
+  });
+
+  // xóa theme (event deligation)
+  $(document).ready(function () {
+    $(document).on('click', '.delete-theme', function () {
+      $('#themeIdToDelete').val($(this).data('theme-id'));
+      $('#deleteThemeModal').modal('show');
+    });
+
+    $('#deleteThemeForm').on('submit', function (event) {
+      event.preventDefault();
+      var themeId = $('#themeIdToDelete').val();
+
+      $.ajax({
+        type: 'POST',
+        url: 'themes/delete',
+        data: { themeId: themeId },
+        dataType: 'json',
+        success: function (response) {
+          if (response.success) {
+            var $row = $('[data-theme-id="' + themeId + '"]').closest('tr');
+            $('#themes').DataTable().row($row).remove().draw();
+            $('#deleteThemeModal').modal('hide');
+          }
+        }
+      });
+    });
+  });
+  // sửa theme
+  $(document).ready(function () {
+    var table = $('#themes').DataTable();
+
+    // Khi bấm nút "Chi tiết" để mở modal sửa theme
+    $(document).on('click', '.edit-theme', function (event) {
+      event.preventDefault();
+      var themeId = $(this).data('theme-id');
+      var themeName = $(this).closest('tr').find('td:eq(1)').text().trim();
+
+      // Gán dữ liệu vào modal chỉnh sửa
+      $('#editThemeId').val(themeId);
+      $('#editThemeName').val(themeName);
+      $('#idTheme').text(themeId);
+      $('#editThemeModal').modal('show');
+    });
+
+    // Xử lý cập nhật theme khi submit form
+    $("#editThemeForm").submit(function (event) {
+      event.preventDefault();
+      var themeId = $("#editThemeId").val();
+      var themeName = $("#editThemeName").val();
+
+      $.ajax({
+        type: "POST",
+        url: "themes/update",
+        data: { themeId: themeId, themeName: themeName },
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            // Cập nhật tên theme trong bảng DataTable
+            var $row = $('button[data-theme-id="' + themeId + '"]').closest('tr');
+            table.cell($row, 1).data(themeName).draw();
+
+            $('#editThemeModal').modal('hide'); // Đóng modal
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function () {
+          alert("Lỗi khi cập nhật theme.");
+        }
+      });
+    });
+  });
+</script>
+<script>
+  $(document).ready(function () {
+    var table = $('#sizes').DataTable();
+
+    // thêm size
+    $("#addSizeForm").submit(function (event) {
+      event.preventDefault();
+      var sizeDescription = $("#sizeName").val();
+
+      $.ajax({
+        type: "POST",
+        url: "sizes/add",
+        data: { description: sizeDescription },
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            // Thêm hàng mới
+            table.row.add([
+              response.id,
+              sizeDescription,
+              '<button class="btn btn-info btn-sm edit-size" data-size-id="' + response.id + '">Chi tiết</button> ' +
+              '<button class="btn btn-danger btn-sm delete-size" data-size-id="' + response.id + '">Xóa</button>'
+            ]).draw();
+
+            $('#addSizeModal').modal('hide');
+            $("#addSizeForm")[0].reset();
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function () {
+          alert("Lỗi khi thêm kích thước.");
+        }
+      });
+    });
+
+    // Xóa size
+    $(document).on('click', '.delete-size', function () {
+      $('#sizeIdToDelete').val($(this).data('size-id'));
+      $('#deleteSizeModal').modal('show');
+    });
+
+    $('#deleteSizeForm').submit(function (event) {
+      event.preventDefault();
+      var sizeId = $('#sizeIdToDelete').val();
+
+      $.ajax({
+        type: 'POST',
+        url: 'sizes/delete',
+        data: { sizeId: sizeId },
+        dataType: 'json',
+        success: function (response) {
+          if (response.success) {
+            var $row = $('[data-size-id="' + sizeId + '"]').closest('tr');
+            table.row($row).remove().draw();
+            $('#deleteSizeModal').modal('hide');
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function () {
+          alert("Lỗi khi xóa kích thước.");
+        }
+      });
+    });
+
+    // edit size
+    $(document).on('click', '.edit-size', function (event) {
+      event.preventDefault();
+      var sizeId = $(this).data('size-id');
+      var sizeDescription = $(this).closest('tr').find('td:eq(1)').text().trim();
+
+      $('#editSizeId').val(sizeId);
+      $('#editDescription').val(sizeDescription);
+      $('#idSize').text(sizeId);
+      $('#editSizeModal').modal('show');
+    });
+
+    $("#editSizeForm").submit(function (event) {
+      event.preventDefault();
+      var sizeId = $("#editSizeId").val();
+      var sizeDescription = $("#editDescription").val();
+
+      $.ajax({
+        type: "POST",
+        url: "sizes/update",
+        data: { sizeId: sizeId, description: sizeDescription },
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            var $row = $('button[data-size-id="' + sizeId + '"]').closest('tr');
+            table.cell($row, 1).data(sizeDescription).draw();
+            $('#editSizeModal').modal('hide');
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function () {
+          alert("Lỗi khi cập nhật kích thước.");
+        }
+      });
+    });
+  });
+</script>
+
+<script>
+  // add painting
+  $(document).ready(function () {
+    var table = $('#products').DataTable();
+
+    $("#addPaintingForm").submit(function (event) {
+      event.preventDefault();
+      var formData = new FormData(this);
+
+      $.ajax({
+        type: "POST",
+        url: "paintings/add",
+        data: formData,
+        processData: false,
+        contentType: false,
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            var imageUrl = response.painting.imageUrl;
+            table.row.add([
+              response.painting.id,
+              '<img src="' + imageUrl + '" width="60">',
+              response.painting.title,
+              response.painting.available ? 'Không hoạt động' : 'Hoạt động',
+              response.painting.price.toFixed(1),
+              response.painting.createDate,
+              response.painting.artistName,
+              '<button class="btn btn-info btn-sm edit-painting" data-product-id="' + response.painting.id + '">Xem Chi Tiết</button> ' +
+              '<button class="btn btn-danger btn-sm delete-painting" data-product-id="' + response.painting.id + '">Xóa</button>'
+            ]).draw();
+
+            $('#addPaintingModal').modal('hide');
+            $("#addPaintingForm")[0].reset();
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function(xhr) {
+          alert("Lỗi server: " + xhr.responseText);
+        }
+      });
+    });
+  });
+// delete
+  $(document).ready(function () {
+    var table = $('#products').DataTable();
+
+    $(document).on("click", ".delete-painting", function () {
+      var paintingId = $(this).data("product-id");
+      $("#pidToDelete").val(paintingId);
+      $("#deleteProductModal").modal("show");
+    });
+
+    $("#deletePaintingForm").submit(function (event) {
+      event.preventDefault();
+      var paintingId = $("#pidToDelete").val();
+
+      $.ajax({
+        type: "POST",
+        url: "products/delete",
+        data: { pid: paintingId },
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            var $row = $('[data-product-id="' + paintingId + '"]').closest('tr');
+            table.row($row).remove().draw();
+            $("#deleteProductModal").modal("hide");
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function () {
+          alert("Lỗi khi xóa tranh.");
+        }
+      });
+    });
+  });
+// update
+$(document).on('click', '.edit-painting', function (event) {
+  event.preventDefault();
+
+  var $row = $(this).closest('tr');
+  var paintingId = $(this).data('product-id');
+  var imageUrl = $row.find('img').attr('src');
+  var title = $row.find('td:eq(2)').text().trim();
+  var price = parseFloat($row.find('td:eq(4)').text().replace(/[^0-9.]/g, ''));
+  var available = $row.find('td:eq(3)').text().trim() === 'Hoạt động';
+  var artistName = $row.find('td:eq(6)').text().trim();
+
+  // dua du lieu vào modal
+  $('#editPaintingId').val(paintingId);
+  $('#editTitle').val(title);
+  $('#editPrice').val(price.toFixed(1));
+  $('#editAvailable').prop('checked', available);
+  $('#currentImage').attr('src', imageUrl);
+
+  $('#viewAndEditModal').modal('show');
+});
+
+$("#editPaintingForm").submit(function (event) {
+  event.preventDefault();
+
+  var formData = new FormData(this);
+  var paintingId = $('#editPaintingId').val();
+
+  $.ajax({
+    type: "POST",
+    url: "paintings/update",
+    data: formData,
+    processData: false,
+    contentType: false,
+    dataType: "json",
+    success: function (response) {
+      if (response.success) {
+        // Cập nhật DataTable
+        var $row = $('button[data-product-id="' + paintingId + '"]').closest('tr');
+        var table = $('#products').DataTable();
+
+        // cập nhat du lieu
+        table.cell($row, 2).data(response.painting.title);
+        table.cell($row, 3).data(response.painting.available ? 'Không hoạt động' : 'Hoạt động');
+        table.cell($row, 4).data(parseFloat(response.painting.price).toFixed(1));
+        table.cell($row, 6).data(response.painting.artistName);
+
+        if(response.painting.imageUrl) {
+          table.cell($row, 1).data('<img src="' + response.painting.imageUrl + '" width="60">');
+        }
+
+        table.draw();
+        $('#viewAndEditModal').modal('hide');
+      } else {
+        alert(response.message);
+      }
+    },
+    error: function(xhr) {
+      alert("Lỗi server: " + xhr.responseText);
+    }
+  });
+});
+</script>
 
 
-
+<%--<script src="${pageContext.request.contextPath}/assets/js/admin/product.js"></script>--%>
+<%--<script src="${pageContext.request.contextPath}/assets/js/admin/theme.js"></script>--%>
+<%--<script src="${pageContext.request.contextPath}/assets/js/admin/sizes.js"></script>--%>
 </body>
 </html>
