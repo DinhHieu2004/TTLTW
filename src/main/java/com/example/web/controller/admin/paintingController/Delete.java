@@ -3,6 +3,7 @@ package com.example.web.controller.admin.paintingController;
 
 import com.example.web.service.PaintingService;
 import com.example.web.service.UserSerive;
+import com.google.gson.JsonObject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -13,26 +14,32 @@ import java.io.IOException;
 
 @WebServlet("/admin/products/delete")
 public class Delete extends HttpServlet {
-    private PaintingService paintingService = new PaintingService();
+    private final PaintingService paintingService = new PaintingService();
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
         String pid = request.getParameter("pid");
-        System.out.println(pid);
+        JsonObject jsonResponse = new JsonObject();
+
         try {
             boolean isDeleted = paintingService.deletePainting(Integer.parseInt(pid));
             if (isDeleted) {
-                request.setAttribute("message", "Xóa tranh thành công!");
+                jsonResponse.addProperty("success", true);
+                jsonResponse.addProperty("message", "Xóa tranh thành công!");
             } else {
-                request.setAttribute("message", "Xóa tranh thất bại!");
+                jsonResponse.addProperty("success", false);
+                jsonResponse.addProperty("message", "Xóa tranh thất bại!");
             }
         } catch (Exception e) {
-            request.setAttribute("message", "Lỗi: " + e.getMessage());
+            jsonResponse.addProperty("success", false);
+            jsonResponse.addProperty("message", "Lỗi: " + e.getMessage());
         }
-       response.sendRedirect("../products");
-       // request.getRequestDispatcher("../products.").forward(request, response);
+
+        response.getWriter().write(jsonResponse.toString());
     }
-
-
 }
+
 

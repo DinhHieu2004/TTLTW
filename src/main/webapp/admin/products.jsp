@@ -341,8 +341,8 @@
   <div class="modal fade" id="viewAndEditModal" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
-        <form id="updatePaintingForm" enctype="multipart/form-data">
-          <input type="hidden" id="editProductId" name="pid" value="">
+        <form id="editPaintingForm" enctype="multipart/form-data">
+          <input type="hidden" id="editPaintingId" name="pid" value="">
 
           <div class="modal-header">
             <h5 class="modal-title">Chi tiết</h5>
@@ -352,12 +352,12 @@
             <div class="row mb-3">
               <div class="col-md-6">
                 <label class="form-label">Tiêu đề</label>
-                <input type="text" class="form-control form-control-sm" name="title" required>
+                <input type="text" class="form-control form-control-sm" name="title">
               </div>
 
               <div class="col-md-6">
                 <label class="form-label">Chủ đề</label>
-                <select class="form-select form-select-sm" name="themeId" required>
+                <select class="form-select form-select-sm" name="themeId">
                   <c:forEach var="t" items="${t}">
                     <option value="${t.id}">${t.themeName}</option>
                   </c:forEach>
@@ -378,11 +378,11 @@
             <div class="row mb-3">
               <div class="col-md-6">
                 <label class="form-label">Giá</label>
-                <input type="number" step="0.01" class="form-control form-control-sm" name="price" required>
+                <input type="number" step="0.01" class="form-control form-control-sm" name="price">
               </div>
               <div class="col-md-6">
                 <label class="form-label">Họa sĩ</label>
-                <select class="form-select form-select-sm" name="artistId" required>
+                <select class="form-select form-select-sm" name="artistId">
                   <c:forEach var="artist" items="${a}">
                     <option value="${artist.id}">${artist.name}</option>
                   </c:forEach>
@@ -393,7 +393,7 @@
 
             <div class="mb-3">
               <label class="form-label">Ảnh tranh</label>
-              <input type="file" class="form-control form-control-sm" name="image" accept="image/*" required>
+              <input type="file" class="form-control form-control-sm" name="image" accept="image/*">
             </div>
 
             <div class="mb-3">
@@ -804,7 +804,7 @@
       });
     });
 
-    // sửa size
+    // edit size
     $(document).on('click', '.edit-size', function (event) {
       event.preventDefault();
       var sizeId = $(this).data('size-id');
@@ -816,7 +816,6 @@
       $('#editSizeModal').modal('show');
     });
 
-    // Cập nhật
     $("#editSizeForm").submit(function (event) {
       event.preventDefault();
       var sizeId = $("#editSizeId").val();
@@ -845,12 +844,12 @@
 </script>
 
 <script>
+  // add painting
   $(document).ready(function () {
     var table = $('#products').DataTable();
 
     $("#addPaintingForm").submit(function (event) {
       event.preventDefault();
-
       var formData = new FormData(this);
 
       $.ajax({
@@ -871,7 +870,7 @@
               response.painting.price.toFixed(1),
               response.painting.createDate,
               response.painting.artistName,
-              '<button class="btn btn-info btn-sm edit-painting" data-product-id="' + response.painting.id + '">Xem Chi Tiết</button>' +
+              '<button class="btn btn-info btn-sm edit-painting" data-product-id="' + response.painting.id + '">Xem Chi Tiết</button> ' +
               '<button class="btn btn-danger btn-sm delete-painting" data-product-id="' + response.painting.id + '">Xóa</button>'
             ]).draw();
 
@@ -887,6 +886,102 @@
       });
     });
   });
+// delete
+  $(document).ready(function () {
+    var table = $('#products').DataTable();
+
+    $(document).on("click", ".delete-painting", function () {
+      var paintingId = $(this).data("product-id");
+      $("#pidToDelete").val(paintingId);
+      $("#deleteProductModal").modal("show");
+    });
+
+    $("#deletePaintingForm").submit(function (event) {
+      event.preventDefault();
+      var paintingId = $("#pidToDelete").val();
+
+      $.ajax({
+        type: "POST",
+        url: "products/delete",
+        data: { pid: paintingId },
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            var $row = $('[data-product-id="' + paintingId + '"]').closest('tr');
+            table.row($row).remove().draw();
+            $("#deleteProductModal").modal("hide");
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function () {
+          alert("Lỗi khi xóa tranh.");
+        }
+      });
+    });
+  });
+// update
+$(document).on('click', '.edit-painting', function (event) {
+  event.preventDefault();
+
+  var $row = $(this).closest('tr');
+  var paintingId = $(this).data('product-id');
+  var imageUrl = $row.find('img').attr('src');
+  var title = $row.find('td:eq(2)').text().trim();
+  var price = parseFloat($row.find('td:eq(4)').text().replace(/[^0-9.]/g, ''));
+  var available = $row.find('td:eq(3)').text().trim() === 'Hoạt động';
+  var artistName = $row.find('td:eq(6)').text().trim();
+
+  // dua du lieu vào modal
+  $('#editPaintingId').val(paintingId);
+  $('#editTitle').val(title);
+  $('#editPrice').val(price.toFixed(1));
+  $('#editAvailable').prop('checked', available);
+  $('#currentImage').attr('src', imageUrl);
+
+  $('#viewAndEditModal').modal('show');
+});
+
+$("#editPaintingForm").submit(function (event) {
+  event.preventDefault();
+
+  var formData = new FormData(this);
+  var paintingId = $('#editPaintingId').val();
+
+  $.ajax({
+    type: "POST",
+    url: "paintings/update",
+    data: formData,
+    processData: false,
+    contentType: false,
+    dataType: "json",
+    success: function (response) {
+      if (response.success) {
+        // Cập nhật DataTable
+        var $row = $('button[data-product-id="' + paintingId + '"]').closest('tr');
+        var table = $('#products').DataTable();
+
+        // cập nhat du lieu
+        table.cell($row, 2).data(response.painting.title);
+        table.cell($row, 3).data(response.painting.available ? 'Không hoạt động' : 'Hoạt động');
+        table.cell($row, 4).data(parseFloat(response.painting.price).toFixed(1));
+        table.cell($row, 6).data(response.painting.artistName);
+
+        if(response.painting.imageUrl) {
+          table.cell($row, 1).data('<img src="' + response.painting.imageUrl + '" width="60">');
+        }
+
+        table.draw();
+        $('#viewAndEditModal').modal('hide');
+      } else {
+        alert(response.message);
+      }
+    },
+    error: function(xhr) {
+      alert("Lỗi server: " + xhr.responseText);
+    }
+  });
+});
 </script>
 
 
