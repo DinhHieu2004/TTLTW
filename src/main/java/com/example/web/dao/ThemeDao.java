@@ -31,6 +31,9 @@ public class ThemeDao {
     }
 
     public boolean addTheme(String themeName) throws SQLException {
+        if (isThemeExists(themeName)) {
+            return false; // Trả về false nếu chủ đề đã tồn tại
+        }
         String sql = "INSERT INTO themes (themeName) VALUES (?)";
         PreparedStatement statement = con.prepareStatement(sql);
         statement.setString(1, themeName);
@@ -38,6 +41,22 @@ public class ThemeDao {
         return rowsInserted > 0;
 
     }
+
+    private boolean isThemeExists(String themeName) {
+        String query = "SELECT COUNT(*) FROM themes WHERE themeName = ?";
+        try (
+             PreparedStatement stmt = con.prepareStatement(query)) {
+            stmt.setString(1, themeName);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+
     public boolean updateTheme(int id, String  themeName) throws SQLException {
         String updateQuery = "UPDATE themes SET themeName = ? WHERE id = ?";
         PreparedStatement statement = con.prepareStatement(updateQuery);
@@ -71,6 +90,20 @@ public class ThemeDao {
             return rowsAffected > 0;
         }
     }
+
+    public int getLastInsertedId() throws SQLException {
+        String query = "SELECT MAX(id) FROM themes";
+        try (
+             PreparedStatement stmt = con.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return -1; // Nếu không tìm thấy ID
+    }
+
 
     public static void main(String[] args) throws SQLException {
         ThemeDao dao = new ThemeDao();

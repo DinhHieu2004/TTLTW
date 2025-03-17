@@ -1,6 +1,8 @@
 package com.example.web.controller.admin.paintingController;
 
+import com.example.web.dao.model.Painting;
 import com.example.web.service.PaintingService;
+import com.google.gson.JsonObject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,6 +13,7 @@ import jakarta.servlet.http.Part;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,12 +25,18 @@ import java.util.List;
         maxRequestSize = 1024 * 1024 * 50
 )
 public class Update extends HttpServlet {
-    private static final String UPLOAD_DIR = "N:/web//web//src//main//webapp//assets//images//artists";
+    private static final String UPLOAD_DIR = "D://web/web/src/main/webapp/assets/images/artists";
 
-    private PaintingService paintingService = new PaintingService();
+    private final PaintingService paintingService = new PaintingService();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+
+        JsonObject jsonResponse = new JsonObject();
+        PrintWriter out = resp.getWriter();
+
         int id = Integer.parseInt(req.getParameter("pid"));
         String title = req.getParameter("title");
         String description = req.getParameter("description");
@@ -76,14 +85,35 @@ public class Update extends HttpServlet {
 
             if (updated) {
                 paintingService.updatePaintingSizes(id, sizeList, quantityList);
-                req.setAttribute("message", "Cập nhật tranh thành công!");
+
+                jsonResponse.addProperty("success", true);
+                jsonResponse.addProperty("message", "Cập nhật tranh thành công!");
+
+                // Trả về dữ liệu mới
+                Painting updatedPainting = paintingService.getPainting(id);
+                JsonObject paintingJson = new JsonObject();
+                paintingJson.addProperty("id", updatedPainting.getId());
+
+                String imageUrl = req.getContextPath() + "/" +updatedPainting.getImageUrl();
+
+                paintingJson.addProperty("imageUrl", imageUrl);
+                paintingJson.addProperty("title", updatedPainting.getTitle());
+                paintingJson.addProperty("available", updatedPainting.getAvailable());
+                paintingJson.addProperty("price", updatedPainting.getPrice());
+                paintingJson.addProperty("createDate", updatedPainting.getCreateDate().toString());
+                paintingJson.addProperty("artistName", updatedPainting.getArtistName());
+
+                jsonResponse.add("painting", paintingJson);
             } else {
-                req.setAttribute("message", "Cập nhật tranh thất bại!");
+                jsonResponse.addProperty("success", false);
+                jsonResponse.addProperty("message", "Cập nhật tranh thất bại!");
             }
         } catch (Exception e) {
-            req.setAttribute("message", "Lỗi: " + e.getMessage());
+            jsonResponse.addProperty("success", false);
+            jsonResponse.addProperty("message", "Lỗi: " + e.getMessage());
         }
-        resp.sendRedirect("../products");
+        out.print(jsonResponse.toString());
+        out.flush();
     }
 
     private String extractFileName(Part part) {

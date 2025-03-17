@@ -14,25 +14,25 @@ import java.sql.SQLException;
 
 @WebServlet("/admin/sizes/add")
 public class Add extends HttpServlet {
-    private SizeService sizeService = new SizeService();
+    private final SizeService sizeService = new SizeService();
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String description = req.getParameter("description");
 
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+
         try {
             boolean isAdd = sizeService.addSize(description);
             if (isAdd) {
-                resp.sendRedirect("../products");
-               // req.setAttribute("message", "thêm thành công!");
-              //  req.getRequestDispatcher("../products.jsp").forward(req, resp);
-
+                int newSizeId = sizeService.getLastInsertedId();
+                resp.getWriter().write("{\"success\": true, \"id\": " + newSizeId + ", \"message\": \"Thêm thành công!\"}");
             } else {
-                resp.getWriter().write("{\"success\": false, \"message\": \"Them thất bại.\"}");
+                resp.getWriter().write("{\"success\": false, \"message\": \"Thêm thất bại.\"}");
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            resp.getWriter().write("{\"success\": false, \"message\": \"Lỗi hệ thống.\"}");
         }
-
-
     }
 }

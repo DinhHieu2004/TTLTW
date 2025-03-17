@@ -10,28 +10,33 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @WebServlet("/admin/themes/delete")
 public class Delete extends HttpServlet {
-    private ThemeService themeService = new ThemeService();
+    private final ThemeService themeService = new ThemeService();
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
+        PrintWriter out = response.getWriter();
         String themeId = request.getParameter("themeId");
-        int id = Integer.parseInt(themeId);
+
         try {
+            int id = Integer.parseInt(themeId);
             boolean isDeleted = themeService.deleteTheme(id);
+
             if (isDeleted) {
-                request.setAttribute("message", "Xóa chủ đề thành công!");
+                out.write("{\"success\": true, \"message\": \"Xóa chủ đề thành công.\"}");
             } else {
-                request.setAttribute("message", "Xóa chủ đề thất bại!");
+                out.write("{\"success\": false, \"message\": \"Xóa chủ đề thất bại.\"}");
             }
         } catch (Exception e) {
-            request.setAttribute("message", "Lỗi: " + e.getMessage());
+            out.write("{\"success\": false, \"message\": \"Lỗi: " + e.getMessage() + "\"}");
+        } finally {
+            out.flush();
         }
-        response.sendRedirect("../products");
-       // request.getRequestDispatcher("../products.jsp").forward(request, response);
     }
-
-
 }
