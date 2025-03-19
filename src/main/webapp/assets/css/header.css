@@ -375,3 +375,9 @@ header{
 .list-group-item:hover {
     background: #f0f0f0;
 }
+
+#captchaImage{
+    border: #ccc solid 1px;
+    margin: 10px;
+}
+

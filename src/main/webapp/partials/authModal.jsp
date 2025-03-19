@@ -36,10 +36,11 @@
                                 <input type="password" class="form-control" id="loginPassword" name="password" placeholder="Nhập mật khẩu">
                                 <div class="error" id="passwordError"></div>
                             </div>
-                            <div id="captchaContainer" style="display: none;">
-                                <label for="captcha">Nhập CAPTCHA:</label>
+                            <div class="mb-3" id="captchaContainer" style="display: none;">
+                                <label for="captcha">Nhập captcha:</label>
                                 <img src="captcha" alt="Captcha Image" id="captchaImage"/>
                                 <input type="text" id="captcha" name="captcha" class="form-control">
+                                <div class="error" id="captchaError"></div>
                             </div>
                             <button type="submit" class="btn btn-primary w-100 login-btn">Đăng Nhập</button>
                         </form>
@@ -47,6 +48,24 @@
                         <!-- Nút Quên mật khẩu -->
                         <div class="mt-3 text-center">
                             <a href="${pageContext.request.contextPath}/user/forgot_password.jsp" class="text-decoration-none">Quên mật khẩu?</a>
+                        </div>
+                        <div class="mt-3 text-center">
+                            <div id="g_id_onload"
+                                 data-client_id="891978819303-g9qeo4mmukj96bfr51iaaeheeqk1t1eo.apps.googleusercontent.com"
+                                 data-context="signin"
+                                 data-ux_mode="redirect"
+                                 data-login_uri="${pageContext.request.contextPath}/login_google"
+                                 data-auto_prompt="false">
+                            </div>
+
+                            <div class="g_id_signin"
+                                 data-type="standard"
+                                 data-size="large"
+                                 data-theme="outline"
+                                 data-text="sign_in_with"
+                                 data-shape="rectangular"
+                                 data-logo_alignment="left">
+                            </div>
                         </div>
                     </div>
 
@@ -121,3 +140,5 @@
     </div>
 </div>
 
+<script src="${pageContext.request.contextPath}/assets/js/authModal.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>

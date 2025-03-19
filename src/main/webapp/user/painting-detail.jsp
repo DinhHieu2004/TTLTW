@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/footer.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/header.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/shopping-cart.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}assets/css/painting-detail.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/painting-detail.css">
     <script src="${pageContext.request.contextPath}/assets/js/painting-detail.js"></script>
 
 </head>

@@ -34,7 +34,7 @@ public class LoginController extends HttpServlet {
             System.out.println(captchaInput);
             System.out.println(captchaSession);
             if (captchaSession == null || !captchaSession.equals(captchaInput)) {
-                responseMap.put("loginError", "CAPTCHA không chính xác.");
+                responseMap.put("loginCaptError", "CAPTCHA không chính xác.");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 responseMap.put("captchaRequired", "true");
                 PrintWriter out = response.getWriter();
