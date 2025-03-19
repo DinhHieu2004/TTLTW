@@ -36,6 +36,7 @@ public class Delete extends HttpServlet {
         }
         finally {
             out.flush();
+            out.close();
         }
     }
 }
