@@ -12,6 +12,17 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+  <!-- DataTables Buttons CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+
+  <!-- DataTables Buttons JavaScript -->
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
 
   <style> .sidebar {
     height: 100vh;
@@ -104,7 +115,6 @@
 
 
   </style>
-
 </head>
 <body>
 <!-- Sidebar -->
@@ -602,19 +612,28 @@
 </div>
 <script>
   $(document).ready(function () {
-    $('#products').DataTable({
+    let table = $('#products').DataTable({
       "order": [[5, "desc"]],
       "columnDefs": [
         { "type": "date", "targets": 5 }
+      ],
+      dom: '<"d-flex justify-content-between align-items-center"lfB>rtip',
+      buttons: [
+        { extend: 'copy', title: 'Danh sách sản phẩm' },
+        { extend: 'csv', title: 'Danh sách sản phẩm' },
+        { extend: 'excel', title: 'Danh sách sản phẩm' },
+        { extend: 'pdf', title: 'Danh sách sản phẩm' },
+        { extend: 'print', title: 'Danh sách sản phẩm' }
       ]
     });
-    $('#sizes').DataTable({
 
+    let table2 = $('#sizes').DataTable({
     });
-    $('#themes').DataTable({
 
+    let table3 = $('#themes').DataTable({
     });
   });
+
   document.querySelectorAll('[data-bs-target="#deleteProductModal"]').forEach(button => {
     button.addEventListener('click', function() {
       let pid = this.getAttribute('data-product-id');
@@ -983,6 +1002,7 @@ $("#editPaintingForm").submit(function (event) {
   });
 });
 </script>
+
 
 
 <%--<script src="${pageContext.request.contextPath}/assets/js/admin/product.js"></script>--%>
