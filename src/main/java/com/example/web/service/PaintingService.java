@@ -6,6 +6,7 @@ import com.example.web.dao.model.OrderItem;
 import com.example.web.dao.model.Painting;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PaintingService {
@@ -83,4 +84,13 @@ public class PaintingService {
     public String getCurrentImagePath(int id) throws SQLException {
         return paintingDao.getCurrentImagePath(id);
     }
+
+
+    public List<String> getPaintingSg(String keyword, int limit) throws SQLException {
+        return paintingDao.getPaintingSg(keyword, limit);
+
+
+    }
+
+
 }
