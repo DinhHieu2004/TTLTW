@@ -11,6 +11,7 @@
   <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <style> .sidebar {
     height: 100vh;
     position: fixed;
@@ -65,11 +66,13 @@
           <td>${order.totalAmount}</td>
           <td>${order.orderDate}</td>
           <td>${order.status}</td>
-          <td><button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#orderDetailsModal" data-order-id="${order.id}">Xem Chi Tiết</button>
-            <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                    data-bs-target="#deleteOrderModal" data-order-id="${order.id}">Xóa</button>
+          <td><button class="btn btn-info btn-sm" data-bs-toggle="modal"
+                      data-bs-target="#orderDetailsModal"
+                      data-order-id="${order.id}">Xem Chi Tiết</button>
+              <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                      data-bs-target="#deleteOrderModal"
+                      data-order-id="${order.id}">Xóa</button>
           </td>
-
         </tr>
       </c:forEach>
       </tbody>
@@ -101,11 +104,13 @@
           <td>${order.orderDate}</td>
           <td>${order.deliveryDate}</td>
           <td>${order.status}</td>
-          <td><button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#orderDetailsModal" data-order-id="${order.id}">Xem Chi Tiết</button>
+          <td><button class="btn btn-info btn-sm" data-bs-toggle="modal"
+                      data-bs-target="#orderDetailsModal"
+                      data-order-id="${order.id}">Xem Chi Tiết</button>
             <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                    data-bs-target="#deleteOrderModal" data-order-id="${order.id}">Xóa</button>
+                    data-bs-target="#deleteOrderModal"
+                    data-order-id="${order.id}">Xóa</button>
           </td>
-        </tr>`;
         </tr>
       </c:forEach>
       </tbody>
@@ -113,7 +118,7 @@
   </div>
 </div>
 
-
+<%-- Modal xóa đơn --%>
   <div class="modal fade" id="deleteOrderModal" tabindex="-1" aria-labelledby="deleteOrderModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -121,19 +126,19 @@
           <h5 class="modal-title" id="deleteOrderModalLabel">Xác nhận xóa</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form action="${pageContext.request.contextPath}/admin/orders/delete" method="POST">
           <div class="modal-body">
             <p>Bạn có chắc chắn muốn xóa đơn hàng này?</p>
             <input type="hidden" id="orderIdToDelete" name="orderId">
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-            <button type="submit" class="btn btn-danger">Xóa</button>
+            <button type="button" id="confirmDeleteOrder" class="btn btn-danger">Xóa</button>
           </div>
-        </form>
       </div>
     </div>
   </div>
+
+<%--  Modal sửa đơn --%>
   <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel"
   aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -170,7 +175,7 @@
             <option value="đang giao">đang giao</option>
             <option value="hoàn thành">hoàn thành</option>
             <option value="thất bại">thất bại</option>
-            <option value="dã hủy">dã hủy</option>
+            <option value="đã hủy">dã hủy</option>
           </select>
 
           <button id="updateStatusBtn" class="btn btn-primary mt-3">Cập nhật đơn hàng</button>
@@ -182,16 +187,11 @@
 </div>
 
 
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
   $(document).ready(function() {
     $('#currentOrders').DataTable();
     $('#orderHistory').DataTable();
-  });
-
-  $(document).ready(function() {
-    $('#artists').DataTable();
   });
 
   document.querySelectorAll('[data-bs-target="#deleteOrderModal"]').forEach(button => {
@@ -201,6 +201,50 @@
     });
   });
 </script>
+<script>
+  // xóa đơn hàng
+  $(document).ready(function () {
+    const tableCurrent = $("#currentOrders").DataTable();
+    const tableHistory = $("#orderHistory").DataTable();
+
+    $(document).on("click", ".delete-order", function () {
+      const orderId = $(this).data("order-id");
+      $("#orderIdToDelete").val(orderId);
+      $("#deleteOrderModal").modal("show");
+    });
+
+    $("#confirmDeleteOrder").click(function () {
+      const orderId = $("#orderIdToDelete").val();
+
+      $.ajax({
+        type: "POST",
+        url: "orders/delete",
+        data: { orderId: orderId },
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            const $row = $('[data-order-id="' + orderId + '"]').closest("tr");
+            const tableId = $row.closest("table").attr("id");
+
+            if (tableId === "currentOrders") {
+              tableCurrent.row($row).remove().draw();
+            } else {
+              tableHistory.row($row).remove().draw();
+            }
+
+            $("#deleteOrderModal").modal("hide");
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function () {
+          alert("Lỗi khi xóa đơn hàng.");
+        }
+      });
+    });
+  });
+</script>
+
 <script src="${pageContext.request.contextPath}/assets/js/admin/order.js"></script>
 </body>
 </html>
