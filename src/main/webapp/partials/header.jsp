@@ -8,7 +8,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+    <script>
+        const contextPath = "${pageContext.request.contextPath}";
+    </script>
 </head>
 <header id="header-container" class="fixed-top">
     <div class="header-top">
@@ -111,15 +113,15 @@
     </div>
     <form action="artwork" method="GET">
 
-    <div id="search-bar" class="container mt-2 justify-content-center" style="">
-        <div class="input-group d-flex justify-content-center" style="width: 600px; top: 60px; right: 600px;">
-            <input style="padding: 12px;" name="keyword" type="text" class="form-control" id="search-input" placeholder="Tìm kiếm..." autocomplete="off">
-            <button class="btn btn-primary" id="search-btn" style="background: #e7621b !important;">Tìm</button>
-            <div style="top:50px; width: 600px" id="suggestions"></div>
+        <div id="search-bar" class="container mt-2 justify-content-center" style="">
+            <div class="input-group d-flex justify-content-center" style="width: 600px; top:-90px;right: 50px;">
+                <input style="padding: 12px;" name="keyword" type="text" class="form-control" id="search-input" placeholder="Tìm kiếm..." autocomplete="off">
+                <button class="btn btn-primary" id="search-btn" style="background: #e7621b !important;">Tìm</button>
+                <div style="top:50px; width: 600px" id="suggestions"></div>
+
+            </div>
 
         </div>
-
-    </div>
     </form>
 
 </header>

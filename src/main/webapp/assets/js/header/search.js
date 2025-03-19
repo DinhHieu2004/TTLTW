@@ -1,41 +1,35 @@
 $("#search-input").on("input", function () {
-    const contextPath = '/web_war';
-        let keyword = $(this).val().trim();
+    let keyword = $(this).val().trim();
 
-    if (keyword) {
-        window.location.href = "/web_war/products.jsp?search=" + encodeURIComponent(keyword);
-    }
-        if (keyword.length > 2) {
-            $.ajax({
-              //  url: "artwork/suggestions",
-                url: '${pageContext.request.contextPath}/artwork/suggestions',
-                method: "GET",
-                dataType: "json",
-                data: { keyword: keyword },
-                success: function (response) {
-                    console.log("API response:", response);
+    if (keyword.length > 2) {
+        $.ajax({
+            url: contextPath + "/artwork/suggestions", // Sửa lỗi URL
+            method: "GET",
+            dataType: "json",
+            data: { keyword: keyword },
+            success: function (response) {
+                console.log("API response:", response);
+                $("#suggestions").empty().show();
 
-                    $("#suggestions").empty().show();
-
-                    if (Array.isArray(response) && response.length > 0) {
-                        let suggestionList = "<ul class='list-group'>";
-                        response.forEach(function (item) {
-                            suggestionList += `<li class='list-group-item suggestion-item' data-keyword="${item}" style="cursor: pointer;">${item}</li>`;
-                        });
-                        suggestionList += "</ul>";
-                        $("#suggestions").html(suggestionList);
-                    } else {
-                        $("#suggestions").hide();
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error("Lỗi khi gửi yêu cầu API:", error);
+                if (Array.isArray(response) && response.length > 0) {
+                    let suggestionList = "<ul class='list-group'>";
+                    response.forEach(function (item) {
+                        suggestionList += `<li class='list-group-item suggestion-item' data-keyword="${item}" style="cursor: pointer;">${item}</li>`;
+                    });
+                    suggestionList += "</ul>";
+                    $("#suggestions").html(suggestionList);
+                } else {
                     $("#suggestions").hide();
                 }
-            });
-        } else {
-            $("#suggestions").empty().hide();
-        }
+            },
+            error: function (xhr, status, error) {
+                console.error("Lỗi khi gửi yêu cầu API:", error);
+                $("#suggestions").hide();
+            }
+        });
+    } else {
+        $("#suggestions").empty().hide();
+    }
 });
 
 function searchArtwork(keyword) {

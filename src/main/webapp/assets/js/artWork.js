@@ -110,7 +110,7 @@ $(document).ready(function () {
     let searchQuery = urlParams.get('search');
 
     if (searchQuery) {
-        $("#search-input").val(searchQuery); // Hiển thị từ khóa đã tìm
-        searchArtwork(searchQuery); // Gọi API tìm kiếm tự động
+        $("#search-input").val(searchQuery);
+        searchArtwork(searchQuery);
     }
 });
