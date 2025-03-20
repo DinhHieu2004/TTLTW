@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class User  implements Serializable {
     private int id;
+    private String google_id;
     private String fullName;
     private String username;
     private String address;
@@ -30,6 +31,13 @@ public class User  implements Serializable {
         this.phone = phone;
         this.role = role;
         this.password = password;
+    }
+    public User(int id, String google_id, String fullName, String email, Role role){
+        this.id = id;
+        this.google_id = google_id;
+        this.fullName = fullName;
+        this.email = email;
+        this.role = role;
     }
 
     public User() {
@@ -118,6 +126,14 @@ public class User  implements Serializable {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public String getGoogle_id() {
+        return google_id;
+    }
+
+    public void setGoogle_id(String google_id) {
+        this.google_id = google_id;
     }
 }
 

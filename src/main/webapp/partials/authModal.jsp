@@ -49,23 +49,18 @@
                         <div class="mt-3 text-center">
                             <a href="${pageContext.request.contextPath}/user/forgot_password.jsp" class="text-decoration-none">Quên mật khẩu?</a>
                         </div>
-                        <div class="mt-3 text-center">
-                            <div id="g_id_onload"
-                                 data-client_id="891978819303-g9qeo4mmukj96bfr51iaaeheeqk1t1eo.apps.googleusercontent.com"
-                                 data-context="signin"
-                                 data-ux_mode="redirect"
-                                 data-login_uri="${pageContext.request.contextPath}/login_google"
-                                 data-auto_prompt="false">
-                            </div>
 
-                            <div class="g_id_signin"
-                                 data-type="standard"
-                                 data-size="large"
-                                 data-theme="outline"
-                                 data-text="sign_in_with"
-                                 data-shape="rectangular"
-                                 data-logo_alignment="left">
-                            </div>
+                        <div class="mt-3 text-center">
+                            <div id="g_id_onload"></div>
+                            <div class="g_id_signin"></div>
+                        </div>
+                        <div class="mt-3 text-center">
+                            <button id="custom-facebook-btn" class="custom-facebook-btn">
+                                <span class="facebook-icon">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook Logo" width="25">
+                                </span>
+                                <span class="facebook-text">Đăng nhập bằng Facebook</span>
+                            </button>
                         </div>
                     </div>
 
@@ -132,6 +127,42 @@
                         .is-invalid {
                             border: 1px solid red;
                         }
+                        .g_id_signin{
+                            width: 60%;
+                            margin: auto;
+                        }
+                        .nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-BPrWId{
+                            font-weight: bold !important;
+                        }
+                        .g_id_signin img {
+                            width: 25px !important;
+                        }
+                        .custom-facebook-btn {
+                            width: 60%;
+                            margin: auto;
+                            display: flex;
+                            align-items: center;
+                            border: 1px solid #dadce0;
+                            background-color: white;
+                            padding: 6px 14px;
+                            border-radius: 5px;
+                            cursor: pointer;
+                            font-weight: bold;
+                            font-size: 14px;
+                            transition: background-color 0.2s;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                        }
+
+                        .custom-facebook-btn:hover {
+                            background-color: #f7f7f7;
+                        }
+
+                        .facebook-icon {
+                            margin-right: 20px;
+                        }
+
                     </style>
 
                 </div>

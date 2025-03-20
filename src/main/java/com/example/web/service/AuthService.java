@@ -22,6 +22,10 @@ public class AuthService {
     public boolean registerUser(String fullName, String username, String password, String email, String phone, String role) throws SQLException {
         return udao.registerUser(fullName, username, hashPassword(password), email, phone, role);
     }
+
+    public boolean createUserByGoogle(String gg_id, String name, String email) throws SQLException {
+        return udao.createUserByGoogle(gg_id, name, email, "user");
+    }
     public String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -36,9 +40,13 @@ public class AuthService {
                 hexString.append(hex);
             }
 
-            return hexString.toString(); // Trả về chuỗi mã hóa MD5
+            return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Error while hashing password with MD5", e);
         }
+    }
+
+    public User findGoogleUserById(String ggId) throws SQLException {
+        return udao.findGoogleUserById(ggId);
     }
 }

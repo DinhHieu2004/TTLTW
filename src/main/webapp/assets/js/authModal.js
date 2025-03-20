@@ -161,6 +161,16 @@ $(document).ready(function () {
             }
         })
     });
+    google.accounts.id.initialize({
+        client_id: "891978819303-g9qeo4mmukj96bfr51iaaeheeqk1t1eo.apps.googleusercontent.com",
+        callback: handleCredentialResponse,
+        auto_select: false,
+    });
+
+    google.accounts.id.renderButton(
+        document.querySelector(".g_id_signin"),
+        { theme: "outline", size: "large", text: "sign_in_with", shape: "rectangular", logo_alignment: "left" }
+    );
 });
 
 function showServerErrors(errors){
@@ -257,4 +267,28 @@ function logout(){
     });
 }
 
+//login bằng google
+function handleCredentialResponse(response) {
+    if (!response.credential) {
+        $('#authModal').modal('show');
+        return;
+    }
+    const idToken = response.credential;
+
+    $.ajax({
+        type: "POST",
+        url: "login_google",
+        data: { credential: idToken },
+        success: function(response) {
+            if (response.success) {
+                window.location.href = "/";
+            } else {
+                alert("Đăng nhập bằng Google thất bại.");
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Lỗi:', error);
+        }
+    });
+}
 
