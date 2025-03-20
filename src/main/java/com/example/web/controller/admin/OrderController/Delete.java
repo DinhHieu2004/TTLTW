@@ -2,6 +2,7 @@ package com.example.web.controller.admin.OrderController;
 
 import com.example.web.service.ArtistService;
 import com.example.web.service.OrderService;
+import com.google.gson.JsonObject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -9,31 +10,33 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @WebServlet("/admin/orders/delete")
 public class Delete extends HttpServlet {
-    private OrderService orderService = new OrderService();
+    private final OrderService orderService = new OrderService();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
-        String orderId = request.getParameter("orderId");
-        System.out.println(orderId);
+        PrintWriter out = response.getWriter();
+
         try {
+            String orderId = request.getParameter("orderId");
             boolean isDeleted = orderService.deleteOrder(Integer.parseInt(orderId));
-            System.out.println(isDeleted);
             if (isDeleted) {
-
-                request.setAttribute("message", "Xóa Đơn hàng thành công!");
+                out.write("{\"success\": true, \"message\": \"Xóa thành công.\"}");
             } else {
-                request.setAttribute("message", "Xóa Đơn hàng thất bại!");
+                out.write("{\"success\": false, \"message\": \"Xóa thất bại.\"}");
             }
         } catch (Exception e) {
-            request.setAttribute("message", "Lỗi: " + e.getMessage());
+            out.write("{\"success\": false, \"message\": \"Lỗi: " + e.getMessage() + "\"}");
         }
-        response.sendRedirect("../orders");
-        //  request.getRequestDispatcher("../artists.jsp").forward(request, response);
+        finally {
+            out.flush();
+            out.close();
+        }
     }
-
-
 }

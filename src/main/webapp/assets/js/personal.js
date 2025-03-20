@@ -19,7 +19,16 @@ $(document).ready(function () {
                     </tr>`;
                 currentTableBody.append(row);
             });
-            $('#currentOrders').DataTable();
+            $('#currentOrders').DataTable({
+                dom: '<"d-flex justify-content-between align-items-center"lfB>rtip',
+                buttons: [
+                    { extend: 'copy', title: 'Danh sách đơn hàng hiện tại' },
+                    { extend: 'csv', title: 'Danh sách đơn hàng hiện tại' },
+                    { extend: 'excel', title: 'Danh sách đơn hàng hiện tại' },
+                    { extend: 'pdf', title: 'Danh sách đơn hàng hiện tại' },
+                    { extend: 'print', title: 'Danh sách đơn hàng hiện tại' }
+                ]
+            });
 
             const previousOrders = response.previousOrders;
             const previousTableBody = $('#orderHistory tbody');
@@ -35,7 +44,16 @@ $(document).ready(function () {
                     </tr>`;
                 previousTableBody.append(row);
             });
-            $('#orderHistory').DataTable();
+            $('#orderHistory').DataTable({
+                dom: '<"d-flex justify-content-between align-items-center"lfB>rtip',
+                buttons: [
+                    { extend: 'copy', title: 'Lịch sử đơn hàng' },
+                    { extend: 'csv', title: 'Lịch sử đơn hàng' },
+                    { extend: 'excel', title: 'Lịch sử đơn hàng' },
+                    { extend: 'pdf', title: 'Lịch sử đơn hàng' },
+                    { extend: 'print', title: 'Lịch sử đơn hàng' }
+                ]
+            });
         },
         error: function () {
             alert('Lỗi khi tải dữ liệu đơn hàng.');
