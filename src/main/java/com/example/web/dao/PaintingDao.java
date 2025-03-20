@@ -755,6 +755,23 @@ public class PaintingDao {
 
         return paintingList;
     }
+    public List<String> getPaintingSg(String keyword, int limit) throws SQLException {
+        List<String> suggestions = new ArrayList<>();
+        String query = "SELECT DISTINCT title FROM paintings WHERE title LIKE ? LIMIT ?";
+             PreparedStatement stmt = con.prepareStatement(query);
+
+            stmt.setString(1, "%" + keyword + "%");
+            stmt.setInt(2, limit);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    suggestions.add(rs.getString("title"));
+                }
+            }
+
+        return suggestions;
+
+    }
 
     public static void main(String[] args) throws SQLException {
         PaintingDao paintingDao = new PaintingDao();
@@ -777,16 +794,16 @@ public class PaintingDao {
          System.out.println(paintingId);
          **/
 
-        int paintingId = 11;
-        List<Integer> sizeIds = Arrays.asList(1, 2, 3);
-        List<Integer> quantities = Arrays.asList(5, 3, 2);
+      //  int paintingId = 11;
+      //  List<Integer> sizeIds = Arrays.asList(1, 2, 3);
+      //  List<Integer> quantities = Arrays.asList(5, 3, 2);
 
-        System.out.println(paintingDao.getPaintingDetail(5));
+       // System.out.println(paintingDao.getPaintingDetail(5));
 
         //    System.out.println(paintingDao.getPaintingList(null,null,null,null,null,null,null,1,10));
         //  System.out.println(paintingDao.getPaintingRating(5));
         //System.out.println(paintingDao.getPaintingRating(6));
 
-
+        System.out.println(paintingDao.getPaintingSg("hoa", 3));
     }
 }
