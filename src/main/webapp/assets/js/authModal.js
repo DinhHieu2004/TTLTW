@@ -281,7 +281,7 @@ function handleCredentialResponse(response) {
         data: { credential: idToken },
         success: function(response) {
             if (response.success) {
-                window.location.href = "/";
+                location.reload();
             } else {
                 alert("Đăng nhập bằng Google thất bại.");
             }
@@ -291,4 +291,31 @@ function handleCredentialResponse(response) {
         }
     });
 }
+document.getElementById('custom-facebook-btn').addEventListener('click', function() {
+    FB.login(function(response) {
+        if (response.authResponse) {
+            const accessToken = response.authResponse.accessToken;
+
+            $.ajax({
+                type: "POST",
+                url: "login_fb",
+                data: { accessToken: accessToken },
+                success: function(data) {
+                    const result = JSON.parse(data);
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        alert(result.message || "Đăng nhập bằng Facebook thất bại.");
+                    }
+                },
+                error: function(xhr) {
+                    alert("Đăng nhập bằng Facebook thất bại. Vui lòng thử lại sau.");
+                }
+            });
+        } else {
+            alert("Người dùng từ chối đăng nhập bằng Facebook.");
+        }
+    }, {scope: 'public_profile,email'});
+});
+
 

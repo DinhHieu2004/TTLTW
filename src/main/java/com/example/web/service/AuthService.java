@@ -49,4 +49,12 @@ public class AuthService {
     public User findGoogleUserById(String ggId) throws SQLException {
         return udao.findGoogleUserById(ggId);
     }
+
+    public User findFacebookUserById(String fbId) {
+        return null;
+    }
+
+    public boolean createUserByFacebook(String fbId, String name, String email) {
+        return false;
+    }
 }
