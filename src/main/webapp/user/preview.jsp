@@ -67,6 +67,9 @@
         <p>${review.comment}</p>
         <p><small>${review.createdAt}</small></p>
       </div>
+      <button class="btn btn-sm btn-primary edit-review-btn" data-id="${review.id}">Chỉnh sửa</button>
+      <button class="btn btn-sm btn-success save-btn d-none" data-id="${review.id}">Lưu</button>
+      <button class="btn btn-sm btn-danger cancel-btn d-none" data-id="${review.id}">Hủy</button>
     </c:forEach>
   </div>
 </div>
@@ -129,6 +132,8 @@
     });
   });
 </script>
+<%-- chỉnh sửa đánh gia--%>
+
 
   </body>
 
