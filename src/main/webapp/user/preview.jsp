@@ -173,42 +173,35 @@
     });
   });
 </script>
-<%-- chỉnh sửa đánh gia--%>
+<%-- chỉnh sửa đánh giá--%>
 <script>
   $(document).ready(function () {
-    // Khi nhấn "Chỉnh sửa"
     $('.edit-review-btn').click(function () {
       let reviewItem = $(this).closest('.review-item');
 
-      // Ẩn nội dung cũ, hiển thị ô chỉnh sửa
       reviewItem.find('.comment-text').addClass('d-none');
       reviewItem.find('.edit-comment').removeClass('d-none');
 
       reviewItem.find('.rating-text').addClass('d-none');
       reviewItem.find('.edit-rating').removeClass('d-none');
 
-      // Ẩn nút "Chỉnh sửa", hiện "Lưu" & "Hủy"
       $(this).addClass('d-none');
       reviewItem.find('.save-btn, .cancel-btn').removeClass('d-none');
     });
 
-    // Khi nhấn "Hủy"
     $('.cancel-btn').click(function () {
       let reviewItem = $(this).closest('.review-item');
 
-      // Khôi phục nội dung cũ
       reviewItem.find('.comment-text').removeClass('d-none');
       reviewItem.find('.edit-comment').addClass('d-none');
 
       reviewItem.find('.rating-text').removeClass('d-none');
       reviewItem.find('.edit-rating').addClass('d-none');
 
-      // Hiện lại nút "Chỉnh sửa", ẩn "Lưu" & "Hủy"
       reviewItem.find('.edit-review-btn').removeClass('d-none');
       reviewItem.find('.save-btn, .cancel-btn').addClass('d-none');
     });
 
-    // Khi nhấn "Lưu"
     $('.save-btn').click(function () {
       let reviewItem = $(this).closest('.review-item');
       let reviewId = $(this).data('id');
@@ -219,8 +212,19 @@
         url: 'admin/reviews/update',
         method: 'POST',
         data: { reviewId, newComment, newRating },
-        success: function () {
-          location.reload();
+        success: function (response) {
+          if (response.status === "success") {
+            reviewItem.find('.comment-text').text(newComment).removeClass('d-none');
+            reviewItem.find('.edit-comment').addClass('d-none');
+
+            reviewItem.find('.rating-text').text(newRating).removeClass('d-none');
+            reviewItem.find('.edit-rating').addClass('d-none');
+
+            reviewItem.find('.edit-review-btn').removeClass('d-none');
+            reviewItem.find('.save-btn, .cancel-btn').addClass('d-none');
+          } else {
+            alert("Cập nhật thất bại!");
+          }
         },
         error: function () {
           alert('Lỗi khi cập nhật đánh giá.');
@@ -233,26 +237,37 @@
 <script>
   $(document).ready(function () {
     let reviewIdToDelete = null;
-
-    $('.delete-review-btn').on('click', function () {
-      reviewIdToDelete = $(this).data('id');
-      $('#deleteConfirmModal').modal('show');
+    $(document).on("click", ".delete-review-btn", function () {
+      reviewIdToDelete = $(this).data("id");
+      window.reviewElementToDelete = $(this).closest(".review-item");
+      $("#deleteConfirmModal").modal("show");
     });
-
-    $('#confirmDeleteBtn').on('click', function () {
+    $("#confirmDeleteBtn").on("click", function () {
       if (!reviewIdToDelete) return;
 
       $.ajax({
-        url: 'admin/reviews/delete',
-        method: 'POST',
+        url: "admin/reviews/delete",
+        method: "POST",
         data: { rid: reviewIdToDelete },
-        success: function () {
-          $(`.delete-review-btn[data-id="${reviewIdToDelete}"]`).closest('.review-item').remove();
-          $('#deleteConfirmModal').modal('hide');
-          location.reload()
+        dataType: "json",
+        success: function (response) {
+          if (window.reviewElementToDelete && window.reviewElementToDelete.length) {
+            window.reviewElementToDelete.fadeOut(300, function() {
+              $(this).remove();
+            });
+          } else {
+            console.error("Không tìm thấy phần tử để xóa");
+          }
+          $("#deleteConfirmModal").modal("hide");
         },
-        error: function () {
-          alert("Lỗi khi xóa đánh giá!");
+        error: function (xhr, status, error) {
+          console.error("Lỗi khi xóa:", xhr.responseText);
+          try {
+            const response = JSON.parse(xhr.responseText);
+            alert(response.message || "Lỗi khi xóa đánh giá!");
+          } catch (e) {
+            alert("Lỗi khi xóa đánh giá!");
+          }
         }
       });
     });
