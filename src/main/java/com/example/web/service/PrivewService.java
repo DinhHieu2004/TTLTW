@@ -39,4 +39,5 @@ public class PrivewService {
     public boolean updateReview(int reviewId, int rating, String comment) throws SQLException {
         return reviewDao.update(reviewId, rating, comment);
     }
+
 }

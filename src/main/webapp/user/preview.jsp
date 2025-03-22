@@ -1,4 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="jakarta.servlet.http.HttpSession" %>
+<%@ page import="com.example.web.dao.model.User" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -81,11 +83,12 @@
 
         <p><small>${review.createdAt}</small></p>
 
-        <!-- Nút thao tác -->
+        <c:if test="${sessionScope.user != null && sessionScope.user.id == review.userId}">
         <button class="btn btn-sm btn-primary edit-review-btn" data-id="${review.id}">Chỉnh sửa</button>
-        <button class="btn btn-sm btn-success save-btn d-none" data-id="${review.id}">Lưu</button>
-        <button class="btn btn-sm btn-danger cancel-btn d-none" data-id="${review.id}">Hủy</button>
-        <button class="btn btn-sm btn-outline-danger delete-review-btn" data-id="${review.id}">Xóa</button>
+          <button class="btn btn-sm btn-success save-btn d-none" data-id="${review.id}">Lưu</button>
+          <button class="btn btn-sm btn-danger cancel-btn d-none" data-id="${review.id}">Hủy</button>
+          <button class="btn btn-sm btn-outline-danger delete-review-btn" data-id="${review.id}">Xóa</button>
+        </c:if>
       </div>
     </c:forEach>
 
