@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix = "f" uri = "http://java.sun.com/jsp/jstl/fmt" %>
+<%--<input type="hidden" id="csrfToken" value="${sessionScope.CSRF_TOKEN}">--%>
 <div class="modal fade" id="authModal">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -42,7 +43,7 @@
                                 <input type="text" id="captcha" name="captcha" class="form-control">
                                 <div class="error" id="captchaError"></div>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100 login-btn">Đăng Nhập</button>
+                            <button type="submit" id="loginButton" class="btn btn-primary w-100 login-btn">Đăng Nhập</button>
                         </form>
 
                         <!-- Nút Quên mật khẩu -->
@@ -51,15 +52,27 @@
                         </div>
 
                         <div class="mt-3 text-center">
-                            <div id="g_id_onload"></div>
-                            <div class="g_id_signin"></div>
+                            <div id="g_id_onload"
+                                 data-client_id="891978819303-g9qeo4mmukj96bfr51iaaeheeqk1t1eo.apps.googleusercontent.com"
+                                 data-callback="handleCredentialResponse"
+                                 data-auto_prompt="false">
+                            </div>
+                            <div class="g_id_signin"
+                                 data-type="standard"
+                                 data-size="large"
+                                 data-theme="outline"
+                                 data-text="signin_with"
+                                 data-shape="rectangular"
+                                 data-logo_alignment="left">
+
+                            </div>
                         </div>
                         <div class="mt-3 text-center">
-                            <button id="custom-facebook-btn" class="custom-facebook-btn">
-                                <span class="facebook-icon">
+                            <button id="custom-facebook-btn" class="custom-facebook-btn w-100 d-flex align-items-center">
+                                <div class="facebook-icon d-flex align-items-center justify-content-center" style="width: 40px; ">
                                     <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook Logo" width="25">
-                                </span>
-                                <span class="facebook-text">Đăng nhập bằng Facebook</span>
+                                </div>
+                                <div class="facebook-text flex-grow-1 text-center">Đăng nhập bằng Facebook</div>
                             </button>
                         </div>
                     </div>
@@ -128,7 +141,7 @@
                             border: 1px solid red;
                         }
                         .g_id_signin{
-                            width: 60%;
+                            width: 80%;
                             margin: auto;
                         }
                         .nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-BPrWId{
@@ -137,31 +150,51 @@
                         .g_id_signin img {
                             width: 25px !important;
                         }
+                        /*.custom-facebook-btn {*/
+                        /*    width: 80%;*/
+                        /*    margin: auto;*/
+                        /*    display: flex;*/
+                        /*    align-items: center;*/
+                        /*    border: 1px solid #dadce0;*/
+                        /*    background-color: white;*/
+                        /*    padding: 6px 14px;*/
+                        /*    border-radius: 5px;*/
+                        /*    cursor: pointer;*/
+                        /*    font-weight: bold;*/
+                        /*    font-size: 14px;*/
+                        /*    transition: background-color 0.2s;*/
+                        /*    white-space: nowrap;*/
+                        /*    overflow: hidden;*/
+                        /*    text-overflow: ellipsis;*/
+                        /*}*/
+
+                        /*.custom-facebook-btn:hover {*/
+                        /*    background-color: #f7f7f7;*/
+                        /*}*/
+
+                        /*.facebook-icon {*/
+                        /*    margin-right: 20px;*/
+                        /*}*/
                         .custom-facebook-btn {
-                            width: 60%;
+                            width: 80% !important;
                             margin: auto;
-                            display: flex;
-                            align-items: center;
-                            border: 1px solid #dadce0;
                             background-color: white;
-                            padding: 6px 14px;
+                            color: #3c4043;
+                            border: 1px solid #ccc;
+                            padding: 6px 0;
                             border-radius: 5px;
                             cursor: pointer;
-                            font-weight: bold;
-                            font-size: 14px;
-                            transition: background-color 0.2s;
+                            transition: background-color 0.3s;
+                            display: flex;
                             white-space: nowrap;
                             overflow: hidden;
                             text-overflow: ellipsis;
                         }
-
-                        .custom-facebook-btn:hover {
-                            background-color: #f7f7f7;
+                        .facebook-text {
+                            font-size: 15px;
+                            font-weight: bold;
                         }
 
-                        .facebook-icon {
-                            margin-right: 20px;
-                        }
 
                     </style>
 

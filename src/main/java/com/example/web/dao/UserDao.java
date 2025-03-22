@@ -311,7 +311,7 @@ public class UserDao {
         if (existingUser != null) {
             return false;
         }
-        String sql = "INSERT INTO users (fullName, email, google_id, role) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO users (fullName, email, gg_id, role) VALUES (?, ?, ?, ?)";
 
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, name);
@@ -324,7 +324,7 @@ public class UserDao {
     }
 
     public User findGoogleUserById(String gg_id) throws SQLException {
-        String sql = "SELECT * FROM users WHERE google_id = ?";
+        String sql = "SELECT * FROM users WHERE gg_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, gg_id);
 
@@ -332,7 +332,7 @@ public class UserDao {
                 if (rs.next()) {
                     return new User(
                             rs.getInt("id"),
-                            rs.getString("google_id"),
+                            rs.getString("gg_id"),
                             rs.getString("fullName"),
                             rs.getString("email"),
                             User.Role.valueOf(rs.getString("role"))
@@ -345,7 +345,7 @@ public class UserDao {
 
     public static void main(String[] args) {
         UserDao userDao = new UserDao();
-        String testEmail = "lenguyennhathao0807@gmail.com"; // Địa chỉ email bạn muốn kiểm tra
+        String testEmail = ""; // Địa chỉ email bạn muốn kiểm tra
 
         try {
             // Gọi phương thức passwordRecovery để kiểm tra

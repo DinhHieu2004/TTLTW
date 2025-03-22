@@ -1,8 +1,19 @@
 $(document).ready(function () {
     initializeErrorClearing()
     // Xử lí js phần đăng nhập
+    let isBlocked = false;
+    let isShowingFastMessage = false;
     $('#loginForm').on('submit', function (e) {
         e.preventDefault();
+        if (isBlocked) return;
+        // const submitButton = $('#loginButton');
+        // submitButton.prop('disabled', true);
+        //
+        // setTimeout(() => {
+        //     submitButton.prop('disabled', false);
+        // }, 2000);
+        const form = $(this);
+        const formData = form.serialize();
 
         let isValid = true;
         let username = $('#username').val().trim();
@@ -10,9 +21,11 @@ $(document).ready(function () {
         let captcha = $('#captcha').val().trim();
 
         // Xóa thông báo lỗi cũ
-        $('.text-danger').text('').removeClass('is-invalid');
-        $('#username, #loginPassword').removeClass('is-invalid');
-        $('#loginMessage').text('').removeClass('text-danger');
+        if (!isBlocked) {
+            $('.text-danger').text('').removeClass('is-invalid');
+            $('#username, #loginPassword').removeClass('is-invalid');
+            $('#loginMessage').text('').removeClass('text-danger');
+        }
 
         if (username === '') {
             $('#usernameError').text('Vui lòng nhập tên đăng nhập!').addClass('text-danger');
@@ -44,6 +57,32 @@ $(document).ready(function () {
             error: function (xhr) {
                 try {
                     var errors = JSON.parse(xhr.responseText);
+                    if (xhr.status === 429) {
+                        if (!isShowingFastMessage) {
+                            isShowingFastMessage = true;
+                            isBlocked = true; // Chặn gửi thêm request
+
+                            const message = $('<div id="fastMessage">Bạn đang thao tác quá nhanh. Vui lòng chờ và thử lại.</div>');
+                            $('body').append(message);
+                            $('#fastMessage').css({
+                                'position': 'fixed',
+                                'top': '20px',
+                                'left': '50%',
+                                'transform': 'translateX(-50%)',
+                                'background-color': 'rgba(0, 0, 0, 0.7)',
+                                'color': 'white',
+                                'padding': '10px',
+                                'border-radius': '5px',
+                                'font-size': '14px',
+                                'z-index': '9999',
+                                'opacity': '0',
+                            }).animate({opacity: 1}, 300).delay(3000).fadeOut(300, function () {
+                                $(this).remove();
+                                isBlocked = false;
+                                isShowingFastMessage = false;
+                            });
+                        }
+                    } else
                     if (xhr.status === 401) {
                         if (errors.captchaRequired) {
                             $('#captchaImage').attr('src', 'captcha?' + new Date().getTime());
@@ -161,16 +200,6 @@ $(document).ready(function () {
             }
         })
     });
-    google.accounts.id.initialize({
-        client_id: "891978819303-g9qeo4mmukj96bfr51iaaeheeqk1t1eo.apps.googleusercontent.com",
-        callback: handleCredentialResponse,
-        auto_select: false,
-    });
-
-    google.accounts.id.renderButton(
-        document.querySelector(".g_id_signin"),
-        { theme: "outline", size: "large", text: "sign_in_with", shape: "rectangular", logo_alignment: "left" }
-    );
 });
 
 function showServerErrors(errors){
@@ -269,16 +298,14 @@ function logout(){
 
 //login bằng google
 function handleCredentialResponse(response) {
-    if (!response.credential) {
-        $('#authModal').modal('show');
-        return;
-    }
     const idToken = response.credential;
+    // const csrfToken = document.getElementById("csrfToken").value;
 
     $.ajax({
         type: "POST",
         url: "login_google",
-        data: { credential: idToken },
+        // data: { credential: idToken, csrfToken: csrfToken },
+        data: { credential: idToken},
         success: function(response) {
             if (response.success) {
                 location.reload();
@@ -286,8 +313,9 @@ function handleCredentialResponse(response) {
                 alert("Đăng nhập bằng Google thất bại.");
             }
         },
-        error: function(xhr, status, error) {
-            console.error('Lỗi:', error);
+        error: function(xhr) {
+            const errorMessage = xhr.responseJSON?.message || "Lỗi kết nối đến server.";
+            alert(errorMessage);
         }
     });
 }
