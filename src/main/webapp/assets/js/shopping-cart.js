@@ -45,26 +45,27 @@ $(document).on('click', '.remove-item', function (e) {
         });
     });
 
-    function updateMiniCart(cart) {
-        const miniCart = $("#mini-cart");
-        miniCart.empty();
+    function updateMiniCart(items) {
+        let miniCartHtml = '';
 
-        if (cart.items && cart.items.length > 0) {
-            cart.items.forEach(item => {
-                miniCart.append(`
-                    <li>
-                        <img src="${item.imageUrl}" alt="${item.productName}" width="30">
-                        ${item.productName} - ${item.quantity} x ${item.price.toLocaleString()} VND
-                    </li>
-                `);
-            });
-            miniCart.append(`
-                <li class="text-end fw-bold">Tổng: ${cart.totalPrice.toLocaleString()} VND</li>
-            `);
-        } else {
-            miniCart.html(`
-                <li>Giỏ hàng trống.</li>
-            `);
-        }
+        items.forEach(item => {
+            const finalPrice = item.discountPrice ? item.discountPrice : item.totalPrice;
+
+            miniCartHtml += `
+        <div class="cart-item">
+            <img src="${item.imageUrl}" alt="${item.productName}" class="cart-item-image" />
+            <div class="cart-item-details">
+                <div class="cart-item-name-price">
+                    <span class="cart-item-name">${item.productName}</span>
+                    <span class="cart-item-price">${finalPrice} VNĐ</span>
+                </div>
+                <div class="cart-item-size">${item.sizeDescriptions}</div>
+            </div>
+        </div>
+        `;
+        });
+
+        $('#mini-cart-items').html(miniCartHtml);
+        $('#mini-cart-count').text(items.length);
     }
 });
