@@ -217,7 +217,6 @@
         method: 'POST',
         data: { reviewId, newComment, newRating },
         success: function () {
-          alert('Cập nhật thành công!');
           location.reload();
         },
         error: function () {
@@ -227,7 +226,35 @@
     });
   });
 </script>
+<%-- Xóa đánh giá--%>
+<script>
+  $(document).ready(function () {
+    let reviewIdToDelete = null;
 
+    $('.delete-review-btn').on('click', function () {
+      reviewIdToDelete = $(this).data('id');
+      $('#deleteConfirmModal').modal('show');
+    });
+
+    $('#confirmDeleteBtn').on('click', function () {
+      if (!reviewIdToDelete) return;
+
+      $.ajax({
+        url: 'admin/reviews/delete',
+        method: 'POST',
+        data: { rid: reviewIdToDelete },
+        success: function () {
+          $(`.delete-review-btn[data-id="${reviewIdToDelete}"]`).closest('.review-item').remove();
+          $('#deleteConfirmModal').modal('hide');
+          location.reload()
+        },
+        error: function () {
+          alert("Lỗi khi xóa đánh giá!");
+        }
+      });
+    });
+  });
+</script>
 
 </body>
 </html>

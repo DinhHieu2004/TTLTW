@@ -8,10 +8,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/footer.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/header.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/shopping-cart.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/painting-detail.css">
+    <script src="${pageContext.request.contextPath}/assets/js/header.js"></script>
     <script src="${pageContext.request.contextPath}/assets/js/painting-detail.js"></script>
 
 </head>
@@ -116,13 +118,51 @@
             <h3>Đánh giá sản phẩm</h3>
 
             <c:forEach items="${reviews}" var="review">
-                <div class="review-item mb-3 p-3 border rounded">
+                <div class="review-item mb-3 p-3 border rounded" data-id="${review.id}">
                     <p><strong>Người dùng:</strong> ${review.userName}</p>
-                    <p><strong>Đánh giá:</strong> ${review.rating} / 5</p>
-                    <p>${review.comment}</p>
+
+                    <p><strong>Đánh giá:</strong>
+                        <span class="rating-text">${review.rating}</span> / 5
+                        <select class="form-select form-select-sm edit-rating d-none">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </p>
+
+                    <p class="comment-text">${review.comment}</p>
+                    <textarea class="form-control d-none edit-comment">${review.comment}</textarea>
+
                     <p><small>${review.createdAt}</small></p>
+
+                    <!-- Nút thao tác -->
+                    <button class="btn btn-sm btn-primary edit-review-btn" data-id="${review.id}">Chỉnh sửa</button>
+                    <button class="btn btn-sm btn-success save-btn d-none" data-id="${review.id}">Lưu</button>
+                    <button class="btn btn-sm btn-danger cancel-btn d-none" data-id="${review.id}">Hủy</button>
+                    <button class="btn btn-sm btn-outline-danger delete-review-btn" data-id="${review.id}">Xóa</button>
                 </div>
             </c:forEach>
+
+            <!-- Modal Xác Nhận Xóa -->
+            <div id="deleteConfirmModal" class="modal fade" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Xác nhận xóa</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Bạn có chắc chắn muốn xóa đánh giá này không?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     </div>
@@ -177,10 +217,8 @@
             input.value = currentValue - 1;
         }
     }
-
-
 </script>
-<script src="${pageContext.request.contextPath}/assets/js/header.js"></script>
+
 
 </body>
 </html>
