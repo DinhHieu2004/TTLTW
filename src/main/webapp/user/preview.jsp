@@ -8,6 +8,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/footer.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/header.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/preview.css">
@@ -61,16 +62,53 @@
     </form>
 
     <c:forEach items="${reviews}" var="review">
-      <div class="review-item mb-3 p-3 border rounded">
+      <div class="review-item mb-3 p-3 border rounded" data-id="${review.id}">
         <p><strong>Người dùng:</strong> ${review.userName}</p>
-        <p><strong>Đánh giá:</strong> ${review.rating} / 5</p>
-        <p>${review.comment}</p>
+
+        <p><strong>Đánh giá:</strong>
+          <span class="rating-text">${review.rating}</span> / 5
+          <select class="form-select form-select-sm edit-rating d-none">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </p>
+
+        <p class="comment-text">${review.comment}</p>
+        <textarea class="form-control d-none edit-comment">${review.comment}</textarea>
+
         <p><small>${review.createdAt}</small></p>
+
+        <!-- Nút thao tác -->
+        <button class="btn btn-sm btn-primary edit-review-btn" data-id="${review.id}">Chỉnh sửa</button>
+        <button class="btn btn-sm btn-success save-btn d-none" data-id="${review.id}">Lưu</button>
+        <button class="btn btn-sm btn-danger cancel-btn d-none" data-id="${review.id}">Hủy</button>
+        <button class="btn btn-sm btn-outline-danger delete-review-btn" data-id="${review.id}">Xóa</button>
       </div>
-      <button class="btn btn-sm btn-primary edit-review-btn" data-id="${review.id}">Chỉnh sửa</button>
-      <button class="btn btn-sm btn-success save-btn d-none" data-id="${review.id}">Lưu</button>
-      <button class="btn btn-sm btn-danger cancel-btn d-none" data-id="${review.id}">Hủy</button>
     </c:forEach>
+
+    <!-- Modal Xác Nhận Xóa -->
+    <div id="deleteConfirmModal" class="modal fade" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Xác nhận xóa</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <p>Bạn có chắc chắn muốn xóa đánh giá này không?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+            <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
   </div>
 </div>
 
@@ -133,8 +171,63 @@
   });
 </script>
 <%-- chỉnh sửa đánh gia--%>
+<script>
+  $(document).ready(function () {
+    // Khi nhấn "Chỉnh sửa"
+    $('.edit-review-btn').click(function () {
+      let reviewItem = $(this).closest('.review-item');
+
+      // Ẩn nội dung cũ, hiển thị ô chỉnh sửa
+      reviewItem.find('.comment-text').addClass('d-none');
+      reviewItem.find('.edit-comment').removeClass('d-none');
+
+      reviewItem.find('.rating-text').addClass('d-none');
+      reviewItem.find('.edit-rating').removeClass('d-none');
+
+      // Ẩn nút "Chỉnh sửa", hiện "Lưu" & "Hủy"
+      $(this).addClass('d-none');
+      reviewItem.find('.save-btn, .cancel-btn').removeClass('d-none');
+    });
+
+    // Khi nhấn "Hủy"
+    $('.cancel-btn').click(function () {
+      let reviewItem = $(this).closest('.review-item');
+
+      // Khôi phục nội dung cũ
+      reviewItem.find('.comment-text').removeClass('d-none');
+      reviewItem.find('.edit-comment').addClass('d-none');
+
+      reviewItem.find('.rating-text').removeClass('d-none');
+      reviewItem.find('.edit-rating').addClass('d-none');
+
+      // Hiện lại nút "Chỉnh sửa", ẩn "Lưu" & "Hủy"
+      reviewItem.find('.edit-review-btn').removeClass('d-none');
+      reviewItem.find('.save-btn, .cancel-btn').addClass('d-none');
+    });
+
+    // Khi nhấn "Lưu"
+    $('.save-btn').click(function () {
+      let reviewItem = $(this).closest('.review-item');
+      let reviewId = $(this).data('id');
+      let newComment = reviewItem.find('.edit-comment').val();
+      let newRating = reviewItem.find('.edit-rating').val();
+
+      $.ajax({
+        url: 'admin/reviews/update',
+        method: 'POST',
+        data: { reviewId, newComment, newRating },
+        success: function () {
+          alert('Cập nhật thành công!');
+          location.reload();
+        },
+        error: function () {
+          alert('Lỗi khi cập nhật đánh giá.');
+        }
+      });
+    });
+  });
+</script>
 
 
-  </body>
-
+</body>
 </html>

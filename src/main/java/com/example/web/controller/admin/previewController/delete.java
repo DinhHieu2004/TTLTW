@@ -11,25 +11,32 @@ import java.io.IOException;
 
 @WebServlet("/admin/reviews/delete")
 public class delete extends HttpServlet {
-    private PrivewService privewService = new PrivewService();
+    private final PrivewService privewService = new PrivewService();
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
         String rid = request.getParameter("rid");
-        int id = Integer.parseInt(rid);
+
         try {
-            boolean isDeleted = privewService.deleteReviewById(id);
+            int reviewId = Integer.parseInt(rid);
+            boolean isDeleted = privewService.deleteReviewById(reviewId);
+
             if (isDeleted) {
-                request.setAttribute("message", "Xóa đánh giá thành công!");
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.getWriter().write("{\"message\": \"Xóa đánh giá thành công!\"}");
             } else {
-                request.setAttribute("message", "Xóa  đánh giá thất bại!");
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"message\": \"Xóa đánh giá thất bại!\"}");
             }
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"message\": \"ID đánh giá không hợp lệ!\"}");
         } catch (Exception e) {
-            request.setAttribute("message", "Lỗi: " + e.getMessage());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"message\": \"Lỗi: " + e.getMessage() + "\"}");
         }
-        response.sendRedirect("../reviews");
-        //request.getRequestDispatcher("../artists.jsp").forward(request, response);
     }
-
-
 }

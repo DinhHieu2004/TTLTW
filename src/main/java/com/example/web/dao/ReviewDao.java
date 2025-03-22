@@ -88,14 +88,19 @@ public class ReviewDao {
 
         return null;
     }
-    public boolean delete(int reviewId) throws SQLException {
+    public boolean delete(int reviewId) {
         String sql = "DELETE FROM product_reviews WHERE id = ?";
+
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, reviewId);
             int affectedRows = ps.executeUpdate();
             return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
+
     public boolean update(int reviewId, int rating, String comment) throws SQLException {
         String sql = """
         UPDATE product_reviews 
