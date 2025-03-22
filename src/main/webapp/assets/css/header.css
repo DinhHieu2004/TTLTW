@@ -337,7 +337,20 @@ header{
     color: #666;
     margin-top: 5px;
 }
-
+.cart-badge {
+    position: absolute;
+    top: 0;
+    right: -10px;
+    transform: translateY(-70%);
+    background-color: red;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 3px 6px;
+    border-radius: 50%;
+    min-width: 18px;
+    text-align: center;
+}
 .cart-item-quantity {
     font-size: 12px;
     color: #666;

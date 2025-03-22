@@ -12,6 +12,7 @@ public class Cart implements Serializable {
     private Map<String, CartPainting> items;
     public  double totalPrice;
     public double afterPrice;
+    public int totalQuantity;
 
     public Cart() {
         items = new HashMap<>();
@@ -28,15 +29,33 @@ public class Cart implements Serializable {
     public void addToCart(CartPainting painting) {
         String key = painting.getProductId() + "_" + painting.getSizeId();
         if (items.containsKey(key)) {
+            getTotalQuantity();
+
             items.get(key).updateQuantityItem(painting.getQuantity());
         } else {
+            getTotalQuantity();
+
             items.put(key, painting);
         }
+    }
+
+    public void setItems(Map<String, CartPainting> items) {
+        this.items = items;
+    }
+
+    public void setTotalQuantity(int totalQuantity) {
+        this.totalQuantity = totalQuantity;
+    }
+
+    public int getTotalQuantity() {
+       return this.totalQuantity = items.values().stream()
+               .mapToInt(CartPainting::getQuantity).sum();
     }
 
     public void removeFromCart(String productId, String sizeId) {
         String key = productId + "_" + sizeId;
         items.remove(key);
+        getTotalQuantity();
         getTotalPrice();
 
     }
@@ -49,6 +68,7 @@ public class Cart implements Serializable {
         CartPainting painting = items.get(key);
         if (painting != null) {
             painting.updateQuantityItem(quantity);
+            getTotalQuantity();
             getTotalPrice();
             return true;
         }
@@ -88,6 +108,8 @@ public class Cart implements Serializable {
         return "Cart{" +
                 "items=" + items +
                 ", totalPrice=" + totalPrice +
+                ", totalQuantity=" + totalQuantity +
+
                 '}';
     }
 }

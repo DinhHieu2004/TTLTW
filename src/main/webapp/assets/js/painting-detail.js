@@ -59,7 +59,22 @@ $(document).ready(function () {
     function updateMiniCartHeader(items) {
         let miniCartHtml = '';
 
-        items.forEach(item => {
+        if (!items || Object.keys(items).length === 0) {
+            $('#mini-cart-items').html(`
+            <div class="alert alert-info text-center" role="alert">
+                Giỏ hàng của bạn đang trống.
+            </div>
+        `);
+            $('#mini-cart-count').text(0);
+            $('#cart-item-count').hide();
+            return;
+        }
+
+        let totalQuantity = 0;
+
+        Object.values(items).forEach(item => {
+            totalQuantity += item.quantity;
+
             const finalPrice = item.discountPrice ? item.discountPrice.toLocaleString() : item.totalPrice.toLocaleString();
             const discountBadge = item.discountPercent > 0 ? `<span class="badge bg-success ms-2">-${item.discountPercent}%</span>` : '';
 
@@ -81,8 +96,11 @@ $(document).ready(function () {
         });
 
         $('#mini-cart-items').html(miniCartHtml);
-        $('#mini-cart-count').text(items.length);
+        $('#mini-cart-count').text(Object.keys(items).length); // Số loại sản phẩm
+
+        $('#cart-item-count').text(totalQuantity).show();
     }
+
 
     window.incrementQuantity = function () {
         const input = $('#quantity');
