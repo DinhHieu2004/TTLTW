@@ -60,19 +60,23 @@ $(document).ready(function () {
         let miniCartHtml = '';
 
         items.forEach(item => {
-            const finalPrice = item.discountPrice ? item.discountPrice : item.totalPrice;
+            const finalPrice = item.discountPrice ? item.discountPrice.toLocaleString() : item.totalPrice.toLocaleString();
+            const discountBadge = item.discountPercent > 0 ? `<span class="badge bg-success ms-2">-${item.discountPercent}%</span>` : '';
 
             miniCartHtml += `
-        <div class="cart-item">
-            <img src="${item.imageUrl}" alt="${item.productName}" class="cart-item-image" />
-            <div class="cart-item-details">
-                <div class="cart-item-name-price">
-                    <span class="cart-item-name">${item.productName}</span>
-                    <span class="cart-item-price">${finalPrice} VNĐ</span>
+            <div class="cart-item" id="mini-cart-item-${item.productId}-${item.sizeId}">
+                <img src="${item.imageUrl}" alt="${item.productName}" class="cart-item-image" />
+                <div class="cart-item-details">
+                    <div class="cart-item-name-price">
+                        <span class="cart-item-name">${item.productName}</span>
+                        <span class="cart-item-price">${finalPrice} VNĐ ${discountBadge}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px; font-size: 14px;">
+                        <div class="cart-item-size">Size: ${item.sizeDescriptions}</div>
+                        <div class="cart-item-quantity">Số lượng: ${item.quantity}</div>
+                    </div>
                 </div>
-                <div class="cart-item-size">${item.sizeDescriptions}</div>
             </div>
-        </div>
         `;
         });
 
@@ -80,8 +84,7 @@ $(document).ready(function () {
         $('#mini-cart-count').text(items.length);
     }
 
-
-window.incrementQuantity = function () {
+    window.incrementQuantity = function () {
         const input = $('#quantity');
         const max = parseInt(input.attr('max')) || Infinity;
         const currentValue = parseInt(input.val());

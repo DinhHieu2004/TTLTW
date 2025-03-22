@@ -26,7 +26,6 @@ $(document).on('click', '.remove-item', function (e) {
                     $("#total-price").text(response.totalPrice.toLocaleString() + " VND");
                     $(`#cart-item-${productId}-${sizeId}`).remove();
 
-                    // Nếu giỏ hàng trống, hiển thị thông báo
                     if (!response.cart.items || response.cart.items.length === 0) {
                         $(".card-body").html(`
                             <div class="alert alert-info text-center" role="alert">

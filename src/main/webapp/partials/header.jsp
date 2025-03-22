@@ -73,32 +73,51 @@
 
                     <div class="cart-dropdown" id="mini-cart">
                         <div class="cart-header">Sản Phẩm Mới Thêm</div>
-                        <div class="cart-items" id="mini-cart-items">
-                        <c:forEach  items="${sessionScope.cart.items}" var="cp">
-                            <div class="cart-item">
-                                <img src="${cp.imageUrl}" alt="${cp.productName}" class="cart-item-image" />
-                                <div class="cart-item-details">
-                                    <div class="cart-item-name-price">
-                                        <span class="cart-item-name">${cp.productName}</span>
-                                        <span class="cart-item-price"><f:formatNumber value="${cp.discountPrice} " type="currency" currencySymbol="VNĐ"/></span>
-                                    </div>
-                                    <div class="cart-item-size">${cp.sizeDescriptions}</div>
-                                </div>
-                            </div>
 
+                        <div class="cart-items" id="mini-cart-items">
+                            <c:forEach items="${sessionScope.cart.items}" var="cp">
+                                <div class="cart-item" id="mini-cart-item-${cp.productId}-${cp.sizeId}">
+                                    <img src="${cp.imageUrl}" alt="${cp.productName}" class="cart-item-image" />
+
+                                    <div class="cart-item-details">
+                                        <div class="cart-item-name-price">
+                                            <span class="cart-item-name">${cp.productName}</span>
+                                            <span class="cart-item-price">
+                            <c:choose>
+                                <c:when test="${cp.discountPercent > 0}">
+                                    <f:formatNumber value="${cp.discountPrice}" type="currency" currencySymbol="VND"/>
+                                    <span class="badge bg-success ms-2">-${cp.discountPercent}%</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <f:formatNumber value="${cp.totalPrice}" type="currency" currencySymbol="VND"/>
+                                </c:otherwise>
+                            </c:choose>
+                        </span>
+                                        </div>
+
+                                        <div style="display: flex; align-items: center; gap: 10px; font-size: 14px;">
+                                            <div class="cart-item-size">Size: ${cp.sizeDescriptions}</div>
+                                            <div class="cart-item-quantity">Số lượng: ${cp.quantity}</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </c:forEach>
                         </div>
+
                         <div class="cart-footer">
+                            <div class="total-price">
+                                Tổng tiền: <span id="total-price">
+                <f:formatNumber value="${sessionScope.cart.totalPrice}" type="currency" currencySymbol="VND"/>
+            </span>
+                            </div>
 
                             <button class="btn btn-primary" onclick="window.location.href='show-cart'" style="background: #e7621b !important;">
                                 Xem Giỏ Hàng
                             </button>
-
                         </div>
                     </div>
 
                 </div>
-            </div>
             <c:choose>
                 <c:when test="${empty sessionScope.user}">
                     <button class="btn login-btn" data-bs-toggle="modal" data-bs-target="#authModal" style="background: #e7621b !important;">Đăng nhập</button>
