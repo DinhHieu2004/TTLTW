@@ -22,8 +22,6 @@ public class ShowCart extends HttpServlet {
         try {
             HttpSession session = req.getSession();
 
-            System.out.println(session.getAttribute("cart"));
-
             List<PaymentMethod> paymentMethods = paymentMethodService.getAllPaymentMethods();
             req.setAttribute("paymentMethods", paymentMethods);
         } catch (SQLException e) {

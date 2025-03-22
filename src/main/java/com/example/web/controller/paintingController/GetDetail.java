@@ -23,7 +23,6 @@ public class GetDetail extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String pid = req.getParameter("pid");
-        System.out.println("pid:"+ pid);
         int id = Integer.parseInt(pid);
         req.getSession().setAttribute("pid", id);
         try {
@@ -32,9 +31,8 @@ public class GetDetail extends HttpServlet {
             Painting painting = paintingService.getPaintingDetail(id);
             req.setAttribute("painting", painting);
             req.setAttribute("p", painting);
-            System.out.println(painting);
             if(painting == null){
-              //  req.setAttribute("message", "không tìm thấy sản phẩm");
+               //  req.setAttribute("message", "không tìm thấy sản phẩm");
                // req.getRequestDispatcher("user/painting-detail.jsp").forward(req, resp);
                 RequestDispatcher dispatcher = req.getRequestDispatcher("/404.jsp");
                 dispatcher.forward(req, resp);

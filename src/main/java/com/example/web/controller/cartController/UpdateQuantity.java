@@ -21,10 +21,6 @@ public class UpdateQuantity extends HttpServlet {
             Cart cart = (Cart) request.getSession().getAttribute("cart");
             boolean isUpdated = cart.upDateCartQuantity(productId, sizeId, newQuantity);
 
-            System.out.println(productId + " " + sizeId + " " + newQuantity);
-            System.out.println(isUpdated);
-
-
 
             if (isUpdated) {
                 response.setContentType("application/json");

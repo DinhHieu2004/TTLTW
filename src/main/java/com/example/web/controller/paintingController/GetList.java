@@ -1,5 +1,6 @@
 package com.example.web.controller.paintingController;
 
+import com.example.web.dao.cart.Cart;
 import com.example.web.dao.model.Artist;
 import com.example.web.dao.model.Painting;
 import com.example.web.dao.model.PaintingSize;
@@ -33,6 +34,9 @@ public class GetList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getServletPath();
+
+        Cart cart = (Cart) req.getSession().getAttribute("cart");
+        System.out.println("cart at get lisst"+ cart);
 
         if ("/artwork/suggestions".equals(path)) {
             try {
