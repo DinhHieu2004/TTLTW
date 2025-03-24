@@ -36,7 +36,8 @@ public class PrivewService {
         return reviewDao.delete(id);
 
     }
-    public boolean updateReview(int reviewId, int userId, int paintingId, int rating, String comment) throws SQLException {
-        return reviewDao.update(reviewId, userId, paintingId,rating, comment);
+    public boolean updateReview(int reviewId, int rating, String comment) throws SQLException {
+        return reviewDao.update(reviewId, rating, comment);
     }
+
 }

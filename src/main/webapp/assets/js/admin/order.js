@@ -91,7 +91,7 @@ $(document).ready(function () {
                 }
                 details.forEach(product => {
 
-                    const fullPhotoUrl = `${window.location.origin}/${contextPath}/assets/images/artists/${product.img}`;
+                    const fullPhotoUrl = `${contextPath}/assets/images/artists/${product.img}`;
 
                     const row = `
                             <tr>

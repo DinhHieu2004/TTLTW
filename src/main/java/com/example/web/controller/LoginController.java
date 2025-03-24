@@ -48,6 +48,7 @@ public class LoginController extends HttpServlet {
             if (user != null) {
                 user.setPassword(null);
                 session.setAttribute("user", user);
+                session.setAttribute("userId", user.getId());
                 session.setAttribute("loginAttempts", 0);
                 System.out.println(user);
                 responseMap.put("loginSuccess", "True");
