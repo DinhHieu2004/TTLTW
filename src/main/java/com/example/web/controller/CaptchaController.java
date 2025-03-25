@@ -17,7 +17,7 @@ import java.util.Random;
 public class CaptchaController extends HttpServlet {
 
     private static final int WIDTH = 160;
-    private static final int HEIGHT = 30;
+    private static final int HEIGHT = 40;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -29,8 +29,9 @@ public class CaptchaController extends HttpServlet {
 
         Random random = new Random();
 
-        g.setColor(Color.BLACK);
-        for (int i = 0; i < 10; i++) {
+        // Vẽ đường nhiễu
+        g.setColor(Color.GRAY);
+        for (int i = 0; i < 15; i++) {
             int x1 = random.nextInt(WIDTH);
             int y1 = random.nextInt(HEIGHT);
             int x2 = random.nextInt(WIDTH);
@@ -41,20 +42,27 @@ public class CaptchaController extends HttpServlet {
         String captchaText = generateCaptchaText(6);
         HttpSession session = request.getSession();
         session.setAttribute("captcha", captchaText);
+        session.setAttribute("captchaCreationTime", System.currentTimeMillis());
 
-        g.setColor(Color.BLACK);
-        g.setFont(new Font("Arial", Font.BOLD, 24));
-        int x = 40;
-        int y = 23;
-        g.drawString(captchaText, x, y);
+        g.setFont(new Font("Arial", Font.BOLD, 28));
+        FontMetrics fontMetrics = g.getFontMetrics();
 
-        g.setColor(Color.BLACK);
-        for (int i = 0; i < 5; i++) {
-            int x1 = random.nextInt(WIDTH);
-            int y1 = random.nextInt(HEIGHT);
-            int x2 = random.nextInt(WIDTH);
-            int y2 = random.nextInt(HEIGHT);
-            g.drawLine(x1, y1, x2, y2);
+        int x = 10;
+        for (int i = 0; i < captchaText.length(); i++) {
+            g.setColor(new Color(random.nextInt(150), random.nextInt(150), random.nextInt(150)));
+
+            char c = captchaText.charAt(i);
+            int charWidth = fontMetrics.charWidth(c);
+            int y = 30 + random.nextInt(5);
+
+            g.drawString(String.valueOf(c), x, y);
+            x += charWidth + 5;
+        }
+
+        for (int i = 0; i < 100; i++) {
+            int px = random.nextInt(WIDTH);
+            int py = random.nextInt(HEIGHT);
+            g.drawRect(px, py, 1, 1);
         }
 
         g.dispose();

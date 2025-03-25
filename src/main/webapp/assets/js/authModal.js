@@ -319,6 +319,24 @@ function handleCredentialResponse(response) {
         }
     });
 }
+
+window.fbAsyncInit = function() {
+    FB.init({
+        appId      : '3696159017340978',
+        xfbml      : true,
+        version    : 'v22.0'
+    });
+    FB.AppEvents.logPageView();
+};
+
+(function(d, s, id){
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {return;}
+    js = d.createElement(s); js.id = id;
+    js.src = "https://connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+
 document.getElementById('custom-facebook-btn').addEventListener('click', function() {
     FB.login(function(response) {
         if (response.authResponse) {
@@ -329,11 +347,10 @@ document.getElementById('custom-facebook-btn').addEventListener('click', functio
                 url: "login_fb",
                 data: { accessToken: accessToken },
                 success: function(data) {
-                    const result = JSON.parse(data);
-                    if (result.success) {
+                    if (data.success) {
                         location.reload();
                     } else {
-                        alert(result.message || "Đăng nhập bằng Facebook thất bại.");
+                        alert(data.message || "Đăng nhập bằng Facebook thất bại.");
                     }
                 },
                 error: function(xhr) {
@@ -343,7 +360,7 @@ document.getElementById('custom-facebook-btn').addEventListener('click', functio
         } else {
             alert("Người dùng từ chối đăng nhập bằng Facebook.");
         }
-    }, {scope: 'public_profile,email'});
+    }, {scope: 'public_profile,email', display: 'popup'});
 });
 
 

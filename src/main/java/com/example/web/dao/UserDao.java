@@ -342,13 +342,47 @@ public class UserDao {
         }
         return null;
     }
+    public boolean createUserByFB(String fbId, String name, String email, String role) throws SQLException {
+        User existingUser = findFBUserById(fbId);
+        if (existingUser != null) {
+            return false;
+        }
+        String sql = "INSERT INTO users (fullName, email, fb_id, role) VALUES (?, ?, ?, ?)";
+
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, name);
+        ps.setString(2, email);
+        ps.setString(3, fbId);
+        ps.setString(4, role);
+
+
+        return ps.executeUpdate() > 0;
+    }
+    public User findFBUserById(String fbId) throws SQLException {
+        String sql = "SELECT * FROM users WHERE fb_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, fbId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new User(
+                            rs.getInt("id"),
+                            rs.getString("fb_id"),
+                            rs.getString("fullName"),
+                            rs.getString("email"),
+                            User.Role.valueOf(rs.getString("role"))
+                    );
+                }
+            }
+        }
+        return null;
+    }
 
     public static void main(String[] args) {
         UserDao userDao = new UserDao();
         String testEmail = ""; // Địa chỉ email bạn muốn kiểm tra
 
         try {
-            // Gọi phương thức passwordRecovery để kiểm tra
             boolean isEmailSent = userDao.passwordRecovery(testEmail);
 
             if (isEmailSent) {
@@ -360,5 +394,7 @@ public class UserDao {
             System.out.println("Lỗi khi thực hiện yêu cầu phục hồi mật khẩu: " + e.getMessage());
         }
     }
+
+
 
 }

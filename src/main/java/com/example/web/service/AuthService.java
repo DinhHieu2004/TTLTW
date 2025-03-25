@@ -54,11 +54,15 @@ public class AuthService {
         return null;
     }
 
-    public User findFacebookUserById(String fbId) {
+    public User findFacebookUserById(String fbId) throws SQLException {
+        User u =  udao.findFBUserById(fbId);
+        if(u != null){
+            return u;
+        }
         return null;
     }
 
-    public boolean createUserByFacebook(String fbId, String name, String email) {
-        return false;
+    public boolean createUserByFacebook(String fbId, String name, String email) throws SQLException {
+        return udao.createUserByFB(fbId, name, email, "user");
     }
 }
