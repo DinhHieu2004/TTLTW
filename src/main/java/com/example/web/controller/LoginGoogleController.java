@@ -25,8 +25,17 @@ public class LoginGoogleController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
         String idTokenString = request.getParameter("credential");
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(false);
 
+        if (session != null && session.getAttribute("user") != null) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"success\": false, \"message\": \"Bạn đã đăng nhập rồi.\"}");
+            return;
+        }
+        if (session == null) {
+            session = request.getSession(true);
+        }
 //        String sessionToken = (String) session.getAttribute("CSRF_TOKEN");
 //        String requestToken = request.getParameter("csrfToken");
 //
@@ -35,6 +44,7 @@ public class LoginGoogleController extends HttpServlet {
 //            response.getWriter().write("{\"success\": false, \"message\": \"Lỗi bảo mật: CSRF Token không hợp lệ.\"}");
 //            return;
 //        }else
+
         if (idTokenString == null || idTokenString.trim().isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("{\"success\": false, \"message\": \"Token không hợp lệ.\"}");
