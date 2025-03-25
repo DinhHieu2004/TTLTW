@@ -139,7 +139,7 @@
                                     <td>${status.index + 1}</td>
                                     <td><img src="${cp.imageUrl}" alt="${cp.productName}" width="50"></td>
                                     <td>${cp.productName}</td>
-                                    <td><span class="mx-2 quantityp">${cp.quantity}</span></td>
+                                    <td><span class="mx-2 quantity">${cp.quantity}</span></td>
                                     <td><f:formatNumber value="${cp.totalPrice}" type="currency" currencySymbol="VNĐ"/></td>
                                 </tr>
                             </c:forEach>

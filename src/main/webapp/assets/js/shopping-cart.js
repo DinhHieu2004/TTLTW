@@ -20,17 +20,9 @@ $(document).on('click', '.remove-item', function (e) {
                 $("#totalAmount").text(response.cart.totalPrice.toLocaleString() + " VND");
                 $("#total-price").text(response.cart.totalPrice.toLocaleString() + " VND");
                 $(`#cart-item-${productId}-${sizeId}`).remove();
+                $(`#mini-cart-item-${productId}-${sizeId}`).remove();
 
-                // Kiểm tra nếu giỏ hàng trống
-                if (!response.cart.items || Object.keys(response.cart.items).length === 0) {
-                    $(".card-body").html(`
-                        <div class="alert alert-info text-center" role="alert">
-                            Giỏ hàng của bạn đang trống.
-                        </div>
-                    `);
-                }
 
-                // Cập nhật mini cart
                 updateMiniCartHeader(response.cart.items);
             } else {
                 alert(response.message || "Đã xảy ra lỗi khi xóa sản phẩm khỏi giỏ hàng.");
@@ -57,7 +49,6 @@ $(document).on('click', '.remove-item', function (e) {
             return;
         }
 
-        // Chuyển object thành array để sử dụng forEach
         let itemArray = Object.values(items);
 
         itemArray.forEach(item => {
@@ -77,6 +68,13 @@ $(document).on('click', '.remove-item', function (e) {
                         <div class="cart-item-quantity">Số lượng: ${item.quantity}</div>
                     </div>
                 </div>
+                
+                <button class="remove-item"
+                                            data-product-id="${cp.productId}"
+                                            data-size-id="${cp.sizeId}"
+                                            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none; cursor: pointer; font-size: 16px; color: #ff0000;">
+                                        X
+                                    </button>
             </div>
         `;
         });

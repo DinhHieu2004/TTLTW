@@ -89,6 +89,13 @@ $(document).on('click', '.increase-quantity, .decrease-quantity', function (e) {
                     <div class="cart-item-quantity">số lượng: ${item.quantity}</div>
                 </div>
                    </div>
+                   
+                   <button class="remove-item"
+                                            data-product-id="${cp.productId}"
+                                            data-size-id="${cp.sizeId}"
+                                            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none; cursor: pointer; font-size: 16px; color: #ff0000;">
+                                        X
+                                    </button>
         </div>
         `;
         });

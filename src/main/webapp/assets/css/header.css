@@ -312,6 +312,14 @@ header{
     width: 80px;
     height: 80px;
 }
+.cart-item {
+    position: relative; /* Để nút X định vị tuyệt đối bên trong */
+    padding-right: 30px; /* Tạo khoảng trống cho nút X */
+}
+
+.remove-item:hover {
+    color: #cc0000; /* Đổi màu khi hover */
+}
 
 .cart-item-details {
     display: flex;
