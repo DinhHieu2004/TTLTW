@@ -331,6 +331,8 @@
 </body>
 <script src="${pageContext.request.contextPath}/assets/js/checkout.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/applyVoucher.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/location.js"></script>
+
 
 
 </html>

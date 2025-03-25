@@ -86,7 +86,7 @@ $(document).ready(function () {
                             </div>
                         `);
                     }
-                    updateMiniCartHeader(Object.values(response.cart.items)); // Cập nhật giỏ mini
+                    updateMiniCartHeader(Object.values(response.cart.items));
                 } else {
                     alert(response.message || "Đã xảy ra lỗi khi xóa sản phẩm khỏi giỏ hàng.");
                 }
