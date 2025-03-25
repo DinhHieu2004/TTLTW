@@ -269,7 +269,6 @@
     });
   });
 </script>
-
 <script src="${pageContext.request.contextPath}/assets/js/admin/order.js"></script>
 </body>
 </html>
