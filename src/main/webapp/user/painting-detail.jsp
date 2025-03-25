@@ -181,6 +181,8 @@
 
 </script>
 <script src="${pageContext.request.contextPath}/assets/js/header.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/painting-detail.js"></script>
+
 
 </body>
 </html>

@@ -4,6 +4,9 @@ package com.example.web.service;
 import com.example.web.dao.LogDao;
 import com.example.web.dao.model.Level;
 import com.example.web.dao.model.Log;
+import com.example.web.dao.model.User;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -17,21 +20,29 @@ public class LogService {
         return logDao.getAllLog();
     }
 
-    public boolean addLog(String level , String logWhere, String resource, String who, String preData, String flowData) throws SQLException {
+    public boolean addLog(String level, HttpServletRequest request,String preData, String flowData) throws SQLException {
         try {
             Level logLevel = Level.valueOf(level.toUpperCase());
 
-            if (who == null || who.isBlank()) {
-                who = "anonymous";
+            HttpSession session = request.getSession();
+            User user = (User) session.getAttribute("user");
+            String who = (user != null && user.getUsername() != null) ? user.getUsername() : "anonymous";
+
+            String logWhere = (String)session.getAttribute("fullAddress");
+
+            String resource = request.getRequestURI();
+
+            if (preData == null || preData.isBlank()) {
+                preData = "Không xác định";
             }
 
             Log log = new Log();
             log.setLevel(logLevel);
-            log.setLogTime( LocalDateTime.now());
-            log.setLogWhere(logWhere != null ? logWhere : "");
-            log.setResource(resource != null ? resource : "");
+            log.setLogTime(LocalDateTime.now());
+            log.setLogWhere(logWhere);
+            log.setResource(resource);
             log.setWho(who);
-            log.setPreData(preData != null ? preData : "");
+            log.setPreData(preData);
             log.setFlowData(flowData != null ? flowData : "");
 
             return logDao.addLog(log);
@@ -40,6 +51,7 @@ public class LogService {
             return false;
         }
     }
+
     public boolean deleteLog(int id) throws SQLException {
         return logDao.deleteLog(id);
     }

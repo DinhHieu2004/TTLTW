@@ -21,3 +21,4 @@
 
 
 </div>
+<script src="${pageContext.request.contextPath}/assets/js/location.js"></script>
