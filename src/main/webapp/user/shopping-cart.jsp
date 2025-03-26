@@ -139,7 +139,7 @@
                                     <td>${status.index + 1}</td>
                                     <td><img src="${cp.imageUrl}" alt="${cp.productName}" width="50"></td>
                                     <td>${cp.productName}</td>
-                                    <td><span class="mx-2 quantityp">${cp.quantity}</span></td>
+                                    <td><span class="mx-2 quantity">${cp.quantity}</span></td>
                                     <td><f:formatNumber value="${cp.totalPrice}" type="currency" currencySymbol="VNĐ"/></td>
                                 </tr>
                             </c:forEach>
@@ -168,8 +168,8 @@
 
 <%@ include file="/partials/footer.jsp" %>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
- <script src="${pageContext.request.contextPath}/assets/js/RemoveCartItem.js"></script>
- <script src="${pageContext.request.contextPath}/assets/js/UpdateQuantity.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/shopping-cart.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/UpdateQuantity.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/checkout.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/header.js"></script>
 
@@ -184,6 +184,6 @@
             window.location.href = "checkout";
         }
 
-});</script>
+    });</script>
 </body>
 </html>

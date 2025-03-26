@@ -1,8 +1,11 @@
 package com.example.web.controller.cartController;
 import com.example.web.dao.cart.Cart;
 import com.example.web.dao.cart.CartPainting;
+import com.example.web.dao.model.Level;
 import com.example.web.dao.model.Painting;
 import com.example.web.dao.model.PaintingSize;
+import com.example.web.dao.model.User;
+import com.example.web.service.LogService;
 import com.example.web.service.PaintingService;
 import com.example.web.service.SizeService;
 import com.google.gson.Gson;
@@ -20,6 +23,7 @@ import java.sql.SQLException;
 public class AddItemCartController extends HttpServlet {
     PaintingService paintingService = new PaintingService();
     SizeService sizeService = new SizeService();
+    LogService logService = new LogService();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -31,9 +35,7 @@ public class AddItemCartController extends HttpServlet {
             String size = req.getParameter("size");
             int quantityOfSize = Integer.parseInt(req.getParameter("quantity_" + size));
 
-            System.out.println(size);
             int quantity = Integer.parseInt(req.getParameter("quantity"));
-            System.out.println("so luong" + quantityOfSize);
 
             PaintingSize paintingSize = sizeService.getSizeById(Integer.parseInt(size));
             String sizeDescriptions = paintingSize.getSizeDescriptions();
@@ -58,6 +60,14 @@ public class AddItemCartController extends HttpServlet {
             cart.addToCart(cartPainting);
             session.setAttribute("cart", cart);
 
+            User user = (User) req.getSession().getAttribute("user");
+            String fullAddress = req.getSession().getAttribute("fullAddress").toString();
+
+            if (user != null) {
+                logService.addLog(String.valueOf(Level.INFO), req, null, null);
+            } else {
+                logService.addLog(String.valueOf(Level.INFO), req,  null, null);
+            }
             String requestedWith = req.getHeader("X-Requested-With");
             if ("XMLHttpRequest".equals(requestedWith)) {
                 resp.setContentType("application/json");

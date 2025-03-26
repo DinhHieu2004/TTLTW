@@ -36,7 +36,6 @@ public class GetListByOrder extends HttpServlet {
                     return;
                 }
 
-                System.out.println(orderItems + "lần");
 
                 Gson gson = new Gson();
                 String json = gson.toJson(orderItems);

@@ -312,6 +312,14 @@ header{
     width: 80px;
     height: 80px;
 }
+.cart-item {
+    position: relative; /* Để nút X định vị tuyệt đối bên trong */
+    padding-right: 30px; /* Tạo khoảng trống cho nút X */
+}
+
+.remove-item:hover {
+    color: #cc0000; /* Đổi màu khi hover */
+}
 
 .cart-item-details {
     display: flex;
@@ -333,6 +341,25 @@ header{
 }
 
 .cart-item-size {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+}
+.cart-badge {
+    position: absolute;
+    top: 0;
+    right: -10px;
+    transform: translateY(-70%);
+    background-color: red;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 3px 6px;
+    border-radius: 50%;
+    min-width: 18px;
+    text-align: center;
+}
+.cart-item-quantity {
     font-size: 12px;
     color: #666;
     margin-top: 5px;

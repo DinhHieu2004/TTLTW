@@ -27,9 +27,6 @@ public class RemoveItem extends HttpServlet {
             cart.removeFromCart(productId, sizeId);
             session.setAttribute("cart", cart);
         }
-        System.out.println("productId: " + productId + ", sizeId: " + sizeId);
-        System.out.println("Cart: " + cart);
-
 
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
