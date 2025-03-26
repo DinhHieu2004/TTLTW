@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 @WebServlet("/admin/reviews/detail")
 public class GetDetail extends HttpServlet {
-    private PrivewService privewService = new PrivewService();
+    private final PrivewService privewService = new PrivewService();
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         int id = Integer.parseInt( req.getParameter("rid"));
 

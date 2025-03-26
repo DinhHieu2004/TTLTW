@@ -1,6 +1,9 @@
 package com.example.web.controller.previewController;
 
 
+import com.example.web.dao.model.Level;
+import com.example.web.dao.model.User;
+import com.example.web.service.LogService;
 import com.example.web.service.PrivewService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,6 +17,7 @@ import java.io.PrintWriter;
 @WebServlet("/admin/review_admin/delete")
 public class Delete extends HttpServlet {
     private final PrivewService privewService = new PrivewService();
+    private final LogService logService = new LogService();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -28,6 +32,13 @@ public class Delete extends HttpServlet {
             boolean isDeleted = privewService.deleteReviewById(reviewId);
 
             if (isDeleted) {
+                User user = (User) request.getSession().getAttribute("user");
+
+                if (user != null) {
+                    logService.addLog(String.valueOf(Level.DANGER), request, null, null);
+                } else {
+                    logService.addLog(String.valueOf(Level.DANGER), request,  null, null);
+                }
                 response.setStatus(HttpServletResponse.SC_OK);
                 out.print("{\"status\": \"success\", \"message\": \"Xóa đánh giá thành công\"}");
             } else {

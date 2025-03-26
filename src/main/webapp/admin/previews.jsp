@@ -86,7 +86,7 @@
         </thead>
         <tbody>
         <c:forEach var="p" items="${p}">
-        <tr>
+        <tr data-review-id="${p.id}">
           <td>${p.id}</td>
           <td>${p.paintingTitle}</td>
           <td>${p.paintingId}</td>
@@ -131,7 +131,7 @@
   </div>
 
 
-  <!--  view and edit -->
+  <!--  view and edit review -->
   <div class="modal fade" id="viewEditReviewModal" tabindex="-1" aria-labelledby="reviewDetailModalLabel"
        aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -141,7 +141,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form id="userDetailForm" action="${pageContext.request.contextPath}/reviews/update" method="post">
+          <form id="userDetailForm">
             <div class="row mb-3">
               <input type="hidden" id="editReviewId" name="id" value="">
               <div class="col-md-6">
@@ -211,14 +211,12 @@
 
     let reviewIdToDelete = null;
 
-    // Khi nhấn nút "Xóa", lấy ID của review và mở modal
     $(document).on('click', '.delete-review-btn', function () {
       reviewIdToDelete = $(this).data('review-id');
       $('#reviewIdToDelete').val(reviewIdToDelete);
       $('#deleteReviewModal').modal('show');
     });
 
-    // Khi xác nhận xóa
     $('#confirmDeleteBtn').on('click', function () {
       if (!reviewIdToDelete) return;
 
@@ -230,9 +228,9 @@
         success: function (response) {
           if (response.status === 'success') {
             var $row = $('[data-review-id="' + reviewIdToDelete + '"]').closest('tr');
-            table.row($row).remove().draw(false); // Xóa khỏi DataTable mà không reset trang
+            table.row($row).remove().draw(false);
 
-            $('#deleteReviewModal').modal('hide'); // Ẩn modal sau khi xóa
+            $('#deleteReviewModal').modal('hide');
           } else {
             console.log(this.error)
             alert('Xóa đánh giá thất bại.');
@@ -244,7 +242,72 @@
       });
     });
   });
+</script>
+<%-- chỉnh sửa đánh giá--%>
+<script>
+  $(document).ready(function () {
+    $('#viewEditReviewModal').on('show.bs.modal', function (event) {
+      const button = $(event.relatedTarget);
+      const reviewId = button.data('review-id');
 
+      $.ajax({
+        url: 'reviews/detail',
+        type: 'GET',
+        data: { rid: reviewId },
+        dataType: 'json',
+        success: function (response) {
+          if (response) {
+            $('#editReviewId').val(response.id);
+            $('#pName').val(response.paintingTitle);
+            $('#uName').val(response.userName);
+            $('#rating').val(response.rating);
+            $('#content').val(response.comment);
+          } else {
+            alert('Không tìm thấy đánh giá.');
+          }
+        },
+        error: function () {
+          alert('Lỗi khi tải dữ liệu đánh giá.');
+        }
+      });
+    });
+
+    $('#userDetailForm').submit(function (event) {
+      event.preventDefault();
+
+
+      $.ajax({
+        url: 'review_admin/update',
+        type: 'POST',
+        data: JSON.stringify({
+          id: $('#editReviewId').val(),
+          rating: $('#rating').val(),
+          comment: $('#content').val()
+        }),
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function (response) {
+          if (response.success) {
+            $('#viewEditReviewModal').modal('hide');
+
+            const newRating = $('#rating').val();
+            const newComment = $('#content').val();
+
+            const $row = $(`tr[data-review-id="${reviewId}"]`);
+
+            $row.find('td:eq(5)').text(newRating);
+            $row.find('td:eq(6)').text(newComment);
+          } else {
+            console.log(this.error)
+            alert('Cập nhật thất bại.');
+          }
+        },
+        error: function () {
+          alert('Lỗi khi cập nhật đánh giá.');
+        }
+      });
+    });
+  });
 </script>
 </body>
 </html>
