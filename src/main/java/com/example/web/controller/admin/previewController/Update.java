@@ -1,6 +1,9 @@
 package com.example.web.controller.admin.previewController;
 
+import com.example.web.dao.model.Level;
 import com.example.web.dao.model.ProductReview;
+import com.example.web.dao.model.User;
+import com.example.web.service.LogService;
 import com.example.web.service.PrivewService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -16,6 +19,7 @@ import java.sql.SQLException;
 @WebServlet("/admin/reviews/update")
 public class Update extends HttpServlet {
     private final PrivewService privewService = new PrivewService();
+    private final LogService logService = new LogService();
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         Integer userId = (Integer) session.getAttribute("userId");
@@ -39,6 +43,13 @@ public class Update extends HttpServlet {
                 return;
             }
             success = privewService.updateReview(reviewId,newRating ,newComment);
+            User user = (User) request.getSession().getAttribute("user");
+
+            if (user != null) {
+                logService.addLog(String.valueOf(Level.INFO), request, null, null);
+            } else {
+                logService.addLog(String.valueOf(Level.INFO), request,  null, null);
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

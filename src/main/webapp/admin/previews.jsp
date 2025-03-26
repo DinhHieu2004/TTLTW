@@ -11,6 +11,7 @@
   <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <!-- DataTables Buttons CSS -->
   <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
   <!-- DataTables Buttons JavaScript -->
@@ -117,7 +118,7 @@
           <h5 class="modal-title" id="deleteReviewModalLabel">Xác nhận xóa</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form action="${pageContext.request.contextPath}/admin/reviews/delete" method="POST">
+        <form action="${pageContext.request.contextPath}/reviews/delete" method="POST">
           <div class="modal-body">
             <p>Bạn có chắc chắn muốn xóa người dùng này?</p>
             <input type="hidden" id="reviewIdToDelete" name="rid">
@@ -197,7 +198,7 @@
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
   $(document).ready(function () {
     $('#reviews').DataTable({

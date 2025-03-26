@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-//@WebServlet("/admin/reviews/delete")
+@WebServlet("/reviews/delete")
 public class delete extends HttpServlet {
     private PrivewService privewService = new PrivewService();
     @Override
@@ -29,7 +29,7 @@ public class delete extends HttpServlet {
         } catch (Exception e) {
             request.setAttribute("message", "Lỗi: " + e.getMessage());
         }
-        response.sendRedirect("../reviews");
+        response.sendRedirect("../admin/previews");
         //request.getRequestDispatcher("../artists.jsp").forward(request, response);
     }
 

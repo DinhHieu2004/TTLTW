@@ -61,10 +61,10 @@ public class AddItemCartController extends HttpServlet {
             session.setAttribute("cart", cart);
 
             User user = (User) req.getSession().getAttribute("user");
-            String fullAddress = req.getSession().getAttribute("fullAddress").toString();
+ //           String fullAddress = req.getSession().getAttribute("fullAddress").toString();
 
             if (user != null) {
-                logService.addLog(String.valueOf(Level.INFO), req, null, null);
+               logService.addLog(String.valueOf(Level.INFO), req, null, null);
             } else {
                 logService.addLog(String.valueOf(Level.INFO), req,  null, null);
             }
