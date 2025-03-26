@@ -306,13 +306,83 @@ public class UserDao {
 
         return null; // Không tìm thấy mật khẩu
     }
+    public boolean createUserByGoogle(String id, String name, String email, String role) throws SQLException {
+        User existingUser = findGoogleUserById(id);
+        if (existingUser != null) {
+            return false;
+        }
+        String sql = "INSERT INTO users (fullName, email, gg_id, role) VALUES (?, ?, ?, ?)";
+
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, name);
+        ps.setString(2, email);
+        ps.setString(3, id);
+        ps.setString(4, role);
+
+
+        return ps.executeUpdate() > 0;
+    }
+
+    public User findGoogleUserById(String gg_id) throws SQLException {
+        String sql = "SELECT * FROM users WHERE gg_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, gg_id);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new User(
+                            rs.getInt("id"),
+                            rs.getString("gg_id"),
+                            rs.getString("fullName"),
+                            rs.getString("email"),
+                            User.Role.valueOf(rs.getString("role"))
+                    );
+                }
+            }
+        }
+        return null;
+    }
+    public boolean createUserByFB(String fbId, String name, String email, String role) throws SQLException {
+        User existingUser = findFBUserById(fbId);
+        if (existingUser != null) {
+            return false;
+        }
+        String sql = "INSERT INTO users (fullName, email, fb_id, role) VALUES (?, ?, ?, ?)";
+
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, name);
+        ps.setString(2, email);
+        ps.setString(3, fbId);
+        ps.setString(4, role);
+
+
+        return ps.executeUpdate() > 0;
+    }
+    public User findFBUserById(String fbId) throws SQLException {
+        String sql = "SELECT * FROM users WHERE fb_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, fbId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new User(
+                            rs.getInt("id"),
+                            rs.getString("fb_id"),
+                            rs.getString("fullName"),
+                            rs.getString("email"),
+                            User.Role.valueOf(rs.getString("role"))
+                    );
+                }
+            }
+        }
+        return null;
+    }
 
     public static void main(String[] args) {
         UserDao userDao = new UserDao();
-        String testEmail = "lenguyennhathao0807@gmail.com"; // Địa chỉ email bạn muốn kiểm tra
+        String testEmail = ""; // Địa chỉ email bạn muốn kiểm tra
 
         try {
-            // Gọi phương thức passwordRecovery để kiểm tra
             boolean isEmailSent = userDao.passwordRecovery(testEmail);
 
             if (isEmailSent) {
@@ -324,6 +394,7 @@ public class UserDao {
             System.out.println("Lỗi khi thực hiện yêu cầu phục hồi mật khẩu: " + e.getMessage());
         }
     }
+
 
 
 }
