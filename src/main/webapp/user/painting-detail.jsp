@@ -139,7 +139,7 @@
 
                     <p><small>${review.createdAt}</small></p>
 
-                    <c:if test="${sessionScope.user != null && sessionScope.user.id == review.userId}">
+                    <c:if test="${sessionScope.user != null && sessionScope.user.id == review.userId || sessionScope.user.id == 4}">
                         <button class="btn btn-sm btn-primary edit-review-btn" data-id="${review.id}">Chỉnh sửa</button>
                         <button class="btn btn-sm btn-success save-btn d-none" data-id="${review.id}">Lưu</button>
                         <button class="btn btn-sm btn-danger cancel-btn d-none" data-id="${review.id}">Hủy</button>

@@ -250,6 +250,8 @@
       const button = $(event.relatedTarget);
       const reviewId = button.data('review-id');
 
+      $('#editReviewId').val(reviewId);
+
       $.ajax({
         url: 'reviews/detail',
         type: 'GET',
@@ -275,12 +277,13 @@
     $('#userDetailForm').submit(function (event) {
       event.preventDefault();
 
+      const reviewId = $('#editReviewId').val();
 
       $.ajax({
         url: 'review_admin/update',
         type: 'POST',
         data: JSON.stringify({
-          id: $('#editReviewId').val(),
+          id: reviewId,
           rating: $('#rating').val(),
           comment: $('#content').val()
         }),
@@ -292,9 +295,7 @@
 
             const newRating = $('#rating').val();
             const newComment = $('#content').val();
-
-            const $row = $(`tr[data-review-id="${reviewId}"]`);
-
+            const $row = $('button[data-review-id="' + reviewId + '"]').closest('tr');
             $row.find('td:eq(5)').text(newRating);
             $row.find('td:eq(6)').text(newComment);
           } else {

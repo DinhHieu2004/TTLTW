@@ -1,5 +1,4 @@
 package com.example.web.controller.admin.previewController;
-
 import com.example.web.dao.model.Level;
 import com.example.web.dao.model.ProductReview;
 import com.example.web.dao.model.User;
@@ -11,7 +10,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -37,7 +35,7 @@ public class Update extends HttpServlet {
         boolean success = false;
         try {
             ProductReview review = privewService.getReviewById(reviewId);
-            if (review == null || review.getUserId() != userId) {
+            if (review == null || review.getUserId() != userId && userId != 4) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 response.getWriter().print("{\"status\": \"error\", \"message\": \"Bạn không có quyền chỉnh sửa đánh giá này!\"}");
                 return;
@@ -46,9 +44,9 @@ public class Update extends HttpServlet {
             User user = (User) request.getSession().getAttribute("user");
 
             if (user != null) {
-                logService.addLog(String.valueOf(Level.INFO), request, null, null);
+                logService.addLog(String.valueOf(Level.WARNING), request, null, null);
             } else {
-                logService.addLog(String.valueOf(Level.INFO), request,  null, null);
+                logService.addLog(String.valueOf(Level.WARNING), request,  null, null);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
