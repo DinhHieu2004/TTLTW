@@ -77,8 +77,7 @@ $(document).ready(function () {
                 modalInfo.html('<p>Có lỗi khi tải thông tin đơn hàng</p>');
             }
         });
-
-        const contextPath = '/web_war';
+        const contextPath = window.location.pathname.split('/')[1];
         $.ajax({
             url: `../order/order-items?orderId=${orderId}`,
             method: 'GET',
@@ -92,7 +91,7 @@ $(document).ready(function () {
                 }
                 details.forEach(product => {
 
-                    const fullPhotoUrl = `${window.location.origin}${contextPath}/${product.img}`;
+                    const fullPhotoUrl = `${contextPath}/assets/images/artists/${product.img}`;
 
                     const row = `
                             <tr>

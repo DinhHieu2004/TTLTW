@@ -36,7 +36,7 @@ function searchArtwork(keyword) {
     let params = keyword ? "keyword=" + encodeURIComponent(keyword) : $("#filterForm").serialize();
 
     $.ajax({
-        url: '/web_war/artwork',
+        url: '/TTLTW_war/artwork',
         type: "GET",
         data: params,
         headers: { "X-Requested-With": "XMLHttpRequest" },
@@ -81,7 +81,7 @@ function updateArtworkGallery(data) {
     data.forEach(function(p) {
         let discountPrice = p.discountPercentage > 0 ? (p.price * (1 - p.discountPercentage / 100)).toLocaleString('vi-VN') : null;
         let price = p.price.toLocaleString('vi-VN');
-        const contextPath = '/web_war';
+        const contextPath = '/TTLTW_war';
         const fullPhotoUrl = `${window.location.origin}${contextPath}/${p.imageUrl}`;
         let cardHtml = `
                     <div class="col-6 col-md-3">

@@ -88,31 +88,38 @@ public class ReviewDao {
 
         return null;
     }
-    public boolean delete(int reviewId) throws SQLException {
+    public boolean delete(int reviewId) {
         String sql = "DELETE FROM product_reviews WHERE id = ?";
+
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, reviewId);
             int affectedRows = ps.executeUpdate();
             return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
-    public boolean update(int reviewId, int userId, int paintingId, int rating, String comment) throws SQLException {
+
+    public boolean update(int reviewId, int rating, String comment) throws SQLException {
         String sql = """
         UPDATE product_reviews 
-        SET userId = ?, paintingId = ?, rating = ?, comment = ? 
+        SET rating = ?, comment = ? 
         WHERE id = ?
     """;
         try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            ps.setInt(2, paintingId);
-            ps.setInt(3, rating);
-            ps.setString(4, comment);
-            ps.setInt(5, reviewId);
+            ps.setInt(1, rating);
+            ps.setString(2, comment);
+            ps.setInt(3, reviewId);
 
             int affectedRows = ps.executeUpdate();
             return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("Lỗi khi cập nhật review: " + e.getMessage(), e);
         }
     }
+
 
 
 

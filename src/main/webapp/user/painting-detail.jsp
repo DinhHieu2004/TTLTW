@@ -22,7 +22,7 @@
 <div class="container py-4">
     <c:if test="${not empty message}">
         <div  id="alertMessage"  class="alert alert-success alert-dismissible fade show" role="alert">
-                <h2>${message}</h2>
+            <h2>${message}</h2>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     </c:if>
@@ -125,7 +125,7 @@
             </c:forEach>
         </div>
     </div>
-    </div>
+</div>
 
 <%@ include file="/partials/footer.jsp" %>
 
