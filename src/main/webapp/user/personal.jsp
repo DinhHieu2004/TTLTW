@@ -81,26 +81,30 @@
                                             aria-label="Đóng"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="update-personal-info" method="post">
+                                    <form id="editPersonalInfoForm">
                                         <div class="mb-3">
-                                            <label for="name" class="form-label">Họ và tên</label>
-                                            <input type="text" class="form-control" id="name" name="fullName"
+                                            <label for="nameChange" class="form-label">Họ và tên</label>
+                                            <input type="text" class="form-control" id="nameChange" name="fullName"
                                                    value="${sessionScope.user.fullName}">
+                                            <div class="error" id="nameChangeError"></div>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="phone" class="form-label">Số điện thoại</label>
-                                            <input type="text" class="form-control" id="phone" name="phone"
+                                            <label for="phoneChange" class="form-label">Số điện thoại</label>
+                                            <input type="text" class="form-control" id="phoneChange" name="phone"
                                                    value="${sessionScope.user.phone}">
+                                            <div class="error" id="phoneChangeError"></div>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="email" class="form-label">Email</label>
-                                            <input type="email" class="form-control" id="email" name="email"
+                                            <label for="emailChange" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="emailChange" name="email"
                                                    value="${sessionScope.user.email}">
+                                            <div class="error" id="emailChangeError"></div>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="address" class="form-label">Địa chỉ</label>
-                                            <input type="text" class="form-control" id="address" name="address"
+                                            <label for="addressChange" class="form-label">Địa chỉ</label>
+                                            <input type="text" class="form-control" id="addressChange" name="address"
                                                    value="${sessionScope.user.address}">
+                                            <div class="error" id="addressChangeError"></div>
                                         </div>
                                         <button type="submit" class="btn btn-primary"
                                                 style="background-color: var(--primary-color) !important;">Lưu Thay Đổi
@@ -241,6 +245,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/personal.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/header.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/authModal.js"></script>
 
 </body>
 

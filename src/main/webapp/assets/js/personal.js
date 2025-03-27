@@ -173,10 +173,56 @@ $(document).ready(function () {
         }
     });
 
-
-
-
     $('#orderDetailsModal').on('hidden.bs.modal', function () {
         currentOrderId = null;
     });
 });
+
+$(document).ready(function(){
+    $("#editPersonalInfoForm").submit(function (e){
+        e.preventDefault();
+        // Kiểm tra email hợp lệ
+        let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (email && !emailRegex.test(email)) {
+            $('#emailChangeError').text('Email không hợp lệ!').addClass('text-danger');
+            $('#emailChange').addClass('is-invalid');
+            isValid = false;
+        }
+
+        // Kiểm tra số điện thoại hợp lệ (10 chữ số)
+        let phoneRegex = /^(0[1-9][0-9]{8})$/;
+        if (phone && !phoneRegex.test(phone)) {
+            $('#phoneChangeError').text('Số điện thoại không hợp lệ!').addClass('text-danger');
+            $('#phoneChange').addClass('is-invalid');
+            isValid = false;
+        }
+
+        let fullName = $("#nameChange").val().trim();
+        let email = $("#emailChange").val().trim();
+        let address = $("#addressChange").val().trim();
+        let phone = $("#phoneChange").val().trim();
+
+        $.ajax({
+            type: "POST",
+            url: "",
+            data: {
+                fullName: fullName,
+                email: email,
+                address: address,
+                phone: phone
+            },
+            success: function(response){
+                if (response.success) {
+                    alert("Cập nhật thông tin thành công!");
+                }
+            },
+            error: function(xhr){
+                let errors = JSON.parse(xhr.responseText)
+                console.log("aaaa"+errors)
+                showServerErrors(errors);
+            }
+        });
+    });
+});
+
+
