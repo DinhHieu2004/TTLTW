@@ -60,14 +60,13 @@ public class AddItemCartController extends HttpServlet {
             cart.addToCart(cartPainting);
             session.setAttribute("cart", cart);
 
-            User user = (User) req.getSession().getAttribute("user");
-            String fullAddress = req.getSession().getAttribute("fullAddress").toString();
+           // User user = (User) req.getSession().getAttribute("user");
 
-            if (user != null) {
+          //  if (user != null) {
                 logService.addLog(String.valueOf(Level.INFO), req, null, null);
-            } else {
-                logService.addLog(String.valueOf(Level.INFO), req,  null, null);
-            }
+          //  } else {
+           //     logService.addLog(String.valueOf(Level.INFO), req,  null, null);
+         //   }
             String requestedWith = req.getHeader("X-Requested-With");
             if ("XMLHttpRequest".equals(requestedWith)) {
                 resp.setContentType("application/json");

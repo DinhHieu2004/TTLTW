@@ -1,6 +1,9 @@
 package com.example.web.dao.model;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+import com.example.web.dao.model.Role;
 
 public class User  implements Serializable {
     private int id;
@@ -9,31 +12,46 @@ public class User  implements Serializable {
     private String address;
     private String email;
     private String phone;
-    private Role role;
+    //private Role role;
     private String password;
+    private Set<com.example.web.dao.model.Role> roles = new HashSet<>();
 
-    public User(int id, String fullName, String username, String address, String email, String phone, Role role) {
+    public User(int id, String fullName, String username, String address, String email, String phone) {
         this.id = id;
         this.fullName = fullName;
         this.username = username;
         this.address = address;
         this.email = email;
         this.phone = phone;
-        this.role = role;
+       // this.role = role;
     }
-    public User(int id, String fullName, String username, String address, String email, String phone, Role role, String password) {
+    public User(int id, String fullName, String username, String address, String email, String phone, String password) {
         this.id = id;
         this.fullName = fullName;
         this.username = username;
         this.address = address;
         this.email = email;
         this.phone = phone;
-        this.role = role;
+      //  this.role = role;
         this.password = password;
     }
 
     public User() {
 
+    }
+    public void addRole(Role role) {
+        roles.add(role);
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+    public Set<Permission> getAllPermissions() {
+        Set<Permission> allPermissions = new HashSet<>();
+        for (Role r : roles) {
+            allPermissions.addAll(r.getPermissions());
+        }
+        return allPermissions;
     }
 
     public String getPassword() {
@@ -53,14 +71,14 @@ public class User  implements Serializable {
                 ", address='" + address + '\'' +
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
-                ", role=" + role +
+             //   ", role=" + role +
                 '}';
     }
 
-    public enum Role {
-        admin,
-        user
-    }
+   // public enum Role {
+   //     admin,
+  //      user
+   // }
 
     public int getId() {
         return id;
@@ -87,9 +105,9 @@ public class User  implements Serializable {
         return phone;
     }
 
-    public Role getRole() {
-        return role;
-    }
+  //  public Role getRole() {
+    //    return role;
+ //   }
 
     public void setId(int id) {
         this.id = id;
@@ -116,8 +134,8 @@ public class User  implements Serializable {
         this.phone = phone;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
-    }
+   // public void setRole(Role role) {
+     //   this.role = role;
+   // }
 }
 
