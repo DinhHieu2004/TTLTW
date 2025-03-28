@@ -181,6 +181,12 @@ $(document).ready(function () {
 $(document).ready(function(){
     $("#editPersonalInfoForm").submit(function (e){
         e.preventDefault();
+
+        let fullName = $("#nameChange").val().trim();
+        let email = $("#emailChange").val().trim();
+        let address = $("#addressChange").val().trim();
+        let phone = $("#phoneChange").val().trim();
+
         // Kiểm tra email hợp lệ
         let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (email && !emailRegex.test(email)) {
@@ -197,14 +203,10 @@ $(document).ready(function(){
             isValid = false;
         }
 
-        let fullName = $("#nameChange").val().trim();
-        let email = $("#emailChange").val().trim();
-        let address = $("#addressChange").val().trim();
-        let phone = $("#phoneChange").val().trim();
 
         $.ajax({
             type: "POST",
-            url: "",
+            url: "update-personal-info",
             data: {
                 fullName: fullName,
                 email: email,
@@ -212,8 +214,9 @@ $(document).ready(function(){
                 phone: phone
             },
             success: function(response){
-                if (response.success) {
+                if (response.status == "success") {
                     alert("Cập nhật thông tin thành công!");
+                    location.reload();
                 }
             },
             error: function(xhr){

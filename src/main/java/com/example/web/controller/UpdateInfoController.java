@@ -2,6 +2,8 @@ package com.example.web.controller;
 
 import com.example.web.dao.UserDao;
 import com.example.web.dao.model.User;
+import com.example.web.service.UserSerive;
+import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -10,55 +12,87 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 @WebServlet(name = "updateInfo", value = "/update-personal-info")
 public class UpdateInfoController extends HttpServlet {
+    private UserSerive userSerive = new UserSerive();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession(false); // Lấy session nếu có, không tạo mới
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
-        // Lấy thông tin từ session và form
+        PrintWriter out = response.getWriter();
+        Gson gson = new Gson();
+        Map<String, Object> jsonResponse = new HashMap<>();
+        Map<String, String> errors = new HashMap<>();
+
+        HttpSession session = request.getSession(false);
         User currentUser = (User) session.getAttribute("user");
+
         String fullName = request.getParameter("fullName");
         String phone = request.getParameter("phone");
         String email = request.getParameter("email");
         String address = request.getParameter("address");
+        try{
+        if (fullName == null || fullName.trim().isEmpty()) {
+            errors.put("fullName", "Họ và tên không được để trống!");
+        }
 
-        UserDao userDao = new UserDao();
+        if (email.trim().isEmpty()) {
+            errors.put("errorEmail", "Email không được để trống!");
+        } else if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+            errors.put("errorEmail", "Email không hợp lệ!");
+        }
+        else if (userSerive.findByEmail(email) != null) {
+            errors.put("errorEmail", "Email đã tồn tại!");
+        }
+
+        if ( phone != null && !phone.trim().isEmpty() && !phone.matches("\\d{10}")) {
+            errors.put("errorPhone", "Số điện thoại không hợp lệ!");
+        }
+
+        if (!errors.isEmpty()) {
+            jsonResponse.put("status", "error");
+            jsonResponse.put("message", "Vui lòng kiểm tra lại thông tin!");
+            jsonResponse.put("errors", errors);
+            out.print(gson.toJson(jsonResponse));
+            out.flush();
+            return;
+        }
 
         try {
-            // Kiểm tra tính hợp lệ của dữ liệu (có thể thêm logic kiểm tra chi tiết hơn)
-            if (fullName == null || fullName.trim().isEmpty() ||
-                    phone == null || phone.trim().isEmpty() ||
-                    email == null || email.trim().isEmpty()) {
-                request.setAttribute("errorMessage", "Vui lòng điền đầy đủ thông tin!");
-                request.getRequestDispatcher("/user/personal.jsp").forward(request, response);
-                return;
-            }
-
-            // Cập nhật thông tin người dùng
             currentUser.setFullName(fullName);
             currentUser.setPhone(phone);
             currentUser.setEmail(email);
             currentUser.setAddress(address);
 
-            boolean isUpdated = userDao.updateUserInfo(currentUser);
+            boolean isUpdated = userSerive.updateUserInfo(currentUser);
             if (isUpdated) {
-                request.setAttribute("successMessage", "Cập nhật thông tin thành công!");
-                session.setAttribute("user", currentUser); // Cập nhật lại thông tin trong session
+                session.setAttribute("user", currentUser);
+                jsonResponse.put("status", "success");
+                jsonResponse.put("message", "Cập nhật thông tin thành công!");
+                jsonResponse.put("updatedUser", currentUser);
             } else {
-                request.setAttribute("errorMessage", "Đã xảy ra lỗi, vui lòng thử lại!");
+                jsonResponse.put("status", "error");
+                jsonResponse.put("message", "Đã xảy ra lỗi, vui lòng thử lại!");
             }
-
-            request.getRequestDispatcher("/user/personal.jsp").forward(request, response);
-
         } catch (SQLException e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "Lỗi hệ thống, vui lòng thử lại sau!");
-            request.getRequestDispatcher("/user/personal.jsp").forward(request, response);
+            jsonResponse.put("status", "error");
+            jsonResponse.put("message", "Lỗi hệ thống, vui lòng thử lại sau!");
         }
+        } catch (SQLException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            errors.put("errorDatabase", "Lỗi hệ thống, vui lòng thử lại sau.");
+
+        }
+        out.print(gson.toJson(jsonResponse));
+        out.flush();
     }
 }
 

@@ -205,7 +205,7 @@
                 </div>
                 <div class="modal-body">
                     <!-- Original Form -->
-                    <form id="registerForm" method="post" action="${pageContext.request.contextPath}/admin/users/add">
+                    <form id="addUserModal">
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="registerName" class="form-label">Họ và Tên</label>

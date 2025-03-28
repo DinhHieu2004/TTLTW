@@ -6,8 +6,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
-import java.sql.SQLException;
-
 public class AuthService {
     private UserDao udao = new UserDao();
     public User checkLogin(String username, String pass) throws SQLException {
@@ -64,5 +62,13 @@ public class AuthService {
 
     public boolean createUserByFacebook(String fbId, String name, String email) throws SQLException {
         return udao.createUserByFB(fbId, name, email, "user");
+    }
+
+    public User findUserByEmail(String email) throws SQLException {
+        return udao.findByEmail(email);
+    }
+
+    public boolean updateUserInfo(User user) throws SQLException {
+        return udao.updateUserInfo(user);
     }
 }
