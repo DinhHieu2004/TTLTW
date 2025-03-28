@@ -28,9 +28,9 @@ public class Update extends HttpServlet {
         String fullName = req.getParameter("fullName");
         String role = req.getParameter("role");
 
-        User.Role roleEnum = User.Role.valueOf(role);
+      //  User.Role roleEnum = User.Role.valueOf(role);
 
-        User user =  new User(id,fullName, username,address, email, phone, roleEnum, password);
+        User user =  new User(id,fullName, username,address, email, phone, password);
         System.out.println(user);
 
         try {

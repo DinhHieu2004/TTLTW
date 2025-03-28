@@ -16,6 +16,13 @@ public class Role {
 
     }
 
+    public Role(int roleId, String roleName, Set<Permission> permissions) {
+        this.id = roleId;
+        this.name = roleName;
+        this.permissions = permissions;
+
+    }
+
     public void addPermission(Permission permission) {
         permissions.add(permission);
     }
@@ -26,5 +33,14 @@ public class Role {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", permissions=" + permissions +
+                '}';
     }
 }

@@ -31,8 +31,8 @@ public class UserDao {
             u.setUsername(rs.getString("username"));
             u.setFullName(rs.getString("fullName"));
             u.setEmail(rs.getString("email"));
-            User.Role role = User.Role.valueOf(rs.getString("role"));
-            u.setRole(role);
+          //  User.Role role = User.Role.valueOf(rs.getString("role"));
+          //  u.setRole(role);
             u.setAddress(rs.getString("address"));
             u.setPhone(rs.getString("phone"));
             users.add(u);
@@ -51,7 +51,7 @@ public class UserDao {
             u.setUsername(rs.getString("username"));
             u.setFullName(rs.getString("fullName"));
             u.setEmail(rs.getString("email"));
-            u.setRole(User.Role.valueOf(rs.getString("role")));
+         //   u.setRole(User.Role.valueOf(rs.getString("role")));
             u.setAddress(rs.getString("address"));
             u.setPhone(rs.getString("phone"));
             u.setPassword(rs.getString("password"));
@@ -81,7 +81,7 @@ public class UserDao {
         statement.setString(4, user.getAddress());
         statement.setString(5, user.getEmail());
         statement.setString(6, user.getPhone());
-        statement.setString(7, user.getRole().toString());
+      //  statement.setString(7, user.getRole().toString());
         statement.setInt(8, user.getId());
         int rowsAffected = statement.executeUpdate();
 
@@ -101,9 +101,9 @@ public class UserDao {
                 String address = rs.getString("address");
                 String email = rs.getString("email");
                 String phone = rs.getString("phone");
-                User.Role role = User.Role.valueOf(rs.getString("role"));
+            //    User.Role role = User.Role.valueOf(rs.getString("role"));
 
-                return new User(id, fullName, uname, address, email, phone, role);
+                return new User(id, fullName, uname, address, email, phone);
             }
 
         }
@@ -122,9 +122,9 @@ public class UserDao {
                 String address = rs.getString("address");
                 String uemail = rs.getString("email");
                 String phone = rs.getString("phone");
-                User.Role role = User.Role.valueOf(rs.getString("role"));
+            //    User.Role role = User.Role.valueOf(rs.getString("role"));
 
-                return new User(id, fullName, uname, address, uemail, phone, role);
+                return new User(id, fullName, uname, address, uemail, phone);
             }
 
         }
@@ -145,8 +145,8 @@ public class UserDao {
                 String email = rs.getString("email");
                 String phone = rs.getString("phone");
                 String password = rs.getString("password");
-                User.Role role = User.Role.valueOf(rs.getString("role"));
-                return new User(id, fullName, uname, address, email, phone, role, password);
+              //  User.Role role = User.Role.valueOf(rs.getString("role"));
+                return new User(id, fullName, uname, address, email, phone, password);
             }
         }
         return null;
