@@ -86,6 +86,7 @@ public class RegisterController extends HttpServlet {
                 System.out.println("phone");
             }
         } catch (SQLException e) {
+            e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             responseMap.put("errorDatabase", "Lỗi hệ thống, vui lòng thử lại sau.");
 

@@ -32,27 +32,41 @@ public class UpdateInfoController extends HttpServlet {
         Map<String, String> errors = new HashMap<>();
 
         HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("user") == null) {
+            jsonResponse.put("status", "error");
+            jsonResponse.put("message", "Bạn chưa đăng nhập!");
+            out.print(gson.toJson(jsonResponse));
+            out.flush();
+            return;
+        }
+
         User currentUser = (User) session.getAttribute("user");
 
         String fullName = request.getParameter("fullName");
         String phone = request.getParameter("phone");
         String email = request.getParameter("email");
         String address = request.getParameter("address");
-        try{
+
         if (fullName == null || fullName.trim().isEmpty()) {
             errors.put("fullName", "Họ và tên không được để trống!");
         }
 
-        if (email.trim().isEmpty()) {
+        if (email == null || email.trim().isEmpty()) {
             errors.put("errorEmail", "Email không được để trống!");
         } else if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
             errors.put("errorEmail", "Email không hợp lệ!");
-        }
-        else if (userSerive.findByEmail(email) != null) {
-            errors.put("errorEmail", "Email đã tồn tại!");
+        } else {
+            try {
+                User existingUser = userSerive.findByEmail(email);
+                if (existingUser != null && existingUser.getId() != (currentUser.getId())) {
+                    errors.put("errorEmail", "Email đã tồn tại!");
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
 
-        if ( phone != null && !phone.trim().isEmpty() && !phone.matches("\\d{10}")) {
+        if (phone != null && !phone.trim().isEmpty() && !phone.matches("\\d{10}")) {
             errors.put("errorPhone", "Số điện thoại không hợp lệ!");
         }
 
@@ -86,11 +100,7 @@ public class UpdateInfoController extends HttpServlet {
             jsonResponse.put("status", "error");
             jsonResponse.put("message", "Lỗi hệ thống, vui lòng thử lại sau!");
         }
-        } catch (SQLException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            errors.put("errorDatabase", "Lỗi hệ thống, vui lòng thử lại sau.");
 
-        }
         out.print(gson.toJson(jsonResponse));
         out.flush();
     }

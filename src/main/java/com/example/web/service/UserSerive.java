@@ -61,4 +61,8 @@ public class UserSerive {
     public boolean updateUserInfo(User currentUser) throws SQLException {
         return userDao.updateUserInfo(currentUser);
     }
+
+    public boolean addUser(String fullName, String username, String password, String email, String phone, String role, String address) throws SQLException {
+        return userDao.addUser(fullName, username, hashPassword(password), email, phone, role, address);
+    }
 }

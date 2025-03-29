@@ -36,7 +36,6 @@ public class Add  extends HttpServlet {
             if (fullName.isEmpty()) {
                 responseMap.put("errorName", "Họ và tên không được để trống!");
             }
-
             if (username.isEmpty()) {
                 responseMap.put("errorUser", "Tên đăng nhập không được để trống!");
             } else if (userSerive.findByUsername(username) != null) {
@@ -73,7 +72,7 @@ public class Add  extends HttpServlet {
                 return;
             }
             // Đăng ký người dùng mới
-            boolean isRegistered = userSerive.registerUser(fullName, username, password, email, phone, "user");
+            boolean isRegistered = userSerive.addUser(fullName, username, password, email, phone, "user", address);
 
             if (isRegistered) {
                 User user = userSerive.findByUsername(username);
@@ -85,8 +84,9 @@ public class Add  extends HttpServlet {
                 System.out.println("phone");
             }
             } catch (SQLException e) {
-        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        responseMap.put("errorDatabase", "Lỗi hệ thống, vui lòng thử lại sau.");
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            responseMap.put("errorDatabase", "Lỗi hệ thống, vui lòng thử lại sau.");
 
     }
     sendJsonResponse(response, responseMap);
