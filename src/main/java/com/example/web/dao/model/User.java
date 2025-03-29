@@ -14,7 +14,7 @@ public class User  implements Serializable {
     private String phone;
     //private Role role;
     private String password;
-    private Set<com.example.web.dao.model.Role> roles = new HashSet<>();
+    private Set<Role> roles = new HashSet<>();
 
     public User(int id, String fullName, String username, String address, String email, String phone) {
         this.id = id;
@@ -35,7 +35,7 @@ public class User  implements Serializable {
       //  this.role = role;
         this.password = password;
     }
-    public User(int id, String fullName, String username, String address, String email, String phone, Set<Role> roles) {
+    public User(int id, String fullName, String username, String address, String email, String phone,String password, Set<Role> roles) {
         this.id = id;
         this.fullName = fullName;
         this.username = username;

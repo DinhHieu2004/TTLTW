@@ -16,21 +16,20 @@ public class PermissionDao {
        public Permission getPermissionById(int permissionId) throws SQLException {
            String query = "SELECT p.id, p.name, ap.apiPrefix " +
                    "FROM permissions p " +
-                   "LEFT JOIN api_permissions ap ON p.id = ap.permissionId " +
                    "WHERE p.id = ?";
            PreparedStatement stmt = conn.prepareStatement(query);
            stmt.setInt(1, permissionId);
            ResultSet rs = stmt.executeQuery();
 
-           Set<String> allowedApis = new HashSet<>();
+
            String permissionName = null;
 
            while (rs.next()) {
                permissionName = rs.getString("name");
-               allowedApis.add(rs.getString("apiPrefix"));
+              // allowedApis.add(rs.getString("apiPrefix"));
            }
 
-           return new Permission(permissionId, permissionName, allowedApis);
+           return new Permission(permissionId, permissionName);
 
    }
     public Set<Permission> getPermissionsByRoleId(int roleId) throws SQLException {

@@ -145,10 +145,10 @@ public class UserDao {
                 String address = rs.getString("address");
                 String email = rs.getString("email");
                 String phone = rs.getString("phone");
-            //    String password = rs.getString("password");
+                String password = rs.getString("password");
                 Set<Role> roles = roleDao.getRolesByUserId(id);
 
-                return new User(id, fullName, uname, address, email, phone, roles);
+                return new User(id, fullName, uname, address, email, phone, password,roles);
             }
         }
         return null;
@@ -309,8 +309,9 @@ public class UserDao {
         return null; // Không tìm thấy mật khẩu
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         UserDao userDao = new UserDao();
+        /**
         String testEmail = "lenguyennhathao0807@gmail.com"; // Địa chỉ email bạn muốn kiểm tra
 
         try {
@@ -324,7 +325,8 @@ public class UserDao {
             }
         } catch (SQLException e) {
             System.out.println("Lỗi khi thực hiện yêu cầu phục hồi mật khẩu: " + e.getMessage());
-        }
+        } **/
+        System.out.println(userDao.findUser("admin"));
     }
 
 

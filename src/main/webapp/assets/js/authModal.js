@@ -134,6 +134,7 @@ $(document).ready(function () {
             },
             datatype: 'json',
             success: function(response){
+                console.log("aa")
                 if (response.success) {
                     alert("Đăng ký thành công!");
                     $('#login-tab').tab('show');
@@ -142,6 +143,14 @@ $(document).ready(function () {
             },
             error: function(xhr){
                 let errors = JSON.parse(xhr.responseText)
+                if (xhr.status === 500) {
+                    try {
+                        let errors = JSON.parse(xhr.responseText);
+                        console.log("Parsed Errors:", errors);
+                    } catch (e) {
+                        console.error("Lỗi khi parse JSON:", e);
+                    }
+                }
                 console.log("aaaa"+errors)
                 showServerErrors(errors);
 

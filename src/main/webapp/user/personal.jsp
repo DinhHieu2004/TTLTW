@@ -2,6 +2,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -64,9 +66,11 @@
                         </button>
                         <button class="btn btn-danger btn-sm" onclick="logout()">Đăng xuất</button>
 
-                        <c:if test="${sessionScope.user.role == 'admin'}">
-                            <a href="${pageContext.request.contextPath}/admin" class="btn btn-info btn-sm">Đến trang quản lý</a>
-                        </c:if>
+                        <c:forEach var="role" items="${sessionScope.user.roles}">
+                            <c:if test="${role.name == 'ADMIN'}">
+                                <a href="${pageContext.request.contextPath}/admin" class="btn btn-info btn-sm">Đến trang quản lý</a>
+                            </c:if>
+                        </c:forEach>
                     </div>
 
                     <!-- Modal chỉnh sửa thông tin cá nhân -->

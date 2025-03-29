@@ -5,15 +5,13 @@ import java.util.Set;
 public class Permission {
     private int id;
     private String name;
-    private Set<String> allowedApis;
 
     public Permission(){
 
     }
-    public Permission(int id, String name, Set<String> allowedApis) {
+    public Permission(int id, String name) {
         this.id = id;
         this.name = name;
-        this.allowedApis = allowedApis;
 
     }
     public int getId() {
@@ -31,19 +29,12 @@ public class Permission {
     public void setName(String name) {
         this.name = name;
     }
-    public Set<String> getAllowedApis() {
-        return allowedApis;
-    }
-    public void setAllowedApis(Set<String> allowedApis) {
-        this.allowedApis = allowedApis;
-    }
 
     @Override
     public String toString() {
         return "Permission{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", allowedApis=" + allowedApis +
                 '}';
     }
 }

@@ -20,6 +20,8 @@ public class LoginController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
+        System.out.println("username: "+ username);
+        System.out.println("pass: "+password);
         HttpSession session = request.getSession();
         Map<String, String> responseMap = new HashMap<>();
 
