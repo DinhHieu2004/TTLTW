@@ -181,6 +181,7 @@ $(document).ready(function () {
 $(document).ready(function(){
     $("#editPersonalInfoForm").submit(function (e){
         e.preventDefault();
+        let isValid = true;
 
         let fullName = $("#nameChange").val().trim();
         let email = $("#emailChange").val().trim();
@@ -203,7 +204,7 @@ $(document).ready(function(){
             isValid = false;
         }
 
-
+        if (!isValid) return;
         $.ajax({
             type: "POST",
             url: "update-personal-info",
@@ -218,8 +219,12 @@ $(document).ready(function(){
                     alert("Cập nhật thông tin thành công!");
                     location.reload();
                 }
+                else{
+                    console.log(response);
+                }
             },
             error: function(xhr){
+                console.log("aaaa")
                 let errors = JSON.parse(xhr.responseText)
                 console.log("aaaa"+errors)
                 showServerErrors(errors);

@@ -63,7 +63,7 @@
 
         <div class="card-body">
             <table id="users" class="table table-bordered display">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
                     Thêm người dùng
                 </button>
                 <div style="padding-bottom: 10px">
@@ -139,22 +139,25 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="userDetailForm" action="${pageContext.request.contextPath}/admin/users/update" method="post">
+                    <form id="userDetailForm">
                         <div class="row mb-3">
                             <input type="hidden" id="editUserId" name="id" value="">
                             <div class="col-md-6">
                                 <label for="username" class="form-label">Tên đăng nhập</label>
                                 <input type="text" class="form-control" id="username" name="username" required>
+                                <div class="error" id="changUsernameError"></div>
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="fullName" class="form-label">Tên Đầy Đủ</label>
                                 <input type="text" class="form-control" id="fullName" name="fullName" required>
+                                <div class="error" id="changeNameError"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" class="form-control" id="email" name="email" required>
+                                <div class="error" id="changeEmailError"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="address" class="form-label">Địa chỉ</label>
@@ -173,12 +176,7 @@
                                 <label for="phone" class="form-label">Số Điện Thoại</label>
                                 <input type="tel" class="form-control" id="phone" name="phone" pattern="[0-9]{10}"
                                        required>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-12">
-                                <label for="password" class="form-label">Mật Khẩu</label>
-                                <input type="text" class="form-control" id="password" name="password" required>
+                                <div class="error" id="changePhoneError"></div>
                             </div>
                         </div>
                     </form>
@@ -196,16 +194,16 @@
 
 
     <!-- Modal -->
-    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="registerModalLabel">Đăng Ký Tài Khoản</h5>
+                    <h5 class="modal-title" id="registerModalLabel">Thêm người dùng mới</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <!-- Original Form -->
-                    <form id="addUserModal">
+                    <form id="addUserForm">
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="registerName" class="form-label">Họ và Tên</label>
@@ -248,7 +246,7 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="ConfirmRegisterPassword" class="form-label">Nhập lại mật khẩu</label>
-                                <input type="password" class="form-control" id="ConfirmRegisterPassword" name="confirmPassword" placeholder="Nhập lại mật khẩu">
+                                <input type="password" class="form-control" id="confirmRegisterPassword" name="confirmPassword" placeholder="Nhập lại mật khẩu">
                                 <div class="error" id="confirmPasswordError"></div>
                             </div>
                         </div>

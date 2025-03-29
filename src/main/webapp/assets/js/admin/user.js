@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    $('#addUserModal').on('submit', function (event) {
+    $('#addUserForm').on('submit', function (event) {
         event.preventDefault()
         let isValid = true;
         const fields = [
@@ -8,7 +8,7 @@ $(document).ready(function () {
             {id: "registerUsername", errorId: "usernamergError", message: "Vui lòng nhập tên đăng nhập!"},
             {id: "registerEmail", errorId: "emailError", message: "Vui lòng nhập email!"},
             {id: "registerPassword", errorId: "passwordrgError", message: "Vui lòng nhập mật khẩu!"},
-            {id: "ConfirmRegisterPassword", errorId: "confirmPasswordError", message: "Vui lòng nhập lại mật khẩu!"}
+            {id: "confirmRegisterPassword", errorId: "confirmPasswordError", message: "Vui lòng nhập lại mật khẩu!"}
         ];
 
         $('.text-danger').text('');
@@ -25,10 +25,10 @@ $(document).ready(function () {
 
         let email = $('#registerEmail').val().trim();
         let phone = $('#registerPhone').val().trim();
+        let address = $('#registerAddress').val().trim();
         let password = $('#registerPassword').val().trim();
-        let confirmPassword = $('#ConfirmRegisterPassword').val().trim();
+        let confirmPassword = $('#confirmRegisterPassword').val().trim();
 
-        // Kiểm tra email hợp lệ
         let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (email && !emailRegex.test(email)) {
             $('#emailError').text('Email không hợp lệ!').addClass('text-danger');
@@ -36,7 +36,6 @@ $(document).ready(function () {
             isValid = false;
         }
 
-        // Kiểm tra số điện thoại hợp lệ (10 chữ số)
         let phoneRegex = /^(0[1-9][0-9]{8})$/;
         if (phone && !phoneRegex.test(phone)) {
             $('#phoneError').text('Số điện thoại không hợp lệ!').addClass('text-danger');
@@ -44,7 +43,6 @@ $(document).ready(function () {
             isValid = false;
         }
 
-        // Kiểm tra mật khẩu mạnh
         let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
         if (password && !passwordRegex.test(password)) {
             $('#passwordrgError').text('Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt!').addClass('text-danger');
@@ -52,7 +50,6 @@ $(document).ready(function () {
             isValid = false;
         }
 
-        // Kiểm tra mật khẩu có khớp không
         if (password && confirmPassword && password !== confirmPassword) {
             $('#confirmPasswordError').text('Mật khẩu và xác nhận không khớp!').addClass('text-danger');
             $('#ConfirmRegisterPassword').addClass('is-invalid');
@@ -69,7 +66,8 @@ $(document).ready(function () {
                 username: $('#registerUsername').val().trim(),
                 password: password,
                 email: email,
-                phone: phone
+                phone: phone,
+                address: address
             },
             datatype: 'json',
             success: function (response) {
@@ -86,18 +84,56 @@ $(document).ready(function () {
                          <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
                                 data-bs-target="#deleteUsersModal" data-user-id="${response.user.id}">Xóa</button>`
                     ]).draw(false);
-                    alert("Thêm user thành công!");
+                    $('#addUserModal').modal('hide');
 
                 }
             },
             error: function (xhr) {
                 let errors = JSON.parse(xhr.responseText)
                 console.log("aaaa" + errors)
-                showServerErrors(errors);
+                showaddUserrErrors(errors);
 
             }
         });
     });
+    function showaddUserrErrors(errors){
+        $('.text-danger').text('');
+        $('.is-invalid').removeClass('is-invalid');
+
+        Object.keys(errors).forEach(key => {
+            let inputId = convertErrorKeyToInputId(key);
+            let errorId = convertErrorKeyToErrorId(key);
+            showError(inputId, errorId, errors[key]);
+        });
+    }
+
+    function convertErrorKeyToInputId(errorKey) {
+        let mapping = {
+            "errorName": "registerName",
+            "errorUser": "registerUsername",
+            "errorEmail": "registerEmail",
+            "errorPassword": "registerPassword",
+            "errorPhone": "registerPhone",
+            "errorAddress": "registerAddress"
+        };
+        return mapping[errorKey] || "";
+    }
+    function convertErrorKeyToErrorId(errorKey){
+        let mapping = {
+            "errorName": "fullNameError",
+            "errorUser": "usernamergError",
+            "errorEmail": "emailError",
+            "errorPassword": "passwordrgError",
+            "errorPhone": "phoneError",
+            "errorAddress": "addressError"
+        };
+        return mapping[errorKey] || "";
+    }
+    function showError(inputId, errorId, message) {
+        $('#' + errorId).text(message).addClass('text-danger');
+        $('#' + inputId).addClass('is-invalid');
+    }
+
     $('#viewEditUserModal').on('show.bs.modal', function (event) {
 
         const button = $(event.relatedTarget);
@@ -129,6 +165,76 @@ $(document).ready(function () {
             }
         });
 
+    });
+    $('#userDetailForm').on('submit', function(e){
+        e.preventDefault();
+        let isValid = true;
+
+        let id = $('#editUserId').val().trim();
+        let username = $('#username').val().trim();
+        let fullName = $("#fullName").val().trim();
+        let email = $("#email").val().trim();
+        let address = $("#address").val().trim();
+        let phone = $("#phone").val().trim();
+        let role = $('#role').val().trim();
+
+
+        let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (email && !emailRegex.test(email)) {
+            $('#changeEmailError').text('Email không hợp lệ!').addClass('text-danger');
+            $('#email').addClass('is-invalid');
+            isValid = false;
+        }
+
+        let phoneRegex = /^(0[1-9][0-9]{8})$/;
+        if (phone && !phoneRegex.test(phone)) {
+            $('#changePhoneError').text('Số điện thoại không hợp lệ!').addClass('text-danger');
+            $('#phone').addClass('is-invalid');
+            isValid = false;
+        }
+
+        if (!isValid) return;
+        $.ajax({
+            type: "POST",
+            url: "users/update",
+            data: {
+                id: id,
+                fullName: fullName,
+                username: username,
+                email: email,
+                address: address,
+                phone: phone,
+                role: role
+            },
+            success: function(response){
+                if (response.status == "success") {
+                    let row = table1.row("#row_" + response.user.id);
+
+                        row.data([
+                            response.user.id,
+                            response.user.username,
+                            response.user.fullName,
+                            response.user.email,
+                            response.user.phone,
+                            response.user.role,
+                            `<button class="btn btn-info btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#viewEditUserModal" data-user-id="${response.user.id}">Xem Chi Tiết</button>
+                     <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#deleteUsersModal" data-user-id="${response.user.id}">Xóa</button>`
+                        ]).draw(false);
+                    $('#viewEditUserModal').modal('hide');
+                }
+                else{
+                    console.log(response);
+                }
+            },
+            error: function(xhr){
+                console.log("aaaa")
+                let errors = JSON.parse(xhr.responseText)
+                console.log("aaaa"+errors)
+                showServerErrors(errors);
+            }
+        });
     });
 
 });

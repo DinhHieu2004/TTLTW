@@ -97,7 +97,11 @@
                                         <div class="mb-3">
                                             <label for="emailChange" class="form-label">Email</label>
                                             <input type="email" class="form-control" id="emailChange" name="email"
-                                                   value="${sessionScope.user.email}">
+                                                   value="${sessionScope.user.email}"
+                                                   style="<c:if test='${not empty sessionScope.user.gg_id or not empty sessionScope.user.fb_id}'>background-color: #e9ecef;</c:if>"
+                                                    <c:if test="${not empty sessionScope.user.gg_id or not empty sessionScope.user.fb_id}">
+                                                        disabled
+                                                    </c:if> />
                                             <div class="error" id="emailChangeError"></div>
                                         </div>
                                         <div class="mb-3">
