@@ -35,12 +35,25 @@ public class User  implements Serializable {
       //  this.role = role;
         this.password = password;
     }
+    public User(int id, String fullName, String username, String address, String email, String phone, Set<Role> roles) {
+        this.id = id;
+        this.fullName = fullName;
+        this.username = username;
+        this.address = address;
+        this.email = email;
+        this.phone = phone;
+        this.roles = roles;
+        this.password = password;
+    }
 
     public User() {
 
     }
     public void addRole(Role role) {
         roles.add(role);
+    }
+    public void setRole(Set<Role> roles) {
+        this.roles = roles;
     }
 
     public Set<Role> getRoles() {
@@ -71,11 +84,12 @@ public class User  implements Serializable {
                 ", address='" + address + '\'' +
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
-             //   ", role=" + role +
+                ", password='" + password + '\'' +
+                ", roles=" + roles +
                 '}';
     }
 
-   // public enum Role {
+    // public enum Role {
    //     admin,
   //      user
    // }

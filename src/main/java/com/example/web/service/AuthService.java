@@ -41,4 +41,9 @@ public class AuthService {
             throw new RuntimeException("Error while hashing password with MD5", e);
         }
     }
+
+    public static void main(String[] args) throws SQLException {
+        AuthService a = new AuthService();
+        System.out.println(a.checkLogin("admin", "462004"));
+    }
 }

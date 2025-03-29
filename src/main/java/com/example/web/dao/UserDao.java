@@ -2,6 +2,7 @@ package com.example.web.dao;
 
 import com.example.web.dao.db.DbConnect;
 import com.example.web.dao.model.Artist;
+import com.example.web.dao.model.Role;
 import com.example.web.dao.model.User;
 
 
@@ -11,14 +12,12 @@ import javax.mail.internet.MimeMessage;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 
 
 public class UserDao {
     Connection conn = DbConnect.getConnection();
+    RoleDao roleDao = new RoleDao();
     public List<User> getListUser() throws SQLException {
         List<User> users = new ArrayList<>();
         String sql = "select * from users";
@@ -55,6 +54,8 @@ public class UserDao {
             u.setAddress(rs.getString("address"));
             u.setPhone(rs.getString("phone"));
             u.setPassword(rs.getString("password"));
+            Set<Role> roles = roleDao.getRolesByUserId(id);
+            u.setRole(roles);
             return u;
         }
         return null;
@@ -144,9 +145,10 @@ public class UserDao {
                 String address = rs.getString("address");
                 String email = rs.getString("email");
                 String phone = rs.getString("phone");
-                String password = rs.getString("password");
-              //  User.Role role = User.Role.valueOf(rs.getString("role"));
-                return new User(id, fullName, uname, address, email, phone, password);
+            //    String password = rs.getString("password");
+                Set<Role> roles = roleDao.getRolesByUserId(id);
+
+                return new User(id, fullName, uname, address, email, phone, roles);
             }
         }
         return null;
