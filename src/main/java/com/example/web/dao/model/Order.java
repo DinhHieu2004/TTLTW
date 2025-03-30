@@ -15,6 +15,7 @@ public class Order  implements Serializable {
     private String recipientName;
     private String deliveryAddress;
     private String recipientPhone;
+    private String paymentMethod;
 
     public static final String STATUS_PENDING = "chờ";
     public static final String STATUS_DELIVERING = "đang giao";
@@ -95,6 +96,14 @@ public class Order  implements Serializable {
         this.deliveryDate = deliveryDate;
     }
 
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
     @Override
     public String toString() {
         return "Order{" +
@@ -107,6 +116,7 @@ public class Order  implements Serializable {
                 ", recipientName='" + recipientName + '\'' +
                 ", deliveryAddress='" + deliveryAddress + '\'' +
                 ", recipientPhone='" + recipientPhone + '\'' +
+                ", paymentMethod='" + paymentMethod + '\'' +
                 '}';
     }
 }
