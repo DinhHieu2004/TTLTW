@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 @WebServlet("/applyVoucher")
     public class ApplyVoucher extends HttpServlet {
-    private VoucherService voucherService = new VoucherService();
+    private final VoucherService voucherService = new VoucherService();
         @Override
         protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
             String vid = req.getParameter("vid");
@@ -36,10 +36,8 @@ import java.sql.SQLException;
             double finalPrice = totalPrice - (totalPrice * discountPercentage / 100);
             System.out.println(finalPrice);
             cart.setAfterPrice(finalPrice);
-            System.out.println(cart.getTotalPrice());
             req.getSession().setAttribute("cart", cart);
             Cart c = (Cart) req.getSession().getAttribute("cart");
-            System.out.println("c: "+c.getTotalPrice());
 
 
             resp.setContentType("application/json");
