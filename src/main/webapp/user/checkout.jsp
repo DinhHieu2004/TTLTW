@@ -1,3 +1,4 @@
+<%@ page import="com.example.web.dao.cart.Cart" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix = "f" uri = "http://java.sun.com/jsp/jstl/fmt" %>
@@ -235,11 +236,11 @@
                 <td>${cp.productName}</td>
                 <td>${cp.sizeDescriptions}</td>
                 <td>
-                    <span class="mx-2 quantity">${cp.quantity}</span>
+                  <span class="mx-2 quantity">${cp.quantity}</span>
                 </td>
                 <td class="item-total-price">
               <span class="fw-bold">Giá:
-                <f:formatNumber value="${cp.discountPrice}" type="currency" currencySymbol="₫"/>
+                <f:formatNumber value="${cp.discountPrice}" type="currency" pattern="#,##0"/> ₫
             </span>
               </tr>
             </c:forEach>
@@ -248,7 +249,7 @@
             <tr>
               <th colspan="4" class="text-end">Tổng tiền</th>
               <th id="total-price" colspan="2">
-                <f:formatNumber value="${sessionScope.cart.totalPrice}" type="currency" currencySymbol="VND"/>
+                <f:formatNumber value="${sessionScope.cart.totalPrice}" pattern="#,##0" type="currency"/> ₫
               </th>            </tr>
             </tfoot>
           </table>
@@ -271,7 +272,7 @@
 
         <div class="price-display">
           Giá phải trả: <span id="finalPrice">
-        <f:formatNumber value="${sessionScope.cart.totalPrice}" type="currency" currencySymbol="VND"/>
+        <f:formatNumber value="${sessionScope.cart.totalPrice}" type="currency" pattern="#,##0"/>₫
       </span>
         </div>
       </div>
@@ -281,57 +282,47 @@
 
     <div class="payment-form">
       <h3>Thông tin thanh toán</h3>
-        <label for="recipientName">Họ và Tên:</label>
-        <input value="${sessionScope.user.fullName}" type="text" id="recipientName" name="fullName" required>
+      <label for="recipientName">Họ và Tên:</label>
+      <input value="${sessionScope.user.fullName}" type="text" id="recipientName" name="fullName" required>
 
-        <label for="recipientPhone">Số điện thoại:</label>
-        <input value="${sessionScope.user.phone}" type="text" id="recipientPhone" name="phoneNumber" required>
+      <label for="recipientPhone">Số điện thoại:</label>
+      <input value="${sessionScope.user.phone}" type="text" id="recipientPhone" name="phoneNumber" required>
 
-        <label for="email">Email:</label>
-        <input  value="${sessionScope.user.email}" type="email" id="email" name="email" required>
+      <label for="email">Email:</label>
+      <input  value="${sessionScope.user.email}" type="email" id="email" name="email" required>
 
-        <div class="mb-3">
-          <label for="deliveryAddress" class="form-label">Địa chỉ nhận hàng:</label>
-          <input type="text" class="form-control" id="deliveryAddress" name="deliveryAddress"
-                 value="${sessionScope.user.address}" placeholder="Nhập địa chỉ nhận hàng" required>
-        </div>
 
-        <label for="paymentMethod">Phương thức thanh toán:</label>
-        <select id="paymentMethod" name="paymentMethod" required onchange="toggleBankDetails()">
-          <option value="1">Thanh toán khi nhận hàng (COD)</option>
-          <option value="2">Thẻ tín dụng / Thẻ ghi nợ</option>
-        </select>
+      <div class="mb-3">
+        <label for="deliveryAddress" class="form-label">Địa chỉ nhận hàng:</label>
+        <input type="text" class="form-control" id="deliveryAddress" name="deliveryAddress"
+               value="${sessionScope.user.address}" placeholder="Nhập địa chỉ nhận hàng" required>
+      </div>
 
-        <div id="bankDetails" style="display: none;">
-          <label for="bankAccount">Số tài khoản:</label>
-          <input type="text" id="bankAccount" name="bankAccount">
+      <label for="paymentMethod">Phương thức thanh toán:</label>
+      <select id="paymentMethod" name="paymentMethod" required>
+        <option value="1">Thanh toán khi nhận hàng (COD)</option>
+        <option value="2">Thanh toán bằng VNPay</option>
+      </select>
 
-          <label for="bankName">Ngân hàng:</label>
-          <input type="text" id="bankName" name="bankName">
-        </div>
+      <div id="bankDetails" style="display: none;">
+        <label for="bankAccount">Số tài khoản:</label>
+        <input type="text" id="bankAccount" name="bankAccount">
 
-        <button type="button" id="submitPayment" class="btn btn-primary">Xác nhân thanh toán</button>
+        <label for="bankName">Ngân hàng:</label>
+        <input type="text" id="bankName" name="bankName">
+      </div>
+
+      <button type="button" id="submitPayment" class="btn btn-primary">Xác nhận thanh toán</button>
     </div>
   </div>
 </div>
 <%@ include file="/partials/footer.jsp" %>
 
 
-<script>
-  function toggleBankDetails() {
-    const paymentMethod = document.getElementById("paymentMethod").value;
-    const bankDetails = document.getElementById("bankDetails");
-    if (paymentMethod === "credit") {
-      bankDetails.style.display = "block";
-    } else {
-      bankDetails.style.display = "none";
-    }
-  }
-</script>
 </body>
 <script src="${pageContext.request.contextPath}/assets/js/checkout.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/applyVoucher.js"></script>
-<script src="${pageContext.request.contextPath}/assets/js/location.js"></script>
+<%--<script src="${pageContext.request.contextPath}/assets/js/location.js"></script>--%>
 
 
 
