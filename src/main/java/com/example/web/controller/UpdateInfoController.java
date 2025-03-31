@@ -28,14 +28,13 @@ public class UpdateInfoController extends HttpServlet {
 
         PrintWriter out = response.getWriter();
         Gson gson = new Gson();
-        Map<String, Object> jsonResponse = new HashMap<>();
         Map<String, String> errors = new HashMap<>();
 
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user") == null) {
-            jsonResponse.put("status", "error");
-            jsonResponse.put("message", "Bạn chưa đăng nhập!");
-            out.print(gson.toJson(jsonResponse));
+            response.setStatus(401);
+            errors.put("message", "Bạn chưa đăng nhập!");
+            out.print(gson.toJson(errors));
             out.flush();
             return;
         }
@@ -62,7 +61,11 @@ public class UpdateInfoController extends HttpServlet {
                     errors.put("errorEmail", "Email đã tồn tại!");
                 }
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                response.setStatus(500);
+                errors.put("message", "Lỗi hệ thống, vui lòng thử lại sau!");
+                out.print(gson.toJson(errors));
+                out.flush();
+                return;
             }
         }
 
@@ -71,10 +74,9 @@ public class UpdateInfoController extends HttpServlet {
         }
 
         if (!errors.isEmpty()) {
-            jsonResponse.put("status", "error");
-            jsonResponse.put("message", "Vui lòng kiểm tra lại thông tin!");
-            jsonResponse.put("errors", errors);
-            out.print(gson.toJson(jsonResponse));
+            response.setStatus(400);
+            errors.put("message", "Vui lòng kiểm tra lại thông tin!");
+            out.print(gson.toJson(errors));
             out.flush();
             return;
         }
@@ -88,20 +90,19 @@ public class UpdateInfoController extends HttpServlet {
             boolean isUpdated = userSerive.updateUserInfo(currentUser);
             if (isUpdated) {
                 session.setAttribute("user", currentUser);
-                jsonResponse.put("status", "success");
-                jsonResponse.put("message", "Cập nhật thông tin thành công!");
-                jsonResponse.put("updatedUser", currentUser);
+                response.setStatus(200);
+                session.setAttribute("user", currentUser);
             } else {
-                jsonResponse.put("status", "error");
-                jsonResponse.put("message", "Đã xảy ra lỗi, vui lòng thử lại!");
+                response.setStatus(500);
+                errors.put("message", "Đã xảy ra lỗi, vui lòng thử lại!");
             }
         } catch (SQLException e) {
+            response.setStatus(500);
             e.printStackTrace();
-            jsonResponse.put("status", "error");
-            jsonResponse.put("message", "Lỗi hệ thống, vui lòng thử lại sau!");
+            errors.put("message", "Lỗi hệ thống, vui lòng thử lại sau!");
         }
 
-        out.print(gson.toJson(jsonResponse));
+        out.print(gson.toJson(errors));
         out.flush();
     }
 }

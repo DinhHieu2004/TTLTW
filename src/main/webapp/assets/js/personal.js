@@ -215,22 +215,50 @@ $(document).ready(function(){
                 phone: phone
             },
             success: function(response){
-                if (response.status == "success") {
                     alert("Cập nhật thông tin thành công!");
                     location.reload();
-                }
-                else{
-                    console.log(response);
-                }
             },
             error: function(xhr){
                 console.log("aaaa")
-                let errors = JSON.parse(xhr.responseText)
+                let response = JSON.parse(xhr.responseText)
                 console.log("aaaa"+errors)
-                showServerErrors(errors);
+                let { message, ...errors } = response;
+                showErrorschange(errors);
             }
         });
     });
 });
+
+function showErrorschange(errors){
+    $('.text-danger').text('');
+    $('.is-invalid').removeClass('is-invalid');
+
+    Object.keys(errors).forEach(key => {
+        let inputId = convertErrorKeyToInputIdCh(key);
+        let errorId = convertErrorKeyToErrorIdCh(key);
+        showErrorc(inputId, errorId, errors[key]);
+    });
+}
+
+function convertErrorKeyToInputIdCh(errorKey) {
+    let mapping = {
+        "fullName": "nameChange",
+        "errorEmail": "emailChange",
+        "errorPhone": "phoneChange"
+    };
+    return mapping[errorKey] || "";
+}
+function convertErrorKeyToErrorIdCh(errorKey){
+    let mapping = {
+        "fullName": "nameChangeError",
+        "errorEmail": "emailChangeError",
+        "errorPhone": "phoneChangeError"
+    };
+    return mapping[errorKey] || "";
+}
+function showErrorc(inputId, errorId, message) {
+    $('#' + errorId).text(message).addClass('text-danger');
+    $('#' + inputId).addClass('is-invalid');
+}
 
 

@@ -115,7 +115,7 @@
                     <h5 class="modal-title" id="deleteArtistModalLabel">Xác nhận xóa</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="${pageContext.request.contextPath}/admin/users/delete" method="POST">
+                <form >
                     <div class="modal-body">
                         <p>Bạn có chắc chắn muốn xóa người dùng này?</p>
                         <input type="hidden" id="userIdToDelete" name="userId">
@@ -277,11 +277,11 @@
     });
 
 
-    document.querySelectorAll('[data-bs-target="#deleteUsersModal"]').forEach(button => {
-        button.addEventListener('click', function () {
-            let userId = this.getAttribute('data-user-id');
+    document.addEventListener('click', function (event) {
+        if (event.target.matches('[data-bs-target="#deleteUsersModal"]')) {
+            let userId = event.target.getAttribute('data-user-id');
             document.getElementById('userIdToDelete').value = userId;
-        });
+        }
     });
 </script>
 <script src="${pageContext.request.contextPath}/assets/js/admin/user.js"></script>

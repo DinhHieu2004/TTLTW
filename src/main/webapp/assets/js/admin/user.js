@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    var table1 = $('#users').DataTable();
 
     $('#addUserForm').on('submit', function (event) {
         event.preventDefault()
@@ -57,7 +58,6 @@ $(document).ready(function () {
         }
 
         if (!isValid) return;
-        var table1 = $('#users').DataTable();
         $.ajax({
             url: 'users/add',
             type: 'POST',
@@ -236,5 +236,36 @@ $(document).ready(function () {
             }
         });
     });
+
+        $('#deleteUsersModal form').on('submit', function (e) {
+            e.preventDefault();
+
+            let userId = $('#userIdToDelete').val();
+            console.log(userId);
+            if (!userId) {
+                console.log("Không tìm thấy ID người dùng!");
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "users/delete",
+                data: { id: userId },
+                success: function (response) {
+                    if (response.status === "success") {
+                        var $row = $('[data-user-id="' + userId + '"]').closest('tr');
+                        table1.row($row).remove().draw(false);
+
+                        $('#deleteUsersModal').modal('hide');
+                    } else {
+                        console.error("Xóa thất bại:", response.message);
+                    }
+                },
+                error: function (xhr) {
+                    console.error("Lỗi khi gửi yêu cầu xóa:", xhr.responseText);
+                }
+            });
+        });
+
 
 });
