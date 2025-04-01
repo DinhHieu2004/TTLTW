@@ -148,8 +148,18 @@ public class User  implements Serializable {
         this.phone = phone;
     }
 
-   // public void setRole(Role role) {
+    public boolean hasPermission(String permission) {
+        return roles.stream()
+                .flatMap(role -> role.getPermissions().stream())
+                .map(Permission::getName)
+                .anyMatch(name -> name.equals(permission));
+    }
+
+    // public void setRole(Role role) {
      //   this.role = role;
    // }
+
+    public static void main(String[] args) {
+    }
 }
 

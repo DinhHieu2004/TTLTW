@@ -1,6 +1,7 @@
 package com.example.web.controller.admin.ThemeController;
 
 
+import com.example.web.dao.model.User;
 import com.example.web.service.ThemeService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -21,6 +22,15 @@ public class AddTheme extends HttpServlet {
         resp.setCharacterEncoding("UTF-8");
         String themeName = req.getParameter("themeName");
         PrintWriter out = resp.getWriter();
+
+        User user = (User) req.getSession().getAttribute("user");
+
+        if(!user.hasPermission("ADD_THEME")){
+            resp.sendRedirect(req.getContextPath() + "/no-permission");
+            return;
+        }
+
+
 
         try {
             boolean isAdd = themeService.addTheme(themeName);

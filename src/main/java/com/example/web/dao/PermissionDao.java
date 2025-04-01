@@ -14,7 +14,7 @@ public class PermissionDao {
     Connection conn = DbConnect.getConnection();
 
        public Permission getPermissionById(int permissionId) throws SQLException {
-           String query = "SELECT p.id, p.name, ap.apiPrefix " +
+           String query = "SELECT p.id, p.name " +
                    "FROM permissions p " +
                    "WHERE p.id = ?";
            PreparedStatement stmt = conn.prepareStatement(query);
