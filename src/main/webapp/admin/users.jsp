@@ -63,7 +63,7 @@
 
         <div class="card-body">
             <table id="users" class="table table-bordered display">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
                     Thêm người dùng
                 </button>
                 <div style="padding-bottom: 10px">
@@ -115,7 +115,7 @@
                     <h5 class="modal-title" id="deleteArtistModalLabel">Xác nhận xóa</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="${pageContext.request.contextPath}/admin/users/delete" method="POST">
+                <form >
                     <div class="modal-body">
                         <p>Bạn có chắc chắn muốn xóa người dùng này?</p>
                         <input type="hidden" id="userIdToDelete" name="userId">
@@ -139,26 +139,30 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="userDetailForm" action="${pageContext.request.contextPath}/admin/users/update" method="post">
+                    <div id="messageE" class="error"></div>
+                    <form id="userDetailForm">
                         <div class="row mb-3">
                             <input type="hidden" id="editUserId" name="id" value="">
                             <div class="col-md-6">
-                                <label for="username" class="form-label">Tên đăng nhập</label>
-                                <input type="text" class="form-control" id="username" name="username" required>
+                                <label for="changUsername" class="form-label">Tên đăng nhập <span style="color: red;">*</span></label>
+                                <input type="text" class="form-control" id="changUsername" name="username" required>
+                                <div class="error" id="changUsernameError"></div>
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="fullName" class="form-label">Tên Đầy Đủ</label>
-                                <input type="text" class="form-control" id="fullName" name="fullName" required>
+                                <label for="changeName" class="form-label">Tên Đầy Đủ <span style="color: red;">*</span></label>
+                                <input type="text" class="form-control" id="changeName" name="fullName" required>
+                                <div class="error" id="changeNameError"></div>
                             </div>
                             <div class="col-md-6">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
+                                <label for="changeEmail" class="form-label">Email <span style="color: red;">*</span></label>
+                                <input type="email" class="form-control" id="changeEmail" name="email" required>
+                                <div class="error" id="changeEmailError"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="address" class="form-label">Địa chỉ</label>
-                                <input type="text" class="form-control" id="address" name="address" required>
+                                <input type="text" class="form-control" id="address" name="address">
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -170,15 +174,10 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label for="phone" class="form-label">Số Điện Thoại</label>
-                                <input type="tel" class="form-control" id="phone" name="phone" pattern="[0-9]{10}"
-                                       required>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-12">
-                                <label for="password" class="form-label">Mật Khẩu</label>
-                                <input type="text" class="form-control" id="password" name="password" required>
+                                <label for="changePhone" class="form-label">Số Điện Thoại</label>
+                                <input type="tel" class="form-control" id="changePhone" name="phone" pattern="[0-9]{10}"
+                                       >
+                                <div class="error" id="changePhoneError"></div>
                             </div>
                         </div>
                     </form>
@@ -196,24 +195,24 @@
 
 
     <!-- Modal -->
-    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="registerModalLabel">Đăng Ký Tài Khoản</h5>
+                    <h5 class="modal-title" id="registerModalLabel">Thêm người dùng mới</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <!-- Original Form -->
-                    <form id="registerForm" method="post" action="${pageContext.request.contextPath}/admin/users/add">
+                    <form id="addUserForm">
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="registerName" class="form-label">Họ và Tên</label>
+                                <label for="registerName" class="form-label">Họ và Tên <span style="color: red;">*</span></label>
                                 <input type="text" class="form-control" id="registerName" name="fullName" placeholder="Nhập họ và tên của bạn">
                                 <div class="error" id="fullNameError"></div>
                             </div>
                             <div class="col-md-6">
-                                <label for="registerUsername" class="form-label">Tên đăng nhập</label>
+                                <label for="registerUsername" class="form-label">Tên đăng nhập <span style="color: red;">*</span></label>
                                 <input type="text" class="form-control" id="registerUsername" name="username" placeholder="Nhập tên đăng nhập">
                                 <div class="error" id="usernamergError"></div>
                             </div>
@@ -226,7 +225,7 @@
                                 <div class="error" id="phoneError"></div>
                             </div>
                             <div class="col-md-6">
-                                <label for="registerEmail" class="form-label">Email</label>
+                                <label for="registerEmail" class="form-label">Email <span style="color: red;">*</span></label>
                                 <input type="email" class="form-control" id="registerEmail" name="email" placeholder="Nhập email của bạn">
                                 <div class="error" id="emailError"></div>
                             </div>
@@ -239,7 +238,7 @@
                                 <div class="error" id="addressError"></div>
                             </div>
                             <div class="col-md-6">
-                                <label for="registerPassword" class="form-label">Mật khẩu</label>
+                                <label for="registerPassword" class="form-label">Mật khẩu <span style="color: red;">*</span></label>
                                 <input type="password" class="form-control" id="registerPassword" name="password" placeholder="Tạo mật khẩu">
                                 <div class="error" id="passwordrgError"></div>
                             </div>
@@ -247,8 +246,8 @@
 
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="ConfirmRegisterPassword" class="form-label">Nhập lại mật khẩu</label>
-                                <input type="password" class="form-control" id="ConfirmRegisterPassword" name="confirmPassword" placeholder="Nhập lại mật khẩu">
+                                <label for="ConfirmRegisterPassword" class="form-label">Nhập lại mật khẩu <span style="color: red;">*</span></label>
+                                <input type="password" class="form-control" id="confirmRegisterPassword" name="confirmPassword" placeholder="Nhập lại mật khẩu">
                                 <div class="error" id="confirmPasswordError"></div>
                             </div>
                         </div>
@@ -279,11 +278,11 @@
     });
 
 
-    document.querySelectorAll('[data-bs-target="#deleteUsersModal"]').forEach(button => {
-        button.addEventListener('click', function () {
-            let userId = this.getAttribute('data-user-id');
+    document.addEventListener('click', function (event) {
+        if (event.target.matches('[data-bs-target="#deleteUsersModal"]')) {
+            let userId = event.target.getAttribute('data-user-id');
             document.getElementById('userIdToDelete').value = userId;
-        });
+        }
     });
 </script>
 <script src="${pageContext.request.contextPath}/assets/js/admin/user.js"></script>

@@ -4,7 +4,8 @@ import java.io.Serializable;
 
 public class User  implements Serializable {
     private int id;
-    private String google_id;
+    private String gg_id;
+    private String fb_id;
     private String fullName;
     private String username;
     private String address;
@@ -32,14 +33,14 @@ public class User  implements Serializable {
         this.role = role;
         this.password = password;
     }
-    public User(int id, String google_id, String fullName, String email, Role role){
+    public User(int id, String gg_id, String fb_id, String fullName, String email, Role role){
         this.id = id;
-        this.google_id = google_id;
+        this.gg_id = gg_id;
+        this.fb_id = fb_id;
         this.fullName = fullName;
         this.email = email;
         this.role = role;
     }
-
     public User() {
 
     }
@@ -128,12 +129,20 @@ public class User  implements Serializable {
         this.role = role;
     }
 
-    public String getGoogle_id() {
-        return google_id;
+    public String getGg_id() {
+        return gg_id;
     }
 
-    public void setGoogle_id(String google_id) {
-        this.google_id = google_id;
+    public void setGg_id(String gg_id) {
+        this.gg_id = gg_id;
+    }
+
+    public String getFb_id() {
+        return fb_id;
+    }
+
+    public void setFb_id(String fb_id) {
+        this.fb_id = fb_id;
     }
 }
 

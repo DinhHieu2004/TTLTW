@@ -24,6 +24,7 @@ public class GetDetail extends HttpServlet {
             System.out.println(userId);
 
             User user = userSerive.getUser(userId);
+            user.setPassword(null);
             System.out.println(user);
 
             resp.setContentType("application/json");

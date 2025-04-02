@@ -2,6 +2,7 @@ package com.example.web.controller.admin.UserController;
 
 import com.example.web.dao.model.User;
 import com.example.web.service.UserSerive;
+import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -9,39 +10,97 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @WebServlet("/admin/users/update")
 public class Update extends HttpServlet {
     private UserSerive userSerive = new UserSerive();
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        @Override
+        protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+            resp.setContentType("application/json");
+            resp.setCharacterEncoding("UTF-8");
+            Gson gson = new Gson();
+            Map<String, Object> responseMap = new HashMap<>();
+            Map<String, String> errors = new HashMap<>();
 
-        int id =Integer.parseInt(req.getParameter("id"));
-        String username = req.getParameter("username");
-        String password = req.getParameter("password");
-        String email = req.getParameter("email");
-        String phone = req.getParameter("phone");
-        String address = req.getParameter("address");
-        String fullName = req.getParameter("fullName");
-        String role = req.getParameter("role");
+            try {
+                int id = Integer.parseInt(req.getParameter("id"));
+                String username = req.getParameter("username");
+                String email = req.getParameter("email");
+                String phone = req.getParameter("phone");
+                String address = req.getParameter("address");
+                String fullName = req.getParameter("fullName");
+                String role = req.getParameter("role");
 
-        User.Role roleEnum = User.Role.valueOf(role);
+                if (fullName == null || fullName.isEmpty()) {
+                    errors.put("changeNameError", "Họ và tên không được để trống!");
+                }
+                if (username == null || username.isEmpty()) {
+                    errors.put("changUsernameError", "Tên đăng nhập không được để trống!");
+                } else if (userSerive.findByUsername(username) != null && !username.equals(getCurrentUsername(id))) {
+                    errors.put("changUsernameError", "Tên đăng nhập đã tồn tại!");
+                }
 
-        User user =  new User(id,fullName, username,address, email, phone, roleEnum, password);
-        System.out.println(user);
+                if (email == null || email.isEmpty()) {
+                    errors.put("changeEmailError", "Email không được để trống!");
+                } else if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+                    errors.put("changeEmailError", "Email không hợp lệ!");
+                } else if (userSerive.findByEmail(email) != null && !email.equals(getCurrentEmail(id))) {
+                    errors.put("changeEmailError", "Email đã tồn tại!");
+                }
 
-        try {
-            boolean isUpdated = userSerive.updateUser(user);
-            if (isUpdated) {
-                resp.sendRedirect("../users");
-            } else {
-                resp.getWriter().write("{\"success\": false, \"message\": \"Cập nhật thất bại.\"}");
+                if (phone != null && !phone.isEmpty() && !phone.matches("\\d{10}")) {
+                    errors.put("changePhoneError", "Số điện thoại không hợp lệ!");
+                }
+
+                if (!errors.isEmpty()) {
+                    responseMap.put("status", "fail");
+                    responseMap.put("errors", errors);
+                    resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    try (PrintWriter out = resp.getWriter()) {
+                        out.write(gson.toJson(responseMap));
+                        out.flush();
+                    }
+                    return;
+                }
+
+                User.Role roleEnum = User.Role.valueOf(role);
+                User user = new User(id, fullName, username, address, email, phone, roleEnum);
+
+                boolean isUpdated = userSerive.updateUser(user);
+                if (isUpdated) {
+                    responseMap.put("message", "Cập nhật thành công!");
+                    responseMap.put("user", user);
+                    resp.setStatus(HttpServletResponse.SC_OK);
+                } else {
+                    responseMap.put("messageE", "Cập nhật thất bại!");
+                    resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                }
+            } catch (Exception e) {
+                responseMap.put("status", "error");
+                responseMap.put("message", "Lỗi hệ thống: " + e.getMessage());
+                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+
+            try (PrintWriter out = resp.getWriter()) {
+                out.write(gson.toJson(responseMap));
+                out.flush();
+            }
         }
-    }
+
+        private String getCurrentUsername(int id) throws SQLException {
+            User currentUser = userSerive.findById(id);
+            return currentUser != null ? currentUser.getUsername() : "";
+        }
+
+        private String getCurrentEmail(int id) throws SQLException {
+            User currentUser = userSerive.findById(id);
+            return currentUser != null ? currentUser.getEmail() : "";
+        }
+
 }

@@ -242,7 +242,7 @@ function showError(inputId, errorId, message) {
 function resetLoginResForm() {
     $('#loginForm')[0].reset();
     $('#registerForm')[0].reset();
-    $('.text-danger').text('');
+    $('.error').text('');
     $('#loginMessage').text('').removeClass('text-danger').hide();
     $('input').removeClass('is-invalid');
 
@@ -337,30 +337,33 @@ window.fbAsyncInit = function() {
     fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
 
-document.getElementById('custom-facebook-btn').addEventListener('click', function() {
-    FB.login(function(response) {
-        if (response.authResponse) {
-            const accessToken = response.authResponse.accessToken;
+document.addEventListener("DOMContentLoaded", function () {
+    var fbBtn = document.getElementById('custom-facebook-btn');
+        fbBtn.addEventListener('click', function () {
+            FB.login(function (response) {
+                if (response.authResponse) {
+                    const accessToken = response.authResponse.accessToken;
 
-            $.ajax({
-                type: "POST",
-                url: "login_fb",
-                data: { accessToken: accessToken },
-                success: function(data) {
-                    if (data.success) {
-                        location.reload();
-                    } else {
-                        alert(data.message || "Đăng nhập bằng Facebook thất bại.");
-                    }
-                },
-                error: function(xhr) {
-                    alert("Đăng nhập bằng Facebook thất bại. Vui lòng thử lại sau.");
+                    $.ajax({
+                        type: "POST",
+                        url: "login_fb",
+                        data: { accessToken: accessToken },
+                        success: function (data) {
+                            if (data.success) {
+                                location.reload();
+                            } else {
+                                alert(data.message || "Đăng nhập bằng Facebook thất bại.");
+                            }
+                        },
+                        error: function (xhr) {
+                            alert("Đăng nhập bằng Facebook thất bại. Vui lòng thử lại sau.");
+                        }
+                    });
+                } else {
+                    alert("Người dùng từ chối đăng nhập bằng Facebook.");
                 }
-            });
-        } else {
-            alert("Người dùng từ chối đăng nhập bằng Facebook.");
-        }
-    }, {scope: 'public_profile,email', display: 'popup'});
+            }, { scope: 'public_profile,email', display: 'popup' });
+        });
 });
 
 

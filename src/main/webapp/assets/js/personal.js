@@ -173,10 +173,111 @@ $(document).ready(function () {
         }
     });
 
-
-
-
     $('#orderDetailsModal').on('hidden.bs.modal', function () {
         currentOrderId = null;
     });
+});
+
+$(document).ready(function(){
+    $("#editPersonalInfoForm").submit(function (e){
+        e.preventDefault();
+        let isValid = true;
+
+        let fullName = $("#nameChange").val().trim();
+        let email = $("#emailChange").val().trim();
+        let address = $("#addressChange").val().trim();
+        let phone = $("#phoneChange").val().trim();
+
+        if (!fullName) {
+            $('#nameChangeError').text('Tên không được để trống!').addClass('text-danger');
+            $('#nameChange').addClass('is-invalid');
+            isValid = false;
+        }
+
+        let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!email) {
+            $('#emailChangeError').text('Email không được để trống!').addClass('text-danger');
+            $('#emailChange').addClass('is-invalid');
+            isValid = false;
+        } else if (!emailRegex.test(email)) {
+            $('#emailChangeError').text('Email không hợp lệ!').addClass('text-danger');
+            $('#emailChange').addClass('is-invalid');
+            isValid = false;
+        }
+
+        // Kiểm tra số điện thoại hợp lệ (10 chữ số)
+        let phoneRegex = /^(0[1-9][0-9]{8})$/;
+        if (phone && !phoneRegex.test(phone)) {
+            $('#phoneChangeError').text('Số điện thoại không hợp lệ!').addClass('text-danger');
+            $('#phoneChange').addClass('is-invalid');
+            isValid = false;
+        }
+
+        if (!isValid) return;
+        $.ajax({
+            type: "POST",
+            url: "update-personal-info",
+            data: {
+                fullName: fullName,
+                email: email,
+                address: address,
+                phone: phone
+            },
+            success: function(response){
+                    alert("Cập nhật thông tin thành công!");
+                    location.reload();
+            },
+            error: function(xhr){
+                console.log("aaaa")
+                let response = JSON.parse(xhr.responseText)
+                let { message, ...errors } = response;
+                showErrorschange(errors);
+            }
+        });
+    });
+});
+
+function showErrorschange(errors){
+    $('.text-danger').text('');
+    $('.is-invalid').removeClass('is-invalid');
+
+    Object.keys(errors).forEach(key => {
+        let inputId = convertErrorKeyToInputIdCh(key);
+        let errorId = convertErrorKeyToErrorIdCh(key);
+        showErrorc(inputId, errorId, errors[key]);
+    });
+}
+
+function convertErrorKeyToInputIdCh(errorKey) {
+    let mapping = {
+        "fullName": "nameChange",
+        "errorEmail": "emailChange",
+        "errorPhone": "phoneChange"
+    };
+    return mapping[errorKey] || "";
+}
+function convertErrorKeyToErrorIdCh(errorKey){
+    let mapping = {
+        "fullName": "nameChangeError",
+        "errorEmail": "emailChangeError",
+        "errorPhone": "phoneChangeError"
+    };
+    return mapping[errorKey] || "";
+}
+function showErrorc(inputId, errorId, message) {
+    $('#' + errorId).text(message).addClass('text-danger');
+    $('#' + inputId).addClass('is-invalid');
+}
+$('#editPersonalInfoModal').on('hidden.bs.modal', function () {
+    $('.text-danger').text('').removeClass('text-danger');
+    $('input').removeClass('is-invalid');
+    $('.error').text('');
+});
+$('#editPersonalInfoModal').on('show.bs.modal', function () {
+    let modal = $(this);
+
+    modal.find('#nameChange').val(modal.find('#nameChange').data('fullname'));
+    modal.find('#phoneChange').val(modal.find('#phoneChange').data('phone'));
+    modal.find('#emailChange').val(modal.find('#emailChange').data('email'));
+    modal.find('#addressChange').val(modal.find('#addressChange').data('address'));
 });

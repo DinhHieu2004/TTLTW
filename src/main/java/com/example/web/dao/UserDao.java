@@ -72,17 +72,16 @@ public class UserDao {
 
     }
     public boolean updateUser(User user) throws SQLException {
-        String updateQuery = "UPDATE users SET fullname = ?, username = ?, password = ?, address = ?, email = ? , phone = ?, role =? WHERE id = ?";
+        String updateQuery = "UPDATE users SET fullname = ?, username = ?, address = ?, email = ? , phone = ?, role =? WHERE id = ?";
         PreparedStatement statement = conn.prepareStatement(updateQuery);
 
         statement.setString(1, user.getFullName());
         statement.setString(2, user.getUsername());
-        statement.setString(3, user.getPassword());
-        statement.setString(4, user.getAddress());
-        statement.setString(5, user.getEmail());
-        statement.setString(6, user.getPhone());
-        statement.setString(7, user.getRole().toString());
-        statement.setInt(8, user.getId());
+        statement.setString(3, user.getAddress());
+        statement.setString(4, user.getEmail());
+        statement.setString(5, user.getPhone());
+        statement.setString(6, user.getRole().toString());
+        statement.setInt(7, user.getId());
         int rowsAffected = statement.executeUpdate();
 
         return rowsAffected > 0;
@@ -173,6 +172,43 @@ public class UserDao {
 
         if (phone != null) {
             ps.setString(6, phone);
+        }
+
+        return ps.executeUpdate() > 0;
+    }
+    public boolean addUser(String fullName, String username, String hashPassword, String email, String phone, String role, String address) throws SQLException {
+        if (findByUsername(username) != null) {
+            return false;
+        }
+
+        StringBuilder sql = new StringBuilder("INSERT INTO users (fullName, username, password, email, role");
+        StringBuilder values = new StringBuilder(" VALUES (?, ?, ?, ?, ?");
+        List<Object> params = new ArrayList<>();
+
+        params.add(fullName);
+        params.add(username);
+        params.add(hashPassword);
+        params.add(email);
+        params.add(role);
+
+        if (phone != null) {
+            sql.append(", phone");
+            values.append(", ?");
+            params.add(phone);
+        }
+
+        if (address != null) {
+            sql.append(", address");
+            values.append(", ?");
+            params.add(address);
+        }
+
+        sql.append(")").append(values).append(")");
+
+        PreparedStatement ps = conn.prepareStatement(sql.toString());
+
+        for (int i = 0; i < params.size(); i++) {
+            ps.setObject(i + 1, params.get(i));
         }
 
         return ps.executeUpdate() > 0;
@@ -333,6 +369,7 @@ public class UserDao {
                     return new User(
                             rs.getInt("id"),
                             rs.getString("gg_id"),
+                            rs.getString("fb_id"),
                             rs.getString("fullName"),
                             rs.getString("email"),
                             User.Role.valueOf(rs.getString("role"))
@@ -367,6 +404,7 @@ public class UserDao {
                 if (rs.next()) {
                     return new User(
                             rs.getInt("id"),
+                            rs.getString("gg_id"),
                             rs.getString("fb_id"),
                             rs.getString("fullName"),
                             rs.getString("email"),
@@ -394,7 +432,4 @@ public class UserDao {
             System.out.println("Lỗi khi thực hiện yêu cầu phục hồi mật khẩu: " + e.getMessage());
         }
     }
-
-
-
 }
