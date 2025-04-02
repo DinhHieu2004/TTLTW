@@ -148,13 +148,13 @@ $(document).ready(function () {
                 if (response) {
                     const data = response;
                     $('#editUserId').val(data.id);
-                    $('#username').val(data.username);
-                    $('#fullName').val(data.fullName);
-                    $('#email').val(data.email);
+                    $('#changUsername').val(data.username);
+                    $('#changeName').val(data.fullName);
+                    $('#changeEmail').val(data.email);
                     $('#role').val(data.role);
                     $('#address').val(data.address);
                     $('#password').val(data.password);
-                    $('#phone').val(data.phone);
+                    $('#changePhone').val(data.phone);
 
                 } else {
                     alert(response.error || 'không tìm thấy người dùng.');
@@ -171,11 +171,11 @@ $(document).ready(function () {
         let isValid = true;
 
         let id = $('#editUserId').val().trim();
-        let username = $('#username').val().trim();
-        let fullName = $("#fullName").val().trim();
-        let email = $("#email").val().trim();
+        let username = $('#changUsername').val().trim();
+        let fullName = $("#changeName").val().trim();
+        let email = $("#changeEmail").val().trim();
         let address = $("#address").val().trim();
-        let phone = $("#phone").val().trim();
+        let phone = $("#changePhone").val().trim();
         let role = $('#role').val().trim();
 
 
@@ -207,32 +207,30 @@ $(document).ready(function () {
                 role: role
             },
             success: function(response){
-                if (response.status == "success") {
-                    let row = table1.row("#row_" + response.user.id);
+                console.log(response)
+                var $row = $('button[data-user-id="' + response.user.id + '"]').closest('tr');
 
-                        row.data([
-                            response.user.id,
-                            response.user.username,
-                            response.user.fullName,
-                            response.user.email,
-                            response.user.phone,
-                            response.user.role,
-                            `<button class="btn btn-info btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#viewEditUserModal" data-user-id="${response.user.id}">Xem Chi Tiết</button>
-                     <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#deleteUsersModal" data-user-id="${response.user.id}">Xóa</button>`
-                        ]).draw(false);
-                    $('#viewEditUserModal').modal('hide');
-                }
-                else{
-                    console.log(response);
-                }
+
+                table1.cell($row, 0).data(response.user.id);
+                table1.cell($row, 1).data(response.user.username);
+                table1.cell($row, 2).data(response.user.fullName);
+                table1.cell($row, 3).data(response.user.email);
+                table1.cell($row, 4).data(response.user.phone);
+                table1.cell($row, 5).data(response.user.role);
+                $('#viewEditUserModal').modal('hide');
             },
             error: function(xhr){
-                console.log("aaaa")
-                let errors = JSON.parse(xhr.responseText)
-                console.log("aaaa"+errors)
-                showServerErrors(errors);
+                if (xhr.status === 400) {
+                    let response = JSON.parse(xhr.responseText);
+                    $(".error").text("");
+                    $.each(response.errors, function (key, message) {
+                        $("#" + key).text(message).addClass('text-danger');
+                        let inputId = key.replace("Error", "");
+                        $("#" + inputId).addClass('is-invalid');
+                    });
+                } else {
+                    alert("Lỗi hệ thống: " + xhr.responseText);
+                }
             }
         });
     });

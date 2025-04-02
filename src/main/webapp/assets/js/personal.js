@@ -188,9 +188,18 @@ $(document).ready(function(){
         let address = $("#addressChange").val().trim();
         let phone = $("#phoneChange").val().trim();
 
-        // Kiểm tra email hợp lệ
+        if (!fullName) {
+            $('#nameChangeError').text('Tên không được để trống!').addClass('text-danger');
+            $('#nameChange').addClass('is-invalid');
+            isValid = false;
+        }
+
         let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (email && !emailRegex.test(email)) {
+        if (!email) {
+            $('#emailChangeError').text('Email không được để trống!').addClass('text-danger');
+            $('#emailChange').addClass('is-invalid');
+            isValid = false;
+        } else if (!emailRegex.test(email)) {
             $('#emailChangeError').text('Email không hợp lệ!').addClass('text-danger');
             $('#emailChange').addClass('is-invalid');
             isValid = false;
@@ -221,7 +230,6 @@ $(document).ready(function(){
             error: function(xhr){
                 console.log("aaaa")
                 let response = JSON.parse(xhr.responseText)
-                console.log("aaaa"+errors)
                 let { message, ...errors } = response;
                 showErrorschange(errors);
             }
@@ -260,5 +268,16 @@ function showErrorc(inputId, errorId, message) {
     $('#' + errorId).text(message).addClass('text-danger');
     $('#' + inputId).addClass('is-invalid');
 }
+$('#editPersonalInfoModal').on('hidden.bs.modal', function () {
+    $('.text-danger').text('').removeClass('text-danger');
+    $('input').removeClass('is-invalid');
+    $('.error').text('');
+});
+$('#editPersonalInfoModal').on('show.bs.modal', function () {
+    let modal = $(this);
 
-
+    modal.find('#nameChange').val(modal.find('#nameChange').data('fullname'));
+    modal.find('#phoneChange').val(modal.find('#phoneChange').data('phone'));
+    modal.find('#emailChange').val(modal.find('#emailChange').data('email'));
+    modal.find('#addressChange').val(modal.find('#addressChange').data('address'));
+});

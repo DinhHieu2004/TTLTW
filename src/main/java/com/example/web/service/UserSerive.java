@@ -35,6 +35,9 @@ public class UserSerive {
     public User findByUsername(String username) throws SQLException {
         return userDao.findByUsername(username);
     }
+    public User findById(int id) throws SQLException {
+        return userDao.getUser(id);
+    }
     public User findByEmail(String email) throws  SQLException {
         return userDao.findByEmail(email);
     }

@@ -83,21 +83,21 @@
                                 <div class="modal-body">
                                     <form id="editPersonalInfoForm">
                                         <div class="mb-3">
-                                            <label for="nameChange" class="form-label">Họ và tên</label>
+                                            <label for="nameChange" class="form-label">Họ và tên <span style="color: red;">*</span></label>
                                             <input type="text" class="form-control" id="nameChange" name="fullName"
-                                                   value="${sessionScope.user.fullName}">
+                                                   data-fullname="${sessionScope.user.fullName}">
                                             <div class="error" id="nameChangeError"></div>
                                         </div>
                                         <div class="mb-3">
                                             <label for="phoneChange" class="form-label">Số điện thoại</label>
                                             <input type="text" class="form-control" id="phoneChange" name="phone"
-                                                   value="${sessionScope.user.phone}">
+                                                   data-phone="${sessionScope.user.phone}">
                                             <div class="error" id="phoneChangeError"></div>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="emailChange" class="form-label">Email</label>
+                                            <label for="emailChange" class="form-label">Email <span style="color: red;">*</span></label>
                                             <input type="email" class="form-control" id="emailChange" name="email"
-                                                   value="${sessionScope.user.email}"
+                                                   data-email="${sessionScope.user.email}"
                                                    style="<c:if test='${not empty sessionScope.user.gg_id or not empty sessionScope.user.fb_id}'>background-color: #e9ecef;</c:if>"
                                                     <c:if test="${not empty sessionScope.user.gg_id or not empty sessionScope.user.fb_id}">
                                                         disabled
@@ -107,7 +107,7 @@
                                         <div class="mb-3">
                                             <label for="addressChange" class="form-label">Địa chỉ</label>
                                             <input type="text" class="form-control" id="addressChange" name="address"
-                                                   value="${sessionScope.user.address}">
+                                                   data-address="${sessionScope.user.address}">
                                             <div class="error" id="addressChangeError"></div>
                                         </div>
                                         <button type="submit" class="btn btn-primary"

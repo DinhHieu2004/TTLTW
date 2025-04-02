@@ -42,7 +42,6 @@ public class Add  extends HttpServlet {
                 responseMap.put("errorUser", "Tên đăng nhập đã tồn tại!");
             }
 
-            // Kiểm tra Email
             if (email.isEmpty()) {
                 responseMap.put("errorEmail", "Email không được để trống!");
             } else if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
@@ -52,7 +51,6 @@ public class Add  extends HttpServlet {
                 responseMap.put("errorEmail", "Email đã tồn tại!");
             }
 
-            // Kiểm tra Password
             if (password.isEmpty()) {
                 responseMap.put("errorPassword", "Mật khẩu không được để trống!");
             }
@@ -60,7 +58,6 @@ public class Add  extends HttpServlet {
                 responseMap.put("errorPassword", "Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt!");
             }
 
-            // Kiểm tra Số điện thoại
             if ( phone != null && !phone.isEmpty() && !phone.matches("\\d{10}")) {
                 responseMap.put("errorPhone", "Số điện thoại không hợp lệ!");
             }
@@ -71,7 +68,6 @@ public class Add  extends HttpServlet {
                 System.out.println("dddd");
                 return;
             }
-            // Đăng ký người dùng mới
             boolean isRegistered = userSerive.addUser(fullName, username, password, email, phone, "user", address);
 
             if (isRegistered) {
