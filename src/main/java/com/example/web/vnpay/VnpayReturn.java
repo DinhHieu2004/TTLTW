@@ -5,9 +5,15 @@
 
 package com.example.web.vnpay;
 
+import com.example.web.dao.model.Order;
+import com.example.web.dao.model.OrderItem;
+import com.example.web.dao.model.User;
+import com.example.web.service.OrderItemService;
 import com.example.web.service.OrderService;
 import java.io.IOException;
 import java.io.PrintWriter;
+
+import com.example.web.service.UserSerive;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,11 +23,14 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @WebServlet("/vnpay_return")
 public class VnpayReturn extends HttpServlet {
     private final OrderService orderService = new OrderService();
+    private final OrderItemService orderItemService = new OrderItemService();
+    private final UserSerive userSerive = new UserSerive();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -53,17 +62,36 @@ public class VnpayReturn extends HttpServlet {
                 
                 boolean transSuccess = false;
                 if ("00".equals(request.getParameter("vnp_TransactionStatus"))) {
-                    //update banking system
+                    //update order status
                     orderService.updateStatus(orderIdInt, "hoàn thành");
                     transSuccess = true;
                 } else {
                     orderService.updateStatus(orderIdInt, "chờ");
                 }
-                request.setAttribute("transResult", transSuccess);
-                request.getRequestDispatcher("paymentResult.jsp").forward(request, response);
+                // Lấy thông tin từ db
+                Order order = orderService.getOrder(orderIdInt);
+                List<OrderItem> orderItems = orderItemService.getOrderItems(orderIdInt);
+                // Lấy email nhận đơn hàng
+                User user = userSerive.getUser(order.getUserId());
+                request.setAttribute("userEmail", user.getEmail());
+
+
+                // Lưu thông tin vào để chuyển đến trang thanh toán thành công
+                if(orderItems != null) {
+                    request.setAttribute("order", order);
+                    request.setAttribute("orderItems", orderItems);
+                }
+                if (transSuccess) {
+                    request.getRequestDispatcher("user/payment_success.jsp").forward(request, response);
+                } else {
+                    request.setAttribute("transResult", transSuccess);
+                    request.getRequestDispatcher("user/payment_failed.jsp").forward(request, response);
+                }
             } else {
-                System.out.println("GD KO HOP LE (invalid signature)");
+                request.getRequestDispatcher("user/payment_failed.jsp").forward(request, response);
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

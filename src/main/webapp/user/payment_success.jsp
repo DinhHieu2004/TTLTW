@@ -79,7 +79,7 @@
                                 </div>
                                 <div class="col-md-6 text-md-end">
                                     <p class="fw-bold mb-1">Ngày đặt hàng:</p>
-                                    <p><fmt:formatDate value="${requestScope.order.orderDate}" pattern="dd/MM/yyyy - HH:mm"/></p>
+                                    <p><fmt:formatDate value="${requestScope.order.orderDate}" pattern="dd/MM/yyyy"/></p>
                                 </div>
                             </div>
 
@@ -140,8 +140,8 @@
                                 <h6 class="mb-3">Thông tin giao hàng</h6>
                                 <p class="mb-1"><span class="fw-bold">Người nhận:</span> ${requestScope.order.recipientName}</p>
                                 <p class="mb-1"><span class="fw-bold">Số điện thoại:</span> ${requestScope.order.recipientPhone}</p>
-                                <p class="mb-1"><span class="fw-bold">Email:</span> ${requestScope.order.recipientEmail}</p>
-                                <p class="mb-0"><span class="fw-bold">Địa chỉ:</span> ${requestScope.userEmail}</p>
+                                <p class="mb-1"><span class="fw-bold">Email:</span> ${requestScope.userEmail}</p>
+                                <p class="mb-0"><span class="fw-bold">Địa chỉ:</span> ${requestScope.order.deliveryAddress}</p>
                             </div>
                         </div>
                     </div>
