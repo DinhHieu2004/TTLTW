@@ -7,7 +7,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class PermissionDao {
@@ -52,4 +54,19 @@ public class PermissionDao {
     }
 
 
+    public List<Permission> getAll() throws SQLException {
+           String query = "SELECT * FROM permissions";
+           List<Permission> permissions = new ArrayList<>();
+
+           PreparedStatement stmt = conn.prepareStatement(query);
+           ResultSet rs = stmt.executeQuery();
+           while (rs.next()) {
+               int permissionId = rs.getInt("id");
+               String permissionName = rs.getString("name");
+               String description = rs.getString("description");
+
+               permissions.add(new Permission(permissionId, permissionName, description));
+           }
+           return permissions;
+    }
 }

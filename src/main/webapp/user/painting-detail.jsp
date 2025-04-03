@@ -1,6 +1,4 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="jakarta.servlet.http.HttpSession" %>
-<%@ page import="com.example.web.dao.model.User" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -321,6 +319,10 @@
         });
     });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/header.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/painting-detail.js"></script>
+
 
 </body>
 </html>

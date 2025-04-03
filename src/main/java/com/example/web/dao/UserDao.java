@@ -30,8 +30,8 @@ public class UserDao {
             u.setUsername(rs.getString("username"));
             u.setFullName(rs.getString("fullName"));
             u.setEmail(rs.getString("email"));
-          //  User.Role role = User.Role.valueOf(rs.getString("role"));
-          //  u.setRole(role);
+            Set<Role> roles = roleDao.getRolesByUserId(u.getId());
+            u.setRole(roles);
             u.setAddress(rs.getString("address"));
             u.setPhone(rs.getString("phone"));
             users.add(u);
@@ -50,12 +50,11 @@ public class UserDao {
             u.setUsername(rs.getString("username"));
             u.setFullName(rs.getString("fullName"));
             u.setEmail(rs.getString("email"));
-         //   u.setRole(User.Role.valueOf(rs.getString("role")));
+            Set<Role> roles = roleDao.getRolesByUserId(u.getId());
+            u.setRole(roles);
             u.setAddress(rs.getString("address"));
             u.setPhone(rs.getString("phone"));
             u.setPassword(rs.getString("password"));
-            Set<Role> roles = roleDao.getRolesByUserId(id);
-            u.setRole(roles);
             return u;
         }
         return null;
@@ -72,22 +71,58 @@ public class UserDao {
         }
 
     }
-    public boolean updateUser(User user) throws SQLException {
-        String updateQuery = "UPDATE users SET fullname = ?, username = ?, password = ?, address = ?, email = ? , phone = ?, role =? WHERE id = ?";
-        PreparedStatement statement = conn.prepareStatement(updateQuery);
+    public boolean updateUser(User user, Set<Integer> roleIds) throws SQLException {
+        PreparedStatement statement = null;
+        boolean success = false;
 
-        statement.setString(1, user.getFullName());
-        statement.setString(2, user.getUsername());
-        statement.setString(3, user.getPassword());
-        statement.setString(4, user.getAddress());
-        statement.setString(5, user.getEmail());
-        statement.setString(6, user.getPhone());
-      //  statement.setString(7, user.getRole().toString());
-        statement.setInt(8, user.getId());
-        int rowsAffected = statement.executeUpdate();
+        try {
+            conn.setAutoCommit(false);
 
-        return rowsAffected > 0;
+            String updateUserQuery = "UPDATE users SET fullname = ?, username = ?, address = ?, email = ?, phone = ? WHERE id = ?";
+            statement = conn.prepareStatement(updateUserQuery);
 
+            statement.setString(1, user.getFullName());
+            statement.setString(2, user.getUsername());
+            statement.setString(3, user.getAddress());
+            statement.setString(4, user.getEmail());
+            statement.setString(5, user.getPhone());
+            statement.setInt(6, user.getId());
+
+            int rowsAffected = statement.executeUpdate();
+            success = rowsAffected > 0;
+
+            if (roleIds != null) {
+                String deleteRolesQuery = "DELETE FROM user_roles WHERE userId = ?";
+                statement = conn.prepareStatement(deleteRolesQuery);
+                statement.setInt(1, user.getId());
+                statement.executeUpdate();
+
+                if (!roleIds.isEmpty()) {
+                    String insertRolesQuery = "INSERT INTO user_roles (userId, roleId) VALUES (?, ?)";
+                    statement = conn.prepareStatement(insertRolesQuery);
+
+                    for (Integer roleId : roleIds) {
+                        statement.setInt(1, user.getId());
+                        statement.setInt(2, roleId);
+                        statement.addBatch();
+                    }
+                    statement.executeBatch();
+                }
+            }
+
+            conn.commit();
+            return success;
+
+        } catch (SQLException e) {
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException rollbackEx) {
+                    rollbackEx.printStackTrace();
+                }
+            }
+            throw e;
+        }
     }
 
     public User findByUsername(String username) throws SQLException {
@@ -102,9 +137,9 @@ public class UserDao {
                 String address = rs.getString("address");
                 String email = rs.getString("email");
                 String phone = rs.getString("phone");
-            //    User.Role role = User.Role.valueOf(rs.getString("role"));
-
-                return new User(id, fullName, uname, address, email, phone);
+                String password = rs.getString("password");
+                Set<Role> roles = roleDao.getRolesByUserId(id);
+                return new User(id, fullName, uname, address, email, phone,password, roles);
             }
 
         }
@@ -123,9 +158,10 @@ public class UserDao {
                 String address = rs.getString("address");
                 String uemail = rs.getString("email");
                 String phone = rs.getString("phone");
-            //    User.Role role = User.Role.valueOf(rs.getString("role"));
-
-                return new User(id, fullName, uname, address, uemail, phone);
+           //     User.Role role = User.Role.valueOf(rs.getString("role"));
+                Set<Role> roles = roleDao.getRolesByUserId(id);
+                String password = rs.getString("password");
+                return new User(id, fullName, uname, address, uemail, phone,password, roles);
             }
 
         }
@@ -147,7 +183,6 @@ public class UserDao {
                 String phone = rs.getString("phone");
                 String password = rs.getString("password");
                 Set<Role> roles = roleDao.getRolesByUserId(id);
-
                 return new User(id, fullName, uname, address, email, phone, password,roles);
             }
         }
@@ -175,6 +210,43 @@ public class UserDao {
 
         if (phone != null) {
             ps.setString(6, phone);
+        }
+
+        return ps.executeUpdate() > 0;
+    }
+    public boolean addUser(String fullName, String username, String hashPassword, String email, String phone, String role, String address) throws SQLException {
+        if (findByUsername(username) != null) {
+            return false;
+        }
+
+        StringBuilder sql = new StringBuilder("INSERT INTO users (fullName, username, password, email, role");
+        StringBuilder values = new StringBuilder(" VALUES (?, ?, ?, ?, ?");
+        List<Object> params = new ArrayList<>();
+
+        params.add(fullName);
+        params.add(username);
+        params.add(hashPassword);
+        params.add(email);
+        params.add(role);
+
+        if (phone != null) {
+            sql.append(", phone");
+            values.append(", ?");
+            params.add(phone);
+        }
+
+        if (address != null) {
+            sql.append(", address");
+            values.append(", ?");
+            params.add(address);
+        }
+
+        sql.append(")").append(values).append(")");
+
+        PreparedStatement ps = conn.prepareStatement(sql.toString());
+
+        for (int i = 0; i < params.size(); i++) {
+            ps.setObject(i + 1, params.get(i));
         }
 
         return ps.executeUpdate() > 0;
@@ -308,14 +380,85 @@ public class UserDao {
 
         return null; // Không tìm thấy mật khẩu
     }
+    public boolean createUserByGoogle(String id, String name, String email, String role) throws SQLException {
+        User existingUser = findGoogleUserById(id);
+        if (existingUser != null) {
+            return false;
+        }
+        String sql = "INSERT INTO users (fullName, email, gg_id, role) VALUES (?, ?, ?, ?)";
 
-    public static void main(String[] args) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, name);
+        ps.setString(2, email);
+        ps.setString(3, id);
+        ps.setString(4, role);
+
+
+        return ps.executeUpdate() > 0;
+    }
+
+    public User findGoogleUserById(String gg_id) throws SQLException {
+        String sql = "SELECT * FROM users WHERE gg_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, gg_id);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int id = rs.getInt("id");
+                    String ggid = rs.getString("gg_id");
+                    String name = rs.getString("fullName");
+                    String email = rs.getString("email");
+                    String fbid = rs.getString("fb_id");
+                    Set<Role> roles = roleDao.getRolesByUserId(id);
+
+                    return new User(id, ggid,fbid,name, email,roles);
+                }
+            }
+        }
+        return null;
+    }
+    public boolean createUserByFB(String fbId, String name, String email, String role) throws SQLException {
+        User existingUser = findFBUserById(fbId);
+        if (existingUser != null) {
+            return false;
+        }
+        String sql = "INSERT INTO users (fullName, email, fb_id, role) VALUES (?, ?, ?, ?)";
+
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, name);
+        ps.setString(2, email);
+        ps.setString(3, fbId);
+        ps.setString(4, role);
+
+
+        return ps.executeUpdate() > 0;
+    }
+    public User findFBUserById(String fbId) throws SQLException {
+        String sql = "SELECT * FROM users WHERE fb_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, fbId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new User(
+                            rs.getInt("id"),
+                            rs.getString("gg_id"),
+                            rs.getString("fb_id"),
+                            rs.getString("fullName"),
+                            rs.getString("email"),
+                            roleDao.getRolesByUserId(rs.getInt("id"))
+                    );
+                }
+            }
+        }
+        return null;
+    }
+
+    public static void main(String[] args) {
         UserDao userDao = new UserDao();
-        /**
-        String testEmail = "lenguyennhathao0807@gmail.com"; // Địa chỉ email bạn muốn kiểm tra
+        String testEmail = ""; // Địa chỉ email bạn muốn kiểm tra
 
         try {
-            // Gọi phương thức passwordRecovery để kiểm tra
             boolean isEmailSent = userDao.passwordRecovery(testEmail);
 
             if (isEmailSent) {
@@ -325,9 +468,6 @@ public class UserDao {
             }
         } catch (SQLException e) {
             System.out.println("Lỗi khi thực hiện yêu cầu phục hồi mật khẩu: " + e.getMessage());
-        } **/
-        System.out.println(userDao.findUser("admin"));
+        }
     }
-
-
 }

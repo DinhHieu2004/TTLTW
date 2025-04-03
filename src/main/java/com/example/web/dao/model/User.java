@@ -7,6 +7,8 @@ import com.example.web.dao.model.Role;
 
 public class User  implements Serializable {
     private int id;
+    private String gg_id;
+    private String fb_id;
     private String fullName;
     private String username;
     private String address;
@@ -15,7 +17,20 @@ public class User  implements Serializable {
     //private Role role;
     private String password;
     private Set<Role> roles = new HashSet<>();
+    private String allRolePermission;
 
+
+    public String getAllRolePermission() {
+        String result="";
+        for(Role role : roles) {
+            result+= "ROLE_"+role.getName()+" ";
+            for(Permission permission : role.getPermissions()) {
+                result+= permission.getName()+" ";
+            }
+        }
+        this.allRolePermission = result;
+        return allRolePermission;
+    }
     public User(int id, String fullName, String username, String address, String email, String phone) {
         this.id = id;
         this.fullName = fullName;
@@ -25,6 +40,7 @@ public class User  implements Serializable {
         this.phone = phone;
        // this.role = role;
     }
+
     public User(int id, String fullName, String username, String address, String email, String phone, String password) {
         this.id = id;
         this.fullName = fullName;
@@ -32,7 +48,6 @@ public class User  implements Serializable {
         this.address = address;
         this.email = email;
         this.phone = phone;
-      //  this.role = role;
         this.password = password;
     }
     public User(int id, String fullName, String username, String address, String email, String phone,String password, Set<Role> roles) {
@@ -45,7 +60,14 @@ public class User  implements Serializable {
         this.roles = roles;
         this.password = password;
     }
-
+    public User(int id, String gg_id, String fb_id, String fullName, String email, Set<Role> role){
+        this.id = id;
+        this.gg_id = gg_id;
+        this.fb_id = fb_id;
+        this.fullName = fullName;
+        this.email = email;
+        this.roles = role;
+    }
     public User() {
 
     }
@@ -160,6 +182,22 @@ public class User  implements Serializable {
    // }
 
     public static void main(String[] args) {
+    }
+
+    public String getGg_id() {
+        return gg_id;
+    }
+
+    public void setGg_id(String gg_id) {
+        this.gg_id = gg_id;
+    }
+
+    public String getFb_id() {
+        return fb_id;
+    }
+
+    public void setFb_id(String fb_id) {
+        this.fb_id = fb_id;
     }
 }
 

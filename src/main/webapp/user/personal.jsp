@@ -85,26 +85,34 @@
                                             aria-label="Đóng"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="update-personal-info" method="post">
+                                    <form id="editPersonalInfoForm">
                                         <div class="mb-3">
-                                            <label for="name" class="form-label">Họ và tên</label>
-                                            <input type="text" class="form-control" id="name" name="fullName"
-                                                   value="${sessionScope.user.fullName}">
+                                            <label for="nameChange" class="form-label">Họ và tên <span style="color: red;">*</span></label>
+                                            <input type="text" class="form-control" id="nameChange" name="fullName"
+                                                   data-fullname="${sessionScope.user.fullName}">
+                                            <div class="error" id="nameChangeError"></div>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="phone" class="form-label">Số điện thoại</label>
-                                            <input type="text" class="form-control" id="phone" name="phone"
-                                                   value="${sessionScope.user.phone}">
+                                            <label for="phoneChange" class="form-label">Số điện thoại</label>
+                                            <input type="text" class="form-control" id="phoneChange" name="phone"
+                                                   data-phone="${sessionScope.user.phone}">
+                                            <div class="error" id="phoneChangeError"></div>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="email" class="form-label">Email</label>
-                                            <input type="email" class="form-control" id="email" name="email"
-                                                   value="${sessionScope.user.email}">
+                                            <label for="emailChange" class="form-label">Email <span style="color: red;">*</span></label>
+                                            <input type="email" class="form-control" id="emailChange" name="email"
+                                                   data-email="${sessionScope.user.email}"
+                                                   style="<c:if test='${not empty sessionScope.user.gg_id or not empty sessionScope.user.fb_id}'>background-color: #e9ecef;</c:if>"
+                                                    <c:if test="${not empty sessionScope.user.gg_id or not empty sessionScope.user.fb_id}">
+                                                        disabled
+                                                    </c:if> />
+                                            <div class="error" id="emailChangeError"></div>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="address" class="form-label">Địa chỉ</label>
-                                            <input type="text" class="form-control" id="address" name="address"
-                                                   value="${sessionScope.user.address}">
+                                            <label for="addressChange" class="form-label">Địa chỉ</label>
+                                            <input type="text" class="form-control" id="addressChange" name="address"
+                                                   data-address="${sessionScope.user.address}">
+                                            <div class="error" id="addressChangeError"></div>
                                         </div>
                                         <button type="submit" class="btn btn-primary"
                                                 style="background-color: var(--primary-color) !important;">Lưu Thay Đổi
@@ -245,6 +253,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/personal.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/header.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/authModal.js"></script>
 
 </body>
 

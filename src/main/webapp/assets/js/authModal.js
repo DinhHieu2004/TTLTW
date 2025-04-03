@@ -1,7 +1,19 @@
 $(document).ready(function () {
+    initializeErrorClearing()
     // Xử lí js phần đăng nhập
+    let isBlocked = false;
+    let isShowingFastMessage = false;
     $('#loginForm').on('submit', function (e) {
         e.preventDefault();
+        if (isBlocked) return;
+        // const submitButton = $('#loginButton');
+        // submitButton.prop('disabled', true);
+        //
+        // setTimeout(() => {
+        //     submitButton.prop('disabled', false);
+        // }, 2000);
+        const form = $(this);
+        const formData = form.serialize();
 
         let isValid = true;
         let username = $('#username').val().trim();
@@ -9,9 +21,11 @@ $(document).ready(function () {
         let captcha = $('#captcha').val().trim();
 
         // Xóa thông báo lỗi cũ
-        $('.text-danger').text('').removeClass('is-invalid');
-        $('#username, #loginPassword').removeClass('is-invalid');
-        $('#loginMessage').text('').removeClass('text-danger');
+        if (!isBlocked) {
+            $('.text-danger').text('').removeClass('is-invalid');
+            $('#username, #loginPassword').removeClass('is-invalid');
+            $('#loginMessage').text('').removeClass('text-danger');
+        }
 
         if (username === '') {
             $('#usernameError').text('Vui lòng nhập tên đăng nhập!').addClass('text-danger');
@@ -43,9 +57,47 @@ $(document).ready(function () {
             error: function (xhr) {
                 try {
                     var errors = JSON.parse(xhr.responseText);
+                    if (xhr.status === 429) {
+                        if (!isShowingFastMessage) {
+                            isShowingFastMessage = true;
+                            isBlocked = true; // Chặn gửi thêm request
+
+                            const message = $('<div id="fastMessage">Bạn đang thao tác quá nhanh. Vui lòng chờ và thử lại.</div>');
+                            $('body').append(message);
+                            $('#fastMessage').css({
+                                'position': 'fixed',
+                                'top': '20px',
+                                'left': '50%',
+                                'transform': 'translateX(-50%)',
+                                'background-color': 'rgba(0, 0, 0, 0.7)',
+                                'color': 'white',
+                                'padding': '10px',
+                                'border-radius': '5px',
+                                'font-size': '14px',
+                                'z-index': '9999',
+                                'opacity': '0',
+                            }).animate({opacity: 1}, 300).delay(3000).fadeOut(300, function () {
+                                $(this).remove();
+                                isBlocked = false;
+                                isShowingFastMessage = false;
+                            });
+                        }
+                    } else
                     if (xhr.status === 401) {
-                        $('#loginMessage').text(errors.loginError).addClass('text-danger').show();
-                        $('#username, #loginPassword').addClass('is-invalid');
+                        if (errors.captchaRequired) {
+                            $('#captchaImage').attr('src', 'captcha?' + new Date().getTime());
+                            $('#captchaContainer').show();
+                            if (errors.loginCaptError) {
+                                $('#captchaError').text(errors.loginCaptError).show();
+                                $('#captcha').addClass('is-invalid');
+                            }else{
+                                $('#loginMessage').text(errors.loginError).addClass('text-danger').show();
+                                $('#username, #loginPassword').addClass('is-invalid');
+                            }
+                        }else {
+                            $('#loginMessage').text(errors.loginError).addClass('text-danger').show();
+                            $('#username, #loginPassword').addClass('is-invalid');
+                        }
                     } else if (xhr.status === 500) {
                         $('#loginMessage').text(errors.errorMess).addClass('text-danger').show();
                     } else {
@@ -199,11 +251,32 @@ function showError(inputId, errorId, message) {
 function resetLoginResForm() {
     $('#loginForm')[0].reset();
     $('#registerForm')[0].reset();
-    $('.text-danger').text('');
+    $('.error').text('');
     $('#loginMessage').text('').removeClass('text-danger').hide();
     $('input').removeClass('is-invalid');
+
+}
+const inputs = [
+    { id: "username", errorId: "usernameError" },
+    { id: "loginPassword", errorId: "passwordError" },
+    { id: "captcha", errorId: "captchaError" },
+    { id: "registerName", errorId: "fullNameError" },
+    { id: "registerUsername", errorId: "usernamergError" },
+    { id: "registerEmail", errorId: "emailError" },
+    { id: "registerPassword", errorId: "passwordrgError" },
+    { id: "ConfirmRegisterPassword", errorId: "confirmPasswordError" }
+];
+
+function initializeErrorClearing() {
+    inputs.forEach(input => {
+        $('#' + input.id).on('input', function() {
+            $(this).removeClass('is-invalid');
+            $('#' + input.errorId).text('');
+        });
+    });
 }
 $('#authModal').on('hidden.bs.modal', function () {
+    $('#captchaImage').attr('src', 'captcha?' + new Date().getTime());
     resetLoginResForm();
 });
 
@@ -231,5 +304,75 @@ function logout(){
         }
     });
 }
+
+//login bằng google
+function handleCredentialResponse(response) {
+    const idToken = response.credential;
+    // const csrfToken = document.getElementById("csrfToken").value;
+
+    $.ajax({
+        type: "POST",
+        url: "login_google",
+        // data: { credential: idToken, csrfToken: csrfToken },
+        data: { credential: idToken},
+        success: function(response) {
+            if (response.success) {
+                location.reload();
+            } else {
+                alert("Đăng nhập bằng Google thất bại.");
+            }
+        },
+        error: function(xhr) {
+            const errorMessage = xhr.responseJSON?.message || "Lỗi kết nối đến server.";
+            alert(errorMessage);
+        }
+    });
+}
+
+window.fbAsyncInit = function() {
+    FB.init({
+        appId      : '3696159017340978',
+        xfbml      : true,
+        version    : 'v22.0'
+    });
+    FB.AppEvents.logPageView();
+};
+
+(function(d, s, id){
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {return;}
+    js = d.createElement(s); js.id = id;
+    js.src = "https://connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+
+document.addEventListener("DOMContentLoaded", function () {
+    var fbBtn = document.getElementById('custom-facebook-btn');
+        fbBtn.addEventListener('click', function () {
+            FB.login(function (response) {
+                if (response.authResponse) {
+                    const accessToken = response.authResponse.accessToken;
+
+                    $.ajax({
+                        type: "POST",
+                        url: "login_fb",
+                        data: { accessToken: accessToken },
+                        success: function (data) {
+                            if (data.success) {
+                                location.reload();
+                            } else {
+                                alert(data.message || "Đăng nhập bằng Facebook thất bại.");
+                            }
+                        },
+                        error: function (xhr) {
+                            alert("Đăng nhập bằng Facebook thất bại. Vui lòng thử lại sau.");
+                        }
+                    });
+                } else {
+                    alert("Người dùng từ chối đăng nhập bằng Facebook.");
+                }
+            }, { scope: 'public_profile,email', display: 'popup' });
+        });
+});
 
 
