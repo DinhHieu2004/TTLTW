@@ -41,12 +41,12 @@
       <div class="card border-0 shadow">
         <div class="card-body text-center py-5">
           <div class="mb-4">
-            <i class="fas fa-ban cancel-icon"></i>
+            <i class="fas fa-ban cancel-icon text-danger"></i>
           </div>
           <h2 class="card-title mb-3">Thanh Toán Đã Bị Hủy</h2>
-          <p class="card-text mb-4">Bạn đã hủy quá trình thanh toán. Đơn hàng của bạn vẫn được lưu trong giỏ hàng nếu bạn muốn tiếp tục mua sắm sau.</p>
+          <p class="card-text mb-4">Bạn "đã hủy" quá trình thanh toán hoặc "hết thời gian" nhập thông tin. Đơn hàng của bạn vẫn được lưu trong giỏ hàng nếu bạn muốn tiếp tục mua sắm sau.</p>
 
-          <div class="alert alert-secondary mb-4 mx-auto" style="max-width: 80%;">
+          <div class="alert alert-danger mb-4 mx-auto" style="max-width: 80%;">
             <div class="d-flex">
               <div class="me-3">
                 <i class="fas fa-info-circle fs-4"></i>
