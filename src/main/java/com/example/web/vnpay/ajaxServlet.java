@@ -71,17 +71,24 @@ public class ajaxServlet extends HttpServlet {
         String deliveryAddress = req.getParameter("deliveryAddress");
         String recipientPhone = req.getParameter("recipientPhone");
 
-        int orderId = 0;
-        try {
-            orderId = checkoutService.processCheckout(cart, userId, 2, recipientName, recipientPhone, deliveryAddress);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        session.removeAttribute("cart"); // Xóa giỏ hàng sau khi tạo đơn hàng
+        // Lưu vào session để dùng ở VnpayReturn
+        session.setAttribute("recipientName", recipientName);
+        session.setAttribute("recipientPhone", recipientPhone);
+        session.setAttribute("deliveryAddress", deliveryAddress);
 
-        String vnp_TxnRef = orderId+"";
+
+//        int orderId = 0;
+//        try {
+//            orderId = checkoutService.processCheckout(cart, userId, 2, recipientName, recipientPhone, deliveryAddress);
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//        session.removeAttribute("cart"); // Xóa giỏ hàng sau khi tạo đơn hàng
+
+        String vnp_TxnRef = Config.getRandomNumber(8);
         String vnp_IpAddr = Config.getIpAddress(req);
 
+        session.setAttribute("vnp_TxnRef", vnp_TxnRef);
         String vnp_TmnCode = Config.vnp_TmnCode;
         
         Map<String, String> vnp_Params = new HashMap<>();
@@ -109,7 +116,7 @@ public class ajaxServlet extends HttpServlet {
         String vnp_CreateDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
         
-        cld.add(Calendar.MINUTE, 15);
+        cld.add(Calendar.SECOND, 120);
         String vnp_ExpireDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
         

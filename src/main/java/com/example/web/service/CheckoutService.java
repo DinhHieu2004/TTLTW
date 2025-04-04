@@ -26,7 +26,7 @@ public class CheckoutService {
         paintingDao = new PaintingDao();
 
     }
-    public int processCheckout(Cart cart, int userId, int paymentMethodId,
+    public void processCheckout(Cart cart, int userId, int paymentMethodId,
                                String recipientName, String recipientPhone,
                                String deliveryAddress) throws Exception {
 
@@ -53,20 +53,36 @@ public class CheckoutService {
 
             paintingDao.updateQuanity(item.getProductId(), item.getSizeId(), item.getQuantity());
         }
+    }
 
-        Payment payment = new Payment();
-        payment.setOrderId(orderId);
-        payment.setUserId(userId);
-        payment.setMethodId(paymentMethodId);
-        payment.setPaymentStatus("chờ");
-        payment.setPaymentDate(LocalDateTime.now());
+    public int processCheckout2(Cart cart, int userId, int paymentMethodId,
+                               String recipientName, String recipientPhone,
+                               String deliveryAddress, String vnpTxnRef) throws Exception {
 
-        if (paymentMethodId == 2) {
-            String txnRef = Config.getRandomNumber(8); // Tạo mã giao dịch ngẫu nhiên
-            payment.setTransactionId(txnRef);
+        // Tạo đơn hàng mới
+        Order order = new Order();
+        order.setUserId(userId);
+        order.setTotalAmount(cart.getFinalPrice());
+        order.setStatus("chờ");
+        order.setDeliveryAddress(deliveryAddress);
+        order.setRecipientName(recipientName);
+        order.setRecipientPhone(recipientPhone);
+        order.setPaymentMethod(paymentMethodId == 1 ? "COD" : "VNPay");
+        order.setVnpTxnRef(vnpTxnRef);
+
+        int orderId = orderDao.createOrder2(order);
+
+        for (CartPainting item : cart.getItems()) {
+            OrderItem orderItem = new OrderItem();
+            orderItem.setOrderId(orderId);
+            orderItem.setPaintingId(item.getProductId());
+            orderItem.setSizeId(item.getSizeId());
+            orderItem.setPrice(item.getDiscountPrice());
+            orderItem.setQuantity(item.getQuantity());
+            orderItemDao.addOrderItem(orderItem);
+
+            paintingDao.updateQuanity(item.getProductId(), item.getSizeId(), item.getQuantity());
         }
-
-        paymentDao.createPayment(payment);
 
         return orderId;
     }
