@@ -156,6 +156,19 @@ public class RoleDao {
 
         return role;
     }
+
+    public boolean delete(int i) {
+        String query = "DELETE FROM roles WHERE id = ?";
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setInt(1, i);
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
     public boolean addRolePermissions(int roleId, Set<Integer> permissionIds) throws SQLException {
         String sql = "INSERT INTO role_permissions (roleId, permissionId) VALUES (?, ?)";
              PreparedStatement pstmt = conn.prepareStatement(sql);

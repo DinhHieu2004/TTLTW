@@ -31,8 +31,8 @@ public class GetListUser extends HttpServlet {
             req.setAttribute("users", users);
             req.setAttribute("roles", roles);
             req.setAttribute("permissions", permissions);
-            System.out.println("roles:"+ roles);
-            System.out.println("per:"+ permissions);
+         //   System.out.println("roles:"+ roles);
+         //   System.out.println("per:"+ permissions);
 
 
             req.getRequestDispatcher("users.jsp").forward(req, resp);

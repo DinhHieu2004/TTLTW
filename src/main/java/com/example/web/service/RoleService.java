@@ -51,6 +51,10 @@ public class RoleService {
         }
     }
 
+    public boolean deleteRole(int roleId) throws SQLException {
+        return roleDao.delete(roleId);
+    }
+
     public static void main(String[] args) throws SQLException {
         Set<Integer> permissionIds = Sets.newHashSet(7, 8, 9);
         RoleService roleService = new RoleService();

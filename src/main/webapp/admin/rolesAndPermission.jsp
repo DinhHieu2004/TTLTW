@@ -2,6 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <div class="row">
   <div class="col-6">
     <div class="card mb-4">
@@ -53,7 +55,7 @@
             <th>ID</th>
             <th>Tên</th>
             <th>Mô tả</th>
-            <th>Hành động</th>
+       <!--     <th>Hành động</th> -->
           </tr>
           </thead>
           <tbody>
@@ -62,14 +64,14 @@
               <td>${p.id}</td>
               <td>${p.name}</td>
               <td>${p.description}</td>
-              <td>
+         <!--     <td>
                 <button class="btn btn-info btn-sm" data-bs-toggle="modal"
                         data-bs-target="#viewEditPermissionsModal" data-permission-id="${p.id}">Xem Chi Tiết
                 </button>
                 <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
                         data-bs-target="#deletePermissionsModal" data-permission-id="${p.id}">Xóa
                 </button>
-              </td>
+              </td> -->
             </tr>
           </c:forEach>
           </tbody>
@@ -100,7 +102,7 @@
             <input type="text" class="form-control" id="editRoleName" name="roleName" required>
           </div>
 
-          <!-- Quyền hiện tại và Thêm quyền mới trên cùng một hàng -->
+
           <div class="mb-3">
             <label class="form-label">Quản lý quyền</label>
             <div class="row">
@@ -169,6 +171,27 @@
   </div>
 </div>
 
+<div class="modal fade" id="deleteRolesModal" tabindex="-1" aria-labelledby="deleteRolesModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteRolesModalLabel">Xác nhận xóa</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form >
+        <div class="modal-body">
+          <p>Bạn có chắc chắn muốn xóa role này?</p>
+          <input type="hidden" id="roleIdToDelete" name="roleId">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-danger">Xóa</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <style>
   .permission-list {
@@ -333,19 +356,16 @@
     $('#addRoleForm').on('submit', function (e) {
       e.preventDefault();
 
-      // Lấy dữ liệu từ form
       var roleName = $('#addRoleName').val().trim();
       var permissionIds = $('input[name="permissionIds"]:checked')
               .map(function () { return this.value; })
               .get();
 
-      // Validate input
       if (!roleName) {
         alert('Vui lòng nhập tên role!');
         return;
       }
 
-      // Tạo form data theo kiểu URLSearchParams giống Update
       var formData = new URLSearchParams();
       formData.append("roleName", roleName);
       permissionIds.forEach(function(permissionId) {
@@ -354,7 +374,6 @@
 
       console.log("Submitting form data:", formData.toString());
 
-      // Gửi request giống như Update
       $.ajax({
         url: 'roles/add',
         type: 'POST',
@@ -364,15 +383,15 @@
         success: function (response) {
           try {
             if (typeof response === "string") {
-              response = JSON.parse(response); // Parse nếu response là chuỗi JSON
+              response = JSON.parse(response);
             }
 
-            console.log("API Response:", response); // Debug phản hồi JSON
+            console.log("API Response:", response);
 
             if (response.roleId) {
               alert('Thêm role thành công!');
               $('#addRoleModal').modal('hide');
-              addRoleToTable(response); // Gọi hàm cập nhật bảng
+              addRoleToTable(response);
             } else {
               console.error("Lỗi: roleId không tồn tại trong phản hồi!");
             }
@@ -393,7 +412,7 @@
     });
 
     function addRoleToTable(response) {
-      var roleId = response.roleId; // Nhận từ backend
+      var roleId = response.roleId;
       var roleName = response.roleName || $('#addRoleName').val();
 
       if (!roleId) {
@@ -415,14 +434,13 @@
     }
 
 
-    // Xử lý khi modal đóng
     $('#addRoleModal').on('hidden.bs.modal', function () {
       $('#addRoleForm')[0].reset();
       $('#addRoleForm .is-invalid').removeClass('is-invalid');
       $('#addRoleForm .invalid-feedback').remove();
     });
 
-    // Validate real-time
+
     $('#addRoleName').on('input', function () {
       var $this = $(this);
       if ($this.val().trim() === '') {
@@ -434,6 +452,52 @@
         $this.removeClass('is-invalid');
         $this.next('.invalid-feedback').remove();
       }
+    });
+
+
+    document.addEventListener('click', function (event) {
+      if (event.target.matches('[data-bs-target="#deleteRolesModal"]')) {
+        let roleId = event.target.getAttribute('data-role-id');
+        document.getElementById('roleIdToDelete').value = roleId;
+      }
+    });
+
+    $('#deleteRolesModal form').on('submit', function (e) {
+      e.preventDefault();
+      var table = $('#roles').DataTable();
+
+      let roleId = $('#roleIdToDelete').val();
+      if (!roleId) {
+        Swal.fire('Lỗi', 'Không tìm thấy ID vai trò!', 'error');
+        return;
+      }
+
+      $.ajax({
+        type: "POST",
+        url: "roles/delete",
+        data: { id: roleId },
+        success: function (response) {
+          if (response.status === "success") {
+            var $row = $('[data-role-id="' + roleId + '"]').closest('tr');
+            table.row($row).remove().draw(false);
+
+            $('#deleteRolesModal').modal('hide');
+
+            Swal.fire({
+              icon: 'success',
+              title: 'Đã xóa thành công!',
+              showConfirmButton: false,
+              timer: 2000,
+              position: 'center',
+            });
+          } else {
+            Swal.fire('Thất bại', response.message || 'Không thể xóa vai trò.', 'error');
+          }
+        },
+        error: function (xhr) {
+          Swal.fire('Lỗi', 'Đã xảy ra lỗi khi gửi yêu cầu xóa.', 'error');
+        }
+      });
     });
   });
 </script>

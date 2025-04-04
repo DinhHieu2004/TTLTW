@@ -86,6 +86,7 @@ public class UserDao {
             statement.setString(3, user.getAddress());
             statement.setString(4, user.getEmail());
             statement.setString(5, user.getPhone());
+            statement.setString(5, user.getPhone());
             statement.setInt(6, user.getId());
 
             int rowsAffected = statement.executeUpdate();
