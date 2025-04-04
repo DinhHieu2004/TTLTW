@@ -29,6 +29,28 @@ public class OrderDao {
         }
         throw new Exception("Unable to create order");
     }
+
+    public int createOrder2(Order order) throws Exception {
+        String sql = "INSERT INTO orders (userId, totalAmount, status, deliveryDate, recipientName, deliveryAddress, recipientPhone, paymentMethod, vnpTxnRef) VALUES (?, ?, ?, ?, ?, ?, ?,?,?)";
+        PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setInt(1, order.getUserId());
+        ps.setDouble(2, order.getTotalAmount());
+        ps.setString(3, order.getStatus());
+        ps.setDate(4, order.getDeliveryDate() != null ? (Date) order.getDeliveryDate() : null);
+        ps.setString(5, order.getRecipientName());
+        ps.setString(6, order.getDeliveryAddress());
+        ps.setString(7, order.getRecipientPhone());
+        ps.setString(8, order.getPaymentMethod());
+        ps.setString(9, order.getVnpTxnRef());
+
+        ps.executeUpdate();
+        try (ResultSet rs = ps.getGeneratedKeys()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        throw new Exception("Unable to create order");
+    }
     public List<Order> getCurrentOrdersForUser(int userId) throws Exception {
         List<Order> orders = new ArrayList<>();
         String query = "SELECT * FROM orders WHERE userId = ? AND status IN ('chờ', 'đang giao') ORDER BY orderDate DESC";
