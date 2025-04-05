@@ -5,8 +5,7 @@ $(document).ready(function () {
 
         if (!vid) {
             finalPriceElement.html(
-                "Gía phải trả: <f:formatNumber value=\"${sessionScope.cart.totalPrice}\" type=\"currency\" currencySymbol=\"VND\"/>"
-            );
+                "Gía phải trả: <f:formatNumber value=\"${sessionScope.cart.totalPrice}\" type=\"currency\" currencySymbol=\"₫\"/>");
             return;
         }
 
@@ -17,11 +16,7 @@ $(document).ready(function () {
             dataType: "json",
             success: function (response) {
                 finalPriceElement.html(
-                    `Gía phải trả: ${new Intl.NumberFormat('vi-VN', {
-                        style: 'currency',
-                        currency: 'VND',
-                    }).format(response.finalPrice)}`
-                );
+                    `${new Intl.NumberFormat('vi-VN', {style: 'currency', currency: 'VND',}).format(response.finalPrice)}`);
             },
             error: function (xhr, status, error) {
                 console.error("Error applying voucher:", error);

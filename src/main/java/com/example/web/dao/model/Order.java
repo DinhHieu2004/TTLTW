@@ -15,9 +15,12 @@ public class Order  implements Serializable {
     private String recipientName;
     private String deliveryAddress;
     private String recipientPhone;
+    private String paymentMethod;
+    private String vnpTxnRef;
 
     public static final String STATUS_PENDING = "chờ";
     public static final String STATUS_DELIVERING = "đang giao";
+    public static final String STATUS_PAID = "đã thanh toán";
     public static final String STATUS_COMPLETED = "hoàn thành";
     public static final String STATUS_FAILED = "thất bại";
     public static final String STATUS_CANCELED = "đã hủy";
@@ -95,6 +98,22 @@ public class Order  implements Serializable {
         this.deliveryDate = deliveryDate;
     }
 
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public String getVnpTxnRef() {
+        return vnpTxnRef;
+    }
+
+    public void setVnpTxnRef(String vnpTxnRef) {
+        this.vnpTxnRef = vnpTxnRef;
+    }
+
     @Override
     public String toString() {
         return "Order{" +
@@ -107,6 +126,8 @@ public class Order  implements Serializable {
                 ", recipientName='" + recipientName + '\'' +
                 ", deliveryAddress='" + deliveryAddress + '\'' +
                 ", recipientPhone='" + recipientPhone + '\'' +
+                ", paymentMethod='" + paymentMethod + '\'' +
+                ", vnpTxnRef='" + vnpTxnRef + '\'' +
                 '}';
     }
 }
