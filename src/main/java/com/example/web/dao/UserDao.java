@@ -160,9 +160,11 @@ public class UserDao {
                 String uemail = rs.getString("email");
                 String phone = rs.getString("phone");
            //     User.Role role = User.Role.valueOf(rs.getString("role"));
-                Set<Role> roles = roleDao.getRolesByUserId(id);
                 String password = rs.getString("password");
-                return new User(id, fullName, uname, address, uemail, phone,password, roles);
+                String gg_id = rs.getString("gg_id");
+                String fb_id = rs.getString("fb_id");
+                Set<Role> roles = roleDao.getRolesByUserId(id);
+                return new User(id, fullName, uname, address, uemail, phone, password, gg_id, fb_id,roles);
             }
 
         }
@@ -214,6 +216,22 @@ public class UserDao {
         }
 
         return ps.executeUpdate() > 0;
+    }
+    public void saveTokenForRegister(int userId, String token) {
+        String sql = "INSERT INTO register_tokens (userId, token, expiredAt) VALUES (?, ?, ?)";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setString(2, token);
+            ps.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis() + 24 * 60 * 60 * 1000));
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public boolean activateUserByToken(String token) {
+        return false;
     }
     public boolean addUser(String fullName, String username, String hashPassword, String email, String phone, String role, String address) throws SQLException {
         if (findByUsername(username) != null) {
@@ -336,7 +354,7 @@ public class UserDao {
         }
 
         // Tạo link đổi mật khẩu
-        String resetLink = "http://localhost:8080/web_war/user/reset_password?token=" + token;
+        String resetLink = "http://localhost:8080/TTLTW_war/user/reset_password?token=" + token;
 
         // Gửi email
         String subject = "Yêu cầu đặt lại mật khẩu";
@@ -381,21 +399,37 @@ public class UserDao {
 
         return null; // Không tìm thấy mật khẩu
     }
-    public boolean createUserByGoogle(String id, String name, String email, String role) throws SQLException {
+    public boolean createUserByGoogle(String id, String name, String email, int role) throws SQLException {
         User existingUser = findGoogleUserById(id);
         if (existingUser != null) {
             return false;
         }
-        String sql = "INSERT INTO users (fullName, email, gg_id, role) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO users (fullName, email, gg_id) VALUES (?, ?, ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, name);
+            ps.setString(2, email);
+            ps.setString(3, id);
 
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setString(1, name);
-        ps.setString(2, email);
-        ps.setString(3, id);
-        ps.setString(4, role);
+            int affectedRows = ps.executeUpdate();
 
+            if (affectedRows > 0) {
+                ResultSet generatedKeys = ps.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    int userId = generatedKeys.getInt(1);
 
-        return ps.executeUpdate() > 0;
+                    String insertRoleQuery = "INSERT INTO user_roles (userId, roleId) VALUES (?, ?)";
+                    try (PreparedStatement insertRolePs = conn.prepareStatement(insertRoleQuery)) {
+                        insertRolePs.setInt(1, userId);
+                        insertRolePs.setInt(2, role);
+                        insertRolePs.executeUpdate();
+
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
     }
 
     public User findGoogleUserById(String gg_id) throws SQLException {
@@ -418,21 +452,37 @@ public class UserDao {
         }
         return null;
     }
-    public boolean createUserByFB(String fbId, String name, String email, String role) throws SQLException {
+    public boolean createUserByFB(String fbId, String name, String email, int role) throws SQLException {
         User existingUser = findFBUserById(fbId);
         if (existingUser != null) {
             return false;
         }
-        String sql = "INSERT INTO users (fullName, email, fb_id, role) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO users (fullName, email, fb_id) VALUES (?, ?, ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, name);
+            ps.setString(2, email);
+            ps.setString(3, fbId);
 
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setString(1, name);
-        ps.setString(2, email);
-        ps.setString(3, fbId);
-        ps.setString(4, role);
+            int affectedRows = ps.executeUpdate();
 
+            if (affectedRows > 0) {
+                ResultSet generatedKeys = ps.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    int userId = generatedKeys.getInt(1);
 
-        return ps.executeUpdate() > 0;
+                    String insertRoleQuery = "INSERT INTO user_roles (userId, roleId) VALUES (?, ?)";
+                    try (PreparedStatement insertRolePs = conn.prepareStatement(insertRoleQuery)) {
+                        insertRolePs.setInt(1, userId);
+                        insertRolePs.setInt(2, role);
+                        insertRolePs.executeUpdate();
+
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
     }
     public User findFBUserById(String fbId) throws SQLException {
         String sql = "SELECT * FROM users WHERE fb_id = ?";
@@ -457,7 +507,7 @@ public class UserDao {
 
     public static void main(String[] args) {
         UserDao userDao = new UserDao();
-        String testEmail = ""; // Địa chỉ email bạn muốn kiểm tra
+        String testEmail = "";
 
         try {
             boolean isEmailSent = userDao.passwordRecovery(testEmail);

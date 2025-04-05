@@ -60,6 +60,18 @@ public class User  implements Serializable {
         this.roles = roles;
         this.password = password;
     }
+    public User(int id, String fullName, String username, String address, String email, String phone,String password, String gg_id, String fb_id, Set<Role> roles) {
+        this.id = id;
+        this.fullName = fullName;
+        this.username = username;
+        this.address = address;
+        this.email = email;
+        this.phone = phone;
+        this.gg_id = gg_id;
+        this.fb_id = fb_id;
+        this.roles = roles;
+        this.password = password;
+    }
     public User(int id, String gg_id, String fb_id, String fullName, String email, Set<Role> role){
         this.id = id;
         this.gg_id = gg_id;
@@ -180,10 +192,6 @@ public class User  implements Serializable {
     // public void setRole(Role role) {
      //   this.role = role;
    // }
-
-    public static void main(String[] args) {
-    }
-
     public String getGg_id() {
         return gg_id;
     }

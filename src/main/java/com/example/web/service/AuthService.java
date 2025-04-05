@@ -7,9 +7,11 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
 import java.sql.SQLException;
+import java.util.UUID;
 
 public class AuthService {
     private UserDao udao = new UserDao();
+    private final EmailService emailService = new EmailService();
     public User checkLogin(String username, String pass) throws SQLException {
         User u = udao.findUser(username);
         if(u==null) return null;
@@ -20,11 +22,30 @@ public class AuthService {
         return null;
     }
     public boolean registerUser(String fullName, String username, String password, String email, String phone, String role) throws SQLException {
-        return udao.registerUser(fullName, username, hashPassword(password), email, phone, role);
+        if (!udao.registerUser(fullName, username, hashPassword(password), email, phone, role)) {
+            return false;
+        }
+        User user = udao.findByEmail(email);
+        if (user != null) {
+            String token = UUID.randomUUID().toString();
+            udao.saveTokenForRegister(user.getId(), token);
+
+            String subject = "Xác nhận email đăng ký";
+            String body = "Xin chào " + fullName + ",\n\nCảm ơn bạn đã đăng ký tài khoản trên hệ thống chúng tôi. Có phải bạn vừa đăng ký tài khoản? " +
+                    "Nếu đúng, vui lòng nhấp vào liên kết dưới đây để xác nhận email của bạn và hoàn tất quá trình đăng ký:\n\n"
+                    + "http://localhost:8080/TTLTW_war/activate_account?token=" + token + "\n\n"
+                    + "Nếu bạn không thực hiện đăng ký này, vui lòng bỏ qua email này.";
+            emailService.sendEmail(email, subject, body);
+            return true;
+        }
+        return false;
+    }
+    public boolean activateUserByToken(String token) {
+        return udao.activateUserByToken(token);
     }
 
     public boolean createUserByGoogle(String gg_id, String name, String email) throws SQLException {
-        return udao.createUserByGoogle(gg_id, name, email, "user");
+        return udao.createUserByGoogle(gg_id, name, email, 2);
     }
     public String hashPassword(String password) {
         try {
@@ -40,7 +61,7 @@ public class AuthService {
                 hexString.append(hex);
             }
 
-            return hexString.toString(); // Trả về chuỗi mã hóa MD5
+            return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Error while hashing password with MD5", e);
         }
@@ -63,7 +84,7 @@ public class AuthService {
     }
 
     public boolean createUserByFacebook(String fbId, String name, String email) throws SQLException {
-        return udao.createUserByFB(fbId, name, email, "user");
+        return udao.createUserByFB(fbId, name, email, 2);
     }
 
     public User findUserByEmail(String email) throws SQLException {
@@ -78,4 +99,5 @@ public class AuthService {
         AuthService a = new AuthService();
         System.out.println(a.checkLogin("admin", "462004"));
     }
+
 }

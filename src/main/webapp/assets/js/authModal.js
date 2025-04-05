@@ -116,6 +116,9 @@ $(document).ready(function () {
     // Xử lí đăng kí tài khoản
     $('#registerForm').on('submit', function (event) {
         event.preventDefault()
+        $(".loading-spinner").show();
+        $(".loading-message").show();
+        $("button[type='submit']").attr("disabled", true);
         let isValid = true;
         const fields = [
             { id: "registerName", errorId: "fullNameError", message: "Vui lòng nhập họ và tên!" },
@@ -173,7 +176,12 @@ $(document).ready(function () {
             isValid = false;
         }
 
-        if (!isValid) return;
+        if (!isValid){
+            $(".loading-spinner").hide();
+            $(".loading-message").hide();
+            $("button[type='submit']").attr("disabled", false);
+            return;
+        }
         $.ajax({
             url: 'register',
             type: 'POST',
@@ -188,12 +196,16 @@ $(document).ready(function () {
             success: function(response){
                 console.log("aa")
                 if (response.success) {
-                    alert("Đăng ký thành công!");
-                    $('#login-tab').tab('show');
-                    resetLoginResForm();
+                    $(".loading-spinner").hide();
+                    $(".loading-message").hide();
+                    $("button[type='submit']").attr("disabled", false);
+                    showVerifyMessage(email);
                 }
             },
             error: function(xhr){
+                $(".loading-spinner").hide();
+                $(".loading-message").hide();
+                $("button[type='submit']").attr("disabled", false);
                 let errors = JSON.parse(xhr.responseText)
                 if (xhr.status === 500) {
                     try {
@@ -210,7 +222,19 @@ $(document).ready(function () {
         })
     });
 });
-
+function showVerifyMessage(email) {
+    document.getElementById("registerForm").style.display = "none";
+    document.getElementById("verify-message").style.display = "block";
+    document.getElementById("user-email").textContent = email;
+}
+function handleUserConfirmed() {
+    $('#login-tab').tab('show');
+    setTimeout(() => {
+        document.getElementById("verify-message").style.display = "none";
+        document.getElementById("registerForm").style.display = "block";
+        resetLoginResForm();
+    }, 500);
+}
 function showServerErrors(errors){
     $('.text-danger').text('');
     $('.is-invalid').removeClass('is-invalid');
@@ -282,6 +306,7 @@ $('#authModal').on('hidden.bs.modal', function () {
 
 // Khi chuyển tab giữa "Đăng nhập" và "Đăng ký" -> reset form
 $('#register-tab, #login-tab').on('click', function () {
+    // $('#captchaImage').attr('src', 'captcha?' + new Date().getTime());
     resetLoginResForm();
 });
 
