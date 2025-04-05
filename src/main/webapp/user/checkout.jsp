@@ -8,6 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Thanh toán</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/footer.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/header.css">
   <style>
@@ -235,7 +236,7 @@
                 <td>${cp.productName}</td>
                 <td>${cp.sizeDescriptions}</td>
                 <td>
-                    <span class="mx-2 quantity">${cp.quantity}</span>
+                  <span class="mx-2 quantity">${cp.quantity}</span>
                 </td>
                 <td class="item-total-price">
               <span class="fw-bold">Giá:
@@ -260,6 +261,12 @@
         </c:otherwise>
       </c:choose>
 
+      <div>
+        <label class="voucher-label">Chi phí giao hàng: <span id="shippingFee">Chưa tính</span></label>
+      </div>
+
+
+
       <div class="voucher-container">
         <label for="voucherSelect" class="voucher-label">Chọn mã giảm giá:</label>
         <select id="voucherSelect" name="voucherCode" class="voucher-select">
@@ -277,62 +284,169 @@
       </div>
     </div>
 
-
-
     <div class="payment-form">
       <h3>Thông tin thanh toán</h3>
-        <label for="recipientName">Họ và Tên:</label>
-        <input value="${sessionScope.user.fullName}" type="text" id="recipientName" name="fullName" required>
+      <label for="recipientName">Họ và Tên:</label>
+      <input value="${sessionScope.user.fullName}" type="text" id="recipientName" name="fullName" required>
 
-        <label for="recipientPhone">Số điện thoại:</label>
-        <input value="${sessionScope.user.phone}" type="text" id="recipientPhone" name="phoneNumber" required>
+      <label for="recipientPhone">Số điện thoại:</label>
+      <input value="${sessionScope.user.phone}" type="text" id="recipientPhone" name="phoneNumber" required>
 
-        <label for="email">Email:</label>
-        <input  value="${sessionScope.user.email}" type="email" id="email" name="email" required>
+      <label for="email">Email:</label>
+      <input value="${sessionScope.user.email}" type="email" id="email" name="email" required>
 
-        <div class="mb-3">
-          <label for="deliveryAddress" class="form-label">Địa chỉ nhận hàng:</label>
-          <input type="text" class="form-control" id="deliveryAddress" name="deliveryAddress"
-                 value="${sessionScope.user.address}" placeholder="Nhập địa chỉ nhận hàng" required>
-        </div>
+      <div class="mb-3">
+        <label for="deliveryAddress" class="form-label">Địa chỉ nhận hàng:</label>
+        <input type="text" class="form-control" id="deliveryAddress" name="deliveryAddress"
+               value="${sessionScope.user.address}" placeholder="Nhập địa chỉ nhận hàng" required readonly data-bs-toggle="modal" data-bs-target="#addressModal">
+      </div>
 
-        <label for="paymentMethod">Phương thức thanh toán:</label>
-        <select id="paymentMethod" name="paymentMethod" required onchange="toggleBankDetails()">
-          <option value="1">Thanh toán khi nhận hàng (COD)</option>
-          <option value="2">Thẻ tín dụng / Thẻ ghi nợ</option>
-        </select>
+      <label for="paymentMethod">Phương thức thanh toán:</label>
+      <select id="paymentMethod" name="paymentMethod" required onchange="toggleBankDetails()">
+        <option value="1">Thanh toán khi nhận hàng (COD)</option>
+        <option value="2">Thẻ tín dụng / Thẻ ghi nợ</option>
+      </select>
 
-        <div id="bankDetails" style="display: none;">
-          <label for="bankAccount">Số tài khoản:</label>
-          <input type="text" id="bankAccount" name="bankAccount">
+      <div id="bankDetails" style="display: none;">
+        <label for="bankAccount">Số tài khoản:</label>
+        <input type="text" id="bankAccount" name="bankAccount">
 
-          <label for="bankName">Ngân hàng:</label>
-          <input type="text" id="bankName" name="bankName">
-        </div>
+        <label for="bankName">Ngân hàng:</label>
+        <input type="text" id="bankName" name="bankName">
+      </div>
 
-        <button type="button" id="submitPayment" class="btn btn-primary">Xác nhân thanh toán</button>
+      <button type="button" id="submitPayment" class="btn btn-primary">Xác nhận thanh toán</button>
     </div>
   </div>
 </div>
+
+<!-- Address Modal -->
+<div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addressModalLabel">Nhập địa chỉ nhận hàng</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="province" class="form-label">Tỉnh/Thành phố:</label>
+          <input type="text" class="form-control" id="province" placeholder="Tỉnh/Thành phố" required>
+
+        </div>
+        <div class="mb-3">
+          <label for="district" class="form-label">Quận/Huyện:</label>
+          <input type="text" class="form-control" id="district" placeholder="Quận/Huyện" required>
+
+        </div>
+        <div class="mb-3">
+          <label for="ward" class="form-label">Phường/Xã:</label>
+          <input type="text" class="form-control" id="ward" placeholder="Phường/xã" required>
+
+        </div>
+        <div class="mb-3">
+          <label for="specificAddress" class="form-label">Địa chỉ cụ thể:</label>
+          <input type="text" class="form-control" id="specificAddress" placeholder="Số nhà, tên đường..." required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button type="button" class="btn btn-primary" id="saveAddress">Lưu</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--<div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addressModalLabel">Nhập địa chỉ nhận hàng</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="province" class="form-label">Tỉnh/Thành phố:</label>
+          <select class="form-select" id="province" required>
+            <option value="">Chọn tỉnh/thành phố</option>
+            Add province options here or populate via JavaScript
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="district" class="form-label">Quận/Huyện:</label>
+          <select class="form-select" id="district" required>
+            <option value="">Chọn quận/huyện</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="ward" class="form-label">Phường/Xã:</label>
+          <select class="form-select" id="ward" required>
+            <option value="">Chọn phường/xã</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="specificAddress" class="form-label">Địa chỉ cụ thể:</label>
+          <input type="text" class="form-control" id="specificAddress" placeholder="Số nhà, tên đường..." required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button type="button" class="btn btn-primary" id="saveAddress">Lưu</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
 <%@ include file="/partials/footer.jsp" %>
 
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   function toggleBankDetails() {
     const paymentMethod = document.getElementById("paymentMethod").value;
     const bankDetails = document.getElementById("bankDetails");
-    if (paymentMethod === "credit") {
-      bankDetails.style.display = "block";
-    } else {
-      bankDetails.style.display = "none";
+    bankDetails.style.display = paymentMethod === "2" ? "block" : "none";
+  }
+  async function calculateShippingFee(province, district, address) {
+    const url = `${window.location.contextPath}/api/shipping-fee?province=${encodeURIComponent(province)}&district=${encodeURIComponent(district)}&address=${encodeURIComponent(address)}`;
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      if (data.success) {
+        const shippingFee = data.fee.fee + (data.fee.insurance_fee || 0);
+        document.getElementById('shippingFee').textContent = shippingFee.toLocaleString('vi-VN') + ' VND';
+      } else {
+        document.getElementById('shippingFee').textContent = 'Không tính được';
+      }
+    } catch (error) {
+      console.error('Error fetching shipping fee:', error);
+      document.getElementById('shippingFee').textContent = 'Lỗi tính phí';
     }
   }
+
+  document.getElementById('saveAddress').addEventListener('click', function () {
+    const province = document.getElementById('province').value.trim();
+    const district = document.getElementById('district').value.trim();
+    const ward = document.getElementById('ward').value.trim();
+    const specificAddress = document.getElementById('specificAddress').value.trim();
+
+    if (province && district && ward && specificAddress) {
+      const fullAddress = `${specificAddress}, ${ward}, ${district}, ${province}`;
+      document.getElementById('deliveryAddress').value = fullAddress;
+      calculateShippingFee(province, district, specificAddress);
+
+      const addressModal = document.getElementById('addressModal');
+      const modal = bootstrap.Modal.getInstance(addressModal);
+      if (modal) {
+        modal.hide();
+      }
+    } else {
+      alert('Vui lòng điền đầy đủ thông tin địa chỉ');
+    }
+  });
+
 </script>
-</body>
 <script src="${pageContext.request.contextPath}/assets/js/checkout.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/applyVoucher.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/location.js"></script>
-
-
-
+</body>
 </html>
