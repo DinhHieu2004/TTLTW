@@ -1,7 +1,9 @@
 package com.example.web.controller.admin.paintingController;
 
 import com.example.web.dao.model.Painting;
+import com.example.web.dao.model.User;
 import com.example.web.service.PaintingService;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -36,6 +38,16 @@ public class Update extends HttpServlet {
 
         JsonObject jsonResponse = new JsonObject();
         PrintWriter out = resp.getWriter();
+
+        User user = (User) req.getSession().getAttribute("user");
+        if (user == null || !user.hasPermission("UPDATE_PRODUCT")) {
+            jsonResponse.addProperty("success", false);
+            jsonResponse.addProperty("message", "Bạn không có quyền chỉnh sửa sản phẩm!");
+            out.print(new Gson().toJson(jsonResponse));
+            out.flush();
+            return;
+        }
+
 
         int id = Integer.parseInt(req.getParameter("pid"));
         String title = req.getParameter("title");

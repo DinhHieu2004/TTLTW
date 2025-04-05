@@ -68,6 +68,7 @@ public class AddItemCartController extends HttpServlet {
 //            } else {
 //                logService.addLog(String.valueOf(Level.INFO), req,  null, null);
 //            }
+
             String requestedWith = req.getHeader("X-Requested-With");
             if ("XMLHttpRequest".equals(requestedWith)) {
                 resp.setContentType("application/json");

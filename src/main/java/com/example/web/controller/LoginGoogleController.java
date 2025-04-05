@@ -66,9 +66,20 @@ public class LoginGoogleController extends HttpServlet {
                 String name = (String) payload.get("name");
                 String email = payload.getEmail();
 
-                User user = service.findGoogleUserById(ggId);
+                User user = service.findUserByEmail(email);
 
-                if (user == null) {
+                if (user != null) {
+                    if (user.getGg_id() == null) {
+                        user.setGg_id(ggId);
+                        user.setEmail(email);
+                        boolean isUpdated = service.updateUserInfo(user);
+                        if (!isUpdated) {
+                            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                            response.getWriter().write("{\"success\": false, \"message\": \"Không thể lưu thông tin người dùng.\"}");
+                            return;
+                        }
+                    }
+                } else {
                     boolean createUser = service.createUserByGoogle(ggId, name, email);
                     if (createUser) {
                         user = service.findGoogleUserById(ggId);
@@ -77,6 +88,9 @@ public class LoginGoogleController extends HttpServlet {
                         response.getWriter().write("{\"success\": false, \"message\": \"Không thể lưu thông tin người dùng.\"}");
                         return;
                     }
+                }
+                if (session == null) {
+                    session = request.getSession(true);
                 }
 
                 session.setAttribute("user", user);

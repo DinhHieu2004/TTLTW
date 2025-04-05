@@ -1,5 +1,6 @@
 package com.example.web.controller.admin.OrderController;
 
+import com.example.web.dao.model.User;
 import com.example.web.service.ArtistService;
 import com.example.web.service.OrderService;
 import com.google.gson.JsonObject;
@@ -22,6 +23,14 @@ public class Delete extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         PrintWriter out = response.getWriter();
+
+        User user = (User) request.getSession().getAttribute("user");
+        boolean hasDeletePermission = user.hasPermission("DELETE_ORDER");
+
+        if (!hasDeletePermission) {
+            response.sendRedirect(request.getContextPath() + "/no_permission.jsp");
+            return;
+        }
 
         try {
             String orderId = request.getParameter("orderId");

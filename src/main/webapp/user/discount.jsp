@@ -40,6 +40,7 @@
 <%@ include file="/partials/authModal.jsp" %>
 
 </body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/discount.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/header.js"></script>
 

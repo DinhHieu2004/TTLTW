@@ -1,5 +1,6 @@
-package com.example.web.controller.admin.UserController;
-import com.example.web.service.ArtistService;
+package com.example.web.controller.admin.RoleController;
+
+import com.example.web.service.RoleService;
 import com.example.web.service.UserSerive;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
@@ -13,9 +14,11 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-@WebServlet("/admin/users/delete")
-public class Delete extends HttpServlet {
-    private UserSerive userSerive = new UserSerive();
+@WebServlet("/admin/roles/delete")
+public class Detele extends HttpServlet {
+
+    private RoleService roleService = new RoleService();
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
@@ -29,13 +32,13 @@ public class Delete extends HttpServlet {
         System.out.println(id);
 
         try {
-            boolean isDeleted = userSerive.deleteUser(Integer.parseInt(id));
+            boolean isDeleted = roleService.deleteRole(Integer.parseInt(id));
             if (isDeleted) {
                 jsonResponse.put("status", "success");
-                jsonResponse.put("message", "Xóa người dùng thành công!");
+                jsonResponse.put("message", "Xóa Role thành công!");
             } else {
                 jsonResponse.put("status", "error");
-                jsonResponse.put("message", "Xóa người dùng thất bại!");
+                jsonResponse.put("message", "Xóa Role thất bại!");
             }
         } catch (Exception e) {
             jsonResponse.put("status", "error");
@@ -45,7 +48,5 @@ public class Delete extends HttpServlet {
         out.print(gson.toJson(jsonResponse));
         out.flush();
     }
-
-
 
 }

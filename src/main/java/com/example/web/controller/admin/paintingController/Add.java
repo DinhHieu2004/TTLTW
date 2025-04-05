@@ -1,6 +1,7 @@
 package com.example.web.controller.admin.paintingController;
 
 import com.example.web.dao.model.Painting;
+import com.example.web.dao.model.User;
 import com.example.web.service.PaintingService;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -29,11 +30,23 @@ public class Add extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
 
         JsonObject jsonResponse = new JsonObject();
         PrintWriter out = resp.getWriter();
+
+        User user = (User) req.getSession().getAttribute("user");
+        if (user == null || !user.hasPermission("ADD_PRODUCT")) {
+            jsonResponse.addProperty("success", false);
+            jsonResponse.addProperty("message", "Bạn không có quyền thêm sản phẩm!");
+            out.print(new Gson().toJson(jsonResponse));
+            out.flush();
+            return;
+        }
+
 
         String title = req.getParameter("title");
         String description = req.getParameter("description");
