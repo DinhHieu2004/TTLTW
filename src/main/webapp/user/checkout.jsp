@@ -400,49 +400,7 @@
 <%@ include file="/partials/footer.jsp" %>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  function toggleBankDetails() {
-    const paymentMethod = document.getElementById("paymentMethod").value;
-    const bankDetails = document.getElementById("bankDetails");
-    bankDetails.style.display = paymentMethod === "2" ? "block" : "none";
-  }
-  async function calculateShippingFee(province, district, address) {
-    const url = `${window.location.contextPath}/api/shipping-fee?province=${encodeURIComponent(province)}&district=${encodeURIComponent(district)}&address=${encodeURIComponent(address)}`;
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      if (data.success) {
-        const shippingFee = data.fee.fee + (data.fee.insurance_fee || 0);
-        document.getElementById('shippingFee').textContent = shippingFee.toLocaleString('vi-VN') + ' VND';
-      } else {
-        document.getElementById('shippingFee').textContent = 'Không tính được';
-      }
-    } catch (error) {
-      console.error('Error fetching shipping fee:', error);
-      document.getElementById('shippingFee').textContent = 'Lỗi tính phí';
-    }
-  }
-
-  document.getElementById('saveAddress').addEventListener('click', function () {
-    const province = document.getElementById('province').value.trim();
-    const district = document.getElementById('district').value.trim();
-    const ward = document.getElementById('ward').value.trim();
-    const specificAddress = document.getElementById('specificAddress').value.trim();
-
-    if (province && district && ward && specificAddress) {
-      const fullAddress = `${specificAddress}, ${ward}, ${district}, ${province}`;
-      document.getElementById('deliveryAddress').value = fullAddress;
-      calculateShippingFee(province, district, specificAddress);
-
-      const addressModal = document.getElementById('addressModal');
-      const modal = bootstrap.Modal.getInstance(addressModal);
-      if (modal) {
-        modal.hide();
-      }
-    } else {
-      alert('Vui lòng điền đầy đủ thông tin địa chỉ');
-    }
-  });
+<script src="${pageContext.request.contextPath}/assets/js/shipping-fee.js">
 
 </script>
 <script src="${pageContext.request.contextPath}/assets/js/checkout.js"></script>
