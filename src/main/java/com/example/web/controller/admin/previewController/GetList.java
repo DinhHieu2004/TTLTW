@@ -14,7 +14,7 @@ import java.util.List;
 
 @WebServlet("/admin/reviews")
 public class GetList extends HttpServlet {
-    private PrivewService privewService = new PrivewService();
+    private final PrivewService privewService = new PrivewService();
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             List<ProductReview> p = privewService.getAll();

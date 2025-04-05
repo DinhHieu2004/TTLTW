@@ -32,7 +32,8 @@ public class AdminFilter implements Filter {
         HttpSession session = request.getSession(false);
         User u = (session != null) ? (User) session.getAttribute("user") : null;
 
-        if (u == null || u.getRole() == null || !u.getRole().equals(User.Role.admin)) {
+        if (u == null || u.getRoles() == null ||
+                u.getRoles().stream().noneMatch(role -> role.getName().equals("ADMIN") || role.getName().startsWith("MANAGER"))) {
             response.sendRedirect(request.getContextPath() + "/");
             return;
         }

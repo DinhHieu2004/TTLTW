@@ -13,6 +13,7 @@
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <!-- DataTables Buttons CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- DataTables Buttons JavaScript -->
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
@@ -92,7 +93,11 @@
                     <td>${u.fullName}</td>
                     <td>${u.email}</td>
                     <td>${u.phone}</td>
-                    <td>${u.role}</td>
+               <   <td>
+                    <c:forEach var="role" items="${u.roles}">
+                        ${role.name}
+                    </c:forEach>
+                </td>
                     <td>
                         <button class="btn btn-info btn-sm" data-bs-toggle="modal"
                                 data-bs-target="#viewEditUserModal" data-user-id="${u.id}">Xem Chi Tiết
@@ -106,6 +111,9 @@
             </table>
         </div>
     </div>
+
+    <%@ include file="/admin/rolesAndPermission.jsp" %>
+
 
     <div class="modal fade" id="deleteUsersModal" tabindex="-1" aria-labelledby="deleteUsersModalLabel"
          aria-hidden="true">
@@ -166,17 +174,26 @@
                             </div>
                         </div>
                         <div class="row mb-3">
+
                             <div class="col-md-6">
-                                <label for="role" class="form-label">Quyền</label>
-                                <select class="form-select" id="role" name="role" required>
-                                    <option value="user">User</option>
-                                    <option value="admin">Admin</option>
-                                </select>
+                                <label class="form-label">Available Roles</label>
+                                <div id="availableRoles" class="role-list scrollable">
+                                    <c:forEach var="r" items="${roles}">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="rolesIds"
+                                                   id="new_role_${r.id}" value="${r.id}">
+                                            <label class="form-check-label" for="new_role_${r.id}">
+                                                    ${r.name} (ID: ${r.id})
+                                            </label>
+                                        </div>
+                                    </c:forEach>
+                                </div>
                             </div>
+                        </div>
+                        <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="changePhone" class="form-label">Số Điện Thoại</label>
-                                <input type="tel" class="form-control" id="changePhone" name="phone" pattern="[0-9]{10}"
-                                       >
+                                <input type="tel" class="form-control" id="changePhone" name="phone" pattern="[0-9]{10}">
                                 <div class="error" id="changePhoneError"></div>
                             </div>
                         </div>
@@ -286,5 +303,6 @@
     });
 </script>
 <script src="${pageContext.request.contextPath}/assets/js/admin/user.js"></script>
+
 </body>
 </html>

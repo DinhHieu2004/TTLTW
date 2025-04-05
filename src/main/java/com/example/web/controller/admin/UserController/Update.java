@@ -13,7 +13,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 
 @WebServlet("/admin/users/update")
@@ -35,7 +37,25 @@ public class Update extends HttpServlet {
                 String phone = req.getParameter("phone");
                 String address = req.getParameter("address");
                 String fullName = req.getParameter("fullName");
-                String role = req.getParameter("role");
+
+                String[] roleIdArray = req.getParameterValues("roleIds");
+                System.out.println("roleid: "+ roleIdArray);
+
+                Set<Integer> roleIds = new HashSet<>();
+                if (roleIdArray != null && roleIdArray.length > 0) {
+                    for (String roleId : roleIdArray) {
+                        try {
+                            roleIds.add(Integer.parseInt(roleId));
+                        } catch (NumberFormatException e) {
+                            System.err.println("Invalid roleId: " + roleId);
+                        }
+                    }
+                } else {
+                    resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "At least one permission must be selected");
+                    return;
+                }
+
+
 
                 if (fullName == null || fullName.isEmpty()) {
                     errors.put("changeNameError", "Họ và tên không được để trống!");
@@ -69,13 +89,15 @@ public class Update extends HttpServlet {
                     return;
                 }
 
-                User.Role roleEnum = User.Role.valueOf(role);
-                User user = new User(id, fullName, username, address, email, phone, roleEnum);
 
-                boolean isUpdated = userSerive.updateUser(user);
+                User user = new User(id, fullName, username, address, email, phone, null);
+
+                boolean isUpdated = userSerive.updateUser(user, roleIds);
+
                 if (isUpdated) {
+                    User up = userSerive.getUser(user.getId());
                     responseMap.put("message", "Cập nhật thành công!");
-                    responseMap.put("user", user);
+                    responseMap.put("user", up);
                     resp.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     responseMap.put("messageE", "Cập nhật thất bại!");

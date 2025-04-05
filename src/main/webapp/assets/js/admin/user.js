@@ -135,95 +135,163 @@ $(document).ready(function () {
     }
 
     $('#viewEditUserModal').on('show.bs.modal', function (event) {
-
         const button = $(event.relatedTarget);
         const userId = button.data('user-id');
+
         $.ajax({
             url: 'users/detail',
             type: 'GET',
             data: { userId: userId },
             dataType: 'json',
             success: function (response) {
-                console.log(response)
-                if (response) {
+                console.log(response);
+                if (response && !response.error) {
                     const data = response;
+
+                    // Điền thông tin cơ bản
                     $('#editUserId').val(data.id);
                     $('#changUsername').val(data.username);
                     $('#changeName').val(data.fullName);
                     $('#changeEmail').val(data.email);
-                    $('#role').val(data.role);
                     $('#address').val(data.address);
                     $('#password').val(data.password);
                     $('#changePhone').val(data.phone);
 
+                    const userRoles = data.roles || [];
+
+                    $('input[name="rolesIds"]').prop('checked', false);
+
+                    userRoles.forEach(function(role) {
+                        const roleId = role.id;
+                        const checkbox = $(`#new_role_${roleId}`);
+                        if (checkbox.length) {
+                            checkbox.prop('checked', true);
+                        }
+                    });
+
+                    const currentRoleDiv = $('#currentRole');
+                    currentRoleDiv.empty();
+                    if (userRoles.length === 0) {
+                        currentRoleDiv.html('<p class="text-muted">Không có role nào.</p>');
+                    } else {
+                        let rolesHtml = '';
+                        userRoles.forEach(function(role) {
+                            rolesHtml += `
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" 
+                                       name="currentRoleIds" id="current_role_${role.id}" 
+                                       value="${role.id}" checked disabled>
+                                <label class="form-check-label" for="current_role_${role.id}">
+                                    ${role.name} (ID: ${role.id})
+                                </label>
+                            </div>`;
+                        });
+                        currentRoleDiv.html(rolesHtml);
+                    }
+
                 } else {
-                    alert(response.error || 'không tìm thấy người dùng.');
+                    alert(response.error || 'Không tìm thấy người dùng.');
                 }
             },
-            error: function () {
+            error: function (xhr, status, error) {
+                console.error('AJAX Error:', status, error);
                 alert('Đã xảy ra lỗi khi lấy thông tin người dùng.');
             }
         });
-
     });
-    $('#userDetailForm').on('submit', function(e){
+    $('#userDetailForm').on('submit', function(e) {
         e.preventDefault();
         let isValid = true;
 
+        // Lấy dữ liệu từ form
         let id = $('#editUserId').val().trim();
         let username = $('#changUsername').val().trim();
         let fullName = $("#changeName").val().trim();
         let email = $("#changeEmail").val().trim();
         let address = $("#address").val().trim();
         let phone = $("#changePhone").val().trim();
-        let role = $('#role').val().trim();
 
+        // Lấy danh sách role IDs đã chọn
+        let selectedRoleIds = $('input[name="rolesIds"]:checked')
+            .map(function() { return this.value; })
+            .get();
 
+        // Validate email
         let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (email && !emailRegex.test(email)) {
             $('#changeEmailError').text('Email không hợp lệ!').addClass('text-danger');
-            $('#email').addClass('is-invalid');
+            $('#changeEmail').addClass('is-invalid');
             isValid = false;
+        } else {
+            $('#changeEmailError').text('').removeClass('text-danger');
+            $('#changeEmail').removeClass('is-invalid');
         }
 
+        // Validate phone
         let phoneRegex = /^(0[1-9][0-9]{8})$/;
         if (phone && !phoneRegex.test(phone)) {
             $('#changePhoneError').text('Số điện thoại không hợp lệ!').addClass('text-danger');
-            $('#phone').addClass('is-invalid');
+            $('#changePhone').addClass('is-invalid');
             isValid = false;
+        } else {
+            $('#changePhoneError').text('').removeClass('text-danger');
+            $('#changePhone').removeClass('is-invalid');
         }
 
         if (!isValid) return;
+
+        // Tạo form data sử dụng URLSearchParams
+        let formData = new URLSearchParams();
+        formData.append('id', id);
+        formData.append('username', username);
+        formData.append('fullName', fullName);
+        formData.append('email', email);
+        formData.append('address', address);
+        formData.append('phone', phone);
+        selectedRoleIds.forEach(function(roleId) {
+            formData.append('roleIds', roleId);
+        });
+
+        let $submitBtn = $('#userDetailForm button[type="submit"]');
+        $submitBtn.prop('disabled', true)
+            .html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang xử lý...');
+
         $.ajax({
             type: "POST",
             url: "users/update",
-            data: {
-                id: id,
-                fullName: fullName,
-                username: username,
-                email: email,
-                address: address,
-                phone: phone,
-                role: role
-            },
-            success: function(response){
-                console.log(response)
-                var $row = $('button[data-user-id="' + response.user.id + '"]').closest('tr');
+            data: formData.toString(),
+            contentType: 'application/x-www-form-urlencoded',
+            processData: false,
+            success: function(response) {
+                console.log(response);
 
+                if (response && response.user) {
+                    let table1 = $('#users').DataTable();
+                    let $row = $('button[data-user-id="' + response.user.id + '"]').closest('tr');
 
-                table1.cell($row, 0).data(response.user.id);
-                table1.cell($row, 1).data(response.user.username);
-                table1.cell($row, 2).data(response.user.fullName);
-                table1.cell($row, 3).data(response.user.email);
-                table1.cell($row, 4).data(response.user.phone);
-                table1.cell($row, 5).data(response.user.role);
-                $('#viewEditUserModal').modal('hide');
+                    // Lấy nội dung cột "Hành động" (cột thứ 6, index 6)
+                    let actionColumn = table1.cell($row, 6).data();
+
+                    // Cập nhật dữ liệu với 7 cột
+                    table1.row($row).data([
+                        response.user.id,
+                        response.user.username,
+                        response.user.fullName,
+                        response.user.email,
+                        response.user.phone,
+                        response.user.roles.map(r => r.name).join(', '), // Cột Roles
+                        actionColumn // Cột Hành động
+                    ]).draw(false);
+
+                    $('#viewEditUserModal').modal('hide');
+                    alert('Cập nhật người dùng thành công!');
+                }
             },
-            error: function(xhr){
+            error: function(xhr) {
                 if (xhr.status === 400) {
                     let response = JSON.parse(xhr.responseText);
                     $(".error").text("");
-                    $.each(response.errors, function (key, message) {
+                    $.each(response.errors, function(key, message) {
                         $("#" + key).text(message).addClass('text-danger');
                         let inputId = key.replace("Error", "");
                         $("#" + inputId).addClass('is-invalid');
@@ -231,6 +299,14 @@ $(document).ready(function () {
                 } else {
                     alert("Lỗi hệ thống: " + xhr.responseText);
                 }
+            },
+            complete: function() {
+                // Khôi phục nút submit
+                $submitBtn.prop('disabled', false).html('Lưu thay đổi');
+                // Reset form
+                $('#userDetailForm')[0].reset();
+                $('.is-invalid').removeClass('is-invalid');
+                $('.error').text('');
             }
         });
     });

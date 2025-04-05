@@ -7,6 +7,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
 
 public class UserSerive {
     private UserDao userDao =  new UserDao();
@@ -16,8 +17,8 @@ public class UserSerive {
     public  boolean deleteUser(int i) {
         return userDao.deleteUser(i);
     }
-    public boolean updateUser(User user) throws SQLException {
-        return  userDao.updateUser(user);
+    public boolean updateUser(User user, Set<Integer> roleIds) throws SQLException {
+        return  userDao.updateUser(user, roleIds);
     }
 
     public List<User> getListUser() throws SQLException {
@@ -27,10 +28,7 @@ public class UserSerive {
         return userDao.getUser(i);
     }
 
-    public static void main(String[] args) throws SQLException {
-        UserSerive userSerive = new UserSerive();
-        System.out.println(userSerive.getListUser());
-    }
+
 
     public User findByUsername(String username) throws SQLException {
         return userDao.findByUsername(username);
@@ -67,5 +65,11 @@ public class UserSerive {
 
     public boolean addUser(String fullName, String username, String password, String email, String phone, String role, String address) throws SQLException {
         return userDao.addUser(fullName, username, hashPassword(password), email, phone, role, address);
+    }
+
+    public static void main(String[] args) throws SQLException {
+        UserSerive userSerive = new UserSerive();
+        User user = userSerive.findById(4);
+        System.out.println(user.getAllRolePermission());
     }
 }

@@ -10,7 +10,7 @@ public class PaymentDao {
     Connection conn = DbConnect.getConnection();
 
     public void createPayment(Payment payment) throws Exception {
-        String sql = "INSERT INTO payments (orderId, userId, methodId, paymentStatus, paymentDate) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO payments (orderId, userId, methodId, paymentStatus, paymentDate, transactionId) VALUES (?, ?, ?, ?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(sql);
 
         ps.setInt(1, payment.getOrderId());
@@ -18,6 +18,8 @@ public class PaymentDao {
         ps.setInt(3, payment.getMethodId());
         ps.setString(4, payment.getPaymentStatus());
         ps.setTimestamp(5, java.sql.Timestamp.valueOf(payment.getPaymentDate()));
+        ps.setString(6, payment.getTransactionId());
+
 
         ps.executeUpdate();
     }

@@ -6,6 +6,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
+import java.sql.SQLException;
+
 public class AuthService {
     private UserDao udao = new UserDao();
     public User checkLogin(String username, String pass) throws SQLException {
@@ -38,7 +40,7 @@ public class AuthService {
                 hexString.append(hex);
             }
 
-            return hexString.toString();
+            return hexString.toString(); // Trả về chuỗi mã hóa MD5
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Error while hashing password with MD5", e);
         }
@@ -70,5 +72,10 @@ public class AuthService {
 
     public boolean updateUserInfo(User user) throws SQLException {
         return udao.updateUserInfo(user);
+    }
+
+    public static void main(String[] args) throws SQLException {
+        AuthService a = new AuthService();
+        System.out.println(a.checkLogin("admin", "462004"));
     }
 }

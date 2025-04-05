@@ -1,41 +1,41 @@
-// $(document).ready(function () {
-//     $('#viewAndEditModal').on('show.bs.modal', function (event) {
-//         const button = $(event.relatedTarget);
-//         const pid = button.data('product-id');
-//         const modal = $(this);
-//
-//         $.ajax({
-//             url: 'products/detail',
-//             type: 'GET',
-//             data: { pid: pid },
-//             dataType: 'json',
-//             success: function (response) {
-//                 if (response) {
-//                     console.log('Response data:', response);
-//                     $('#editProductId').val(response.id);
-//
-//                     const contextPath = '/web_war';
-//                     const fullPhotoUrl = `${window.location.origin}${contextPath}/${response.imageUrl}`;
-//                     loadProductDetails(response, fullPhotoUrl, modal);
-//                 } else {
-//                     alert('Không tìm thấy thông tin sản phẩm.');
-//                 }
-//             },
-//             error: function (xhr, status, error) {
-//                 console.error('Ajax error:', error);
-//                 alert('Đã xảy ra lỗi khi lấy thông tin sản phẩm.');
-//             }
-//         });
-//     });
-//
-//     $('#viewAndEditModal').on('hidden.bs.modal', function () {
-//         const modal = $(this);
-//         const form = modal.find('form');
-//         form[0].reset();
-//         modal.find('.preview-image').remove();
-//         modal.find('input[name="image"]').prop('required', true);
-//     });
-// });
+$(document).ready(function () {
+    $('#viewAndEditModal').on('show.bs.modal', function (event) {
+        const button = $(event.relatedTarget);
+        const pid = button.data('product-id');
+        const modal = $(this);
+
+        $.ajax({
+            url: 'products/detail',
+            type: 'GET',
+            data: { pid: pid },
+            dataType: 'json',
+            success: function (response) {
+                if (response) {
+                    console.log('Response data:', response);
+                    $('#editProductId').val(response.id);
+
+                    const contextPath = '/web_war';
+                    const fullPhotoUrl = `${window.location.origin}${contextPath}/${response.imageUrl}`;
+                    loadProductDetails(response, fullPhotoUrl, modal);
+                } else {
+                    alert('Không tìm thấy thông tin sản phẩm.');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Ajax error:', error);
+                alert('Đã xảy ra lỗi khi lấy thông tin sản phẩm.');
+            }
+        });
+    });
+
+    $('#viewAndEditModal').on('hidden.bs.modal', function () {
+        const modal = $(this);
+        const form = modal.find('form');
+        form[0].reset();
+        modal.find('.preview-image').remove();
+        modal.find('input[name="image"]').prop('required', true);
+    });
+});
 
 function loadProductDetails(data, fullPhotoUrl, modal) {
     try {
