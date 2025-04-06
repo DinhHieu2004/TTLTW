@@ -1,4 +1,6 @@
 package com.example.web.controller;
+import com.example.web.dao.cart.Cart;
+import com.example.web.dao.cart.CartPainting;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,10 +25,10 @@ public class ShippingFeeServlet extends HttpServlet {
         String province = request.getParameter("province");
         String district = request.getParameter("district");
         String address = request.getParameter("address");
-        String weight = request.getParameter("weight") != null ? request.getParameter("weight") : "1000";
-        String value = request.getParameter("value") != null ? request.getParameter("value") : "3000000";
+      //  String weight = request.getParameter("weight") != null ? request.getParameter("weight") : "1000";
+      //  String value = request.getParameter("value") != null ? request.getParameter("value") : "3000000";
 
-        System.out.println(province + " " + district + " " + address + " " + weight + " " + value);
+     //   System.out.println(province + " " + district + " " + address + " " + weight + " " + value);
 
         if (province == null || district == null || address == null ||
                 province.trim().isEmpty() || district.trim().isEmpty() || address.trim().isEmpty()) {
@@ -34,10 +36,16 @@ public class ShippingFeeServlet extends HttpServlet {
             return;
         }
 
+        Cart cart = (Cart) request.getSession().getAttribute("cart");
+
+        double totalWeight = calcWeightAndValue(cart);
+
+        double value = cart.getFinalPrice();
+
         LOGGER.info("Province: " + province);
         LOGGER.info("District: " + district);
         LOGGER.info("Address: " + address);
-        LOGGER.info("Weight: " + weight);
+        LOGGER.info("Weight: " + totalWeight);
         LOGGER.info("Value: " + value);
 
         PrintWriter out = response.getWriter();
@@ -49,8 +57,8 @@ public class ShippingFeeServlet extends HttpServlet {
                     + "&province=" + URLEncoder.encode(province, "UTF-8")
                     + "&district=" + URLEncoder.encode(district, "UTF-8")
                     + "&address=" + URLEncoder.encode(address, "UTF-8")
-                    + "&weight=" + URLEncoder.encode(weight, "UTF-8")
-                    + "&value=" + URLEncoder.encode(value, "UTF-8");
+                    + "&weight=" + URLEncoder.encode(String.valueOf(totalWeight), "UTF-8")
+                    + "&value=" + URLEncoder.encode(String.valueOf(value), "UTF-8");
 
             LOGGER.info("GHTK URL: " + ghtkUrl);
 
@@ -88,5 +96,16 @@ public class ShippingFeeServlet extends HttpServlet {
             out.flush();
             out.close();
         }
+    }
+    private double calcWeightAndValue(Cart cart){
+            if (cart == null || cart.getItems() == null)
+                return 0.0;
+
+            double totalWeight = 0.0;
+
+            for (CartPainting item : cart.getItems()) {
+                totalWeight += item.getWeight() * item.getQuantity();
+            }
+        return totalWeight;
     }
 }

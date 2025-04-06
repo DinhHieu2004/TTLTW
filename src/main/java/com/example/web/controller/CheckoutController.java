@@ -56,13 +56,18 @@ public class CheckoutController extends HttpServlet {
             String deliveryAddress = request.getParameter("deliveryAddress");
             String recipientPhone = request.getParameter("recipientPhone");
             String paymentMethod = request.getParameter("paymentMethod");
+            String shippingFee = request.getParameter("shippingFee");
+            shippingFee = shippingFee.replace(".", "");
+
+            System.out.println( recipientName +" "+deliveryAddress+" "+recipientPhone+" "+paymentMethod+" "+shippingFee);
 
             int paymentMethodInt = Integer.parseInt(paymentMethod);
+            double shippingFeeDouble = Double.parseDouble(shippingFee);
 
 
             CheckoutService checkoutService = new CheckoutService();
             try {
-                checkoutService.processCheckout(cart, userId, paymentMethodInt,recipientName, recipientPhone, deliveryAddress);
+                checkoutService.processCheckout(cart, userId, paymentMethodInt,recipientName, recipientPhone, deliveryAddress, shippingFeeDouble);
                 session.removeAttribute("cart");
                 response.setStatus(HttpServletResponse.SC_OK);
                 response.getWriter().write("Thanh toán thành công!");

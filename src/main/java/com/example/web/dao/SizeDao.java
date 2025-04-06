@@ -41,6 +41,7 @@ public class SizeDao {
                 size = new PaintingSize();
                 size.setIdSize(resultSet.getInt("id"));
                 size.setSizeDescriptions(resultSet.getString("sizeDescription"));
+                size.setWeight(resultSet.getDouble("weight"));
             }
 
         } catch (Exception e) {

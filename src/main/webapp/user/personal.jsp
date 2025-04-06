@@ -73,16 +73,12 @@
                         </c:forEach>
                     </div>
 
-                    <!-- Modal chỉnh sửa thông tin cá nhân -->
-                    <div class="modal fade" id="editPersonalInfoModal" tabindex="-1"
-                         aria-labelledby="editPersonalInfoModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="editPersonalInfoModal" tabindex="-1" aria-labelledby="editPersonalInfoModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="editPersonalInfoModalLabel">Chỉnh Sửa Thông Tin Cá
-                                        Nhân</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Đóng"></button>
+                                    <h5 class="modal-title" id="editPersonalInfoModalLabel">Chỉnh Sửa Thông Tin Cá Nhân</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                                 </div>
                                 <div class="modal-body">
                                     <form id="editPersonalInfoForm">
@@ -111,12 +107,12 @@
                                         <div class="mb-3">
                                             <label for="addressChange" class="form-label">Địa chỉ</label>
                                             <input type="text" class="form-control" id="addressChange" name="address"
-                                                   data-address="${sessionScope.user.address}">
+                                                   data-address="${sessionScope.user.address}" required readonly data-bs-toggle="modal" data-bs-target="#addressModal">
                                             <div class="error" id="addressChangeError"></div>
+
                                         </div>
-                                        <button type="submit" class="btn btn-primary"
-                                                style="background-color: var(--primary-color) !important;">Lưu Thay Đổi
-                                        </button>
+                                        <button type="submit" class="btn btn-primary" style="background-color: var(--primary-color) !important;">Lưu Thay Đổi</button>
+
                                     </form>
                                 </div>
                             </div>
@@ -246,8 +242,83 @@
     </div>
 </div>
 
+
+<!-- Address Modal -->
+<div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addressModalLabel">Nhập địa chỉ nhận hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="province" class="form-label">Tỉnh/Thành phố:</label>
+                    <input type="text" class="form-control" id="province" placeholder="Tỉnh/Thành phố" required>
+                </div>
+                <div class="mb-3">
+                    <label for="district" class="form-label">Quận/Huyện:</label>
+                    <input type="text" class="form-control" id="district" placeholder="Quận/Huyện" required>
+                </div>
+                <div class="mb-3">
+                    <label for="ward" class="form-label">Phường/Xã:</label>
+                    <input type="text" class="form-control" id="ward" placeholder="Phường/xã" required>
+                </div>
+                <div class="mb-3">
+                    <label for="specificAddress" class="form-label">Địa chỉ cụ thể:</label>
+                    <input type="text" class="form-control" id="specificAddress" placeholder="Số nhà, tên đường..." required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="closeAddressModal" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="saveAddress">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <%@ include file="/partials/footer.jsp" %>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const fullAddress = "${sessionScope.user.address}";
+
+        if (fullAddress) {
+            const parts = fullAddress.split(",").map(part => part.trim());
+
+            const reversed = parts.reverse();
+
+            document.getElementById("province").value = reversed[0] || "";
+            document.getElementById("district").value = reversed[1] || "";
+            document.getElementById("ward").value = reversed[2] || "";
+            document.getElementById("specificAddress").value = reversed[3] || "";
+        }
+    });
+
+
+
+    document.getElementById('saveAddress').addEventListener('click', function () {
+
+        const province = document.getElementById('province').value.trim();
+        const district = document.getElementById('district').value.trim();
+        const ward = document.getElementById('ward').value.trim();
+        const specificAddress = document.getElementById('specificAddress').value.trim();
+
+        const fullAddress = specificAddress + ", " + district + ", " + province;
+        console.log("Full Address:", fullAddress);
+
+        document.getElementById('saveAddress').value = fullAddress;
+
+        const addressModal = document.getElementById('addressModal');
+
+        const modal = bootstrap.Modal.getInstance(addressModal);
+        if (modal) {
+            modal.hide();
+        } else {
+            document.querySelector('#addressModal .btn-close').click();
+        }
+    });
+</script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

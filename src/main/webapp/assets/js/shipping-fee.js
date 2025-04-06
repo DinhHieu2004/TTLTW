@@ -59,32 +59,40 @@ async function calculateShippingFee(province, district, address) {
 }
 
 
-document.getElementById('saveAddress').addEventListener('click', function () {
-    const province = document.getElementById('province').value.trim();
-    const district = document.getElementById('district').value.trim();
-    const ward = document.getElementById('ward').value.trim();
-    const specificAddress = document.getElementById('specificAddress').value.trim();
+function handleAddressSave() {
+        const province = document.getElementById('province').value.trim();
+        const district = document.getElementById('district').value.trim();
+        const ward = document.getElementById('ward').value.trim();
+        const specificAddress = document.getElementById('specificAddress').value.trim();
 
-    console.log("Province:", province);
-    console.log("District:", district);
-    console.log("Ward:", ward);
-    console.log("Specific Address:", specificAddress);
+        console.log("Province:", province);
+        console.log("District:", district);
+       console.log("Ward:", ward);
+        console.log("Specific Address:", specificAddress);
 
-    if (province && district && ward && specificAddress) {
-        const fullAddress = specificAddress + ", " + ward + ", " + district + ", " + province;
-        console.log("Full Address:", fullAddress);
+        if (province &&  district  && specificAddress) {
+            const fullAddress = specificAddress + ", " + district + ", " + province;
+            console.log("Full Address:", fullAddress);
 
-        document.getElementById('deliveryAddress').value = fullAddress;
+            document.getElementById('deliveryAddress').value = fullAddress;
 
-        const addressModal = document.getElementById('addressModal');
-        calculateShippingFee(province, district, specificAddress);
-        const modal = bootstrap.Modal.getInstance(addressModal);
-        if (modal) {
-            modal.hide();
+            const addressModal = document.getElementById('addressModal');
+            calculateShippingFee(province, district, specificAddress);
+
+            const modal = bootstrap.Modal.getInstance(addressModal);
+            if (modal) {
+                modal.hide();
+            } else {
+                document.querySelector('#addressModal .btn-close').click();
+            }
         } else {
-            document.querySelector('#addressModal .btn-close').click();
+            alert('Vui lòng điền đầy đủ thông tin địa chỉ');
         }
-    } else {
-        alert('Vui lòng điền đầy đủ thông tin địa chỉ');
     }
+
+document.addEventListener("DOMContentLoaded", function () {
+    handleAddressSave();
+    document.getElementById('saveAddress').addEventListener('click', function () {
+        handleAddressSave();
+    });
 });

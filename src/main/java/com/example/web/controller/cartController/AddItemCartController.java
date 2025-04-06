@@ -39,12 +39,14 @@ public class AddItemCartController extends HttpServlet {
 
             PaintingSize paintingSize = sizeService.getSizeById(Integer.parseInt(size));
             String sizeDescriptions = paintingSize.getSizeDescriptions();
+            double weight = paintingSize.getWeight();
 
             CartPainting cartPainting = new CartPainting(
                     p.getId(),
                     p.getTitle(),
                     size,
                     sizeDescriptions,
+                    weight,
                     quantity,
                     p.getPrice(),
                     p.getImageUrl(),

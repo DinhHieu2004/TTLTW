@@ -24,15 +24,17 @@ public class CheckoutService {
         paintingDao = new PaintingDao();
 
     }
-    public void processCheckout(Cart cart, int userId, int paymentMethodId, String recipientName, String recipientPhone, String deliveryAddress) throws Exception {
+    public void processCheckout(Cart cart, int userId, int paymentMethodId, String recipientName, String recipientPhone, String deliveryAddress, double shippingFee) throws Exception {
 
         Order order = new Order();
         order.setUserId(userId);
         order.setTotalAmount(cart.getFinalPrice());
+        order.setPriceAfterShipping(shippingFee + cart.getFinalPrice());
         order.setStatus("chờ");
         order.setDeliveryAddress(deliveryAddress);
         order.setRecipientName(recipientName);
         order.setRecipientPhone(recipientPhone);
+        order.setShippingFee(shippingFee);
         int orderId = orderDao.createOrder(order);
 
         for (CartPainting item : cart.getItems()) {

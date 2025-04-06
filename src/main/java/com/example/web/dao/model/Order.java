@@ -15,6 +15,8 @@ public class Order  implements Serializable {
     private String recipientName;
     private String deliveryAddress;
     private String recipientPhone;
+    private double shippingFee;
+    private double priceAfterShipping;
 
     public static final String STATUS_PENDING = "chờ";
     public static final String STATUS_DELIVERING = "đang giao";
@@ -22,6 +24,14 @@ public class Order  implements Serializable {
     public static final String STATUS_FAILED = "thất bại";
     public static final String STATUS_CANCELED = "đã hủy";
 
+
+    public double getPriceAfterShipping() {
+        return priceAfterShipping;
+    }
+
+    public void setPriceAfterShipping(double priceAfterShipping) {
+        this.priceAfterShipping = priceAfterShipping;
+    }
 
     public String getRecipientName() {
         return recipientName;
@@ -95,6 +105,14 @@ public class Order  implements Serializable {
         this.deliveryDate = deliveryDate;
     }
 
+    public double getShippingFee() {
+        return shippingFee;
+    }
+
+    public void setShippingFee(double shippingFee) {
+        this.shippingFee = shippingFee;
+    }
+
     @Override
     public String toString() {
         return "Order{" +
@@ -107,6 +125,8 @@ public class Order  implements Serializable {
                 ", recipientName='" + recipientName + '\'' +
                 ", deliveryAddress='" + deliveryAddress + '\'' +
                 ", recipientPhone='" + recipientPhone + '\'' +
+                ", shippingFee=" + shippingFee +
+                ", priceAfterShipping=" + priceAfterShipping +
                 '}';
     }
 }

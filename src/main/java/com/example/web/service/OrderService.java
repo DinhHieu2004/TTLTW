@@ -33,8 +33,8 @@ public class OrderService {
         return orderDao.deleteOrder(i);
     }
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws Exception {
         OrderService orderService = new OrderService();
-        System.out.println(orderService.deleteOrder(39));
+        System.out.println(orderService.getOrder(68));
     }
 }

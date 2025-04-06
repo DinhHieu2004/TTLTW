@@ -10,7 +10,7 @@ import java.util.List;
 public class OrderDao {
     private Connection conn = DbConnect.getConnection();
     public int createOrder(Order order) throws Exception {
-        String sql = "INSERT INTO orders (userId, totalAmount, status, deliveryDate, recipientName, deliveryAddress, recipientPhone) VALUES (?, ?, ?, ?, ?,?,?)";
+        String sql = "INSERT INTO orders (userId, totalAmount, status, deliveryDate, recipientName, deliveryAddress, recipientPhone,shippingFee, totalPrice) VALUES (?, ?, ?, ?, ?,?,?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         ps.setInt(1, order.getUserId());
         ps.setDouble(2, order.getTotalAmount());
@@ -19,6 +19,8 @@ public class OrderDao {
         ps.setString(5, order.getRecipientName());
         ps.setString(6, order.getDeliveryAddress());
         ps.setString(7, order.getRecipientPhone());
+        ps.setDouble(8, order.getShippingFee());
+        ps.setDouble(9, order.getPriceAfterShipping());
         ps.executeUpdate();
         try (ResultSet rs = ps.getGeneratedKeys()) {
             if (rs.next()) {
@@ -78,6 +80,8 @@ public class OrderDao {
         order.setRecipientName(rs.getString("recipientName"));
         order.setDeliveryAddress(rs.getString("deliveryAddress"));
         order.setRecipientPhone(rs.getString("recipientPhone"));
+        order.setShippingFee(rs.getDouble("shippingFee"));
+        order.setPriceAfterShipping(rs.getDouble("totalPrice"));
         order.setDeliveryDate(rs.getDate("deliveryDate") != null ? rs.getDate("deliveryDate") : null);
         return order;
     }

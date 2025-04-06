@@ -3,12 +3,16 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
     const deliveryAddress = $('#deliveryAddress').val();
     const recipientPhone = $('#recipientPhone').val();
     const paymentMethod = $('#paymentMethod').val();
+    const shippingFeeStr = $('#shippingFee').text();
+    const shippingFee = shippingFeeStr.split(' ')[0];
+
+
+    console.log(recipientName + " "+ deliveryAddress+" "+ shippingFee)
 
     if (!recipientName || !deliveryAddress || !recipientPhone || !paymentMethod) {
         alert("Vui lòng điền đầy đủ thông tin.");
         return;
     }
-
 
 
     $.ajax({
@@ -18,7 +22,8 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
             recipientName: recipientName,
             deliveryAddress: deliveryAddress,
             recipientPhone: recipientPhone,
-            paymentMethod: paymentMethod
+            paymentMethod: paymentMethod,
+            shippingFee : shippingFee
 
         },
         success: function (response) {

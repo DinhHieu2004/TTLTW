@@ -1,6 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix = "f" uri = "http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -320,6 +322,7 @@
   </div>
 </div>
 
+
 <!-- Address Modal -->
 <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -400,9 +403,24 @@
 <%@ include file="/partials/footer.jsp" %>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="${pageContext.request.contextPath}/assets/js/shipping-fee.js">
 
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const fullAddress = "${sessionScope.user.address}";
+
+    if (fullAddress) {
+      const parts = fullAddress.split(",").map(part => part.trim());
+
+      const reversed = parts.reverse();
+
+      document.getElementById("province").value = reversed[0] || "";
+      document.getElementById("district").value = reversed[1] || "";
+      document.getElementById("ward").value = reversed[2] || "";
+      document.getElementById("specificAddress").value = reversed[3] || "";
+    }
+  });
 </script>
+<script src="${pageContext.request.contextPath}/assets/js/shipping-fee.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/checkout.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/applyVoucher.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/location.js"></script>
