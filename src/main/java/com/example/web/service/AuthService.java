@@ -1,6 +1,7 @@
 package com.example.web.service;
 import com.example.web.dao.UserDao;
 import com.example.web.dao.model.User;
+import com.example.web.dao.model.UserToken;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -31,7 +32,7 @@ public class AuthService {
             udao.saveTokenForRegister(user.getId(), token);
 
             String subject = "Xác nhận email đăng ký";
-            String body = "Xin chào " + fullName + ",\n\nCảm ơn bạn đã đăng ký tài khoản trên hệ thống chúng tôi. Có phải bạn vừa đăng ký tài khoản? " +
+            String body = "Xin chào " + fullName + ",\n\nCó phải bạn vừa đăng ký tài khoản? " +
                     "Nếu đúng, vui lòng nhấp vào liên kết dưới đây để xác nhận email của bạn và hoàn tất quá trình đăng ký:\n\n"
                     + "http://localhost:8080/TTLTW_war/activate_account?token=" + token + "\n\n"
                     + "Nếu bạn không thực hiện đăng ký này, vui lòng bỏ qua email này.";
@@ -39,6 +40,12 @@ public class AuthService {
             return true;
         }
         return false;
+    }
+    public UserToken findByToken(String token) throws SQLException {
+        return udao.findByToken(token);
+    }
+    public User findById(int userId) throws SQLException {
+        return udao.getUser(userId);
     }
     public boolean activateUserByToken(String token) {
         return udao.activateUserByToken(token);

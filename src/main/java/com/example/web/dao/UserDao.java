@@ -4,6 +4,7 @@ import com.example.web.dao.db.DbConnect;
 import com.example.web.dao.model.Artist;
 import com.example.web.dao.model.Role;
 import com.example.web.dao.model.User;
+import com.example.web.dao.model.UserToken;
 
 
 import javax.mail.*;
@@ -18,6 +19,7 @@ import java.util.*;
 public class UserDao {
     Connection conn = DbConnect.getConnection();
     RoleDao roleDao = new RoleDao();
+
     public List<User> getListUser() throws SQLException {
         List<User> users = new ArrayList<>();
         String sql = "select * from users";
@@ -39,6 +41,7 @@ public class UserDao {
         return users;
 
     }
+
     public User getUser(int id) throws SQLException {
         String sql = "select * from users where id=?";
         PreparedStatement ps = conn.prepareStatement(sql);
@@ -55,6 +58,7 @@ public class UserDao {
             u.setAddress(rs.getString("address"));
             u.setPhone(rs.getString("phone"));
             u.setPassword(rs.getString("password"));
+            u.setStatus(rs.getString("status"));
             return u;
         }
         return null;
@@ -71,6 +75,7 @@ public class UserDao {
         }
 
     }
+
     public boolean updateUser(User user, Set<Integer> roleIds) throws SQLException {
         PreparedStatement statement = null;
         boolean success = false;
@@ -140,7 +145,8 @@ public class UserDao {
                 String phone = rs.getString("phone");
                 String password = rs.getString("password");
                 Set<Role> roles = roleDao.getRolesByUserId(id);
-                return new User(id, fullName, uname, address, email, phone,password, roles);
+                String status = rs.getString("status");
+                return new User(id, fullName, uname, address, email, phone, password, roles, status);
             }
 
         }
@@ -159,12 +165,13 @@ public class UserDao {
                 String address = rs.getString("address");
                 String uemail = rs.getString("email");
                 String phone = rs.getString("phone");
-           //     User.Role role = User.Role.valueOf(rs.getString("role"));
+                //     User.Role role = User.Role.valueOf(rs.getString("role"));
                 String password = rs.getString("password");
                 String gg_id = rs.getString("gg_id");
                 String fb_id = rs.getString("fb_id");
                 Set<Role> roles = roleDao.getRolesByUserId(id);
-                return new User(id, fullName, uname, address, uemail, phone, password, gg_id, fb_id,roles);
+                String status = rs.getString("status");
+                return new User(id, fullName, uname, address, uemail, phone, password, gg_id, fb_id, roles, status);
             }
 
         }
@@ -186,7 +193,8 @@ public class UserDao {
                 String phone = rs.getString("phone");
                 String password = rs.getString("password");
                 Set<Role> roles = roleDao.getRolesByUserId(id);
-                return new User(id, fullName, uname, address, email, phone, password,roles);
+                String status = rs.getString("status");
+                return new User(id, fullName, uname, address, email, phone, password, roles, status);
             }
         }
         return null;
@@ -217,6 +225,7 @@ public class UserDao {
 
         return ps.executeUpdate() > 0;
     }
+
     public void saveTokenForRegister(int userId, String token) {
         String sql = "INSERT INTO register_tokens (userId, token, expiredAt) VALUES (?, ?, ?)";
 
@@ -230,7 +239,55 @@ public class UserDao {
             e.printStackTrace();
         }
     }
+
+    public UserToken findByToken(String token) throws SQLException {
+        String sql = "SELECT * FROM register_tokens WHERE token = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, token);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                int userId = rs.getInt("userId");
+                String tokenStr = rs.getString("token");
+                Timestamp expiredAt = rs.getTimestamp("expiredAt");
+                return new UserToken(id, userId, tokenStr, expiredAt);
+            }
+        }
+        return null;
+    }
+
     public boolean activateUserByToken(String token) {
+        String sqlUpdateUser = "UPDATE users SET status = ? WHERE id = " +
+                "(SELECT userId FROM register_tokens WHERE token = ?)";
+        String sqlDeleteToken = "DELETE FROM register_tokens WHERE token = ?";
+        try {
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement psUpdateUser = conn.prepareStatement(sqlUpdateUser);
+                 PreparedStatement psDeleteToken = conn.prepareStatement(sqlDeleteToken)) {
+                psUpdateUser.setString(1, "Hoạt động");
+                psUpdateUser.setString(2, token);
+                int rowsAffected = psUpdateUser.executeUpdate();
+
+                if (rowsAffected == 0) {
+                    conn.rollback();
+                    return false;
+                }
+
+                psDeleteToken.setString(1, token);
+                psDeleteToken.executeUpdate();
+
+                conn.commit();
+                return true;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return false;
     }
     public boolean addUser(String fullName, String username, String hashPassword, String email, String phone, String role, String address) throws SQLException {
@@ -445,8 +502,9 @@ public class UserDao {
                     String email = rs.getString("email");
                     String fbid = rs.getString("fb_id");
                     Set<Role> roles = roleDao.getRolesByUserId(id);
+                    String status = rs.getString("status");
 
-                    return new User(id, ggid,fbid,name, email,roles);
+                    return new User(id, ggid,fbid,name, email,roles, status);
                 }
             }
         }
@@ -497,7 +555,8 @@ public class UserDao {
                             rs.getString("fb_id"),
                             rs.getString("fullName"),
                             rs.getString("email"),
-                            roleDao.getRolesByUserId(rs.getInt("id"))
+                            roleDao.getRolesByUserId(rs.getInt("id")),
+                            rs.getString("status")
                     );
                 }
             }

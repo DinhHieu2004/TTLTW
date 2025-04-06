@@ -93,11 +93,11 @@
                     <td>${u.fullName}</td>
                     <td>${u.email}</td>
                     <td>${u.phone}</td>
-               <   <td>
+                    <td>
                     <c:forEach var="role" items="${u.roles}">
                         ${role.name}
                     </c:forEach>
-                </td>
+                    </td>
                     <td>
                         <button class="btn btn-info btn-sm" data-bs-toggle="modal"
                                 data-bs-target="#viewEditUserModal" data-user-id="${u.id}">Xem Chi Tiết
@@ -195,6 +195,14 @@
                                 <label for="changePhone" class="form-label">Số Điện Thoại</label>
                                 <input type="tel" class="form-control" id="changePhone" name="phone" pattern="[0-9]{10}">
                                 <div class="error" id="changePhoneError"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="status" class="form-label">Trạng Thái</label>
+                                <select class="form-control" id="status" name="status">
+                                    <option value="Hoạt động" ${user.status == 'Hoạt động' ? 'selected' : ''}>Hoạt động</option>
+                                    <option value="Chưa kích hoạt" ${user.status == 'Chưa kích hoạt' ? 'selected' : ''}>Chưa kích hoạt</option>
+                                    <option value="Bị khóa" ${user.status == 'Bị khóa' ? 'selected' : ''}>Bị khóa</option>
+                                </select>
                             </div>
                         </div>
                     </form>
