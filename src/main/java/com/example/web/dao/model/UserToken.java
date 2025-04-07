@@ -8,12 +8,14 @@ public class UserToken {
     private int userId;
     private String token;
     private Timestamp expiredAt;
+    private String type;
 
-    public UserToken(int id, int userId, String token, Timestamp expiredAt) {
+    public UserToken(int id, int userId, String token, Timestamp expiredAt, String type) {
         this.id = id;
         this.userId = userId;
         this.token = token;
         this.expiredAt = expiredAt;
+        this.type = type;
     }
     public UserToken() {
     }
@@ -48,5 +50,13 @@ public class UserToken {
 
     public void setExpiredAt(Timestamp expiredAt) {
         this.expiredAt = expiredAt;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

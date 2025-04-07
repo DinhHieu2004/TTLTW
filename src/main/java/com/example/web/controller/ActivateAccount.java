@@ -31,7 +31,7 @@ public class ActivateAccount extends HttpServlet {
             status = "INVALID_TOKEN";
         } else {
             try {
-                UserToken userToken = authService.findByToken(token);
+                UserToken userToken = authService.findByToken(token, "register");
                 if (userToken == null) {
                     status = "TOKEN_NOT_FOUND";
                 } else if (userToken.getExpiredAt().before(new Timestamp(System.currentTimeMillis()))) {
@@ -73,7 +73,7 @@ public class ActivateAccount extends HttpServlet {
                     resp.setStatus(400);
                     errors.put("error", "Email không hợp lệ hoặc tài khoản đã kích hoạt.");
                 } else {
-                    if (authService.hasValidToken(user)) {
+                    if (authService.hasValidToken(user, "register")) {
                         resp.setStatus(400);
                         errors.put("error", "Đã có yêu cầu gửi lại liên kết. Vui lòng thử lại sau khi liên kết cũ hết hạn.");
                     } else {

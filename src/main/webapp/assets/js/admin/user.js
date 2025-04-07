@@ -78,7 +78,7 @@ $(document).ready(function () {
                         response.user.fullName,
                         response.user.email,
                         response.user.phone,
-                        response.user.role,
+                        Array.from(response.user.roles).map(r => r.name).join(', '),
                         `<button class="btn btn-info btn-sm" data-bs-toggle="modal"
                                 data-bs-target="#viewEditUserModal" data-user-id="${response.user.id}">Xem Chi Tiết</button>
                          <button class="btn btn-danger btn-sm" data-bs-toggle="modal"

@@ -29,7 +29,7 @@ public class AuthService {
         User user = udao.findByEmail(email);
         if (user != null) {
             String token = UUID.randomUUID().toString();
-            udao.saveTokenForRegister(user.getId(), token);
+            udao.saveTokenForRegister(user.getId(), token, "register");
 
             String subject = "Xác nhận email đăng ký";
             String body = "Xin chào " + fullName + ",\n\nCó phải bạn vừa đăng ký tài khoản? " +
@@ -41,8 +41,8 @@ public class AuthService {
         }
         return false;
     }
-    public UserToken findByToken(String token) throws SQLException {
-        return udao.findByToken(token);
+    public UserToken findByToken(String token, String type) throws SQLException {
+        return udao.findByToken(token, type);
     }
     public User findById(int userId) throws SQLException {
         return udao.getUser(userId);
@@ -115,7 +115,7 @@ public class AuthService {
         System.out.println(a.checkLogin("admin", "462004"));
     }
 
-    public boolean hasValidToken(User user) {
-        return udao.hasValidToken(user);
+    public boolean hasValidToken(User user, String type) {
+        return udao.hasValidToken(user, type);
     }
 }
