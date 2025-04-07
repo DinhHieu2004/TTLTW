@@ -29,8 +29,8 @@ public class OrderService {
         return orderDao.updateOrderStatus(orderId, status,recipientName,recipientPhone, deliveryAddress);
     }
 
-    public boolean updateStatus(int orderId, String status) {
-        return orderDao.updateStatus(orderId, status);
+    public boolean updatePaymentStatus(int orderId, String paymentStatus) {
+        return orderDao.updatePaymentStatus(orderId, paymentStatus);
     }
 
     public boolean deleteOrder(int i) throws SQLException {

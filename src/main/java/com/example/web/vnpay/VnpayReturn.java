@@ -88,7 +88,7 @@ public class VnpayReturn extends HttpServlet {
                     //update order status
                     try {
                         orderId = checkoutService.processCheckout2(cart, userId, 2, recipientName, recipientPhone, deliveryAddress, vnpTxnRef, shippingFee);
-                        orderService.updateStatus(orderId, "đã thanh toán");
+                        orderService.updatePaymentStatus(orderId, "đã thanh toán");
 
                         // Lấy thông tin từ db
                         Order order = orderService.getOrder(orderId);

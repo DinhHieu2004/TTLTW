@@ -33,7 +33,8 @@ public class CheckoutService {
         order.setUserId(userId);
         order.setTotalAmount(cart.getFinalPrice());
         order.setPriceAfterShipping(shippingFee + cart.getFinalPrice());
-        order.setStatus("chờ");
+        order.setPaymentStatus("chưa thanh toán");
+        order.setDeliveryStatus("chờ");
         order.setDeliveryAddress(deliveryAddress);
         order.setRecipientName(recipientName);
         order.setPaymentMethod("COD");
@@ -70,7 +71,8 @@ public class CheckoutService {
         order.setUserId(userId);
         order.setTotalAmount(cart.getFinalPrice());
         order.setPriceAfterShipping(shippingFee + cart.getFinalPrice());
-        order.setStatus("chờ");
+        order.setPaymentStatus("đã thanh toán");
+        order.setDeliveryStatus("chờ");
         order.setDeliveryAddress(deliveryAddress);
         order.setRecipientName(recipientName);
         order.setVnpTxnRef(vnpTxnRef);

@@ -10,40 +10,17 @@ import java.util.List;
 public class OrderDao {
     private Connection conn = DbConnect.getConnection();
     public int createOrder(Order order) throws Exception {
-        String sql = "INSERT INTO orders (userId, totalAmount, status, deliveryDate, recipientName, deliveryAddress, recipientPhone, paymentMethod, shippingFee, totalPrice) VALUES (?, ?, ?, ?, ?,?,?, ?, ?, ?)";
+        String sql = "INSERT INTO orders (userId, totalAmount, paymentStatus, deliveryStatus, deliveryDate, recipientName, deliveryAddress, recipientPhone, paymentMethod, shippingFee, totalPrice) VALUES (?, ?, ?, ?, ?, ?,?,?, ?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         ps.setInt(1, order.getUserId());
         ps.setDouble(2, order.getTotalAmount());
-        ps.setString(3, order.getStatus());
-        ps.setDate(4, order.getDeliveryDate() != null ? (Date) order.getDeliveryDate() : null);
-        ps.setString(5, order.getRecipientName());
-        ps.setString(6, order.getDeliveryAddress());
-        ps.setString(7, order.getRecipientPhone());
-        ps.setString(8, order.getPaymentMethod());
-        ps.setDouble(9, order.getShippingFee());
-        ps.setDouble(10, order.getPriceAfterShipping());
-
-        ps.executeUpdate();
-        try (ResultSet rs = ps.getGeneratedKeys()) {
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-        }
-        throw new Exception("Unable to create order");
-    }
-
-    public int createOrder2(Order order) throws Exception {
-        String sql = "INSERT INTO orders (userId, totalAmount, status, deliveryDate, recipientName, deliveryAddress, recipientPhone, paymentMethod, vnpTxnRef, shippingFee, totalPrice) VALUES (?, ?, ?, ?, ?, ?, ?,?,?, ?, ?)";
-        PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        ps.setInt(1, order.getUserId());
-        ps.setDouble(2, order.getTotalAmount());
-        ps.setString(3, order.getStatus());
-        ps.setDate(4, order.getDeliveryDate() != null ? (Date) order.getDeliveryDate() : null);
-        ps.setString(5, order.getRecipientName());
-        ps.setString(6, order.getDeliveryAddress());
-        ps.setString(7, order.getRecipientPhone());
-        ps.setString(8, order.getPaymentMethod());
-        ps.setString(9, order.getVnpTxnRef());
+        ps.setString(3, order.getPaymentStatus());
+        ps.setString(4, order.getDeliveryStatus());
+        ps.setDate(5, order.getDeliveryDate() != null ? (Date) order.getDeliveryDate() : null);
+        ps.setString(6, order.getRecipientName());
+        ps.setString(7, order.getDeliveryAddress());
+        ps.setString(8, order.getRecipientPhone());
+        ps.setString(9, order.getPaymentMethod());
         ps.setDouble(10, order.getShippingFee());
         ps.setDouble(11, order.getPriceAfterShipping());
 
@@ -55,9 +32,34 @@ public class OrderDao {
         }
         throw new Exception("Unable to create order");
     }
+
+    public int createOrder2(Order order) throws Exception {
+        String sql = "INSERT INTO orders (userId, totalAmount, paymentStatus, deliveryStatus, deliveryDate, recipientName, deliveryAddress, recipientPhone, paymentMethod, vnpTxnRef, shippingFee, totalPrice) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?, ?, ?)";
+        PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setInt(1, order.getUserId());
+        ps.setDouble(2, order.getTotalAmount());
+        ps.setString(3, order.getPaymentStatus());
+        ps.setString(4, order.getDeliveryStatus());
+        ps.setDate(5, order.getDeliveryDate() != null ? (Date) order.getDeliveryDate() : null);
+        ps.setString(6, order.getRecipientName());
+        ps.setString(7, order.getDeliveryAddress());
+        ps.setString(8, order.getRecipientPhone());
+        ps.setString(9, order.getPaymentMethod());
+        ps.setString(10, order.getVnpTxnRef());
+        ps.setDouble(11, order.getShippingFee());
+        ps.setDouble(12, order.getPriceAfterShipping());
+
+        ps.executeUpdate();
+        try (ResultSet rs = ps.getGeneratedKeys()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        throw new Exception("Unable to create order");
+    }
     public List<Order> getCurrentOrdersForUser(int userId) throws Exception {
         List<Order> orders = new ArrayList<>();
-        String query = "SELECT * FROM orders WHERE userId = ? AND status IN ('chờ', 'đang giao') ORDER BY orderDate DESC";
+        String query = "SELECT * FROM orders WHERE userId = ? AND deliveryStatus IN ('chờ', 'đang giao') ORDER BY orderDate DESC";
 
         PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, userId);
@@ -72,7 +74,7 @@ public class OrderDao {
     }
     public List<Order> getHistoryOrder(int userId) throws Exception {
         List<Order> orders = new ArrayList<>();
-        String query = "SELECT * FROM orders WHERE userId = ? AND status IN ('hoàn thành', 'thất bại','đã hủy') ORDER BY orderDate DESC";
+        String query = "SELECT * FROM orders WHERE userId = ? AND deliveryStatus IN ('hoàn thành', 'giao hàng thất bại','đã hủy giao hàng') ORDER BY orderDate DESC";
 
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setInt(1, userId);
@@ -102,7 +104,8 @@ public class OrderDao {
         order.setUserId(rs.getInt("userId"));
         order.setOrderDate(rs.getDate("orderDate"));
         order.setTotalAmount(rs.getDouble("totalAmount"));
-        order.setStatus(rs.getString("status"));
+        order.setPaymentStatus(rs.getString("paymentStatus"));
+        order.setDeliveryStatus(rs.getString("deliveryStatus"));
         order.setRecipientName(rs.getString("recipientName"));
         order.setDeliveryAddress(rs.getString("deliveryAddress"));
         order.setRecipientPhone(rs.getString("recipientPhone"));
@@ -166,10 +169,10 @@ public class OrderDao {
         return success;
     }
 
-    public boolean updateStatus(int orderId, String newStatus) {
-        String sql = "UPDATE orders SET status = ? WHERE id = ?";
+    public boolean updatePaymentStatus(int orderId, String newPaymentStatus) {
+        String sql = "UPDATE orders SET paymentStatus = ? WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, newStatus);
+            stmt.setString(1, newPaymentStatus);
             stmt.setInt(2, orderId);
             int rowsUpdated = stmt.executeUpdate();
             return rowsUpdated > 0;
