@@ -1,6 +1,9 @@
 package com.example.web.controller.admin.previewController;
 
+import com.example.web.dao.model.Level;
 import com.example.web.dao.model.ProductReview;
+import com.example.web.dao.model.User;
+import com.example.web.service.LogService;
 import com.example.web.service.PrivewService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,6 +17,7 @@ import java.io.IOException;
 @WebServlet("/admin/reviews/delete")
 public class delete extends HttpServlet {
     private final PrivewService privewService = new PrivewService();
+    private final LogService logService = new LogService();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -34,13 +38,19 @@ public class delete extends HttpServlet {
             int reviewId = Integer.parseInt(rid);
 
             ProductReview review = privewService.getReviewById(reviewId);
-            if (review == null || review.getUserId() != userId) {
+            if (review == null || review.getUserId() != userId && userId != 4) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 response.getWriter().write("{\"status\": \"error\", \"message\": \"Bạn không có quyền chỉnh sửa đánh giá này!\"}");
                 return;
             }
             boolean isDeleted = privewService.deleteReviewById(reviewId);
+            User user = (User) request.getSession().getAttribute("user");
 
+            if (user != null) {
+                logService.addLog(String.valueOf(Level.WARNING), request, null, null);
+            } else {
+                logService.addLog(String.valueOf(Level.WARNING), request,  null, null);
+            }
             if (isDeleted) {
                 response.setStatus(HttpServletResponse.SC_OK);
                 response.getWriter().write("{\"message\": \"Xóa đánh giá thành công!\"}");

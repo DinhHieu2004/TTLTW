@@ -17,10 +17,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-@WebServlet(name="Checkout", value = "/checkout")
+@WebServlet(value = "/checkout")
 public class CheckoutController extends HttpServlet {
-    private CheckoutService checkoutService = new CheckoutService();
-    private VoucherService voucherService = new VoucherService();
+    private final CheckoutService checkoutService = new CheckoutService();
+    private final VoucherService voucherService = new VoucherService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -65,17 +65,15 @@ public class CheckoutController extends HttpServlet {
             double shippingFeeDouble = Double.parseDouble(shippingFee);
 
 
-            CheckoutService checkoutService = new CheckoutService();
             try {
                 checkoutService.processCheckout(cart, userId, paymentMethodInt,recipientName, recipientPhone, deliveryAddress, shippingFeeDouble);
                 session.removeAttribute("cart");
                 response.setStatus(HttpServletResponse.SC_OK);
                 response.getWriter().write("Thanh toán thành công!");
             } catch (Exception e) {
-                e.printStackTrace();
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 response.getWriter().write("Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại!");
-                e.printStackTrace(); // Thêm dòng này
+                e.printStackTrace();
             }
         } catch (Exception e) {
             response.setContentType("application/json");

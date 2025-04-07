@@ -1,3 +1,4 @@
+<%@ page import="com.example.web.dao.cart.Cart" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix = "f" uri = "http://java.sun.com/jsp/jstl/fmt" %>
@@ -242,7 +243,7 @@
                 </td>
                 <td class="item-total-price">
               <span class="fw-bold">Giá:
-                <f:formatNumber value="${cp.discountPrice}" type="currency" currencySymbol="₫"/>
+                <f:formatNumber value="${cp.discountPrice}" type="currency" pattern="#,##0"/> ₫
             </span>
               </tr>
             </c:forEach>
@@ -251,7 +252,7 @@
             <tr>
               <th colspan="4" class="text-end">Tổng tiền</th>
               <th id="total-price" colspan="2">
-                <f:formatNumber value="${sessionScope.cart.totalPrice}" type="currency" currencySymbol="VND"/>
+                <f:formatNumber value="${sessionScope.cart.totalPrice}" pattern="#,##0" type="currency"/> ₫
               </th>            </tr>
             </tfoot>
           </table>
@@ -280,11 +281,13 @@
 
         <div class="price-display">
           Giá phải trả: <span id="finalPrice">
-        <f:formatNumber value="${sessionScope.cart.totalPrice}" type="currency" currencySymbol="VND"/>
+        <f:formatNumber value="${sessionScope.cart.totalPrice}" type="currency" pattern="#,##0"/>₫
       </span>
         </div>
       </div>
     </div>
+
+
 
     <div class="payment-form">
       <h3>Thông tin thanh toán</h3>
@@ -304,9 +307,9 @@
       </div>
 
       <label for="paymentMethod">Phương thức thanh toán:</label>
-      <select id="paymentMethod" name="paymentMethod" required onchange="toggleBankDetails()">
+      <select id="paymentMethod" name="paymentMethod" required>
         <option value="1">Thanh toán khi nhận hàng (COD)</option>
-        <option value="2">Thẻ tín dụng / Thẻ ghi nợ</option>
+        <option value="2">Thanh toán bằng VNPay</option>
       </select>
 
       <div id="bankDetails" style="display: none;">
@@ -421,8 +424,13 @@
   });
 </script>
 <script src="${pageContext.request.contextPath}/assets/js/shipping-fee.js"></script>
+</body>
 <script src="${pageContext.request.contextPath}/assets/js/checkout.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/applyVoucher.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/location.js"></script>
 </body>
+<%--<script src="${pageContext.request.contextPath}/assets/js/location.js"></script>--%>
+
+
+
 </html>

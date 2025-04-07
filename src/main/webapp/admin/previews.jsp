@@ -11,6 +11,7 @@
   <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <!-- DataTables Buttons CSS -->
   <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
   <!-- DataTables Buttons JavaScript -->
@@ -85,7 +86,7 @@
         </thead>
         <tbody>
         <c:forEach var="p" items="${p}">
-        <tr>
+        <tr data-review-id="${p.id}">
           <td>${p.id}</td>
           <td>${p.paintingTitle}</td>
           <td>${p.paintingId}</td>
@@ -97,9 +98,9 @@
 
           <td>
             <button class="btn btn-info btn-sm" data-bs-toggle="modal"
-                    data-bs-target="#viewEditReviewModal" data-reivew-id="${p.id}">Xem Chi Tiết
+                    data-bs-target="#viewEditReviewModal" data-review-id="${p.id}">Xem Chi Tiết
             </button>
-            <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+            <button class="btn btn-danger btn-sm delete-review-btn" data-bs-toggle="modal"
                     data-bs-target="#deleteReviewModal" data-review-id="${p.id}">Xóa
             </button>
           </td>
@@ -109,29 +110,28 @@
     </div>
   </div>
 
-  <div class="modal fade" id="deleteReviewModal" tabindex="-1" aria-labelledby="deleteReviewModalLabel"
-       aria-hidden="true">
+  <!-- Modal xóa đánh giá -->
+  <div class="modal fade" id="deleteReviewModal" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="deleteReviewModalLabel">Xác nhận xóa</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h5 class="modal-title">Xác nhận xóa</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <form action="${pageContext.request.contextPath}/admin/reviews/delete" method="POST">
-          <div class="modal-body">
-            <p>Bạn có chắc chắn muốn xóa người dùng này?</p>
-            <input type="hidden" id="reviewIdToDelete" name="rid">
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-            <button type="submit" class="btn btn-danger">Xóa</button>
-          </div>
-        </form>
+        <div class="modal-body">
+          <p>Bạn có chắc chắn muốn xóa đánh giá này?</p>
+          <input type="hidden" id="reviewIdToDelete">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!--  view and edit -->
+
+  <!--  view and edit review -->
   <div class="modal fade" id="viewEditReviewModal" tabindex="-1" aria-labelledby="reviewDetailModalLabel"
        aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -141,7 +141,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form id="userDetailForm" action="${pageContext.request.contextPath}/admin/reviews/update" method="post">
+          <form id="userDetailForm">
             <div class="row mb-3">
               <input type="hidden" id="editReviewId" name="id" value="">
               <div class="col-md-6">
@@ -167,7 +167,7 @@
                 </select>
               </div>
               <div class="col-md-6">
-                <label for="content" class="form-label">Nội dung đánh gia</label>
+                <label for="content" class="form-label">Nội dung đánh giá</label>
                 <input type="text" class="form-control" id="content" name="content" required>
               </div>
             </div>
@@ -188,16 +188,8 @@
     </div>
   </div>
 
-
-  <!-- add người dùng-->
-
-
-
-
-
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   $(document).ready(function () {
     $('#reviews').DataTable({
@@ -211,15 +203,112 @@
       ]
     });
   });
+</script>
+<%-- xóa đánh giá --%>
+<script>
+  $(document).ready(function () {
+    var table = $('#reviews').DataTable();
 
+    let reviewIdToDelete = null;
 
-  document.querySelectorAll('[data-bs-target="#deleteReviewModal"]').forEach(button => {
-    button.addEventListener('click', function () {
-      let reviewId = this.getAttribute('data-review-id');
-      document.getElementById('reviewIdToDelete').value = reviewId;
+    $(document).on('click', '.delete-review-btn', function () {
+      reviewIdToDelete = $(this).data('review-id');
+      $('#reviewIdToDelete').val(reviewIdToDelete);
+      $('#deleteReviewModal').modal('show');
+    });
+
+    $('#confirmDeleteBtn').on('click', function () {
+      if (!reviewIdToDelete) return;
+
+      $.ajax({
+        url: 'review_admin/delete',
+        method: 'POST',
+        data: { rid: reviewIdToDelete },
+        dataType: 'json',
+        success: function (response) {
+          if (response.status === 'success') {
+            var $row = $('[data-review-id="' + reviewIdToDelete + '"]').closest('tr');
+            table.row($row).remove().draw(false);
+
+            $('#deleteReviewModal').modal('hide');
+          } else {
+            console.log(this.error)
+            alert('Xóa đánh giá thất bại.');
+          }
+        },
+        error: function () {
+          alert('Lỗi khi xóa đánh giá.');
+        }
+      });
     });
   });
 </script>
-<script src="${pageContext.request.contextPath}/assets/js/admin/reviews.js"></script>
+<%-- chỉnh sửa đánh giá--%>
+<script>
+  $(document).ready(function () {
+    $('#viewEditReviewModal').on('show.bs.modal', function (event) {
+      const button = $(event.relatedTarget);
+      const reviewId = button.data('review-id');
+
+      $('#editReviewId').val(reviewId);
+
+      $.ajax({
+        url: 'reviews/detail',
+        type: 'GET',
+        data: { rid: reviewId },
+        dataType: 'json',
+        success: function (response) {
+          if (response) {
+            $('#editReviewId').val(response.id);
+            $('#pName').val(response.paintingTitle);
+            $('#uName').val(response.userName);
+            $('#rating').val(response.rating);
+            $('#content').val(response.comment);
+          } else {
+            alert('Không tìm thấy đánh giá.');
+          }
+        },
+        error: function () {
+          alert('Lỗi khi tải dữ liệu đánh giá.');
+        }
+      });
+    });
+
+    $('#userDetailForm').submit(function (event) {
+      event.preventDefault();
+
+      const reviewId = $('#editReviewId').val();
+
+      $.ajax({
+        url: 'review_admin/update',
+        type: 'POST',
+        data: JSON.stringify({
+          id: reviewId,
+          rating: $('#rating').val(),
+          comment: $('#content').val()
+        }),
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function (response) {
+          if (response.success) {
+            $('#viewEditReviewModal').modal('hide');
+
+            const newRating = $('#rating').val();
+            const newComment = $('#content').val();
+            const $row = $('button[data-review-id="' + reviewId + '"]').closest('tr');
+            $row.find('td:eq(5)').text(newRating);
+            $row.find('td:eq(6)').text(newComment);
+          } else {
+            console.log(this.error)
+            alert('Cập nhật thất bại.');
+          }
+        },
+        error: function () {
+          alert('Lỗi khi cập nhật đánh giá.');
+        }
+      });
+    });
+  });
+</script>
 </body>
 </html>
