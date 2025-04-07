@@ -33,7 +33,7 @@ public class OrderDao {
     }
 
     public int createOrder2(Order order) throws Exception {
-        String sql = "INSERT INTO orders (userId, totalAmount, status, deliveryDate, recipientName, deliveryAddress, recipientPhone, paymentMethod, vnpTxnRef, shippingFee) VALUES (?, ?, ?, ?, ?, ?, ?,?,?, ?)";
+        String sql = "INSERT INTO orders (userId, totalAmount, status, deliveryDate, recipientName, deliveryAddress, recipientPhone, paymentMethod, vnpTxnRef, shippingFee, totalPrice) VALUES (?, ?, ?, ?, ?, ?, ?,?,?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         ps.setInt(1, order.getUserId());
         ps.setDouble(2, order.getTotalAmount());
@@ -45,6 +45,7 @@ public class OrderDao {
         ps.setString(8, order.getPaymentMethod());
         ps.setString(9, order.getVnpTxnRef());
         ps.setDouble(10, order.getShippingFee());
+        ps.setDouble(11, order.getPriceAfterShipping());
 
         ps.executeUpdate();
         try (ResultSet rs = ps.getGeneratedKeys()) {
