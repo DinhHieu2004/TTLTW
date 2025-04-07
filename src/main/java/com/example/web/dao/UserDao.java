@@ -239,6 +239,20 @@ public class UserDao {
             e.printStackTrace();
         }
     }
+    public void updateTokenForRegister(int userId, String token) {
+        String sql = "UPDATE register_tokens SET token = ?, expiredAt = ? WHERE userId = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, token);
+            ps.setTimestamp(2, new java.sql.Timestamp(System.currentTimeMillis() + 24 * 60 * 60 * 1000));
+            ps.setInt(3, userId);
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public UserToken findByToken(String token) throws SQLException {
         String sql = "SELECT * FROM register_tokens WHERE token = ?";
@@ -256,39 +270,70 @@ public class UserDao {
         return null;
     }
 
-    public boolean activateUserByToken(String token) {
+    public boolean updateUserStatusByToken(String token) throws SQLException {
         String sqlUpdateUser = "UPDATE users SET status = ? WHERE id = " +
                 "(SELECT userId FROM register_tokens WHERE token = ?)";
+
+        try (PreparedStatement psUpdateUser = conn.prepareStatement(sqlUpdateUser)) {
+            psUpdateUser.setString(1, "Hoạt động");
+            psUpdateUser.setString(2, token);
+            int rowsAffected = psUpdateUser.executeUpdate();
+
+            return rowsAffected > 0;
+        }
+    }
+    public boolean deleteRegisterToken(String token) throws SQLException {
         String sqlDeleteToken = "DELETE FROM register_tokens WHERE token = ?";
+
+        try (PreparedStatement psDeleteToken = conn.prepareStatement(sqlDeleteToken)) {
+            psDeleteToken.setString(1, token);
+            int rowsAffected = psDeleteToken.executeUpdate();
+
+            return rowsAffected > 0;
+        }
+    }
+    public boolean activateUserByToken(String token) {
         try {
             conn.setAutoCommit(false);
-
-            try (PreparedStatement psUpdateUser = conn.prepareStatement(sqlUpdateUser);
-                 PreparedStatement psDeleteToken = conn.prepareStatement(sqlDeleteToken)) {
-                psUpdateUser.setString(1, "Hoạt động");
-                psUpdateUser.setString(2, token);
-                int rowsAffected = psUpdateUser.executeUpdate();
-
-                if (rowsAffected == 0) {
-                    conn.rollback();
-                    return false;
-                }
-
-                psDeleteToken.setString(1, token);
-                psDeleteToken.executeUpdate();
-
-                conn.commit();
-                return true;
-            } catch (SQLException e) {
+            boolean isUserUpdated = updateUserStatusByToken(token);
+            if (!isUserUpdated) {
                 conn.rollback();
-                throw e;
-            } finally {
-                conn.setAutoCommit(true);
+                return false;
             }
+            boolean isTokenDeleted = deleteRegisterToken(token);
+            if (!isTokenDeleted) {
+                conn.rollback();
+                return false;
+            }
+
+            conn.commit();
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return false;
+    }
+    public boolean hasValidToken(User user) {
+        String sql = "SELECT * FROM register_tokens WHERE userId = ? AND expiredAt > NOW()";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, user.getId());
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
     public boolean addUser(String fullName, String username, String hashPassword, String email, String phone, String role, String address) throws SQLException {
         if (findByUsername(username) != null) {
@@ -354,13 +399,13 @@ public class UserDao {
 
 
     public boolean updateUserInfo(User user) throws SQLException {
-        String query = "UPDATE users SET fullName = ?, phone = ?, email = ?, address = ? WHERE username = ?";
+        String query = "UPDATE users SET fullName = ?, phone = ?, email = ?, address = ? WHERE id = ?";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1, user.getFullName());
         ps.setString(2, user.getPhone());
         ps.setString(3, user.getEmail());
         ps.setString(4, user.getAddress());
-        ps.setString(5, user.getUsername());
+        ps.setInt(5, user.getId());
 
         return ps.executeUpdate() > 0;
 
@@ -461,11 +506,12 @@ public class UserDao {
         if (existingUser != null) {
             return false;
         }
-        String sql = "INSERT INTO users (fullName, email, gg_id) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO users (fullName, email, gg_id, status) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, name);
             ps.setString(2, email);
             ps.setString(3, id);
+            ps.setString(4, "Hoạt động");
 
             int affectedRows = ps.executeUpdate();
 
@@ -515,11 +561,12 @@ public class UserDao {
         if (existingUser != null) {
             return false;
         }
-        String sql = "INSERT INTO users (fullName, email, fb_id) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO users (fullName, email, fb_id, status) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, name);
             ps.setString(2, email);
             ps.setString(3, fbId);
+            ps.setString(4, "Hoạt động");
 
             int affectedRows = ps.executeUpdate();
 
@@ -580,4 +627,5 @@ public class UserDao {
             System.out.println("Lỗi khi thực hiện yêu cầu phục hồi mật khẩu: " + e.getMessage());
         }
     }
+
 }

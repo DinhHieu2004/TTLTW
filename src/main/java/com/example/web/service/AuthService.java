@@ -50,7 +50,15 @@ public class AuthService {
     public boolean activateUserByToken(String token) {
         return udao.activateUserByToken(token);
     }
-
+    public void resendToken(User user, String token) {
+        udao.updateTokenForRegister(user.getId(), token);
+        String subject = "Gửi lại email xác nhận";
+        String body = "Xin chào " + user.getFullName() + ",\n\nCó phải bạn vừa yêu cầu lại liên kết kích hoạt? " +
+                "Nếu đúng, vui lòng nhấp vào liên kết dưới đây để xác nhận email của bạn và hoàn tất quá trình đăng ký:\n\n"
+                + "http://localhost:8080/TTLTW_war/activate_account?token=" + token + "\n\n"
+                + "Nếu không phải bạn, vui lòng bỏ qua email này.";
+        emailService.sendEmail(user.getEmail(), subject, body);
+    }
     public boolean createUserByGoogle(String gg_id, String name, String email) throws SQLException {
         return udao.createUserByGoogle(gg_id, name, email, 2);
     }
@@ -107,4 +115,7 @@ public class AuthService {
         System.out.println(a.checkLogin("admin", "462004"));
     }
 
+    public boolean hasValidToken(User user) {
+        return udao.hasValidToken(user);
+    }
 }
