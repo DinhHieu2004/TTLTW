@@ -28,7 +28,7 @@ public class CheckoutService {
     }
     public void processCheckout(Cart cart, int userId, int paymentMethodId,
                                String recipientName, String recipientPhone,
-                               String deliveryAddress) throws Exception {
+                               String deliveryAddress, double shippingFee) throws Exception {
 
         Order order = new Order();
         order.setUserId(userId);
@@ -58,7 +58,7 @@ public class CheckoutService {
 
     public int processCheckout2(Cart cart, int userId, int paymentMethodId,
                                String recipientName, String recipientPhone,
-                               String deliveryAddress, String vnpTxnRef) throws Exception {
+                               String deliveryAddress, String vnpTxnRef, double shippingFee) throws Exception {
 
         // Tạo đơn hàng mới
         Order order = new Order();
@@ -70,6 +70,7 @@ public class CheckoutService {
         order.setRecipientPhone(recipientPhone);
         order.setPaymentMethod(paymentMethodId == 1 ? "COD" : "VNPay");
         order.setVnpTxnRef(vnpTxnRef);
+        order.setShippingFee(shippingFee);
 
         int orderId = orderDao.createOrder2(order);
 
@@ -91,7 +92,7 @@ public class CheckoutService {
         payment.setPaymentStatus(paymentMethodId == 1 ? "đã thanh toán" : "chờ");
         payment.setPaymentDate(LocalDateTime.now());
         paymentDao.createPayment(payment);
-    }
+
 
         return orderId;
     }

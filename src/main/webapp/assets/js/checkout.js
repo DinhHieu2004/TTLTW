@@ -18,15 +18,6 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
     }
 
 
-    $.ajax({
-        url: "checkout",
-        type: "POST",
-        data: {
-            recipientName: recipientName,
-            deliveryAddress: deliveryAddress,
-            recipientPhone: recipientPhone,
-            paymentMethod: paymentMethod,
-            shippingFee : shippingFee
 
     if(paymentMethod === "1") {
         $.ajax({
@@ -36,7 +27,8 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
                 recipientName: recipientName,
                 deliveryAddress: deliveryAddress,
                 recipientPhone: recipientPhone,
-                paymentMethod: paymentMethod
+                paymentMethod: paymentMethod,
+                shippingFee : shippingFee
 
             },
             success: function (response) {
@@ -61,7 +53,8 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
             data: { amount: amount,
                 recipientName: $("#recipientName").val(),
                 recipientPhone: $("#recipientPhone").val(),
-                deliveryAddress: $("#deliveryAddress").val()
+                deliveryAddress: $("#deliveryAddress").val(),
+                shippingFee : shippingFee
             },
             dataType: "json",
             success: function (response) {

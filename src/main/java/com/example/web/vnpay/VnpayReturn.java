@@ -47,6 +47,8 @@ public class VnpayReturn extends HttpServlet {
         String recipientName = (String) session.getAttribute("recipientName");
         String deliveryAddress = (String) session.getAttribute("deliveryAddress");
         String recipientPhone = (String) session.getAttribute("recipientPhone");
+        String shippingFeeStr = (String) session.getAttribute("shippingFee");
+        Double shippingFee = Double.parseDouble(shippingFeeStr);
 
         response.setContentType("text/html;charset=UTF-8");
 
@@ -84,7 +86,7 @@ public class VnpayReturn extends HttpServlet {
                 if ("00".equals(transactionStatus)) {
                     //update order status
                     try {
-                        orderId = checkoutService.processCheckout2(cart, userId, 2, recipientName, recipientPhone, deliveryAddress, vnpTxnRef);
+                        orderId = checkoutService.processCheckout2(cart, userId, 2, recipientName, recipientPhone, deliveryAddress, vnpTxnRef, shippingFee);
                         orderService.updateStatus(orderId, "đã thanh toán");
 
                         // Lấy thông tin từ db

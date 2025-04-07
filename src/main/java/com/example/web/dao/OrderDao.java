@@ -10,8 +10,8 @@ import java.util.List;
 public class OrderDao {
     private Connection conn = DbConnect.getConnection();
     public int createOrder(Order order) throws Exception {
-        String sql = "INSERT INTO orders (userId, totalAmount, status, deliveryDate, recipientName, deliveryAddress, recipientPhone,shippingFee, totalPrice) VALUES (?, ?, ?, ?, ?,?,?, ?, ?)";
-        String sql = "INSERT INTO orders (userId, totalAmount, status, deliveryDate, recipientName, deliveryAddress, recipientPhone, paymentMethod) VALUES (?, ?, ?, ?, ?, ?,?,?)";
+        String sql = "INSERT INTO orders (userId, totalAmount, status, deliveryDate, recipientName, deliveryAddress, recipientPhone,shippingFee, totalPrice, paymentMethod) VALUES (?, ?, ?, ?, ?,?,?, ?, ?, ?)";
+     //   String sql = "INSERT INTO orders (userId, totalAmount, status, deliveryDate, recipientName, deliveryAddress, recipientPhone, paymentMethod) VALUES (?, ?, ?, ?, ?, ?,?,?,?)";
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         ps.setInt(1, order.getUserId());
         ps.setDouble(2, order.getTotalAmount());
@@ -22,7 +22,7 @@ public class OrderDao {
         ps.setString(7, order.getRecipientPhone());
         ps.setDouble(8, order.getShippingFee());
         ps.setDouble(9, order.getPriceAfterShipping());
-        ps.setString(8, order.getPaymentMethod());
+        ps.setString(10, order.getPaymentMethod());
 
         ps.executeUpdate();
         try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -34,7 +34,7 @@ public class OrderDao {
     }
 
     public int createOrder2(Order order) throws Exception {
-        String sql = "INSERT INTO orders (userId, totalAmount, status, deliveryDate, recipientName, deliveryAddress, recipientPhone, paymentMethod, vnpTxnRef) VALUES (?, ?, ?, ?, ?, ?, ?,?,?)";
+        String sql = "INSERT INTO orders (userId, totalAmount, status, deliveryDate, recipientName, deliveryAddress, recipientPhone, paymentMethod, vnpTxnRef, shippingFee) VALUES (?, ?, ?, ?, ?, ?, ?,?,?, ?)";
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         ps.setInt(1, order.getUserId());
         ps.setDouble(2, order.getTotalAmount());
@@ -45,6 +45,7 @@ public class OrderDao {
         ps.setString(7, order.getRecipientPhone());
         ps.setString(8, order.getPaymentMethod());
         ps.setString(9, order.getVnpTxnRef());
+        ps.setDouble(10, order.getShippingFee());
 
         ps.executeUpdate();
         try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -71,7 +72,7 @@ public class OrderDao {
     }
     public List<Order> getHistoryOrder(int userId) throws Exception {
         List<Order> orders = new ArrayList<>();
-        String query = "SELECT * FROM orders WHERE userId = ? AND status IN ('hoàn thành', 'thất bại','đã hủy') ORDER BY orderDate DESC";
+        String query = "SELECT * FROM orders WHERE userId = ? AND status IN ('hoàn thành', 'thất bại','đã hủy','đã thanh toán') ORDER BY orderDate DESC";
 
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setInt(1, userId);
@@ -106,6 +107,9 @@ public class OrderDao {
         order.setDeliveryAddress(rs.getString("deliveryAddress"));
         order.setRecipientPhone(rs.getString("recipientPhone"));
         order.setDeliveryDate(rs.getDate("deliveryDate") != null ? rs.getDate("deliveryDate") : null);
+        order.setShippingFee(rs.getDouble("shippingFee"));
+        order.setPriceAfterShipping(rs.getDouble("totalPrice"));
+        order.setPaymentMethod(rs.getString("paymentMethod"));
         return order;
     }
     public List<Order> getListAllOrdersCrurrentAdmin() throws Exception {
