@@ -10,8 +10,7 @@ import java.util.List;
 public class OrderDao {
     private Connection conn = DbConnect.getConnection();
     public int createOrder(Order order) throws Exception {
-        String sql = "INSERT INTO orders (userId, totalAmount, status, deliveryDate, recipientName, deliveryAddress, recipientPhone,shippingFee, totalPrice) VALUES (?, ?, ?, ?, ?,?,?, ?, ?)";
-        String sql = "INSERT INTO orders (userId, totalAmount, status, deliveryDate, recipientName, deliveryAddress, recipientPhone, paymentMethod) VALUES (?, ?, ?, ?, ?, ?,?,?)";
+        String sql = "INSERT INTO orders (userId, totalAmount, status, deliveryDate, recipientName, deliveryAddress, recipientPhone, paymentMethod, shippingFee, totalPrice) VALUES (?, ?, ?, ?, ?,?,?, ?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         ps.setInt(1, order.getUserId());
         ps.setDouble(2, order.getTotalAmount());
@@ -20,9 +19,9 @@ public class OrderDao {
         ps.setString(5, order.getRecipientName());
         ps.setString(6, order.getDeliveryAddress());
         ps.setString(7, order.getRecipientPhone());
-        ps.setDouble(8, order.getShippingFee());
-        ps.setDouble(9, order.getPriceAfterShipping());
         ps.setString(8, order.getPaymentMethod());
+        ps.setDouble(9, order.getShippingFee());
+        ps.setDouble(10, order.getPriceAfterShipping());
 
         ps.executeUpdate();
         try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -34,7 +33,7 @@ public class OrderDao {
     }
 
     public int createOrder2(Order order) throws Exception {
-        String sql = "INSERT INTO orders (userId, totalAmount, status, deliveryDate, recipientName, deliveryAddress, recipientPhone, paymentMethod, vnpTxnRef) VALUES (?, ?, ?, ?, ?, ?, ?,?,?)";
+        String sql = "INSERT INTO orders (userId, totalAmount, status, deliveryDate, recipientName, deliveryAddress, recipientPhone, paymentMethod, vnpTxnRef, shippingFee) VALUES (?, ?, ?, ?, ?, ?, ?,?,?, ?)";
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         ps.setInt(1, order.getUserId());
         ps.setDouble(2, order.getTotalAmount());
@@ -45,6 +44,7 @@ public class OrderDao {
         ps.setString(7, order.getRecipientPhone());
         ps.setString(8, order.getPaymentMethod());
         ps.setString(9, order.getVnpTxnRef());
+        ps.setDouble(10, order.getShippingFee());
 
         ps.executeUpdate();
         try (ResultSet rs = ps.getGeneratedKeys()) {

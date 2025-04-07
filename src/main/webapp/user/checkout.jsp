@@ -363,45 +363,6 @@
   </div>
 </div>
 
-<!--<div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="addressModalLabel">Nhập địa chỉ nhận hàng</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mb-3">
-          <label for="province" class="form-label">Tỉnh/Thành phố:</label>
-          <select class="form-select" id="province" required>
-            <option value="">Chọn tỉnh/thành phố</option>
-            Add province options here or populate via JavaScript
-          </select>
-        </div>
-        <div class="mb-3">
-          <label for="district" class="form-label">Quận/Huyện:</label>
-          <select class="form-select" id="district" required>
-            <option value="">Chọn quận/huyện</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label for="ward" class="form-label">Phường/Xã:</label>
-          <select class="form-select" id="ward" required>
-            <option value="">Chọn phường/xã</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label for="specificAddress" class="form-label">Địa chỉ cụ thể:</label>
-          <input type="text" class="form-control" id="specificAddress" placeholder="Số nhà, tên đường..." required>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-        <button type="button" class="btn btn-primary" id="saveAddress">Lưu</button>
-      </div>
-    </div>
-  </div>
-</div> -->
 
 <%@ include file="/partials/footer.jsp" %>
 
@@ -428,9 +389,5 @@
 <script src="${pageContext.request.contextPath}/assets/js/checkout.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/applyVoucher.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/location.js"></script>
-</body>
-<%--<script src="${pageContext.request.contextPath}/assets/js/location.js"></script>--%>
-
-
 
 </html>

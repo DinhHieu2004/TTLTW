@@ -26,9 +26,7 @@ public class CheckoutService {
         paintingDao = new PaintingDao();
 
     }
-    public void processCheckout(Cart cart, int userId, int paymentMethodId,
-                               String recipientName, String recipientPhone,
-                               String deliveryAddress) throws Exception {
+    public void processCheckout(Cart cart, int userId, int paymentMethodId, String recipientName, String recipientPhone, String deliveryAddress, double shippingFee) throws Exception {
 
         Order order = new Order();
         order.setUserId(userId);
@@ -39,8 +37,6 @@ public class CheckoutService {
         order.setRecipientName(recipientName);
         order.setRecipientPhone(recipientPhone);
         order.setShippingFee(shippingFee);
-        order.setPaymentMethod(paymentMethodId == 1 ? "COD" : "VNPay");
-
         int orderId = orderDao.createOrder(order);
 
         for (CartPainting item : cart.getItems()) {
@@ -51,9 +47,16 @@ public class CheckoutService {
             orderItem.setPrice(item.getDiscountPrice());
             orderItem.setQuantity(item.getQuantity());
             orderItemDao.addOrderItem(orderItem);
+            paintingDao.updateQuanity(item.getProductId(), item.getSizeId(),item.getQuantity());
 
-            paintingDao.updateQuanity(item.getProductId(), item.getSizeId(), item.getQuantity());
         }
+        Payment payment = new Payment();
+        payment.setOrderId(orderId);
+        payment.setUserId(userId);
+        payment.setMethodId(paymentMethodId);
+        payment.setPaymentStatus(paymentMethodId == 1 ? "đã thanh toán" : "chờ");
+        payment.setPaymentDate(LocalDateTime.now());
+        paymentDao.createPayment(payment);
     }
 
     public int processCheckout2(Cart cart, int userId, int paymentMethodId,
@@ -91,8 +94,6 @@ public class CheckoutService {
         payment.setPaymentStatus(paymentMethodId == 1 ? "đã thanh toán" : "chờ");
         payment.setPaymentDate(LocalDateTime.now());
         paymentDao.createPayment(payment);
-    }
-
         return orderId;
     }
 
