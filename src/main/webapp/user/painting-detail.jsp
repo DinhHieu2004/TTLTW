@@ -1,6 +1,4 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="jakarta.servlet.http.HttpSession" %>
-<%@ page import="com.example.web.dao.model.User" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -139,8 +137,7 @@
 
                     <p><small>${review.createdAt}</small></p>
 
-                    <c:if test="${sessionScope.user != null && sessionScope.user.id == review.userId || sessionScope.user.id == 4}">
-
+                    <c:if test="${sessionScope.user != null && sessionScope.user.id == review.userId}">
                         <button class="btn btn-sm btn-primary edit-review-btn" data-id="${review.id}">Chỉnh sửa</button>
                         <button class="btn btn-sm btn-success save-btn d-none" data-id="${review.id}">Lưu</button>
                         <button class="btn btn-sm btn-danger cancel-btn d-none" data-id="${review.id}">Hủy</button>
@@ -325,102 +322,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/header.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/painting-detail.js"></script>
->>>>>>> main
 
-            reviewItem.find('.comment-text').addClass('d-none');
-            reviewItem.find('.edit-comment').removeClass('d-none');
-
-            reviewItem.find('.rating-text').addClass('d-none');
-            reviewItem.find('.edit-rating').removeClass('d-none');
-
-            $(this).addClass('d-none');
-            reviewItem.find('.save-btn, .cancel-btn').removeClass('d-none');
-        });
-
-        $('.cancel-btn').click(function () {
-            let reviewItem = $(this).closest('.review-item');
-
-            reviewItem.find('.comment-text').removeClass('d-none');
-            reviewItem.find('.edit-comment').addClass('d-none');
-
-            reviewItem.find('.rating-text').removeClass('d-none');
-            reviewItem.find('.edit-rating').addClass('d-none');
-
-            reviewItem.find('.edit-review-btn').removeClass('d-none');
-            reviewItem.find('.save-btn, .cancel-btn').addClass('d-none');
-        });
-
-        $('.save-btn').click(function () {
-            let reviewItem = $(this).closest('.review-item');
-            let reviewId = $(this).data('id');
-            let newComment = reviewItem.find('.edit-comment').val();
-            let newRating = reviewItem.find('.edit-rating').val();
-
-            $.ajax({
-                url: 'admin/reviews/update',
-                method: 'POST',
-                data: { reviewId, newComment, newRating },
-                success: function (response) {
-                    if (response.status === "success") {
-                        reviewItem.find('.comment-text').text(newComment).removeClass('d-none');
-                        reviewItem.find('.edit-comment').addClass('d-none');
-
-                        reviewItem.find('.rating-text').text(newRating).removeClass('d-none');
-                        reviewItem.find('.edit-rating').addClass('d-none');
-
-                        reviewItem.find('.edit-review-btn').removeClass('d-none');
-                        reviewItem.find('.save-btn, .cancel-btn').addClass('d-none');
-                    } else {
-                        alert("Cập nhật thất bại!");
-                    }
-                },
-                error: function () {
-                    alert('Lỗi khi cập nhật đánh giá.');
-                }
-            });
-        });
-    });
-</script>
-<%-- Xóa đánh giá--%>
-<script>
-    $(document).ready(function () {
-        let reviewIdToDelete = null;
-        $(document).on("click", ".delete-review-btn", function () {
-            reviewIdToDelete = $(this).data("id");
-            window.reviewElementToDelete = $(this).closest(".review-item");
-            $("#deleteConfirmModal").modal("show");
-        });
-        $("#confirmDeleteBtn").on("click", function () {
-            if (!reviewIdToDelete) return;
-
-            $.ajax({
-                url: "admin/reviews/delete",
-                method: "POST",
-                data: { rid: reviewIdToDelete },
-                dataType: "json",
-                success: function (response) {
-                    if (window.reviewElementToDelete && window.reviewElementToDelete.length) {
-                        window.reviewElementToDelete.fadeOut(300, function() {
-                            $(this).remove();
-                        });
-                    } else {
-                        console.error("Không tìm thấy phần tử để xóa");
-                    }
-                    $("#deleteConfirmModal").modal("hide");
-                },
-                error: function (xhr, status, error) {
-                    console.error("Lỗi khi xóa:", xhr.responseText);
-                    try {
-                        const response = JSON.parse(xhr.responseText);
-                        alert(response.message || "Lỗi khi xóa đánh giá!");
-                    } catch (e) {
-                        alert("Lỗi khi xóa đánh giá!");
-                    }
-                }
-            });
-        });
-    });
-</script>
 
 </body>
 </html>

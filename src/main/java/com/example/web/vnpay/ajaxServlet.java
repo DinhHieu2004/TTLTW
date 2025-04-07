@@ -70,11 +70,17 @@ public class ajaxServlet extends HttpServlet {
         String recipientName = req.getParameter("recipientName");
         String deliveryAddress = req.getParameter("deliveryAddress");
         String recipientPhone = req.getParameter("recipientPhone");
+        String shippingFee = req.getParameter("shippingFee");
+
+        shippingFee = shippingFee.replace(".", "");
 
         // Lưu vào session để dùng ở VnpayReturn
         session.setAttribute("recipientName", recipientName);
         session.setAttribute("recipientPhone", recipientPhone);
         session.setAttribute("deliveryAddress", deliveryAddress);
+        session.setAttribute("shippingFee", shippingFee);
+
+
 
 
 //        int orderId = 0;

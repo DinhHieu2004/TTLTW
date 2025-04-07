@@ -3,6 +3,11 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
     const deliveryAddress = $('#deliveryAddress').val();
     const recipientPhone = $('#recipientPhone').val();
     const paymentMethod = $('#paymentMethod').val();
+    const shippingFeeStr = $('#shippingFee').text();
+    const shippingFee = shippingFeeStr.split(' ')[0];
+
+
+    console.log(recipientName + " "+ deliveryAddress+" "+ shippingFee)
     const amountText = $("#finalPrice").text(); // lấy giá trị từ label
     const amount = parseInt(amountText.replace(/[^\d]/g, ""), 10);
 
@@ -22,7 +27,8 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
                 recipientName: recipientName,
                 deliveryAddress: deliveryAddress,
                 recipientPhone: recipientPhone,
-                paymentMethod: paymentMethod
+                paymentMethod: paymentMethod,
+                shippingFee : shippingFee
 
             },
             success: function (response) {
@@ -47,7 +53,8 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
             data: { amount: amount,
                 recipientName: $("#recipientName").val(),
                 recipientPhone: $("#recipientPhone").val(),
-                deliveryAddress: $("#deliveryAddress").val()
+                deliveryAddress: $("#deliveryAddress").val(),
+                shippingFee : shippingFee
             },
             dataType: "json",
             success: function (response) {

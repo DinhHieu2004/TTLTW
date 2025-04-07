@@ -28,16 +28,17 @@ public class CheckoutService {
     }
     public void processCheckout(Cart cart, int userId, int paymentMethodId,
                                String recipientName, String recipientPhone,
-                               String deliveryAddress) throws Exception {
+                               String deliveryAddress, double shippingFee) throws Exception {
 
-        // Tạo đơn hàng mới
         Order order = new Order();
         order.setUserId(userId);
         order.setTotalAmount(cart.getFinalPrice());
+        order.setPriceAfterShipping(shippingFee + cart.getFinalPrice());
         order.setStatus("chờ");
         order.setDeliveryAddress(deliveryAddress);
         order.setRecipientName(recipientName);
         order.setRecipientPhone(recipientPhone);
+        order.setShippingFee(shippingFee);
         order.setPaymentMethod(paymentMethodId == 1 ? "COD" : "VNPay");
 
         int orderId = orderDao.createOrder(order);
@@ -57,7 +58,7 @@ public class CheckoutService {
 
     public int processCheckout2(Cart cart, int userId, int paymentMethodId,
                                String recipientName, String recipientPhone,
-                               String deliveryAddress, String vnpTxnRef) throws Exception {
+                               String deliveryAddress, String vnpTxnRef, double shippingFee) throws Exception {
 
         // Tạo đơn hàng mới
         Order order = new Order();
@@ -69,6 +70,7 @@ public class CheckoutService {
         order.setRecipientPhone(recipientPhone);
         order.setPaymentMethod(paymentMethodId == 1 ? "COD" : "VNPay");
         order.setVnpTxnRef(vnpTxnRef);
+        order.setShippingFee(shippingFee);
 
         int orderId = orderDao.createOrder2(order);
 
@@ -83,6 +85,14 @@ public class CheckoutService {
 
             paintingDao.updateQuanity(item.getProductId(), item.getSizeId(), item.getQuantity());
         }
+        Payment payment = new Payment();
+        payment.setOrderId(orderId);
+        payment.setUserId(userId);
+        payment.setMethodId(paymentMethodId);
+        payment.setPaymentStatus(paymentMethodId == 1 ? "đã thanh toán" : "chờ");
+        payment.setPaymentDate(LocalDateTime.now());
+        paymentDao.createPayment(payment);
+
 
         return orderId;
     }

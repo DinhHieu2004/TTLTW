@@ -15,9 +15,10 @@ public class CartPainting implements Serializable {
     private int quanlytiOfSize;
     private double discountPrice;
     private double discountPercent;
+    private double weight;
 
 
-    public CartPainting(int productId, String productName, String sizeId,String sizeDescriptions, int quantity, double price, String imageUrl, int quanlytiOfSize , double discountPercent) {
+    public CartPainting(int productId, String productName, String sizeId,String sizeDescriptions,double weight, int quantity, double price, String imageUrl, int quanlytiOfSize , double discountPercent) {
         this.productId = productId;
         this.productName = productName;
         this.sizeDescriptions = sizeDescriptions;
@@ -29,6 +30,7 @@ public class CartPainting implements Serializable {
         this.discountPrice = totalPrice * (1-discountPercent/ 100);
         this.quanlytiOfSize = quanlytiOfSize;
         this.discountPercent = discountPercent;
+        this.weight = weight;
     }
     public CartPainting() {
 
@@ -36,6 +38,14 @@ public class CartPainting implements Serializable {
 
     public int getQuanlytiOfSize() {
         return quanlytiOfSize;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
     }
 
     public double getDiscountPrice() {

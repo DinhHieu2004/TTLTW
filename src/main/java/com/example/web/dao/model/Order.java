@@ -15,6 +15,8 @@ public class Order  implements Serializable {
     private String recipientName;
     private String deliveryAddress;
     private String recipientPhone;
+    private double shippingFee;
+    private double priceAfterShipping;
     private String paymentMethod;
     private String vnpTxnRef;
 
@@ -25,6 +27,14 @@ public class Order  implements Serializable {
     public static final String STATUS_FAILED = "thất bại";
     public static final String STATUS_CANCELED = "đã hủy";
 
+
+    public double getPriceAfterShipping() {
+        return priceAfterShipping;
+    }
+
+    public void setPriceAfterShipping(double priceAfterShipping) {
+        this.priceAfterShipping = priceAfterShipping;
+    }
 
     public String getRecipientName() {
         return recipientName;
@@ -98,6 +108,14 @@ public class Order  implements Serializable {
         this.deliveryDate = deliveryDate;
     }
 
+    public double getShippingFee() {
+        return shippingFee;
+    }
+
+    public void setShippingFee(double shippingFee) {
+        this.shippingFee = shippingFee;
+    }
+
     public String getPaymentMethod() {
         return paymentMethod;
     }
@@ -128,6 +146,8 @@ public class Order  implements Serializable {
                 ", recipientPhone='" + recipientPhone + '\'' +
                 ", paymentMethod='" + paymentMethod + '\'' +
                 ", vnpTxnRef='" + vnpTxnRef + '\'' +
+                ", shippingFee=" + shippingFee +
+                ", priceAfterShipping=" + priceAfterShipping +
                 '}';
     }
 }

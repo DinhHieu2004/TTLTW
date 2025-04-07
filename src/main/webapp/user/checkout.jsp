@@ -2,6 +2,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix = "f" uri = "http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,6 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Thanh toán</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/footer.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/header.css">
   <style>
@@ -261,6 +264,12 @@
         </c:otherwise>
       </c:choose>
 
+      <div>
+        <label class="voucher-label">Chi phí giao hàng: <span id="shippingFee">Chưa tính</span></label>
+      </div>
+
+
+
       <div class="voucher-container">
         <label for="voucherSelect" class="voucher-label">Chọn mã giảm giá:</label>
         <select id="voucherSelect" name="voucherCode" class="voucher-select">
@@ -289,13 +298,12 @@
       <input value="${sessionScope.user.phone}" type="text" id="recipientPhone" name="phoneNumber" required>
 
       <label for="email">Email:</label>
-      <input  value="${sessionScope.user.email}" type="email" id="email" name="email" required>
-
+      <input value="${sessionScope.user.email}" type="email" id="email" name="email" required>
 
       <div class="mb-3">
         <label for="deliveryAddress" class="form-label">Địa chỉ nhận hàng:</label>
         <input type="text" class="form-control" id="deliveryAddress" name="deliveryAddress"
-               value="${sessionScope.user.address}" placeholder="Nhập địa chỉ nhận hàng" required>
+               value="${sessionScope.user.address}" placeholder="Nhập địa chỉ nhận hàng" required readonly data-bs-toggle="modal" data-bs-target="#addressModal">
       </div>
 
       <label for="paymentMethod">Phương thức thanh toán:</label>
@@ -316,12 +324,111 @@
     </div>
   </div>
 </div>
+
+
+<!-- Address Modal -->
+<div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addressModalLabel">Nhập địa chỉ nhận hàng</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="province" class="form-label">Tỉnh/Thành phố:</label>
+          <input type="text" class="form-control" id="province" placeholder="Tỉnh/Thành phố" required>
+
+        </div>
+        <div class="mb-3">
+          <label for="district" class="form-label">Quận/Huyện:</label>
+          <input type="text" class="form-control" id="district" placeholder="Quận/Huyện" required>
+
+        </div>
+        <div class="mb-3">
+          <label for="ward" class="form-label">Phường/Xã:</label>
+          <input type="text" class="form-control" id="ward" placeholder="Phường/xã" required>
+
+        </div>
+        <div class="mb-3">
+          <label for="specificAddress" class="form-label">Địa chỉ cụ thể:</label>
+          <input type="text" class="form-control" id="specificAddress" placeholder="Số nhà, tên đường..." required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button type="button" class="btn btn-primary" id="saveAddress">Lưu</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--<div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addressModalLabel">Nhập địa chỉ nhận hàng</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="province" class="form-label">Tỉnh/Thành phố:</label>
+          <select class="form-select" id="province" required>
+            <option value="">Chọn tỉnh/thành phố</option>
+            Add province options here or populate via JavaScript
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="district" class="form-label">Quận/Huyện:</label>
+          <select class="form-select" id="district" required>
+            <option value="">Chọn quận/huyện</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="ward" class="form-label">Phường/Xã:</label>
+          <select class="form-select" id="ward" required>
+            <option value="">Chọn phường/xã</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="specificAddress" class="form-label">Địa chỉ cụ thể:</label>
+          <input type="text" class="form-control" id="specificAddress" placeholder="Số nhà, tên đường..." required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button type="button" class="btn btn-primary" id="saveAddress">Lưu</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
 <%@ include file="/partials/footer.jsp" %>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const fullAddress = "${sessionScope.user.address}";
+
+    if (fullAddress) {
+      const parts = fullAddress.split(",").map(part => part.trim());
+
+      const reversed = parts.reverse();
+
+      document.getElementById("province").value = reversed[0] || "";
+      document.getElementById("district").value = reversed[1] || "";
+      document.getElementById("ward").value = reversed[2] || "";
+      document.getElementById("specificAddress").value = reversed[3] || "";
+    }
+  });
+</script>
+<script src="${pageContext.request.contextPath}/assets/js/shipping-fee.js"></script>
 </body>
 <script src="${pageContext.request.contextPath}/assets/js/checkout.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/applyVoucher.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/location.js"></script>
+</body>
 <%--<script src="${pageContext.request.contextPath}/assets/js/location.js"></script>--%>
 
 

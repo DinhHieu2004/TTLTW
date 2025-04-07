@@ -65,8 +65,8 @@ public class Painting implements Serializable{
         return averageRating;
     }
 
-    public void addSize(int idSize, String sizeDescription, int quantity) {
-            this.sizes.add(new PaintingSize(idSize, sizeDescription, quantity));
+    public void addSize(int idSize, String sizeDescription, int quantity, double weight) {
+            this.sizes.add(new PaintingSize(idSize, sizeDescription, quantity, weight));
         }
         public void setDiscount(String discountName, double discountPercentage) {
             this.discountName = discountName;

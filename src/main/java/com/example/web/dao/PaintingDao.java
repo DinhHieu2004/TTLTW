@@ -179,6 +179,7 @@ public class PaintingDao {
                         d.discountName,
                         d.discountPercentage,
                         s.sizeDescription,
+                        s.weight,
                         s.id AS idSize,
                         ps.quantity AS sizeQuantity,
                         dp.discountId
@@ -203,9 +204,10 @@ public class PaintingDao {
                     }
                     // Add size and quantity to the painting detail
                     int idSize = rs.getInt("idSize");
+                    double weight = rs.getDouble("weight");
                     String sizeDescription = rs.getString("sizeDescription");
                     int sizeQuantity = rs.getInt("sizeQuantity");
-                    paintingDetail.addSize(idSize, sizeDescription, sizeQuantity);
+                    paintingDetail.addSize(idSize, sizeDescription, sizeQuantity, weight);
 
                     // Add discount information if exists
                     if (rs.getString("discountName") != null) {
@@ -655,6 +657,7 @@ public class PaintingDao {
                         d.discountPercentage,
                         s.sizeDescription,
                         s.id AS idSize,
+                        s.weight,       
                         ps.quantity AS sizeQuantity,
                         dp.discountId
                 
@@ -682,7 +685,8 @@ public class PaintingDao {
                         int idSize = rs.getInt("idSize");
                         String sizeDescription = rs.getString("sizeDescription");
                         int sizeQuantity = rs.getInt("sizeQuantity");
-                        paintingDetail.addSize(idSize, sizeDescription, sizeQuantity);
+                        double weight = rs.getDouble("weight");
+                        paintingDetail.addSize(idSize, sizeDescription, sizeQuantity,weight);
 
                         // Add discount information if exists
                         if (rs.getString("discountName") != null) {

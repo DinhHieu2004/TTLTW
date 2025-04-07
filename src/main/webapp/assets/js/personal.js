@@ -12,7 +12,7 @@ $(document).ready(function () {
                 const row = `
                     <tr>
                         <td>${order.id}</td>
-                        <td>${order.totalAmount} .VND</td>
+                        <td>${order.priceAfterShipping} .VND</td>
                         <td>${order.orderDate}</td>
                         <td>${order.status}</td>
                         <td><button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#orderDetailsModal" data-order-id="${order.id}">Xem Chi Tiết</button></td>
@@ -36,7 +36,7 @@ $(document).ready(function () {
                 const row = `
                     <tr>
                         <td>${order.id}</td>
-                        <td>${order.totalAmount} .VND</td>
+                        <td>${order.priceAfterShipping} .VND</td>
                         <td>${order.orderDate}</td>
                         <td>${order.deliveryDate}</td>
                         <td>${order.status}</td>
@@ -92,7 +92,11 @@ $(document).ready(function () {
                         <p ><strong id="statusOrder">Trạng thái đơn hàng:</strong>${order.status}</p>
                     `);
 
-                        modelPrice.html(`<p><strong>Tổng trả:</strong> ${order.totalAmount}</p>`);
+                        modelPrice.html(`
+                        <p><strong>Phí giao hàng:</strong> ${order.shippingFee}</p>
+                        <p><strong>Tiền hàng:</strong> ${order.totalAmount}</p>
+                        <p><strong>Tổng trả:</strong> ${order.priceAfterShipping}</p>
+`);
                         if (orderStatus.trim().toLowerCase()  === 'chờ') {
                             modelPrice.append(`
                     <button id="cancelOrderButton" class="btn btn-danger">Hủy đơn hàng</button>
