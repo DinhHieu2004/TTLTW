@@ -12,7 +12,7 @@ $(document).ready(function () {
                 const row = `
                     <tr>
                         <td>${order.id}</td>
-                        <td>${order.priceAfterShipping} .VND</td>
+                        <td>${order.priceAfterShipping} VND</td>
                         <td>${order.orderDate}</td>
                         <td>${order.status}</td>
                         <td><button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#orderDetailsModal" data-order-id="${order.id}">Xem Chi Tiết</button></td>
@@ -36,7 +36,7 @@ $(document).ready(function () {
                 const row = `
                     <tr>
                         <td>${order.id}</td>
-                        <td>${order.priceAfterShipping} .VND</td>
+                        <td>${order.priceAfterShipping} VND</td>
                         <td>${order.orderDate}</td>
                         <td>${order.deliveryDate}</td>
                         <td>${order.status}</td>

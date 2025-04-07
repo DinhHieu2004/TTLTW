@@ -106,6 +106,9 @@ public class OrderDao {
         order.setRecipientName(rs.getString("recipientName"));
         order.setDeliveryAddress(rs.getString("deliveryAddress"));
         order.setRecipientPhone(rs.getString("recipientPhone"));
+        order.setVnpTxnRef(rs.getString("vnpTxnRef"));
+        order.setShippingFee(rs.getDouble("shippingFee"));
+        order.setPriceAfterShipping(rs.getDouble("totalPrice"));
         order.setDeliveryDate(rs.getDate("deliveryDate") != null ? rs.getDate("deliveryDate") : null);
         return order;
     }

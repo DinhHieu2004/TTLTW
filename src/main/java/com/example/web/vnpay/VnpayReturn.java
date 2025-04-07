@@ -76,7 +76,7 @@ public class VnpayReturn extends HttpServlet {
 
                 String vnpTxnRef = (String) session.getAttribute("vnp_TxnRef");
 //
-//                int orderIdInt = Integer.parseInt(orderId);
+//               int orderIdInt = Integer.parseInt(orderId);
 
                 boolean transSuccess = false;
 

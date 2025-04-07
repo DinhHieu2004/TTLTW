@@ -111,8 +111,16 @@
                                         </tbody>
                                         <tfoot>
                                         <tr>
-                                            <th colspan="4" class="text-end">Tổng tiền:</th>
+                                            <th colspan="4" class="text-end">Tổng tiền sản phẩm:</th>
                                             <th colspan="2"><fmt:formatNumber value="${requestScope.order.totalAmount}" type="currency" pattern="#,##0"/> ₫</th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="4" class="text-end">Phí giao hàng:</th>
+                                            <th colspan="2"><fmt:formatNumber value="${requestScope.order.shippingFee}" type="currency" pattern="#,##0"/> ₫</th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="4" class="text-end">Tổng cộng:</th>
+                                            <th colspan="2"><fmt:formatNumber value="${requestScope.order.priceAfterShipping}" type="currency" pattern="#,##0"/> ₫</th>
                                         </tr>
                                         </tfoot>
                                     </table>
