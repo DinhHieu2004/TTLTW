@@ -126,11 +126,33 @@
                             </div>
 
                             <button type="submit" class="btn btn-success w-100 login-btn">Đăng Ký</button>
+                            <div class="loading-spinner">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
+                            <div class="loading-message">
+                                Đang xử lý, vui lòng đợi...
+                            </div>
                         </form>
+                        <div id="verify-message" style="display: none;">
+                            <h4>Đăng ký thành công!</h4>
+                            <p>Chúng tôi đã gửi một email xác thực đến <strong id="user-email"></strong>.</p>
+                            <p>Vui lòng kiểm tra hộp thư đến hoặc mục <strong>Spam</strong>.</p>
+                            <p>Nhấn Xác Nhận để tắt thông báo này.</p>
+                            <button class="btn btn-success mt-3" onclick="handleUserConfirmed()">Xác nhận</button>
+                        </div>
                     </div>
 
 
                     <style>
+                        .loading-spinner, .loading-message {
+                            position: absolute;
+                            top: 20%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            display: none;
+                        }
                         .error {
                             color: red;
                             font-size: 12px;
@@ -150,31 +172,6 @@
                         .g_id_signin img {
                             width: 25px !important;
                         }
-                        /*.custom-facebook-btn {*/
-                        /*    width: 80%;*/
-                        /*    margin: auto;*/
-                        /*    display: flex;*/
-                        /*    align-items: center;*/
-                        /*    border: 1px solid #dadce0;*/
-                        /*    background-color: white;*/
-                        /*    padding: 6px 14px;*/
-                        /*    border-radius: 5px;*/
-                        /*    cursor: pointer;*/
-                        /*    font-weight: bold;*/
-                        /*    font-size: 14px;*/
-                        /*    transition: background-color 0.2s;*/
-                        /*    white-space: nowrap;*/
-                        /*    overflow: hidden;*/
-                        /*    text-overflow: ellipsis;*/
-                        /*}*/
-
-                        /*.custom-facebook-btn:hover {*/
-                        /*    background-color: #f7f7f7;*/
-                        /*}*/
-
-                        /*.facebook-icon {*/
-                        /*    margin-right: 20px;*/
-                        /*}*/
                         .custom-facebook-btn {
                             width: 80% !important;
                             margin: auto;
