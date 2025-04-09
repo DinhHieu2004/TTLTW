@@ -14,20 +14,11 @@ $(document).ready(function () {
                         <td>${order.id}</td>
                         <td>${order.priceAfterShipping} VND</td>
                         <td>${order.orderDate}</td>
-                        <td>${order.status}</td>
+                        <td>${order.paymentStatus}</td>
+                        <td>${order.deliveryStatus}</td>
                         <td><button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#orderDetailsModal" data-order-id="${order.id}">Xem Chi Tiết</button></td>
                     </tr>`;
                 currentTableBody.append(row);
-            });
-            $('#currentOrders').DataTable({
-                dom: '<"d-flex justify-content-between align-items-center"lfB>rtip',
-                buttons: [
-                    { extend: 'copy', title: 'Danh sách đơn hàng hiện tại' },
-                    { extend: 'csv', title: 'Danh sách đơn hàng hiện tại' },
-                    { extend: 'excel', title: 'Danh sách đơn hàng hiện tại' },
-                    { extend: 'pdf', title: 'Danh sách đơn hàng hiện tại' },
-                    { extend: 'print', title: 'Danh sách đơn hàng hiện tại' }
-                ]
             });
 
             const previousOrders = response.previousOrders;
@@ -39,20 +30,11 @@ $(document).ready(function () {
                         <td>${order.priceAfterShipping} VND</td>
                         <td>${order.orderDate}</td>
                         <td>${order.deliveryDate}</td>
-                        <td>${order.status}</td>
+                        <td>${order.paymentStatus}</td>
+                        <td>${order.deliveryStatus}</td>
                         <td><button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#orderDetailsModal" data-order-id="${order.id}">Xem Chi Tiết</button></td>
                     </tr>`;
                 previousTableBody.append(row);
-            });
-            $('#orderHistory').DataTable({
-                dom: '<"d-flex justify-content-between align-items-center"lfB>rtip',
-                buttons: [
-                    { extend: 'copy', title: 'Lịch sử đơn hàng' },
-                    { extend: 'csv', title: 'Lịch sử đơn hàng' },
-                    { extend: 'excel', title: 'Lịch sử đơn hàng' },
-                    { extend: 'pdf', title: 'Lịch sử đơn hàng' },
-                    { extend: 'print', title: 'Lịch sử đơn hàng' }
-                ]
             });
         },
         error: function () {

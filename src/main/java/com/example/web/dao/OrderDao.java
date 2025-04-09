@@ -117,7 +117,7 @@ public class OrderDao {
     }
     public List<Order> getListAllOrdersCrurrentAdmin() throws Exception {
         List<Order> orders = new ArrayList<>();
-        String query = "SELECT * FROM orders where status IN ('chờ', 'đang giao') ORDER BY orderDate DESC";
+        String query = "SELECT * FROM orders where deliveryStatus IN ('chờ', 'đang giao') ORDER BY orderDate DESC";
         PreparedStatement ps = conn.prepareStatement(query);
 
         try (ResultSet rs = ps.executeQuery()) {
@@ -131,7 +131,7 @@ public class OrderDao {
 
     public List<Order> getListAllOrdersHistoryAdmin() throws SQLException {
         List<Order> orders = new ArrayList<>();
-        String query = "SELECT * FROM orders  where status IN ('hoàn thành', 'thất bại','đã hủy') ORDER BY orderDate DESC";
+        String query = "SELECT * FROM orders  where deliveryStatus IN ('hoàn thành', 'giao hàng thất bại','đã hủy giao hàng') ORDER BY orderDate DESC";
         PreparedStatement ps = conn.prepareStatement(query);
 
         try (ResultSet rs = ps.executeQuery()) {
@@ -149,9 +149,9 @@ public class OrderDao {
 
         String sql;
         if ("hoàn thành".equalsIgnoreCase(status)) {
-            sql = "UPDATE orders SET status = ?, recipientName = ?, recipientPhone = ?, deliveryAddress = ?, deliveryDate = CURRENT_TIMESTAMP WHERE id = ?";
+            sql = "UPDATE orders SET deliveryStatus = ?, recipientName = ?, recipientPhone = ?, deliveryAddress = ?, deliveryDate = CURRENT_TIMESTAMP WHERE id = ?";
         } else {
-            sql = "UPDATE orders SET status = ?, recipientName = ?, recipientPhone = ?, deliveryAddress = ? WHERE id = ?";
+            sql = "UPDATE orders SET deliveryStatus = ?, recipientName = ?, recipientPhone = ?, deliveryAddress = ? WHERE id = ?";
         }
 
         PreparedStatement ps = conn.prepareStatement(sql);
