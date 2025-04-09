@@ -109,12 +109,10 @@
                                         <div class="mb-3">
                                             <label for="addressChange" class="form-label">Địa chỉ</label>
                                             <input type="text" class="form-control" id="addressChange" name="address"
-                                                   data-address="${sessionScope.user.address}" required readonly data-bs-toggle="modal" data-bs-target="#addressModal">
+                                                   value="${sessionScope.user.address}">
                                             <div class="error" id="addressChangeError"></div>
-
                                         </div>
                                         <button type="submit" class="btn btn-primary" style="background-color: var(--primary-color) !important;">Lưu Thay Đổi</button>
-
                                     </form>
                                 </div>
                             </div>
@@ -298,27 +296,6 @@
 
 
 
-    document.getElementById('saveAddress').addEventListener('click', function () {
-
-        const province = document.getElementById('province').value.trim();
-        const district = document.getElementById('district').value.trim();
-        const ward = document.getElementById('ward').value.trim();
-        const specificAddress = document.getElementById('specificAddress').value.trim();
-
-        const fullAddress = specificAddress + ", " + district + ", " + province;
-        console.log("Full Address:", fullAddress);
-
-        document.getElementById('saveAddress').value = fullAddress;
-
-        const addressModal = document.getElementById('addressModal');
-
-        const modal = bootstrap.Modal.getInstance(addressModal);
-        if (modal) {
-            modal.hide();
-        } else {
-            document.querySelector('#addressModal .btn-close').click();
-        }
-    });
 </script>
 
 

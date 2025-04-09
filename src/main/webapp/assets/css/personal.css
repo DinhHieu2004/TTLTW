@@ -26,3 +26,19 @@ body, html {
     margin-left: 50px;
     align-items: center;
 }
+#editPersonalInfoModal {
+    z-index: 1050;
+}
+
+#addressModal {
+    z-index: 1060;
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#addressChange {
+    background-color: #e9ecef;
+    cursor: pointer;
+}
