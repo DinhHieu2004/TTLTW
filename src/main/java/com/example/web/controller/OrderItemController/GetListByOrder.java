@@ -14,9 +14,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-@WebServlet(name = "ListOrderItemsByOrder", value = "/order/order-items")
+@WebServlet("/order/order-items")
 public class GetListByOrder extends HttpServlet {
-    private OrderItemService orderItemService;
+    private final OrderItemService orderItemService = new OrderItemService();
         @Override
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -25,7 +25,6 @@ public class GetListByOrder extends HttpServlet {
 
             String orderIdParam = req.getParameter("orderId");
             int orderId = Integer.parseInt(orderIdParam);
-            orderItemService = new OrderItemService();
 
             try {
                 List<OrderItem> orderItems = orderItemService.getOrderItems(orderId);
@@ -35,8 +34,6 @@ public class GetListByOrder extends HttpServlet {
                     resp.getWriter().write("{\"error\": \"No items found for this order\"}");
                     return;
                 }
-
-
                 Gson gson = new Gson();
                 String json = gson.toJson(orderItems);
                 resp.getWriter().write(json);

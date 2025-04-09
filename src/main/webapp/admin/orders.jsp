@@ -65,7 +65,8 @@
         <th>Mã Đơn Hàng</th>
         <th>Tổng Tiền</th>
         <th>Ngày Đặt</th>
-        <th>Trạng Thái</th>
+        <th>Thanh Toán</th>
+        <th>Vận chuyển</th>
         <th>Hành Động</th>
       </tr>
       </thead>
@@ -75,7 +76,8 @@
           <td>${order.id}</td>
           <td>${order.totalAmount}</td>
           <td>${order.orderDate}</td>
-          <td>${order.status}</td>
+          <td>${order.paymentStatus}</td>
+          <td>${order.deliveryStatus}</td>
           <td><button class="btn btn-info btn-sm" data-bs-toggle="modal"
                       data-bs-target="#orderDetailsModal"
                       data-order-id="${order.id}">Xem Chi Tiết</button>
@@ -102,7 +104,8 @@
         <th>Tổng Tiền</th>
         <th>Ngày Đặt</th>
         <th>Ngày Giao</th>
-        <th>Trạng Thái</th>
+        <th>Thanh Toán</th>
+        <th>Vận chuyển</th>
         <th>Hành Động</th>
       </tr>
       </thead>
@@ -113,7 +116,8 @@
           <td>${order.totalAmount}</td>
           <td>${order.orderDate}</td>
           <td>${order.deliveryDate}</td>
-          <td>${order.status}</td>
+          <td>${order.paymentStatus}</td>
+          <td>${order.deliveryStatus}</td>
           <td><button class="btn btn-info btn-sm" data-bs-toggle="modal"
                       data-bs-target="#orderDetailsModal"
                       data-order-id="${order.id}">Xem Chi Tiết</button>
@@ -184,8 +188,9 @@
             <option value="chờ">chờ</option>
             <option value="đang giao">đang giao</option>
             <option value="hoàn thành">hoàn thành</option>
-            <option value="thất bại">thất bại</option>
-            <option value="đã hủy">dã hủy</option>
+            <option value="giao hàng thất bại">giao hàng thất bại</option>
+            <option value="đã hủy giao hàng">đã hủy giao hàng</option>
+            <option value="đã giao">đã giao</option>
           </select>
 
           <button id="updateStatusBtn" class="btn btn-primary mt-3">Cập nhật đơn hàng</button>
