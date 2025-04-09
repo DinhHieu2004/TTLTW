@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    let orderStatus = null;
 
     $.ajax({
         url: 'user/orders',
@@ -12,22 +11,13 @@ $(document).ready(function () {
                 const row = `
                     <tr>
                         <td>${order.id}</td>
-                        <td>${order.priceAfterShipping} .VND</td>
+                        <td>${order.priceAfterShipping} VND</td>
                         <td>${order.orderDate}</td>
-                        <td>${order.status}</td>
+                        <td>${order.paymentStatus}</td>
+                        <td>${order.deliveryStatus}</td>
                         <td><button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#orderDetailsModal" data-order-id="${order.id}">Xem Chi Tiết</button></td>
                     </tr>`;
                 currentTableBody.append(row);
-            });
-            $('#currentOrders').DataTable({
-                dom: '<"d-flex justify-content-between align-items-center"lfB>rtip',
-                buttons: [
-                    { extend: 'copy', title: 'Danh sách đơn hàng hiện tại' },
-                    { extend: 'csv', title: 'Danh sách đơn hàng hiện tại' },
-                    { extend: 'excel', title: 'Danh sách đơn hàng hiện tại' },
-                    { extend: 'pdf', title: 'Danh sách đơn hàng hiện tại' },
-                    { extend: 'print', title: 'Danh sách đơn hàng hiện tại' }
-                ]
             });
 
             const previousOrders = response.previousOrders;
@@ -36,23 +26,14 @@ $(document).ready(function () {
                 const row = `
                     <tr>
                         <td>${order.id}</td>
-                        <td>${order.priceAfterShipping} .VND</td>
+                        <td>${order.priceAfterShipping} VND</td>
                         <td>${order.orderDate}</td>
                         <td>${order.deliveryDate}</td>
-                        <td>${order.status}</td>
+                        <td>${order.paymentStatus}</td>
+                        <td>${order.deliveryStatus}</td>
                         <td><button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#orderDetailsModal" data-order-id="${order.id}">Xem Chi Tiết</button></td>
                     </tr>`;
                 previousTableBody.append(row);
-            });
-            $('#orderHistory').DataTable({
-                dom: '<"d-flex justify-content-between align-items-center"lfB>rtip',
-                buttons: [
-                    { extend: 'copy', title: 'Lịch sử đơn hàng' },
-                    { extend: 'csv', title: 'Lịch sử đơn hàng' },
-                    { extend: 'excel', title: 'Lịch sử đơn hàng' },
-                    { extend: 'pdf', title: 'Lịch sử đơn hàng' },
-                    { extend: 'print', title: 'Lịch sử đơn hàng' }
-                ]
             });
         },
         error: function () {
@@ -81,29 +62,28 @@ $(document).ready(function () {
                 success: function (response) {
                     if (response) {
                         const order = response;
-                        orderStatus = order.status;
-                        console.log("Order status raw value:", order.status);
-                        console.log("Order status after trim and lowercase:", order.status.trim().toLowerCase()); // Thêm dòng này
-
+                        debugger
                         modalInfo.html(`
                         <p id="recipientName"><strong>Tên người nhận:</strong> ${order.recipientName}</p>
                         <p id="recipientPhone"><strong>Số điện thoại:</strong> ${order.recipientPhone}</p>
                         <p id="deliveryAddress"><strong>Địa chỉ nhận hàng:</strong> ${order.deliveryAddress}</p>
-                        <p ><strong id="statusOrder">Trạng thái đơn hàng:</strong>${order.status}</p>
+                        <p ><strong id="statusOrder">Trạng thái thanh toán:</strong>${order.paymentStatus}</p>
                     `);
+                        debugger
 
                         modelPrice.html(`
                         <p><strong>Phí giao hàng:</strong> ${order.shippingFee}</p>
                         <p><strong>Tiền hàng:</strong> ${order.totalAmount}</p>
                         <p><strong>Tổng trả:</strong> ${order.priceAfterShipping}</p>
-`);
-                        if (orderStatus.trim().toLowerCase()  === 'chờ') {
+`);                     debugger
+                        if (order.deliveryStatus.trim().toLowerCase()  === 'chờ' ||
+                            order.deliveryStatus.trim().toLowerCase()  === 'đang giao') {
                             modelPrice.append(`
                     <button id="cancelOrderButton" class="btn btn-danger">Hủy đơn hàng</button>
                     
                     
                 `)}
-
+                        debugger
                         $('#cancelOrderButton').off('click').on('click', function () {
                             const recipientName = $('#recipientName').val();
                             const recipientPhone = $('#recipientPhone').val();
@@ -114,7 +94,7 @@ $(document).ready(function () {
                                 method: 'POST',
                                 data: {
                                     orderId: orderId,
-                                    status: "dã hủy",
+                                    deliveryStatus: "đã hủy giao hàng",
                                     recipientName : recipientName,
                                     deliveryAddress: deliveryAddress,
                                     recipientPhone :recipientPhone
@@ -136,28 +116,27 @@ $(document).ready(function () {
                             url: `order/order-items?orderId=${orderId}`,
                             method: 'GET',
                             dataType: 'json',
-                            success: function (details) {
-                                if (details.length === 0) {
-                                    modalBody.append('<tr><td colspan="4">Không có chi tiết đơn hàng.</td></tr>');
+                            success: function (response) {
+                                if (response.length === 0) {
+                                    modalBody.append('<tr><td colspan="6">Không có chi tiết đơn hàng.</td></tr>');
                                     return;
                                 }
-
-                                details.forEach(product => {
+                                debugger
+                                response.forEach(product => {
                                     const row = `
                                     <tr>
-                                         <td>${product.id}</td>
-
+                                        <td>${product.id}</td>
                                         <td>${product.name}</td>
                                         <td>${product.sizeDescription}</td>
                                         <td>${product.quantity}</td>
                                         <td>${product.price}₫</td>
-                                        <td>${orderStatus.toLowerCase() === "hoàn thành"
+                                        <td>${(order.deliveryStatus || '').trim().toLowerCase() === "hoàn thành"
                                         ? `<button class="btn btn-primary btn-sm review-btn" data-product-id="${product.id}">Đánh Giá</button>`
                                         : ''}</td>
                                     </tr>`;
                                     modalBody.append(row);
                                 });
-
+                                debugger
                                 modalBody.find('.review-btn').off('click').on('click', function () {
                                     const productId = $(this).data('product-id');
                                     window.location.href = `review?itemId=${productId}`;

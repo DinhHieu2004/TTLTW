@@ -1004,8 +1004,8 @@ $("#editPaintingForm").submit(function (event) {
 
 
 
-<<script src="${pageContext.request.contextPath}/assets/js/admin/product.js"></script>
-<<script src="${pageContext.request.contextPath}/assets/js/admin/theme.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/admin/product.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/admin/theme.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/admin/sizes.js"></script>
 </body>
 </html>

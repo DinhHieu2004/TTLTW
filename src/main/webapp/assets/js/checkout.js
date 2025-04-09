@@ -58,13 +58,11 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
             },
             dataType: "json",
             success: function (response) {
-                debugger
                 if (response.success) {
                     window.location.href = response.paymentUrl;
                 } else {
                     alert("Lỗi khi tạo đơn hàng VNPay!");
                 }
-                debugger
             },
             error: function () {
                 alert("Đã xảy ra lỗi khi kết nối với VNPay.");

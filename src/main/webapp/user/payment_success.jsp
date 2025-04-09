@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -110,8 +111,16 @@
                                         </tbody>
                                         <tfoot>
                                         <tr>
-                                            <th colspan="4" class="text-end">Tổng tiền:</th>
-                                            <th colspan="2"><f:formatNumber value="${requestScope.order.totalAmount}" type="currency" pattern="#,##0"/> ₫</th>
+                                            <th colspan="4" class="text-end">Tổng tiền sản phẩm:</th>
+                                            <th colspan="2"><fmt:formatNumber value="${requestScope.order.totalAmount}" type="currency" pattern="#,##0"/> ₫</th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="4" class="text-end">Phí giao hàng:</th>
+                                            <th colspan="2"><fmt:formatNumber value="${requestScope.order.shippingFee}" type="currency" pattern="#,##0"/> ₫</th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="4" class="text-end">Tổng cộng:</th>
+                                            <th colspan="2"><fmt:formatNumber value="${requestScope.order.priceAfterShipping}" type="currency" pattern="#,##0"/> ₫</th>
                                         </tr>
                                         </tfoot>
                                     </table>

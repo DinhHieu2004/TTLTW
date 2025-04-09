@@ -7,7 +7,7 @@ $(document).ready(function () {
         const modalBody = $('#orderDetailsBody');
         const modalInfo = $('#orderRecipientInfo');
         const modelPrice = $(`#totalPrice`)
-        const modalStatus = $('#orderStatus');
+        const deliveryStatus = $('#orderStatus');
         const statusSelect = $('#statusSelect');
         const recipientName = $('#recipientName');
         const recipientPhone = $('#recipientPhone');
@@ -15,7 +15,7 @@ $(document).ready(function () {
         const updateStatusBtn = $('#updateStatusBtn');
         modalInfo.empty();
         modalBody.empty();
-        modalStatus.empty();
+        // modalStatus.empty();
 
         $.ajax({
             url: `../order-detail?orderId=${orderId}`,
@@ -27,7 +27,7 @@ $(document).ready(function () {
                 if (response) {
                     console.log(response)
                     const order = response;
-                    orderStatus = order.status;
+                    orderStatus = order.deliveryStatus;
 
                     let orderDate = '';
                     if (order.orderDate ) {
@@ -56,11 +56,11 @@ $(document).ready(function () {
                 `);
 
                     modelPrice.html(`<p><strong>Tổng trả:</strong> ${order.totalAmount || 0}</p>`)
-                    modalStatus.text(orderStatus || '');
+                    deliveryStatus.text(order.deliveryStatus || '');
                     if (statusSelect.length) {
-                        statusSelect.val(orderStatus);
+                        statusSelect.val(deliveryStatus);
                     }
-                    if (orderStatus === 'dã hủy' || orderStatus === 'thất bại') {
+                    if (deliveryStatus === 'đã hủy giao hàng' || orderStatus === 'giao hàng thất bại') {
                         updateStatusBtn.prop('disabled', true);
                     }else{
                         updateStatusBtn.prop('enable', true);
@@ -123,7 +123,7 @@ $(document).ready(function () {
                 data: {
 
                     orderId: orderId,
-                    status: newStatus,
+                    deliveryStatus: newStatus,
                     recipientName : recipientName,
                     deliveryAddress: deliveryAddress,
                     recipientPhone :recipientPhone
@@ -131,6 +131,7 @@ $(document).ready(function () {
                 success: function (response) {
                     alert('Cập nhật trạng thái thành công');
                     modalStatus.text(newStatus);
+                    location.reload();
                 },
                 error: function () {
                     alert('Lỗi khi cập nhật trạng thái đơn hàng');

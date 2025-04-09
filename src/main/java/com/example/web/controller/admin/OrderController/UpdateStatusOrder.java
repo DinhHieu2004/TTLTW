@@ -23,12 +23,11 @@ public class UpdateStatusOrder extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         String orderIdStr = request.getParameter("orderId");
-        String status = request.getParameter("status");
+        String status = request.getParameter("deliveryStatus");
         String recipientName = request.getParameter("recipientName");
         String recipientPhone = request.getParameter("recipientPhone");
         String deliveryAddress = request.getParameter("deliveryAddress");
 
-        System.out.println("Order ID: " + orderIdStr);
 
         if (orderIdStr == null || orderIdStr.isEmpty() || status == null || status.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

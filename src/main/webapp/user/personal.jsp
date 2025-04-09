@@ -12,13 +12,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trang Cá Nhân</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/footer.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/header.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/personal.css">
     <!-- DataTables Buttons CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
-
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">li
     <!-- DataTables Buttons JavaScript -->
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -162,9 +164,6 @@
 <c:if test="${sessionScope.user == null}">
     <p>Không tìm thấy thông tin người dùng.</p>
 </c:if>
-</div>
-</div>
-</div>
 
 <!-- Bảng Đơn Hàng Hiện Tại -->
 <div class="card mb-4" style="margin: 30px">
@@ -179,6 +178,7 @@
                 <th>Tổng Tiền</th>
                 <th>Ngày Đặt</th>
                 <th>Trạng Thái</th>
+                <th>Vận chuyển</th>
                 <th>Hành Động</th>
             </tr>
             </thead>
@@ -187,7 +187,7 @@
         </table>
     </div>
 </div>
-
+<%-- Bảng lịch sử đơn hàng--%>
 <div class="card mb-4" style="margin: 30px">
     <div class="card-header bg-secondary text-white">
         <h4>Lịch Sử Đơn Hàng</h4>
@@ -201,6 +201,7 @@
                 <th>Ngày Đặt</th>
                 <th>Ngày Giao</th>
                 <th>Trạng Thái</th>
+                <th>Vận chuyển</th>
                 <th>Hành Động</th>
             </tr>
             </thead>
@@ -319,9 +320,8 @@
         }
     });
 </script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
 <script src="${pageContext.request.contextPath}/assets/js/personal.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/header.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/authModal.js"></script>

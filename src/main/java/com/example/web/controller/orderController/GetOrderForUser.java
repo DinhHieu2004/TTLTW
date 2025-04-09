@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@WebServlet(name = "OrderForUser", value = "/user/orders")
+@WebServlet("/user/orders")
 public class GetOrderForUser extends HttpServlet {
     private final OrderService orderService = new OrderService();
 

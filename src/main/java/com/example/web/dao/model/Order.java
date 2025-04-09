@@ -8,7 +8,8 @@ import java.util.Date;
 public class Order  implements Serializable {
     private int id;
     private int userId;
-    private String status;
+    private String paymentStatus;
+    private String deliveryStatus;
     private double totalAmount;
     private Date orderDate;
     private Date deliveryDate;
@@ -19,13 +20,6 @@ public class Order  implements Serializable {
     private double priceAfterShipping;
     private String paymentMethod;
     private String vnpTxnRef;
-
-    public static final String STATUS_PENDING = "chờ";
-    public static final String STATUS_DELIVERING = "đang giao";
-    public static final String STATUS_PAID = "đã thanh toán";
-    public static final String STATUS_COMPLETED = "hoàn thành";
-    public static final String STATUS_FAILED = "thất bại";
-    public static final String STATUS_CANCELED = "đã hủy";
 
 
     public double getPriceAfterShipping() {
@@ -76,12 +70,20 @@ public class Order  implements Serializable {
         this.userId = userId;
     }
 
-    public String getStatus() {
-        return status;
+    public String getPaymentStatus() {
+        return paymentStatus;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+    public String getDeliveryStatus() {
+        return deliveryStatus;
+    }
+
+    public void setDeliveryStatus(String deliveryStatus) {
+        this.deliveryStatus = deliveryStatus;
     }
 
     public double getTotalAmount() {
@@ -137,17 +139,18 @@ public class Order  implements Serializable {
         return "Order{" +
                 "id=" + id +
                 ", userId=" + userId +
-                ", status='" + status + '\'' +
+                ", paymentStatus='" + paymentStatus + '\'' +
+                ", deliveryStatus='" + deliveryStatus + '\'' +
                 ", totalAmount=" + totalAmount +
                 ", orderDate=" + orderDate +
                 ", deliveryDate=" + deliveryDate +
                 ", recipientName='" + recipientName + '\'' +
                 ", deliveryAddress='" + deliveryAddress + '\'' +
                 ", recipientPhone='" + recipientPhone + '\'' +
-                ", paymentMethod='" + paymentMethod + '\'' +
-                ", vnpTxnRef='" + vnpTxnRef + '\'' +
                 ", shippingFee=" + shippingFee +
                 ", priceAfterShipping=" + priceAfterShipping +
+                ", paymentMethod='" + paymentMethod + '\'' +
+                ", vnpTxnRef='" + vnpTxnRef + '\'' +
                 '}';
     }
 }
