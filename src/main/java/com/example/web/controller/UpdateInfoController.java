@@ -52,7 +52,11 @@ public class UpdateInfoController extends HttpServlet {
 
         if (email == null || email.trim().isEmpty()) {
             errors.put("errorEmail", "Email không được để trống!");
-        } else if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+        }
+        else if ((currentUser.getGg_id()!= null || currentUser.getFb_id() != null)) {
+            errors.put("errorEmail", "Tài khoản Google/Facebook không thể thay đổi email!");
+        }
+        else if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
             errors.put("errorEmail", "Email không hợp lệ!");
         } else {
             try {

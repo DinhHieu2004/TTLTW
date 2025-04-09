@@ -79,7 +79,7 @@
                                 </div>
                                 <div class="col-md-6 text-md-end">
                                     <p class="fw-bold mb-1">Ngày đặt hàng:</p>
-                                    <p><fmt:formatDate value="${requestScope.order.orderDate}" pattern="dd/MM/yyyy"/></p>
+                                    <p><f:formatDate value="${requestScope.order.orderDate}" pattern="dd/MM/yyyy"/></p>
                                 </div>
                             </div>
 
@@ -105,7 +105,7 @@
                                                 <td>${item.name}</td>
                                                 <td>${item.sizeDescription}</td>
                                                 <td>${item.quantity}</td>
-                                                <td><fmt:formatNumber value="${item.price}" type="currency" pattern="#,##0"/> ₫</td>
+                                                <td><f:formatNumber value="${item.price}" type="currency" pattern="#,##0"/> ₫</td>
                                             </tr>
                                         </c:forEach>
                                         </tbody>

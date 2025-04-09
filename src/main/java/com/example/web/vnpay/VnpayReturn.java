@@ -48,6 +48,7 @@ public class VnpayReturn extends HttpServlet {
         String deliveryAddress = (String) session.getAttribute("deliveryAddress");
         String recipientPhone = (String) session.getAttribute("recipientPhone");
         String shippingFeeStr = (String) session.getAttribute("shippingFee");
+
         shippingFeeStr = shippingFeeStr.replace(".", "");
         double shippingFee = Double.parseDouble(shippingFeeStr);
 
@@ -89,6 +90,7 @@ public class VnpayReturn extends HttpServlet {
                     try {
                         orderId = checkoutService.processCheckout2(cart, userId, 2, recipientName, recipientPhone, deliveryAddress, vnpTxnRef, shippingFee);
                         orderService.updatePaymentStatus(orderId, "đã thanh toán");
+
 
                         // Lấy thông tin từ db
                         Order order = orderService.getOrder(orderId);

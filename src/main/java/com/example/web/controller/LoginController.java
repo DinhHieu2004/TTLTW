@@ -94,15 +94,22 @@ public class LoginController extends HttpServlet {
         try {
             User user = service.checkLogin(username, password);
             if (user != null) {
-                user.setPassword(null);
-                session.setAttribute("user", user);
-                session.setAttribute("userId", user.getId());
-                session.setAttribute("loginAttempts", 0);
-                session.removeAttribute("captcha_code");
-                session.removeAttribute("captchaCreationTime");
-                System.out.println(user);
-                responseMap.put("loginSuccess", "True");
-                response.setStatus(HttpServletResponse.SC_OK);
+                if (!user.isActivated()) {
+                    responseMap.put("loginError", "Tài khoản chưa được kích hoạt. Vui lòng kiểm tra email để kích hoạt tài khoản.");
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                } else {
+                    user.setPassword(null);
+                    session.setAttribute("user", user);
+                    session.setAttribute("userId", user.getId());
+                    session.setAttribute("loginAttempts", 0);
+                    session.removeAttribute("captcha_code");
+                    session.removeAttribute("captchaCreationTime");
+
+                    System.out.println(user);
+
+                    responseMap.put("loginSuccess", "True");
+                    response.setStatus(HttpServletResponse.SC_OK);
+                }
             } else {
                 loginAttempts++;
                 session.setAttribute("loginAttempts", loginAttempts);

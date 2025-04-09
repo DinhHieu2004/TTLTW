@@ -66,6 +66,7 @@ public class CheckoutService {
                                 String recipientName, String recipientPhone,
                                 String deliveryAddress, String vnpTxnRef, double shippingFee) throws Exception {
 
+
         // Tạo đơn hàng mới
         Order order = new Order();
         order.setUserId(userId);
@@ -78,6 +79,7 @@ public class CheckoutService {
         order.setVnpTxnRef(vnpTxnRef);
         order.setPaymentMethod("VNPay");
         order.setRecipientPhone(recipientPhone);
+
         order.setShippingFee(shippingFee);
 
         int orderId = orderDao.createOrder2(order);

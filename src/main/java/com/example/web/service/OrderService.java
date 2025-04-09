@@ -39,6 +39,6 @@ public class OrderService {
 
     public static void main(String[] args) throws Exception {
         OrderService orderService = new OrderService();
-        System.out.println(orderService.getOrder(68));
+        System.out.println(orderService.getCurrentOrdersForUser(4));
     }
 }

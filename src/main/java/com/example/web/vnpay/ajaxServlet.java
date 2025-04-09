@@ -79,6 +79,7 @@ public class ajaxServlet extends HttpServlet {
         session.setAttribute("shippingFee", shippingFee);
 
 
+
 //        int orderId = 0;
 //        try {
 //            orderId = checkoutService.processCheckout(cart, userId, 2, recipientName, recipientPhone, deliveryAddress);

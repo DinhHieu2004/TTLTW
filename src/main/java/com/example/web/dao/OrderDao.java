@@ -34,6 +34,7 @@ public class OrderDao {
     }
 
     public int createOrder2(Order order) throws Exception {
+
         String sql = "INSERT INTO orders (userId, totalAmount, paymentStatus, deliveryStatus, deliveryDate, recipientName, deliveryAddress, recipientPhone, paymentMethod, vnpTxnRef, shippingFee, totalPrice) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         ps.setInt(1, order.getUserId());
@@ -76,6 +77,7 @@ public class OrderDao {
         List<Order> orders = new ArrayList<>();
         String query = "SELECT * FROM orders WHERE userId = ? AND deliveryStatus IN ('hoàn thành', 'giao hàng thất bại','đã hủy giao hàng') ORDER BY orderDate DESC";
 
+
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setInt(1, userId);
 
@@ -113,6 +115,9 @@ public class OrderDao {
         order.setShippingFee(rs.getDouble("shippingFee"));
         order.setPriceAfterShipping(rs.getDouble("totalPrice"));
         order.setDeliveryDate(rs.getDate("deliveryDate") != null ? rs.getDate("deliveryDate") : null);
+        order.setShippingFee(rs.getDouble("shippingFee"));
+        order.setPriceAfterShipping(rs.getDouble("totalPrice"));
+        order.setPaymentMethod(rs.getString("paymentMethod"));
         return order;
     }
     public List<Order> getListAllOrdersCrurrentAdmin() throws Exception {

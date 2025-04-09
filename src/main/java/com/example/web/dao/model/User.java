@@ -18,6 +18,7 @@ public class User  implements Serializable {
     private String password;
     private Set<Role> roles = new HashSet<>();
     private String allRolePermission;
+    private String status;
 
 
     public String getAllRolePermission() {
@@ -31,17 +32,18 @@ public class User  implements Serializable {
         this.allRolePermission = result;
         return allRolePermission;
     }
-    public User(int id, String fullName, String username, String address, String email, String phone) {
+    public User(int id, String fullName, String username, String address, String email, String phone, String status) {
         this.id = id;
         this.fullName = fullName;
         this.username = username;
         this.address = address;
         this.email = email;
         this.phone = phone;
+        this.status = status;
        // this.role = role;
     }
 
-    public User(int id, String fullName, String username, String address, String email, String phone, String password) {
+    public User(int id, String fullName, String username, String address, String email, String phone, String password, String status) {
         this.id = id;
         this.fullName = fullName;
         this.username = username;
@@ -49,8 +51,9 @@ public class User  implements Serializable {
         this.email = email;
         this.phone = phone;
         this.password = password;
+        this.status = status;
     }
-    public User(int id, String fullName, String username, String address, String email, String phone,String password, Set<Role> roles) {
+    public User(int id, String fullName, String username, String address, String email, String phone,String password, Set<Role> roles, String status) {
         this.id = id;
         this.fullName = fullName;
         this.username = username;
@@ -59,17 +62,41 @@ public class User  implements Serializable {
         this.phone = phone;
         this.roles = roles;
         this.password = password;
+        this.status = status;
     }
-    public User(int id, String gg_id, String fb_id, String fullName, String email, Set<Role> role){
+    public User(int id, String fullName, String username, String address, String email, String phone,String password, String gg_id, String fb_id, Set<Role> roles, String status) {
+        this.id = id;
+        this.fullName = fullName;
+        this.username = username;
+        this.address = address;
+        this.email = email;
+        this.phone = phone;
+        this.gg_id = gg_id;
+        this.fb_id = fb_id;
+        this.roles = roles;
+        this.password = password;
+        this.status = status;
+    }
+
+    public User(int id, String gg_id, String fb_id, String fullName, String email, Set<Role> role, String status){
         this.id = id;
         this.gg_id = gg_id;
         this.fb_id = fb_id;
         this.fullName = fullName;
         this.email = email;
         this.roles = role;
+        this.status = status;
     }
     public User() {
 
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
     public void addRole(Role role) {
         roles.add(role);
@@ -180,10 +207,6 @@ public class User  implements Serializable {
     // public void setRole(Role role) {
      //   this.role = role;
    // }
-
-    public static void main(String[] args) {
-    }
-
     public String getGg_id() {
         return gg_id;
     }
@@ -198,6 +221,9 @@ public class User  implements Serializable {
 
     public void setFb_id(String fb_id) {
         this.fb_id = fb_id;
+    }
+    public boolean isActivated(){
+        return !this.status.equals( "Chưa kích hoạt");
     }
 }
 
