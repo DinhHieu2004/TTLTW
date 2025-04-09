@@ -251,65 +251,15 @@ function showErrorc(inputId, errorId, message) {
     $('#' + errorId).text(message).addClass('text-danger');
     $('#' + inputId).addClass('is-invalid');
 }
-$('#editPersonalInfoModal').on('hidden.bs.modal', function () {
-    $('.text-danger').text('').removeClass('text-danger');
-    $('input').removeClass('is-invalid');
-    $('.error').text('');
-});
-$('#editPersonalInfoModal').on('show.bs.modal', function () {
-    let modal = $(this);
+document.getElementById('saveAddress').addEventListener('click', function () {
+    const province = document.getElementById('province').value.trim();
+    const district = document.getElementById('district').value.trim();
+    const ward = document.getElementById('ward').value.trim();
+    const specificAddress = document.getElementById('specificAddress').value.trim();
 
-    modal.find('#nameChange').val(modal.find('#nameChange').data('fullname'));
-    modal.find('#phoneChange').val(modal.find('#phoneChange').data('phone'));
-    modal.find('#emailChange').val(modal.find('#emailChange').data('email'));
-    modal.find('#addressChange').val(modal.find('#addressChange').data('address'));
-});
+    const fullAddress = `${specificAddress}, ${ward}, ${district}, ${province}`;
+    document.getElementById('addressChange').value = fullAddress;
 
-document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById('addressChange').addEventListener('click', function () {
-        const fullAddress = document.getElementById('addressChange').value;
-        if (fullAddress) {
-            const parts = fullAddress.split(",").map(part => part.trim());
-            document.getElementById("specificAddress").value = parts[0] || "";
-            document.getElementById("ward").value = parts[1] || "";
-            document.getElementById("district").value = parts[2] || "";
-            document.getElementById("province").value = parts[3] || "";
-        }
-
-        const addressModal = new bootstrap.Modal(document.getElementById('addressModal'), {
-            backdrop: 'static' /
-        });
-        addressModal.show();
-
-        const editModalElement = document.getElementById('editPersonalInfoModal');
-        editModalElement.classList.add('show');
-        editModalElement.style.display = 'block';
-    });
-
-    document.getElementById('saveAddress').addEventListener('click', function () {
-        const province = document.getElementById('province').value.trim();
-        const district = document.getElementById('district').value.trim();
-        const ward = document.getElementById('ward').value.trim();
-        const specificAddress = document.getElementById('specificAddress').value.trim();
-
-        const fullAddress = `${specificAddress}, ${ward}, ${district}, ${province}`;
-
-        document.getElementById('addressChange').value = fullAddress;
-
-        const addressModal = bootstrap.Modal.getInstance(document.getElementById('addressModal'));
-        addressModal.hide();
-    });
-
-    document.getElementById('addressModal').addEventListener('hidden.bs.modal', function () {
-        const editModalElement = document.getElementById('editPersonalInfoModal');
-        if (editModalElement.classList.contains('show')) {
-            editModalElement.style.display = 'block';
-            document.body.classList.add('modal-open');
-            if (!document.querySelector('.modal-backdrop')) {
-                const backdrop = document.createElement('div');
-                backdrop.className = 'modal-backdrop fade show';
-                document.body.appendChild(backdrop);
-            }
-        }
-    });
+    const addressModal = bootstrap.Modal.getInstance(document.getElementById('addressModal'));
+    addressModal.hide();
 });
