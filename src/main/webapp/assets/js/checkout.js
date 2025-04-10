@@ -69,8 +69,17 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
                     alert("Lỗi khi tạo đơn hàng VNPay!");
                 }
             },
-            error: function () {
-                alert("Đã xảy ra lỗi khi kết nối với VNPay.");
+            error: function (xhr) {
+                if (xhr.status === 400) {
+                    let msg = xhr.responseText;
+                    if (msg.includes("Giỏ hàng của bạn đang trống")) {
+                        alert("Giỏ hàng của bạn đang trống!");
+                    } else {
+                        alert(msg);
+                    }
+                } else {
+                    alert("Đã xảy ra lỗi khi kết nối với VNPay.");
+                }
             }
         });
     }

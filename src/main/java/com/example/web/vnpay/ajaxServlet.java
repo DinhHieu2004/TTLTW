@@ -6,12 +6,16 @@
 package com.example.web.vnpay;
 
 import com.example.web.dao.cart.Cart;
+import com.example.web.dao.cart.CartPainting;
+import com.example.web.dao.model.Painting;
+import com.example.web.dao.model.PaintingSize;
 import com.example.web.dao.model.User;
 import com.example.web.service.CheckoutService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -58,6 +62,39 @@ public class ajaxServlet extends HttpServlet {
             out.write("{\"success\": false, \"message\": \"Giỏ hàng của bạn đang trống!\"}");
             return;
         }
+        List<Painting> inventoryPainting = null;
+        try {
+            inventoryPainting = checkoutService.getOutOfStockList(cart);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (inventoryPainting != null && !inventoryPainting.isEmpty()) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
+            StringBuilder outOfStockNames = new StringBuilder("Các sản phẩm sau đã hết hàng hoặc không đủ số lượng:\n");
+
+            for (CartPainting cp : cart.getItems()) {
+                for (Painting p : inventoryPainting) {
+                    if (cp.getProductId() == p.getId()) {
+                        String sizeName = "";
+                        for (PaintingSize ps : p.getSizes()) {
+                            if (ps.getIdSize() == cp.getSizeId()) {
+                                sizeName = ps.getSizeDescriptions();
+                                break;
+                            }
+                        }
+                        outOfStockNames.append("- ").append(p.getTitle())
+                                .append(" (Kích thước: ").append(sizeName).append(")").append("\n");
+                    }
+                }
+            }
+
+            resp.setContentType("text/plain;charset=UTF-8");
+            resp.getWriter().write(outOfStockNames.toString());
+            return;
+        }
+
 
 
         String vnp_Version = "2.1.0";
