@@ -1,5 +1,6 @@
 package com.example.web.dao;
 
+import com.example.web.dao.cart.CartPainting;
 import com.example.web.dao.db.DbConnect;
 import com.example.web.dao.model.Painting;
 import com.example.web.dao.model.Theme;
@@ -777,6 +778,42 @@ public class PaintingDao {
 
     }
 
+    public Painting getPaintingAndQuantity(CartPainting cartPainting) throws SQLException {
+        Painting paintingDetail = null;
+        String sql = """
+                    SELECT 
+                        p.id AS paintingId,
+                        p.title AS paintingTitle,
+                        p.price,
+                        s.sizeDescription,
+                        s.weight,
+                        s.id AS idSize,
+                        ps.quantity AS sizeQuantity
+                    FROM paintings p
+                    LEFT JOIN painting_sizes ps ON p.id = ps.paintingId
+                    LEFT JOIN sizes s ON ps.sizeId = s.id
+                    WHERE p.id = ?;
+                """;
+
+        try (PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, cartPainting.getProductId());
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    if (paintingDetail == null) {
+                        paintingDetail = new Painting(rs.getInt("paintingId"), rs.getString("paintingTitle"), rs.getDouble("price"));
+                    }
+                    int idSize = rs.getInt("idSize");
+                    double weight = rs.getDouble("weight");
+                    String sizeDescription = rs.getString("sizeDescription");
+                    int sizeQuantity = rs.getInt("sizeQuantity");
+                    paintingDetail.addSize(idSize, sizeDescription, sizeQuantity, weight);
+
+                }
+            }
+        }
+        return paintingDetail;
+    }
+
     public static void main(String[] args) throws SQLException {
         PaintingDao paintingDao = new PaintingDao();
         Double m1 = null;
@@ -808,6 +845,13 @@ public class PaintingDao {
         //  System.out.println(paintingDao.getPaintingRating(5));
         //System.out.println(paintingDao.getPaintingRating(6));
 
-        System.out.println(paintingDao.getPaintingSg("hoa", 3));
+      //  System.out.println(paintingDao.getPaintingSg("hoa", 3));
+
+        CartPainting cartPainting = new CartPainting();
+        cartPainting.setProductId(1);
+        cartPainting.setProductName("Tranh cảnh biển");
+        cartPainting.setQuantity(2);
+
+        System.out.println(paintingDao.getPaintingAndQuantity(cartPainting));
     }
 }

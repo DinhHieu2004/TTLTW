@@ -8,10 +8,13 @@ import com.example.web.dao.cart.Cart;
 import com.example.web.dao.cart.CartPainting;
 import com.example.web.dao.model.Order;
 import com.example.web.dao.model.OrderItem;
+import com.example.web.dao.model.Painting;
 import com.example.web.dao.model.Payment;
 import com.example.web.vnpay.Config;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CheckoutService {
     private final OrderDao orderDao;
@@ -104,6 +107,12 @@ public class CheckoutService {
         paymentDao.createPayment(payment);
 
         return orderId;
+    }
+    private List<Painting> getOutOfStockList(Cart cart){
+        List<CartPainting> paintingList = cart.getItems();
+        List<Painting> outOfStockList = new ArrayList<>();
+return null;
+
     }
 
 }

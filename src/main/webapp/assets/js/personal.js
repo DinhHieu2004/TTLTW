@@ -263,3 +263,9 @@ document.getElementById('saveAddress').addEventListener('click', function () {
     const addressModal = bootstrap.Modal.getInstance(document.getElementById('addressModal'));
     addressModal.hide();
 });
+
+$('#editPersonalInfoModal').on('hidden.bs.modal', function () {
+    $('.text-danger').text('').removeClass('text-danger');
+    $('input').removeClass('is-invalid');
+    $('.error').text('');
+});

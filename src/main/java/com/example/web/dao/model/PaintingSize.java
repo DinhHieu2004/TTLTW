@@ -55,8 +55,10 @@ public class PaintingSize  implements Serializable {
     @Override
     public String toString() {
         return "PaintingSize{" +
-                "sizeDescriptions='" + sizeDescriptions + '\'' +
+                "idSize=" + idSize +
+                ", sizeDescriptions='" + sizeDescriptions + '\'' +
                 ", quantity=" + quantity +
+                ", weight=" + weight +
                 '}';
     }
 }
