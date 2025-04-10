@@ -778,7 +778,7 @@ public class PaintingDao {
 
     }
 
-    public Painting getPaintingAndQuantity(CartPainting cartPainting) throws SQLException {
+    public Painting getInventory(CartPainting cartPainting) throws SQLException {
         Painting paintingDetail = null;
         String sql = """
                     SELECT 
@@ -852,6 +852,6 @@ public class PaintingDao {
         cartPainting.setProductName("Tranh cảnh biển");
         cartPainting.setQuantity(2);
 
-        System.out.println(paintingDao.getPaintingAndQuantity(cartPainting));
+        System.out.println(paintingDao.getInventory(cartPainting));
     }
 }
