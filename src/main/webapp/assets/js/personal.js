@@ -251,6 +251,18 @@ function showErrorc(inputId, errorId, message) {
     $('#' + errorId).text(message).addClass('text-danger');
     $('#' + inputId).addClass('is-invalid');
 }
+$('#editPersonalInfoModal').on('hidden.bs.modal', function () {
+    $('.text-danger').text('').removeClass('text-danger');
+    $('input').removeClass('is-invalid');
+    $('.error').text('');
+});
+$('#editPersonalInfoModal').on('show.bs.modal', function () {
+    let modal = $(this);
+
+    modal.find('#nameChange').val(modal.find('#nameChange').data('fullname'));
+    modal.find('#phoneChange').val(modal.find('#phoneChange').data('phone'));
+    modal.find('#emailChange').val(modal.find('#emailChange').data('email'));
+});
 document.getElementById('saveAddress').addEventListener('click', function () {
     const province = document.getElementById('province').value.trim();
     const district = document.getElementById('district').value.trim();

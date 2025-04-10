@@ -48,7 +48,7 @@
 
                         <!-- Nút Quên mật khẩu -->
                         <div class="mt-3 text-center">
-                            <a href="${pageContext.request.contextPath}/user/forgot_password.jsp" class="text-decoration-none">Quên mật khẩu?</a>
+                            <a href="#" onclick="showForgotPassword()" class="text-decoration-none">Quên mật khẩu?</a>
                         </div>
 
                         <div class="mt-3 text-center">
@@ -196,11 +196,25 @@
                     </style>
 
                 </div>
+
+                <div id="forgotPasswordSection" style="display: none;">
+                    <div id="forgotPasswordMessage" class="text-danger"></div>
+                    <form id="forgotPasswordForm" method="post" action="forgot-password">
+                        <div class="mb-3">
+                            <label for="forgotEmail" class="form-label">Nhập Email<span style="color: red;">*</span></label>
+                            <input type="email" class="form-control" id="forgotEmail" name="email" placeholder="Nhập email đã đăng ký" required>
+                            <div class="error" id="forgotEmailError"></div>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 login-btn">Gửi liên kết khôi phục</button>
+                        <div class="text-center mt-3">
+                            <span>Đã nhớ mật khẩu? </span><a href="#" onclick="backToLogin()">Quay lại Đăng nhập</a>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
 <script src="${pageContext.request.contextPath}/assets/js/authModal.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>

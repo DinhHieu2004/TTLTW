@@ -118,4 +118,8 @@ public class AuthService {
     public boolean hasValidToken(User user, String type) {
         return udao.hasValidToken(user, type);
     }
+
+    public boolean passwordRecovery(String email) throws SQLException {
+        return udao.passwordRecovery(email);
+    }
 }

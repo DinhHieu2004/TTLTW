@@ -81,17 +81,17 @@
                                     <form id="editPersonalInfoForm">
                                         <div class="mb-3">
                                             <label for="nameChange" class="form-label">Họ và tên <span style="color: red;">*</span></label>
-                                            <input type="text" class="form-control" id="nameChange" name="fullName" value="${sessionScope.user.fullName}">
+                                            <input type="text" class="form-control" id="nameChange" name="fullName" data-fullName="${sessionScope.user.fullName}">
                                             <div class="error" id="nameChangeError"></div>
                                         </div>
                                         <div class="mb-3">
                                             <label for="phoneChange" class="form-label">Số điện thoại</label>
-                                            <input type="text" class="form-control" id="phoneChange" name="phone" value="${sessionScope.user.phone}">
+                                            <input type="text" class="form-control" id="phoneChange" name="phone" data-phone="${sessionScope.user.phone}">
                                             <div class="error" id="phoneChangeError"></div>
                                         </div>
                                         <div class="mb-3">
                                             <label for="emailChange" class="form-label">Email <span style="color: red;">*</span></label>
-                                            <input type="email" class="form-control" id="emailChange" name="email" value="${sessionScope.user.email}"
+                                            <input type="email" class="form-control" id="emailChange" name="email" data-email="${sessionScope.user.email}"
                                                    <c:if test="${not empty sessionScope.user.gg_id or not empty sessionScope.user.fb_id}">disabled style="background-color: #e9ecef;"</c:if>>
                                             <div class="error" id="emailChangeError"></div>
                                         </div>

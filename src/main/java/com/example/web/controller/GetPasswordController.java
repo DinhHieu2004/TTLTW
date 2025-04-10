@@ -2,6 +2,7 @@ package com.example.web.controller;
 
 import com.example.web.dao.UserDao;
 import com.example.web.dao.model.User;
+import com.example.web.service.AuthService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,41 +13,47 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 
-@WebServlet(name = "getPasswordController", value = "/user/sendPassword")
+@WebServlet("/sendPassword")
 public class GetPasswordController extends HttpServlet {
-
+    private final AuthService authService = new AuthService();
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("email");
 
-        UserDao userDao = new UserDao();
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         User user = null;
+
         try {
-            user = userDao.findByEmail(email);
+            user = authService.findUserByEmail(email);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"status\":\"error\",\"message\":\"Lỗi hệ thống khi kiểm tra email.\"}");
+            return;
         }
 
         if (user == null) {
-            request.setAttribute("errorMessage", "Email không tồn tại trong hệ thống!");
-            request.getRequestDispatcher("/user/forgot_password.jsp").forward(request, response);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.getWriter().write("{\"status\":\"error\",\"message\":\"Email không tồn tại trong hệ thống!\"}");
             return;
         }
 
         try {
-            boolean isPasswordRecovered = userDao.passwordRecovery(email);
+            boolean isPasswordRecovered = authService.passwordRecovery(email);
 
             if (isPasswordRecovered) {
-                request.setAttribute("successMessage", "Mã kích hoạt đã được gửi tới email của bạn!");
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.getWriter().write("{\"status\":\"success\",\"message\":\"Mã khôi phục đã được gửi tới email của bạn!\"}");
             } else {
-                request.setAttribute("errorMessage", "Đã xảy ra lỗi khi gửi email. Vui lòng thử lại sau!");
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().write("{\"status\":\"error\",\"message\":\"Không thể gửi email. Vui lòng thử lại sau!\"}");
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "Đã xảy ra lỗi khi gửi email. Vui lòng thử lại sau!");
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"status\":\"error\",\"message\":\"Đã xảy ra lỗi khi gửi email. Vui lòng thử lại sau!\"}");
         }
-
-        request.getRequestDispatcher("/user/forgot_password.jsp").forward(request, response);
     }
 }
 

@@ -221,6 +221,37 @@ $(document).ready(function () {
             }
         })
     });
+    //ForgotPassword
+    $('#forgotPasswordForm').on('submit', function(e){
+        e.preventDefault();
+        $('.text-danger').text('');
+        $('.is-invalid').removeClass('is-invalid');
+
+        let isValid = true;
+        let email = $('#forgotEmail').val().trim();
+        if(email === ''){
+            $('#forgotEmailError').text('Vui lòng nhập Email!').addClass('text-danger');
+            $('#forgotEmail').addClass('is-invalid');
+            isValid = false;
+        }
+        if (!isValid) return;
+
+        $.ajax({
+            url: "sendPassword",
+            type: 'POST',
+            data: { email: email},
+            datatype: 'json',
+
+            success: function(resp){
+                alert("thành công")
+
+            },
+            error: function (xhr){
+                const res = JSON.parse(xhr.responseText);
+                $('#forgotEmailError').text(res.message);
+            }
+        });
+    });
 });
 function showVerifyMessage(email) {
     document.getElementById("registerForm").style.display = "none";
@@ -400,4 +431,20 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 });
 
+function showForgotPassword() {
+    document.getElementById('authTabs').style.display = 'none';
+    document.getElementById('authTabsContent').style.display = 'none';
+    document.getElementById('forgotPasswordSection').style.display = 'block';
+    document.getElementById('authModalLabel').innerText = 'Quên Mật Khẩu';
+    resetLoginResForm();
+}
 
+function backToLogin() {
+    document.getElementById('forgotPasswordSection').style.display = 'none';
+    document.getElementById('authTabs').style.display = 'flex';
+    document.getElementById('authTabsContent').style.display = 'block';
+    document.getElementById('authModalLabel').innerText = 'Đăng Nhập / Đăng Ký';
+}
+document.getElementById('authModal').addEventListener('hidden.bs.modal', function () {
+    backToLogin();
+});
