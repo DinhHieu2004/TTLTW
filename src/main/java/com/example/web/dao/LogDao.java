@@ -13,6 +13,8 @@ import java.util.List;
 public class LogDao {
 
     static Connection conn = DbConnect.getConnection();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
 
     public List<Log> getAllLog() throws SQLException {
         List<Log> logs = new ArrayList<>();
@@ -22,7 +24,6 @@ public class LogDao {
         while (rs.next()) {
             int id = rs.getInt("id");
             String level = rs.getString("level");
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             LocalDateTime logTime = LocalDateTime.parse(rs.getString("logTime"),formatter);
             String logWhere = rs.getString("logWhere");
             String resource = rs.getString("resource");
@@ -70,7 +71,7 @@ public class LogDao {
         ResultSet rs = statement.executeQuery();
         if (rs.next()) {
             String level = rs.getString("level");
-            LocalDateTime logTime = LocalDateTime.parse(rs.getString("logTime"));
+            LocalDateTime logTime = LocalDateTime.parse(rs.getString("logTime"), formatter);
             String logWhere = rs.getString("logWhere");
             String resource = rs.getString("resource");
             String who = rs.getString("who");
