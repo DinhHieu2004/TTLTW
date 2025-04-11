@@ -40,5 +40,9 @@
     <a href="${pageContext.request.contextPath}/admin/vouchers">Quản lý voucher</a>
   </c:if>
 
+  <c:if test="${not empty sessionScope.user and (isAdmin or fn:contains(allRolePermission, 'VIEW_LOGS'))}">
+    <a href="${pageContext.request.contextPath}/admin/logs">Quản lý log</a>
+  </c:if>
+
 </div>
 <script src="${pageContext.request.contextPath}/assets/js/location.js"></script>
