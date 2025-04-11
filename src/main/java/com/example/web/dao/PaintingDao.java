@@ -1,9 +1,7 @@
 package com.example.web.dao;
 
-import com.example.web.dao.db.DbConnect;
 import com.example.web.dao.model.Painting;
 import com.example.web.dao.model.Theme;
-import com.example.web.service.PaintingService;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -562,6 +560,41 @@ public class PaintingDao {
         return featuredArtworks;
     }
 
+    public List<Painting> getFlashSaleArtworks() {
+        String sql = "SELECT p.id, p.title, p.imageUrl, ar.name AS artist_name, t.themeName, p.price, " +
+                "IFNULL(d.discountPercentage, 0) AS discount, " +
+                "(SELECT AVG(r.rating) FROM product_reviews r WHERE r.paintingId = p.id) AS average_rating " +
+                "FROM paintings p " +
+                "JOIN artists ar ON p.artistId = ar.id " +
+                "JOIN themes t ON p.themeId = t.id " +
+                "JOIN discount_paintings dp ON p.id = dp.paintingId " +
+                "JOIN discounts d ON dp.discountId = d.id " +
+                "WHERE d.id = 3";
+        List<Painting> flashSaleArtworks = new ArrayList<>();
+
+        try (PreparedStatement stmt = con.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Painting painting = new Painting();
+                int id = rs.getInt("id");
+                painting.setId(id);
+                painting.setTitle(rs.getString("title"));
+                painting.setImageUrl(rs.getString("imageUrl"));
+                painting.setThemeName(rs.getString("themeName"));
+                painting.setArtistName(rs.getString("artist_name"));
+                painting.setPrice(rs.getDouble("price"));
+                painting.setDiscountPercentage(rs.getDouble("discount"));
+                painting.setAverageRating(getPaintingRating(id));
+                flashSaleArtworks.add(painting);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return flashSaleArtworks;
+    }
+
     public List<Theme> getTheme() throws SQLException {
         String sql = "SELECT * FROM themes";
         List<Theme> theme = new ArrayList<>();
@@ -779,35 +812,6 @@ public class PaintingDao {
 
     public static void main(String[] args) throws SQLException {
         PaintingDao paintingDao = new PaintingDao();
-        Double m1 = null;
-        Double m2 = null;
 
-        String[] sizes = null;
-        String[] themes = {"1"};
-        /**
-         int paintingId = paintingDao.addPainting(
-         "Sunset Overdrive",
-         1,
-         150.0,
-         2,
-         "A beautiful sunset painting.",
-         "sunset.jpg",
-         true
-         );
-
-         System.out.println(paintingId);
-         **/
-
-      //  int paintingId = 11;
-      //  List<Integer> sizeIds = Arrays.asList(1, 2, 3);
-      //  List<Integer> quantities = Arrays.asList(5, 3, 2);
-
-       // System.out.println(paintingDao.getPaintingDetail(5));
-
-        //    System.out.println(paintingDao.getPaintingList(null,null,null,null,null,null,null,1,10));
-        //  System.out.println(paintingDao.getPaintingRating(5));
-        //System.out.println(paintingDao.getPaintingRating(6));
-
-        System.out.println(paintingDao.getPaintingSg("hoa", 3));
     }
 }
