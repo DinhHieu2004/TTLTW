@@ -6,12 +6,13 @@ import com.example.web.dao.PaintingDao;
 import com.example.web.dao.PaymentDao;
 import com.example.web.dao.cart.Cart;
 import com.example.web.dao.cart.CartPainting;
-import com.example.web.dao.model.Order;
-import com.example.web.dao.model.OrderItem;
-import com.example.web.dao.model.Payment;
+import com.example.web.dao.model.*;
 import com.example.web.vnpay.Config;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CheckoutService {
     private final OrderDao orderDao;
@@ -104,6 +105,40 @@ public class CheckoutService {
         paymentDao.createPayment(payment);
 
         return orderId;
+    }
+    public List<Painting> getOutOfStockList(Cart cart) throws SQLException {
+        List<CartPainting> paintingList = cart.getItems();
+        List<Painting> outOfStockList = new ArrayList<>();
+      //  List<Painting> inventoryList = new ArrayList<>();
+
+        Painting painting =null;
+        boolean result = false;
+        for (CartPainting p : paintingList) {
+            painting = paintingDao.getInventory(p);
+
+            result = checkQuantity(p.getSizeId(), painting, p.getQuantity());
+
+            if (!result) {
+                outOfStockList.add(painting);
+            }
+
+        }
+        return outOfStockList;
+    }
+
+    private boolean checkQuantity(int sizeId, Painting painting, int quantity) {
+
+        for(PaintingSize ps : painting.getSizes()){
+
+            if(sizeId == ps.getIdSize() && ps.getQuantity() >= quantity){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void main(String[] args) {
+
     }
 
 }

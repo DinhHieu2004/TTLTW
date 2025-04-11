@@ -19,7 +19,7 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
 
 
 
-    if(paymentMethod === "1") {
+    if (paymentMethod === "1") {
         $.ajax({
             url: "checkout",
             type: "POST",
@@ -28,8 +28,7 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
                 deliveryAddress: deliveryAddress,
                 recipientPhone: recipientPhone,
                 paymentMethod: paymentMethod,
-                shippingFee : shippingFee
-
+                shippingFee: shippingFee
             },
             success: function (response) {
                 alert(response);
@@ -40,13 +39,19 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
                     alert("Bạn cần đăng nhập để thực hiện thanh toán!");
                     $("#loginModal").modal("show");
                 } else if (xhr.status === 400) {
-                    alert("Giỏ hàng của bạn đang trống!");
+                    let msg = xhr.responseText;
+                    if (msg.includes("Giỏ hàng của bạn đang trống")) {
+                        alert("Giỏ hàng của bạn đang trống!");
+                    } else {
+                        alert(msg);
+                    }
                 } else {
                     alert("Đã xảy ra lỗi trong quá trình thanh toán. Vui lòng thử lại!");
                 }
             }
         });
-    }else {
+    }
+    else {
         $.ajax({
             url: "ajaxServlet",
             type: "POST",
@@ -64,8 +69,17 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
                     alert("Lỗi khi tạo đơn hàng VNPay!");
                 }
             },
-            error: function () {
-                alert("Đã xảy ra lỗi khi kết nối với VNPay.");
+            error: function (xhr) {
+                if (xhr.status === 400) {
+                    let msg = xhr.responseText;
+                    if (msg.includes("Giỏ hàng của bạn đang trống")) {
+                        alert("Giỏ hàng của bạn đang trống!");
+                    } else {
+                        alert(msg);
+                    }
+                } else {
+                    alert("Đã xảy ra lỗi khi kết nối với VNPay.");
+                }
             }
         });
     }
