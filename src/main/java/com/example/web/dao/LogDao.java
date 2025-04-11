@@ -6,6 +6,7 @@ import com.example.web.dao.model.Log;
 
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,14 +15,15 @@ public class LogDao {
     static Connection conn = DbConnect.getConnection();
 
     public List<Log> getAllLog() throws SQLException {
-        List<Log> logs = new ArrayList<Log>();
+        List<Log> logs = new ArrayList<>();
         String sql = "select * from log";
         PreparedStatement ps = conn.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
             int id = rs.getInt("id");
             String level = rs.getString("level");
-            LocalDateTime logTime = LocalDateTime.parse(rs.getString("logTime"));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime logTime = LocalDateTime.parse(rs.getString("logTime"),formatter);
             String logWhere = rs.getString("logWhere");
             String resource = rs.getString("resource");
             String who = rs.getString("who");
@@ -59,9 +61,32 @@ public class LogDao {
             return rowsAffected > 0;
         }
     }
+    public Log getDetailLog(int id) throws SQLException {
+        String sql = "select * from log where id = ?";
 
+        PreparedStatement statement = conn.prepareStatement(sql);
 
+        statement.setInt(1, id);
+        ResultSet rs = statement.executeQuery();
+        if (rs.next()) {
+            String level = rs.getString("level");
+            LocalDateTime logTime = LocalDateTime.parse(rs.getString("logTime"));
+            String logWhere = rs.getString("logWhere");
+            String resource = rs.getString("resource");
+            String who = rs.getString("who");
+            String preData = rs.getString("preData");
+            String flowData = rs.getString("flowData");
 
+            Level levelEnum = Level.valueOf(level);
+            return new Log(id,levelEnum, logTime,logWhere,resource,who,preData,flowData);
+        }
+        return null;
 
+    }
+
+    public static void main(String[] args) throws SQLException {
+        LogDao l = new LogDao();
+        System.out.println(l.getAllLog());
+    }
 
 }
