@@ -7,91 +7,143 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đổi Mật Khẩu</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url("${pageContext.request.contextPath}/assets/images/pngtree-an-art-gallery-with-many-framed-paintings-in-the-background-and-picture-image_3157704.jpg");
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .message-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50%;
+            height: 60%;
+            padding: 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .message-box h2 {
+            margin-bottom: 20px;
+        }
+
+        .message-box p {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
+
 <body>
 
-<c:if test="${not empty successMessage}">
-    <div class="alert alert-success">
-            ${successMessage}
-    </div>
-</c:if>
-<c:if test="${not empty errorMessage}">
-    <div class="alert alert-danger">
-            ${errorMessage}
-    </div>
-</c:if>
+<div class="container">
+    <c:choose>
+        <c:when test="${status == 'VALID_TOKEN'}">
+            <div class="message-box">
+                <h2>Đổi Mật Khẩu</h2>
+                <div id="resultMessage" class="mt-3 text-center"></div>
+                <form id="resetPasswordForm" action="reset_password" method="post" novalidate>
+                    <input type="hidden" name="token" value="${token}">
 
-<div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
-    <div class="card" style="width: 800px;">
-        <div class="card-header bg-primary text-white">
-            <h4>Đổi Mật Khẩu</h4>
-        </div>
-        <div class="card-body">
-            <form id="resetPasswordForm" action="reset_password" method="post">
-                <input type="hidden" name="token" value="${token}">
+                    <div class="mb-3 text-start">
+                        <label for="newPassword" class="form-label">Mật khẩu mới</label>
+                        <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Nhập mật khẩu mới">
+                        <div class="text-danger small" id="newPasswordError"></div>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="newPassword" class="form-label">Mật khẩu mới</label>
-                    <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Nhập mật khẩu mới">
-                    <div class="error" id="newPasswordError"></div>
-                </div>
+                    <div class="mb-3 text-start">
+                        <label for="confirmPassword" class="form-label">Xác nhận mật khẩu</label>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Nhập lại mật khẩu">
+                        <div class="text-danger small" id="confirmPasswordError"></div>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="confirmPassword" class="form-label">Xác nhận mật khẩu</label>
-                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Nhập lại mật khẩu">
-                    <div class="error" id="confirmPasswordError"></div>
-                </div>
+                    <button type="submit" class="btn btn-primary w-100 mb-3">Đổi Mật Khẩu</button>
+                </form>
+                <a href="${pageContext.request.contextPath}/" class="btn btn-primary">Về trang chủ</a>
+            </div>
+        </c:when>
 
-                <button type="submit" class="btn btn-warning w-100">Đổi Mật Khẩu</button>
-            </form>
-        </div>
-    </div>
+        <c:otherwise>
+            <div class="message-box">
+                <h2 class="text-danger">
+                    <c:choose>
+                        <c:when test="${status == 'INVALID_TOKEN'}">Liên kết không hợp lệ.</c:when>
+                        <c:when test="${status == 'TOKEN_NOT_FOUND'}">Token không tồn tại hoặc đã bị xóa.</c:when>
+                        <c:when test="${status == 'TOKEN_EXPIRED'}">Token đã hết hạn. Vui lòng yêu cầu lại.</c:when>
+                        <c:when test="${status == 'ERROR'}">Lỗi hệ thống. Vui lòng thử lại sau.</c:when>
+                        <c:otherwise>Đã xảy ra lỗi không xác định.</c:otherwise>
+                    </c:choose>
+                </h2>
+                <a href="${pageContext.request.contextPath}/" class="btn btn-primary">Về trang chủ</a>
+            </div>
+        </c:otherwise>
+    </c:choose>
+
 </div>
 
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    document.getElementById('resetPasswordForm').addEventListener('submit', function (e) {
+    $('#resetPasswordForm').on('submit', function (e) {
+        e.preventDefault();
+
         let isValid = true;
+        const newPassword = $('#newPassword');
+        const confirmPassword = $('#confirmPassword');
+        const newPasswordError = $('#newPasswordError');
+        const confirmPasswordError = $('#confirmPasswordError');
+        const resultMessage = $('#resultMessage');
+        let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-        // Lấy các phần tử input và thông báo lỗi
-        const newPassword = document.getElementById('newPassword');
-        const confirmPassword = document.getElementById('confirmPassword');
-        const newPasswordError = document.getElementById('newPasswordError');
-        const confirmPasswordError = document.getElementById('confirmPasswordError');
+        $('.text-danger').text('');
+        $('.is-invalid').removeClass('is-invalid');
 
-        // Xóa thông báo lỗi cũ
-        newPasswordError.textContent = '';
-        confirmPasswordError.textContent = '';
-        newPassword.classList.remove('is-invalid');
-        confirmPassword.classList.remove('is-invalid');
-
-        // Kiểm tra mật khẩu mới
-        if (newPassword.value.trim() === '') {
-            newPasswordError.textContent = 'Vui lòng nhập mật khẩu mới!';
-            newPassword.classList.add('is-invalid');
+        if (newPassword.val().trim() === '') {
+            newPasswordError.text('Vui lòng nhập mật khẩu mới!').addClass('text-danger');;
+            newPassword.addClass('is-invalid');
             isValid = false;
-        } else if (newPassword.value.length < 6) {
-            newPasswordError.textContent = 'Mật khẩu phải có ít nhất 6 ký tự!';
-            newPassword.classList.add('is-invalid');
+        } else if (!passwordRegex.test(newPassword.val())) {
+            newPasswordError.text('Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt!').addClass('text-danger');;
+            newPassword.addClass('is-invalid');
             isValid = false;
         }
 
-        // Kiểm tra xác nhận mật khẩu
-        if (confirmPassword.value.trim() === '') {
-            confirmPasswordError.textContent = 'Vui lòng nhập lại mật khẩu!';
-            confirmPassword.classList.add('is-invalid');
+        if (confirmPassword.val().trim() === '') {
+            confirmPasswordError.text('Vui lòng xác nhận lại mật khẩu!').addClass('text-danger');;
+            confirmPassword.addClass('is-invalid');
             isValid = false;
-        } else if (newPassword.value !== confirmPassword.value) {
-            confirmPasswordError.textContent = 'Mật khẩu xác nhận không khớp!';
-            confirmPassword.classList.add('is-invalid');
+        } else if (newPassword.val() !== confirmPassword.val()) {
+            confirmPasswordError.text('Mật khẩu xác nhận không khớp!').addClass('text-danger');;
+            confirmPassword.addClass('is-invalid');
             isValid = false;
         }
 
-        // Ngăn form gửi nếu không hợp lệ
-        if (!isValid) {
-            e.preventDefault();
-        }
+        if (!isValid) return;
+
+        $.ajax({
+            type: 'POST',
+            url: "reset_password",
+            data: $(this).serialize(),
+            success: function (response) {
+                alert("Đổi mật khẩu thành công!")
+                window.location.href = "http://localhost:8080/TTLTW_war/";
+            },
+            error: function (xhr) {
+
+                const res = JSON.parse(xhr.responseText);
+                console.log(res);
+                $('#resultMessage').text(res.message).addClass('text-danger');
+            }
+        });
     });
 </script>
+
 
 <style>
     .error {
