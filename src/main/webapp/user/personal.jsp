@@ -60,16 +60,23 @@
                     <p><strong>Email:</strong> ${sessionScope.user.email}</p>
                     <p><strong>Địa chỉ:</strong> ${sessionScope.user.address}</p>
                     <div class="button-group">
-                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#changePassword">Đổi mật khẩu</button>
-                        <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#editPersonalInfoModal">Chỉnh sửa</button>
-                        <button class="btn btn-danger btn-sm" onclick="logout()">Đăng xuất</button>
+                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#changePassword">
+                            <i class="fas fa-key"></i> Đổi mật khẩu
+                        </button>
+                        <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#editPersonalInfoModal">
+                            <i class="fas fa-edit"></i> Chỉnh sửa
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                        </button>
                         <c:forEach var="role" items="${sessionScope.user.roles}">
                             <c:if test="${role.name == 'ADMIN'}">
-                                <a href="${pageContext.request.contextPath}/admin" class="btn btn-info btn-sm">Đến trang quản lý</a>
+                                <a href="${pageContext.request.contextPath}/admin" class="btn btn-info btn-sm">
+                                    <i class="fas fa-cogs"></i> Đến trang quản lý
+                                </a>
                             </c:if>
                         </c:forEach>
                     </div>
-
                     <div class="modal fade" id="editPersonalInfoModal" tabindex="-1" aria-labelledby="editPersonalInfoModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">

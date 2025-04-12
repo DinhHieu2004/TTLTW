@@ -35,10 +35,6 @@
         .message-box h2 {
             margin-bottom: 20px;
         }
-
-        .message-box p {
-            margin-bottom: 20px;
-        }
     </style>
 </head>
 
@@ -77,8 +73,8 @@
                 <h2 class="text-danger">
                     <c:choose>
                         <c:when test="${status == 'INVALID_TOKEN'}">Liên kết không hợp lệ.</c:when>
-                        <c:when test="${status == 'TOKEN_NOT_FOUND'}">Token không tồn tại hoặc đã bị xóa.</c:when>
-                        <c:when test="${status == 'TOKEN_EXPIRED'}">Token đã hết hạn. Vui lòng yêu cầu lại.</c:when>
+                        <c:when test="${status == 'TOKEN_NOT_FOUND'}">Liên kết không tồn tại hoặc đã bị xóa.</c:when>
+                        <c:when test="${status == 'TOKEN_EXPIRED'}">Liên kết đã hết hạn. Vui lòng yêu cầu lại.</c:when>
                         <c:when test="${status == 'ERROR'}">Lỗi hệ thống. Vui lòng thử lại sau.</c:when>
                         <c:otherwise>Đã xảy ra lỗi không xác định.</c:otherwise>
                     </c:choose>
@@ -101,7 +97,6 @@
         const confirmPassword = $('#confirmPassword');
         const newPasswordError = $('#newPasswordError');
         const confirmPasswordError = $('#confirmPasswordError');
-        const resultMessage = $('#resultMessage');
         const submitButton = $('#resetPasswordForm button[type="submit"]');
         let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
@@ -144,7 +139,6 @@
                 submitButton.prop('disabled', false);
             },
             error: function (xhr) {
-
                 const res = JSON.parse(xhr.responseText);
                 console.log(res);
                 $('#resultMessage').text(res.message).addClass('text-danger');

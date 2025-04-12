@@ -31,7 +31,7 @@ public class AuthService {
         long time = 24 * 60 * 60 * 1000;
         if (user != null) {
             String token = UUID.randomUUID().toString();
-            udao.saveTokenForRegister(user.getId(), token, "register", time);
+            udao.saveTokens(user.getId(), token, "register", time);
 
             String subject = "Xác nhận email đăng ký";
             String body = "Xin chào " + fullName + ",\n\nCó phải bạn vừa đăng ký tài khoản? " +
@@ -48,8 +48,8 @@ public class AuthService {
     public User findById(int userId) throws SQLException {
         return udao.getUser(userId);
     }
-    public boolean activateUserByToken(String token) {
-        return udao.activateUserByToken(token);
+    public boolean activateUserByToken(String token, int userId) {
+        return udao.activateUserByToken(token, userId);
     }
     public void resendToken(User user, String token) {
         udao.updateTokenForRegister(user.getId(), token);
@@ -66,12 +66,13 @@ public class AuthService {
 
     public boolean passwordRecovery(String email) throws SQLException {
         User user = udao.findByEmail(email);
-        if (user == null) {
+        if (user == null || user.getPassword() == null || user.getPassword().isEmpty()) {
             return false;
         }
         long time = 15 * 60 * 1000;
         String token = UUID.randomUUID().toString();
-        udao.saveTokenForRegister(user.getId(), token, "forgotPass", time);
+        udao.deleteActiveTokens(user.getId(), "forgotPass");
+        udao.saveTokens(user.getId(), token, "forgotPass", time);
 
         String resetLink = "http://localhost:8080/TTLTW_war/reset_password?token=" + token;
 

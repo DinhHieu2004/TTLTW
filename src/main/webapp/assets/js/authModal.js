@@ -261,7 +261,8 @@ $(document).ready(function () {
             dataType: 'json',
 
             success: function(resp){
-                alert("thành công")
+                grecaptcha.reset();
+                alert(resp.message)
                 submitButton.prop('disabled', false);
                 $('#forgotPasswordForm')[0].reset();
                 loadingText.hide();
@@ -271,6 +272,7 @@ $(document).ready(function () {
                 $('#forgotEmailError').text(res.message);
                 submitButton.prop('disabled', false);
                 loadingText.hide();
+                grecaptcha.reset();
             }
         });
     });

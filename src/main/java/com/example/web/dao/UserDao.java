@@ -226,7 +226,7 @@ public class UserDao {
         return ps.executeUpdate() > 0;
     }
 
-    public void saveTokenForRegister(int userId, String token, String type, long expiryMillis) {
+    public void saveTokens(int userId, String token, String type, long expiryMillis) {
         String sql = "INSERT INTO tokens (userId, token, expiredAt, type) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -297,13 +297,19 @@ public class UserDao {
             return rowsAffected > 0;
         }
     }
-    public boolean activateUserByToken(String token) {
+    public boolean activateUserByToken(String token, int userId) {
         try {
             conn.setAutoCommit(false);
             boolean isUserUpdated = updateUserStatusByToken(token);
             if (!isUserUpdated) {
                 conn.rollback();
                 return false;
+            }
+            String insertRoleQuery = "INSERT INTO user_roles (userId, roleId) VALUES (?, ?)";
+            try (PreparedStatement insertRolePs = conn.prepareStatement(insertRoleQuery)) {
+                insertRolePs.setInt(1, userId);
+                insertRolePs.setInt(2, 2);
+                insertRolePs.executeUpdate();
             }
             boolean isTokenDeleted = deleteRegisterToken(token, "register");
             if (!isTokenDeleted) {
@@ -339,6 +345,16 @@ public class UserDao {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+    public void deleteActiveTokens(int userId, String type) {
+        String sql = "DELETE FROM tokens WHERE userId = ? AND type = ? AND expiredAt > CURRENT_TIMESTAMP";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setString(2, type);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
     public boolean addUser(String fullName, String username, String hashPassword, String email, String phone, String role, String address) throws SQLException {
@@ -415,28 +431,6 @@ public class UserDao {
         return ps.executeUpdate() > 0;
 
     }
-
-    public int getUserIdByToken(String token) throws SQLException {
-        String sql = "SELECT user_id FROM password_reset_tokens WHERE token = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, token);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("user_id");
-                }
-            }
-        }
-        return -1;
-    }
-    public void deleteToken(String token) throws SQLException {
-        String sql = "DELETE FROM password_reset_tokens WHERE token = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, token);
-            ps.executeUpdate();
-        }
-    }
-
-
     public String getPasswordByUsername(String username) throws SQLException {
         String sql = "SELECT password FROM users WHERE username = ?";
         PreparedStatement ps = conn.prepareStatement(sql);
@@ -557,9 +551,6 @@ public class UserDao {
             }
         }
         return null;
-    }
-
-    public static void main(String[] args) {
     }
 
 }
