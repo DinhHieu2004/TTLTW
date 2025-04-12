@@ -227,28 +227,50 @@ $(document).ready(function () {
         $('.text-danger').text('');
         $('.is-invalid').removeClass('is-invalid');
 
+        const loadingText = $('#forgotLoading');
+        loadingText.hide();
+        const submitButton = $('#forgotPasswordForm button[type="submit"]');
+        $('#reCaptchaError').text('');
+        const captchaResponse = grecaptcha.getResponse();
         let isValid = true;
         let email = $('#forgotEmail').val().trim();
+
         if(email === ''){
             $('#forgotEmailError').text('Vui lòng nhập Email!').addClass('text-danger');
             $('#forgotEmail').addClass('is-invalid');
             isValid = false;
         }
-        if (!isValid) return;
+        if (captchaResponse.length === 0) {
+            $('#reCaptchaError').text('Vui lòng xác nhận bạn không phải robot!');
+            $('#forgotLoading').hide();
+            return;
+        }
+        if (!isValid){
+            return;
+        }
+        submitButton.prop('disabled', true);
+        loadingText.show();
+
 
         $.ajax({
             url: "sendPassword",
             type: 'POST',
-            data: { email: email},
-            datatype: 'json',
+            data: {
+                email: email,
+                'g-recaptcha-response': captchaResponse },
+            dataType: 'json',
 
             success: function(resp){
                 alert("thành công")
-
+                submitButton.prop('disabled', false);
+                $('#forgotPasswordForm')[0].reset();
+                loadingText.hide();
             },
             error: function (xhr){
                 const res = JSON.parse(xhr.responseText);
                 $('#forgotEmailError').text(res.message);
+                submitButton.prop('disabled', false);
+                loadingText.hide();
             }
         });
     });

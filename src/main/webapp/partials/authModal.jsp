@@ -198,13 +198,19 @@
                 </div>
 
                 <div id="forgotPasswordSection" style="display: none;">
+                    <div id="forgotLoading" class="mb-2 text-center text-primary" style="display: none;">
+                        <span class="spinner-border spinner-border-sm"></span> Đang gửi liên kết...
+                    </div>
                     <div id="forgotPasswordMessage" class="text-danger"></div>
-                    <form id="forgotPasswordForm" method="post" action="forgot-password">
+                    <form id="forgotPasswordForm" method="post">
                         <div class="mb-3">
                             <label for="forgotEmail" class="form-label">Nhập Email<span style="color: red;">*</span></label>
                             <input type="email" class="form-control" id="forgotEmail" name="email" placeholder="Nhập email đã đăng ký" required>
                             <div class="error" id="forgotEmailError"></div>
                         </div>
+                        <div class="g-recaptcha mb-2" data-sitekey="6LcLlxUrAAAAAPXCQ0NU3bAIXe17zjg0aiZhyck-"></div>
+                        <div id="reCaptchaError" class="text-danger mb-2"></div>
+
                         <button type="submit" class="btn btn-success w-100 login-btn">Gửi liên kết khôi phục</button>
                         <div class="text-center mt-3">
                             <span>Đã nhớ mật khẩu? </span><a href="#" onclick="backToLogin()">Quay lại Đăng nhập</a>
@@ -218,3 +224,4 @@
 <script src="${pageContext.request.contextPath}/assets/js/authModal.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>

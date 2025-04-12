@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đổi Mật Khẩu</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
     <style>
         body {
             background-image: url("${pageContext.request.contextPath}/assets/images/pngtree-an-art-gallery-with-many-framed-paintings-in-the-background-and-picture-image_3157704.jpg");
@@ -46,6 +48,7 @@
     <c:choose>
         <c:when test="${status == 'VALID_TOKEN'}">
             <div class="message-box">
+
                 <h2>Đổi Mật Khẩu</h2>
                 <div id="resultMessage" class="mt-3 text-center"></div>
                 <form id="resetPasswordForm" action="reset_password" method="post" novalidate>
@@ -99,10 +102,12 @@
         const newPasswordError = $('#newPasswordError');
         const confirmPasswordError = $('#confirmPasswordError');
         const resultMessage = $('#resultMessage');
+        const submitButton = $('#resetPasswordForm button[type="submit"]');
         let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
         $('.text-danger').text('');
         $('.is-invalid').removeClass('is-invalid');
+        submitButton.prop('disabled', false);
 
         if (newPassword.val().trim() === '') {
             newPasswordError.text('Vui lòng nhập mật khẩu mới!').addClass('text-danger');;
@@ -124,7 +129,10 @@
             isValid = false;
         }
 
-        if (!isValid) return;
+        if (!isValid){
+            return;
+        }
+        submitButton.prop('disabled', true);
 
         $.ajax({
             type: 'POST',
@@ -133,12 +141,14 @@
             success: function (response) {
                 alert("Đổi mật khẩu thành công!")
                 window.location.href = "http://localhost:8080/TTLTW_war/";
+                submitButton.prop('disabled', false);
             },
             error: function (xhr) {
 
                 const res = JSON.parse(xhr.responseText);
                 console.log(res);
                 $('#resultMessage').text(res.message).addClass('text-danger');
+                submitButton.prop('disabled', false);
             }
         });
     });
