@@ -144,6 +144,7 @@
         </div>
     </div>
 
+<c:if test="${not empty flashSaleArtworks}">
 <%-- Flash sale--%>
 <div id="outstanding_works_section">
     <div class="title_container">
@@ -180,20 +181,20 @@
                                     <div class="price-container">
                                         <div class="original-price-wrapper">
                                     <span class="text-muted original-price">
-                                        <del><f:formatNumber value="${p.price}" type="currency" currencySymbol="VNĐ"/></del>
+                                        <del><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</del>
                                     </span>
                                             <span class="badge bg-success discount-badge">-${p.discountPercentage}%</span>
                                         </div>
                                         <div class="sale-price-wrapper">
                                     <span class="text-danger fw-bold sale-price">
-                                        <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}" type="currency" currencySymbol="VNĐ"/>
+                                        <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}" type="currency" pattern="#,##0"/>₫
                                     </span>
                                         </div>
                                     </div>
                                 </c:when>
                                 <c:otherwise>
                                     <div class="regular-price">
-                                        <span class="fw-bold"><f:formatNumber value="${p.price}" type="currency" currencySymbol="VNĐ"/></span>
+                                        <span class="fw-bold"><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</span>
                                     </div>
                                 </c:otherwise>
                             </c:choose>
@@ -222,7 +223,7 @@
         <i class="fas fa-angle-right ms-1"></i>
     </a>
 </div>
-
+</c:if>
 
 <div id="outstanding_works_section">
     <div class="title_container">
@@ -258,20 +259,20 @@
                                         <div class="price-container">
                                             <div class="original-price-wrapper">
                                     <span class="text-muted original-price">
-                                        <del><f:formatNumber value="${p.price}" type="currency" currencySymbol="VNĐ"/></del>
+                                        <del><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</del>
                                     </span>
                                                 <span class="badge bg-success discount-badge">-${p.discountPercentage}%</span>
                                             </div>
                                             <div class="sale-price-wrapper">
                                     <span class="text-danger fw-bold sale-price">
-                                        <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}" type="currency" currencySymbol="VNĐ"/>
+                                        <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}" type="currency" pattern="#,##0"/>₫
                                     </span>
                                             </div>
                                         </div>
                                     </c:when>
                                     <c:otherwise>
                                         <div class="regular-price">
-                                            <span class="fw-bold"><f:formatNumber value="${p.price}" type="currency" currencySymbol="VNĐ"/></span>
+                                            <span class="fw-bold"><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</span>
                                         </div>
                                     </c:otherwise>
                                 </c:choose>
@@ -316,20 +317,20 @@
                                     <div class="price-container">
                                         <div class="original-price-wrapper">
                                     <span class="text-muted original-price">
-                                        <del><f:formatNumber value="${p.price}" type="currency" currencySymbol="VNĐ"/></del>
+                                        <del><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</del>
                                     </span>
                                             <span class="badge bg-success discount-badge">-${p.discountPercentage}%</span>
                                         </div>
                                         <div class="sale-price-wrapper">
                                     <span class="text-danger fw-bold sale-price">
-                                        <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}" type="currency" currencySymbol="VNĐ"/>
+                                        <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}" type="currency" pattern="#,##0"/>₫
                                     </span>
                                         </div>
                                     </div>
                                 </c:when>
                                 <c:otherwise>
                                     <div class="regular-price">
-                                        <span class="fw-bold"><f:formatNumber value="${p.price}" type="currency" currencySymbol="VNĐ"/></span>
+                                        <span class="fw-bold"><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</span>
                                     </div>
                                 </c:otherwise>
                             </c:choose>
@@ -392,20 +393,20 @@
                                     <div class="price-container">
                                         <div class="original-price-wrapper">
                                     <span class="text-muted original-price">
-                                        <del><f:formatNumber value="${p.price}" type="currency" currencySymbol="VNĐ"/></del>
+                                        <del><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</del>
                                     </span>
                                             <span class="badge bg-success discount-badge">-${p.discountPercentage}%</span>
                                         </div>
                                         <div class="sale-price-wrapper">
                                     <span class="text-danger fw-bold sale-price">
-                                        <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}" type="currency" currencySymbol="VNĐ"/>
+                                        <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}" type="currency" pattern="#,##0"/>₫
                                     </span>
                                         </div>
                                     </div>
                                 </c:when>
                                 <c:otherwise>
                                     <div class="regular-price">
-                                        <span class="fw-bold"><f:formatNumber value="${p.price}" type="currency" currencySymbol="VNĐ"/></span>
+                                        <span class="fw-bold"><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</span>
                                     </div>
                                 </c:otherwise>
                             </c:choose>

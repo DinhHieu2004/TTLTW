@@ -36,7 +36,6 @@ public class GetList extends HttpServlet {
         String path = req.getServletPath();
 
         Cart cart = (Cart) req.getSession().getAttribute("cart");
-        System.out.println("cart at get lisst"+ cart);
 
         if ("/artwork/suggestions".equals(path)) {
             try {
