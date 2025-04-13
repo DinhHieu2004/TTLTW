@@ -8,13 +8,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Title</title>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/discount.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/footer.css">
@@ -26,6 +27,17 @@
 
     <h4 class="title">CHƯƠNG TRÌNH GIẢM GIÁ ĐẶC BIỆT</h4>
     <p class="sub_title"> Ưu đãi hấp dẫn cho các sản phẩm yêu thích của bạn</p>
+    <c:if test="${not empty sessionScope.expiredMessage}">
+        <script>
+            Swal.fire({
+                title: 'Thông báo',
+                text: '${sessionScope.expiredMessage}',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+        </script>
+        <c:remove var="expiredMessage" scope="session"/>
+    </c:if>
     <div id="discount_list">
         <c:forEach var="discount" items="${list}">
             <a href="${pageContext.request.contextPath}/discount_content?id=${discount.id}" class="discount_item">
