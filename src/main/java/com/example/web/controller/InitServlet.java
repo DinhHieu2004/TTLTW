@@ -34,6 +34,7 @@ public class InitServlet extends HttpServlet {
             List<PaintingSize> sizes = sizeService.getAllSize();
             List<Theme> themes = themeService.getAllTheme();
             List<Painting> featuredArtworks = paintingDao.getFeaturedArtworks();
+            List<Painting> flashSaleArtworks = paintingDao.getFlashSaleArtworks();
             List<Painting> newP = paintingService.getNewestPaintings();
 
             System.out.println(sizes);
@@ -44,6 +45,7 @@ public class InitServlet extends HttpServlet {
             List<Painting> bestP = paintingService.getRandomTopRatedPaintings();
             context.setAttribute("bp", bestP);
             context.setAttribute("featuredArtworks", featuredArtworks);
+            context.setAttribute("flashSaleArtworks", flashSaleArtworks);
             context.setAttribute("newP", newP);
 
             // context.setAttribute("themes", themes);

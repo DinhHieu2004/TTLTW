@@ -37,6 +37,20 @@
         left: 0;
         z-index: 1;
     }
+
+     .flash-sale-timer {
+         border: 2px solid red;
+         padding: 6px 14px;
+         margin-bottom: 5px;
+         border-radius: 8px;
+         font-weight: bold;
+         color: red;
+         font-size: 1rem;
+         min-width: 100px;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+     }
 </style>
 
 <body>
@@ -130,6 +144,87 @@
         </div>
     </div>
 
+<c:if test="${not empty flashSaleArtworks}">
+<%-- Flash sale--%>
+<div id="outstanding_works_section">
+    <div class="title_container">
+        <div class="img_left">
+            <img src="assets/images/t_left.png">
+        </div>
+        <h4 class="collection_title">FLASH SALE</h4>
+        <div id="flash-sale-timer" class="flash-sale-timer">00:00:00</div>
+        <div class="img_right">
+            <img src="assets/images/t_right.png">
+        </div>
+    </div>
+    <div class="product">
+        <c:forEach var="p" items="${flashSaleArtworks}">
+            <div class="col-6 col-md-3">
+                <div class="card artwork-card">
+                    <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="card-link"></a>
+                    <img src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                    <div class="card-body">
+                        <h5 class="card-title">${p.title}</h5>
+                        <p class="card-text">
+                            <strong>Họa Sĩ:</strong> ${p.artistName}<br>
+                            <strong>Chủ đề:</strong> ${p.themeName}<br>
+                            <span class="rating-stars">
+                            <c:forEach begin="1" end="5" var="i">
+                                <i class="fas fa-star ${i <= p.averageRating ? 'text-warning' : 'text-gray-200'}" style="${i > p.averageRating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>
+                            </c:forEach>
+                        </span>
+                            <span class="ms-1">${p.averageRating}</span>
+                        </p>
+                        <div class="price-section">
+                            <c:choose>
+                                <c:when test="${p.discountPercentage > 0}">
+                                    <div class="price-container">
+                                        <div class="original-price-wrapper">
+                                    <span class="text-muted original-price">
+                                        <del><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</del>
+                                    </span>
+                                            <span class="badge bg-success discount-badge">-${p.discountPercentage}%</span>
+                                        </div>
+                                        <div class="sale-price-wrapper">
+                                    <span class="text-danger fw-bold sale-price">
+                                        <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}" type="currency" pattern="#,##0"/>₫
+                                    </span>
+                                        </div>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="regular-price">
+                                        <span class="fw-bold"><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</span>
+                                    </div>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </c:forEach>
+    </div>
+</div>
+
+<div class="view-all-container text-center my-3">
+    <a href="discount_content?id=3" class="btn btn-outline-warning btn-sm view-all-btn" style="
+        padding: 6px 15px;
+        border: 1px solid #f39c12;
+        color: #f39c12;
+        background: transparent;
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    ">
+        xem tất cả
+        <i class="fas fa-angle-right ms-1"></i>
+    </a>
+</div>
+</c:if>
+
 <div id="outstanding_works_section">
     <div class="title_container">
         <div class="img_left">
@@ -164,20 +259,20 @@
                                         <div class="price-container">
                                             <div class="original-price-wrapper">
                                     <span class="text-muted original-price">
-                                        <del><f:formatNumber value="${p.price}" type="currency" currencySymbol="VNĐ"/></del>
+                                        <del><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</del>
                                     </span>
                                                 <span class="badge bg-success discount-badge">-${p.discountPercentage}%</span>
                                             </div>
                                             <div class="sale-price-wrapper">
                                     <span class="text-danger fw-bold sale-price">
-                                        <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}" type="currency" currencySymbol="VNĐ"/>
+                                        <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}" type="currency" pattern="#,##0"/>₫
                                     </span>
                                             </div>
                                         </div>
                                     </c:when>
                                     <c:otherwise>
                                         <div class="regular-price">
-                                            <span class="fw-bold"><f:formatNumber value="${p.price}" type="currency" currencySymbol="VNĐ"/></span>
+                                            <span class="fw-bold"><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</span>
                                         </div>
                                     </c:otherwise>
                                 </c:choose>
@@ -222,20 +317,20 @@
                                     <div class="price-container">
                                         <div class="original-price-wrapper">
                                     <span class="text-muted original-price">
-                                        <del><f:formatNumber value="${p.price}" type="currency" currencySymbol="VNĐ"/></del>
+                                        <del><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</del>
                                     </span>
                                             <span class="badge bg-success discount-badge">-${p.discountPercentage}%</span>
                                         </div>
                                         <div class="sale-price-wrapper">
                                     <span class="text-danger fw-bold sale-price">
-                                        <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}" type="currency" currencySymbol="VNĐ"/>
+                                        <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}" type="currency" pattern="#,##0"/>₫
                                     </span>
                                         </div>
                                     </div>
                                 </c:when>
                                 <c:otherwise>
                                     <div class="regular-price">
-                                        <span class="fw-bold"><f:formatNumber value="${p.price}" type="currency" currencySymbol="VNĐ"/></span>
+                                        <span class="fw-bold"><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</span>
                                     </div>
                                 </c:otherwise>
                             </c:choose>
@@ -298,20 +393,20 @@
                                     <div class="price-container">
                                         <div class="original-price-wrapper">
                                     <span class="text-muted original-price">
-                                        <del><f:formatNumber value="${p.price}" type="currency" currencySymbol="VNĐ"/></del>
+                                        <del><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</del>
                                     </span>
                                             <span class="badge bg-success discount-badge">-${p.discountPercentage}%</span>
                                         </div>
                                         <div class="sale-price-wrapper">
                                     <span class="text-danger fw-bold sale-price">
-                                        <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}" type="currency" currencySymbol="VNĐ"/>
+                                        <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}" type="currency" pattern="#,##0"/>₫
                                     </span>
                                         </div>
                                     </div>
                                 </c:when>
                                 <c:otherwise>
                                     <div class="regular-price">
-                                        <span class="fw-bold"><f:formatNumber value="${p.price}" type="currency" currencySymbol="VNĐ"/></span>
+                                        <span class="fw-bold"><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</span>
                                     </div>
                                 </c:otherwise>
                             </c:choose>
@@ -414,7 +509,45 @@
 <script src="${pageContext.request.contextPath}/assets/js/header.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/header/search.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/location.js"></script>
-
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script type="text/javascript">
+    function startCountdown(endTimeStr) {
+        const timer = document.getElementById("flash-sale-timer");
+        const endTime = new Date(endTimeStr).getTime();
+
+        function updateTimer() {
+            const now = new Date().getTime();
+            const distance = endTime - now;
+
+            if (distance < 0) {
+                timer.innerHTML = "Đã kết thúc";
+                clearInterval(interval);
+                return;
+            }
+
+            const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((distance / (1000 * 60)) % 60);
+            const seconds = Math.floor((distance / 1000) % 60);
+
+            timer.innerHTML =
+                hours.toString().padStart(2, '0') + ":" +
+                minutes.toString().padStart(2, '0') + ":" +
+                seconds.toString().padStart(2, '0');
+        }
+
+        updateTimer();
+        const interval = setInterval(updateTimer, 1000);
+    }
+
+    // thời gian kết thúc flash sale
+    const flashSaleEndTime = "2025-05-10T23:59:59";
+
+    document.addEventListener("DOMContentLoaded", function() {
+        startCountdown(flashSaleEndTime);
+    });
+</script>
+
+
 </html>
