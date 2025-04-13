@@ -41,7 +41,7 @@ public class ActivateAccount extends HttpServlet {
                     if (user.isActivated()) {
                         status = "ALREADY_ACTIVATED";
                     } else {
-                        boolean isActivated = authService.activateUserByToken(token);
+                        boolean isActivated = authService.activateUserByToken(token, user.getId());
                         status = isActivated ? "ACTIVATED" : "ACTIVATION_FAILED";
                     }
                 }
