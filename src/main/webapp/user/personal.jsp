@@ -19,9 +19,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/footer.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/header.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/personal.css">
-    <!-- DataTables Buttons CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">li
-    <!-- DataTables Buttons JavaScript -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
@@ -29,21 +27,25 @@
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
 
+    <style>
+        #nameChange, #phoneChange, #emailChange, #addressChange {
+            color: #000 !important; /* Đảm bảo chữ màu đen */
+            opacity: 1 !important; /* Đảm bảo không trong suốt */
+            visibility: visible !important; /* Đảm bảo hiển thị */
+            font-size: 16px !important; /* Đảm bảo chữ đủ lớn */
+        }
+    </style>
 </head>
 
 <body>
 <%@ include file="/partials/header.jsp" %>
+
 <c:if test="${not empty successMessage}">
-    <div class="alert alert-success">
-            ${successMessage}
-    </div>
+    <div class="alert alert-success">${successMessage}</div>
 </c:if>
 <c:if test="${not empty errorMessage}">
-    <div class="alert alert-danger">
-            ${errorMessage}
-    </div>
+    <div class="alert alert-danger">${errorMessage}</div>
 </c:if>
-
 
 <div class="container mt-5">
     <div class="card mb-4">
@@ -58,23 +60,23 @@
                     <p><strong>Email:</strong> ${sessionScope.user.email}</p>
                     <p><strong>Địa chỉ:</strong> ${sessionScope.user.address}</p>
                     <div class="button-group">
-                        <!-- Nút đổi mật khẩu -->
                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#changePassword">
-                            Đổi mật khẩu
+                            <i class="fas fa-key"></i> Đổi mật khẩu
                         </button>
-                        <!-- Nút chỉnh sửa thông tin -->
-                        <button class="btn btn-success btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#editPersonalInfoModal">Chỉnh sửa
+                        <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#editPersonalInfoModal">
+                            <i class="fas fa-edit"></i> Chỉnh sửa
                         </button>
-                        <button class="btn btn-danger btn-sm" onclick="logout()">Đăng xuất</button>
-
+                        <button class="btn btn-danger btn-sm" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                        </button>
                         <c:forEach var="role" items="${sessionScope.user.roles}">
                             <c:if test="${role.name == 'ADMIN'}">
-                                <a href="${pageContext.request.contextPath}/admin" class="btn btn-info btn-sm">Đến trang quản lý</a>
+                                <a href="${pageContext.request.contextPath}/admin" class="btn btn-info btn-sm">
+                                    <i class="fas fa-cogs"></i> Đến trang quản lý
+                                </a>
                             </c:if>
                         </c:forEach>
                     </div>
-
                     <div class="modal fade" id="editPersonalInfoModal" tabindex="-1" aria-labelledby="editPersonalInfoModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -86,35 +88,26 @@
                                     <form id="editPersonalInfoForm">
                                         <div class="mb-3">
                                             <label for="nameChange" class="form-label">Họ và tên <span style="color: red;">*</span></label>
-                                            <input type="text" class="form-control" id="nameChange" name="fullName"
-                                                   data-fullname="${sessionScope.user.fullName}">
+                                            <input type="text" class="form-control" id="nameChange" name="fullName" data-fullName="${sessionScope.user.fullName}">
                                             <div class="error" id="nameChangeError"></div>
                                         </div>
                                         <div class="mb-3">
                                             <label for="phoneChange" class="form-label">Số điện thoại</label>
-                                            <input type="text" class="form-control" id="phoneChange" name="phone"
-                                                   data-phone="${sessionScope.user.phone}">
+                                            <input type="text" class="form-control" id="phoneChange" name="phone" data-phone="${sessionScope.user.phone}">
                                             <div class="error" id="phoneChangeError"></div>
                                         </div>
                                         <div class="mb-3">
                                             <label for="emailChange" class="form-label">Email <span style="color: red;">*</span></label>
-                                            <input type="email" class="form-control" id="emailChange" name="email"
-                                                   data-email="${sessionScope.user.email}"
-                                                   style="<c:if test='${not empty sessionScope.user.gg_id or not empty sessionScope.user.fb_id}'>background-color: #e9ecef;</c:if>"
-                                                    <c:if test="${not empty sessionScope.user.gg_id or not empty sessionScope.user.fb_id}">
-                                                        disabled
-                                                    </c:if> />
+                                            <input type="email" class="form-control" id="emailChange" name="email" data-email="${sessionScope.user.email}"
+                                                   <c:if test="${not empty sessionScope.user.gg_id or not empty sessionScope.user.fb_id}">disabled style="background-color: #e9ecef;"</c:if>>
                                             <div class="error" id="emailChangeError"></div>
                                         </div>
                                         <div class="mb-3">
                                             <label for="addressChange" class="form-label">Địa chỉ</label>
-                                            <input type="text" class="form-control" id="addressChange" name="address"
-                                                   data-address="${sessionScope.user.address}" required readonly data-bs-toggle="modal" data-bs-target="#addressModal">
+                                            <input type="text" class="form-control" id="addressChange" name="address" value="${sessionScope.user.address}">
                                             <div class="error" id="addressChangeError"></div>
-
                                         </div>
                                         <button type="submit" class="btn btn-primary" style="background-color: var(--primary-color) !important;">Lưu Thay Đổi</button>
-
                                     </form>
                                 </div>
                             </div>
@@ -125,7 +118,6 @@
         </div>
     </div>
 </div>
-
 
 <!-- Modal đổi mật khẩu -->
 <div class="modal fade" id="changePassword" tabindex="-1" aria-labelledby="changePasswordLabel" aria-hidden="true">
@@ -139,22 +131,17 @@
                 <form action="change-password" method="post">
                     <div class="mb-3">
                         <label for="currentPassword" class="form-label">Mật khẩu hiện tại</label>
-                        <input type="password" class="form-control" id="currentPassword" name="currentPassword"
-                               placeholder="Nhập mật khẩu hiện tại" required>
+                        <input type="password" class="form-control" id="currentPassword" name="currentPassword" placeholder="Nhập mật khẩu hiện tại" required>
                     </div>
                     <div class="mb-3">
                         <label for="newPassword" class="form-label">Mật khẩu mới</label>
-                        <input type="password" class="form-control" id="newPassword" name="newPassword"
-                               placeholder="Nhập mật khẩu mới" required>
+                        <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Nhập mật khẩu mới" required>
                     </div>
                     <div class="mb-3">
                         <label for="confirmPassword" class="form-label">Nhập lại mật khẩu mới</label>
-                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
-                               placeholder="Nhập lại mật khẩu mới" required>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Nhập lại mật khẩu mới" required>
                     </div>
-                    <button type="submit" class="btn btn-primary"
-                            style=" background-color: var(--primary-color) !important">Lưu Thay Đổi
-                    </button>
+                    <button type="submit" class="btn btn-primary" style="background-color: var(--primary-color) !important;">Lưu Thay Đổi</button>
                 </form>
             </div>
         </div>
@@ -182,12 +169,12 @@
                 <th>Hành Động</th>
             </tr>
             </thead>
-            <tbody>
-            </tbody>
+            <tbody></tbody>
         </table>
     </div>
 </div>
-<%-- Bảng lịch sử đơn hàng--%>
+
+<!-- Bảng lịch sử đơn hàng -->
 <div class="card mb-4" style="margin: 30px">
     <div class="card-header bg-secondary text-white">
         <h4>Lịch Sử Đơn Hàng</h4>
@@ -205,14 +192,12 @@
                 <th>Hành Động</th>
             </tr>
             </thead>
-            <tbody>
-            </tbody>
+            <tbody></tbody>
         </table>
     </div>
 </div>
 
-<div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel"
-     aria-hidden="true">
+<div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -220,8 +205,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div id="orderRecipientInfo">
-                </div>
+                <div id="orderRecipientInfo"></div>
                 <table class="table table-striped">
                     <thead>
                     <tr>
@@ -231,18 +215,15 @@
                         <th>Số Lượng</th>
                         <th>Giá</th>
                         <th>Đánh giá</th>
-
                     </tr>
                     </thead>
                     <tbody id="orderDetailsBody"></tbody>
                 </table>
-                <div id="totalPrice">
-                </div>
+                <div id="totalPrice"></div>
             </div>
         </div>
     </div>
 </div>
-
 
 <!-- Address Modal -->
 <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
@@ -282,50 +263,59 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const fullAddress = "${sessionScope.user.address}";
+        // Khi editPersonalInfoModal mở, kiểm tra giá trị
+        document.getElementById('editPersonalInfoModal').addEventListener('shown.bs.modal', function () {
+            const nameInput = document.getElementById('nameChange');
+            const phoneInput = document.getElementById('phoneChange');
+            const emailInput = document.getElementById('emailChange');
+            const addressInput = document.getElementById('addressChange');
 
-        if (fullAddress) {
-            const parts = fullAddress.split(",").map(part => part.trim());
+            console.log("Modal opened - Full Name:", nameInput.value);
+            console.log("Modal opened - Phone:", phoneInput.value);
+            console.log("Modal opened - Email:", emailInput.value);
+            console.log("Modal opened - Address:", addressInput.value);
+        });
 
-            const reversed = parts.reverse();
+        // Khi nhấp vào ô addressChange, mở addressModal
+        document.getElementById('addressChange').addEventListener('click', function () {
+            const fullAddress = document.getElementById('addressChange').value;
+            if (fullAddress) {
+                const parts = fullAddress.split(",").map(part => part.trim());
+                document.getElementById("specificAddress").value = parts[0] || "";
+                document.getElementById("ward").value = parts[1] || "";
+                document.getElementById("district").value = parts[2] || "";
+                document.getElementById("province").value = parts[3] || "";
+            }
 
-            document.getElementById("province").value = reversed[0] || "";
-            document.getElementById("district").value = reversed[1] || "";
-            document.getElementById("ward").value = reversed[2] || "";
-            document.getElementById("specificAddress").value = reversed[3] || "";
-        }
-    });
+            const addressModal = new bootstrap.Modal(document.getElementById('addressModal'), {
+                backdrop: 'static'
+            });
+            addressModal.show();
+
+            const editModalElement = document.getElementById('editPersonalInfoModal');
+            editModalElement.classList.add('show');
+            editModalElement.style.display = 'block';
+        });
 
 
-
-    document.getElementById('saveAddress').addEventListener('click', function () {
-
-        const province = document.getElementById('province').value.trim();
-        const district = document.getElementById('district').value.trim();
-        const ward = document.getElementById('ward').value.trim();
-        const specificAddress = document.getElementById('specificAddress').value.trim();
-
-        const fullAddress = specificAddress + ", " + district + ", " + province;
-        console.log("Full Address:", fullAddress);
-
-        document.getElementById('saveAddress').value = fullAddress;
-
-        const addressModal = document.getElementById('addressModal');
-
-        const modal = bootstrap.Modal.getInstance(addressModal);
-        if (modal) {
-            modal.hide();
-        } else {
-            document.querySelector('#addressModal .btn-close').click();
-        }
+        document.getElementById('addressModal').addEventListener('hidden.bs.modal', function () {
+            const editModalElement = document.getElementById('editPersonalInfoModal');
+            if (editModalElement.classList.contains('show')) {
+                editModalElement.style.display = 'block';
+                document.body.classList.add('modal-open');
+                if (!document.querySelector('.modal-backdrop')) {
+                    const backdrop = document.createElement('div');
+                    backdrop.className = 'modal-backdrop fade show';
+                    document.body.appendChild(backdrop);
+                }
+            }
+        });
     });
 </script>
-
 
 <script src="${pageContext.request.contextPath}/assets/js/personal.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/header.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/authModal.js"></script>
 
 </body>
-
 </html>

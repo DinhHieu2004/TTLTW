@@ -61,6 +61,12 @@ public class Painting implements Serializable{
         this.price = price;
     }
 
+    public Painting(int paintingId, String paintingTitle, double price) {
+            this.id = paintingId;
+            this.title = paintingTitle;
+            this.price = price;
+    }
+
     public double getAverageRating() {
         return averageRating;
     }
@@ -186,7 +192,6 @@ public class Painting implements Serializable{
     }
 
 
-
     @Override
     public String toString() {
         return "Painting{" +
@@ -198,14 +203,16 @@ public class Painting implements Serializable{
                 ", artistName='" + artistName + '\'' +
                 ", themeName='" + themeName + '\'' +
                 ", sizes=" + sizes +
-                ", createDate=" + createDate +
                 ", discountName='" + discountName + '\'' +
-                ", isFu='" + isFeatured + '\'' +
-                ", raiting='" + averageRating + '\'' +
-                ", isSold='" + available + '\'' +
                 ", discountPercentage=" + discountPercentage +
+                ", available=" + available +
+                ", crateDate=" + crateDate +
+                ", isFeatured=" + isFeatured +
+                ", createDate=" + createDate +
+                ", averageRating=" + averageRating +
                 '}';
     }
+
     public boolean getAvailable() {
             return available;
     }

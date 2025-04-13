@@ -6,9 +6,8 @@
 package com.example.web.vnpay;
 
 import com.example.web.dao.cart.Cart;
-import com.example.web.dao.model.Order;
-import com.example.web.dao.model.OrderItem;
-import com.example.web.dao.model.User;
+import com.example.web.dao.cart.CartPainting;
+import com.example.web.dao.model.*;
 import com.example.web.service.CheckoutService;
 import com.example.web.service.OrderItemService;
 import com.example.web.service.OrderService;
@@ -88,6 +87,34 @@ public class VnpayReturn extends HttpServlet {
                 if ("00".equals(transactionStatus)) {
                     //update order status
                     try {
+                        List<Painting> inventoryPainting = checkoutService.getOutOfStockList(cart);
+
+                        if (inventoryPainting != null && !inventoryPainting.isEmpty()) {
+                            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
+                            StringBuilder outOfStockNames = new StringBuilder("Các sản phẩm sau đã hết hàng hoặc không đủ số lượng:\n");
+
+                            for (CartPainting cp : cart.getItems()) {
+                                for (Painting p : inventoryPainting) {
+                                    if (cp.getProductId() == p.getId()) {
+                                        String sizeName = "";
+                                        for (PaintingSize ps : p.getSizes()) {
+                                            if (ps.getIdSize() == cp.getSizeId()) {
+                                                sizeName = ps.getSizeDescriptions();
+                                                break;
+                                            }
+                                        }
+                                        outOfStockNames.append("- ").append(p.getTitle())
+                                                .append(" (Kích thước: ").append(sizeName).append(")").append("\n");
+                                    }
+                                }
+                            }
+
+                            response.setContentType("text/plain;charset=UTF-8");
+                            response.getWriter().write(outOfStockNames.toString());
+                            return;
+                        }
+
                         orderId = checkoutService.processCheckout2(cart, userId, 2, recipientName, recipientPhone, deliveryAddress, vnpTxnRef, shippingFee);
                         orderService.updatePaymentStatus(orderId, "đã thanh toán");
 

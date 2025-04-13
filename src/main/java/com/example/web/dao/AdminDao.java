@@ -18,7 +18,7 @@ public class AdminDao {
 
     public double getTotalRevenue() throws SQLException {
         double totalRevenue = 0;
-        String query = "SELECT SUM(totalAmount) AS totalRevenue FROM orders WHERE status = 'hoàn thành'";
+        String query = "SELECT SUM(totalAmount) AS totalRevenue FROM orders WHERE deliveryStatus = 'hoàn thành'";
 
         PreparedStatement statement = conn.prepareStatement(query);
         ResultSet resultSet = statement.executeQuery();
@@ -80,13 +80,13 @@ public class AdminDao {
 
     public Map<String, Integer> getOrderStatusCount() throws SQLException {
         Map<String, Integer> orderStatusCount = new HashMap<>();
-        String query = "SELECT status, COUNT(*) AS count FROM orders GROUP BY status";
+        String query = "SELECT deliveryStatus, COUNT(*) AS count FROM orders GROUP BY deliveryStatus";
 
         PreparedStatement statement = conn.prepareStatement(query);
         ResultSet resultSet = statement.executeQuery();
 
         while (resultSet.next()) {
-            String status = resultSet.getString("status");
+            String status = resultSet.getString("deliveryStatus");
             int count = resultSet.getInt("count");
             orderStatusCount.put(status, count);
         }
@@ -104,7 +104,7 @@ public class AdminDao {
                 artists a
                 LEFT JOIN paintings p ON a.id = p.artistId
                 LEFT JOIN order_items oi ON p.id = oi.paintingId
-                LEFT JOIN orders o ON oi.orderId = o.id AND o.status = 'hoàn thành'
+                LEFT JOIN orders o ON oi.orderId = o.id AND o.deliveryStatus = 'hoàn thành'
             GROUP BY 
                 a.name
             ORDER BY 

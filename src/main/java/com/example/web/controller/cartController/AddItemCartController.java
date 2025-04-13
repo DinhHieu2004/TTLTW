@@ -62,6 +62,9 @@ public class AddItemCartController extends HttpServlet {
             cart.addToCart(cartPainting);
             session.setAttribute("cart", cart);
 
+            System.out.println("cart : "+cart);
+
+
             User user = (User) req.getSession().getAttribute("user");
  //           String fullAddress = req.getSession().getAttribute("fullAddress").toString();
 
