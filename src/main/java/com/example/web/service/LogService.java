@@ -55,4 +55,8 @@ public class LogService {
     public boolean deleteLog(int id) throws SQLException {
         return logDao.deleteLog(id);
     }
+    public Log getLog(int id) throws SQLException {
+        return logDao.getDetailLog(id);
+    }
+
 }
