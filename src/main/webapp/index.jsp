@@ -542,7 +542,8 @@
     }
 
     // thời gian kết thúc flash sale
-    const flashSaleEndTime = "2025-05-10T23:59:59";
+    const flashSaleEndTime = "${flashSaleEndDateTime}";
+    debugger
 
     document.addEventListener("DOMContentLoaded", function() {
         startCountdown(flashSaleEndTime);
