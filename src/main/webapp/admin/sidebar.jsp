@@ -16,6 +16,10 @@
     <a href="${pageContext.request.contextPath}/admin/products">Quản lý sản phẩm</a>
   </c:if>
 
+  <c:if test="${not empty sessionScope.user and (isAdmin or fn:contains(allRolePermission, 'VIEW_STOCKS'))}">
+    <a href="${pageContext.request.contextPath}/admin/inventoryTrans">Quản lý nhập/xuất kho hàng</a>
+  </c:if>
+
   <c:if test="${not empty sessionScope.user and (isAdmin or fn:contains(allRolePermission, 'VIEW_ORDERS'))}">
     <a href="${pageContext.request.contextPath}/admin/orders">Quản lý đơn hàng</a>
   </c:if>
