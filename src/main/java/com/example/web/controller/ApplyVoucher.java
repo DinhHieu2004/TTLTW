@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.Date;
 import java.sql.SQLException;
 
 @WebServlet("/applyVoucher")
@@ -28,16 +29,14 @@ import java.sql.SQLException;
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
-                if (voucher != null && voucher.isActive()) {
+                if (voucher != null && voucher.isActive() && voucher.getEndDate().after(new Date())) {
                     discountPercentage = voucher.getDiscount();
                 }
             }
 
             double finalPrice = totalPrice - (totalPrice * discountPercentage / 100);
-            System.out.println(finalPrice);
             cart.setAfterPrice(finalPrice);
             req.getSession().setAttribute("cart", cart);
-            Cart c = (Cart) req.getSession().getAttribute("cart");
 
 
             resp.setContentType("application/json");

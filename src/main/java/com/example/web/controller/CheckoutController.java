@@ -4,6 +4,7 @@ import com.example.web.dao.cart.Cart;
 import com.example.web.dao.cart.CartPainting;
 import com.example.web.dao.model.*;
 import com.example.web.service.CheckoutService;
+import com.example.web.service.UserVoucherService;
 import com.example.web.service.VoucherService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,24 +15,40 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(value = "/checkout")
 public class CheckoutController extends HttpServlet {
     private final CheckoutService checkoutService = new CheckoutService();
     private final VoucherService voucherService = new VoucherService();
+    private final UserVoucherService userVoucherService = new UserVoucherService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        User user = (User) session.getAttribute("user");
+        int userId = user.getId();
+
+        List<UserVoucher> userVouchers = null;
         try {
-            List<Voucher> vouchers = voucherService.getAll();
-            req.setAttribute("v", vouchers);
+            userVouchers = userVoucherService.getAllByUserId(userId);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        List<Voucher> validVouchers = new ArrayList<>();
 
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+
+        for (UserVoucher uv : userVouchers) {
+            Voucher v = uv.getVoucher();
+            if(!uv.getIsUsed() && v.getStartDate().before(now) && v.getEndDate().after(now)) {
+                validVouchers.add(v);
+            }
+        }
+        req.setAttribute("v", validVouchers);
         req.getRequestDispatcher("user/checkout.jsp").forward(req, resp);
-
     }
 
     @Override
