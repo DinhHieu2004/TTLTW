@@ -384,7 +384,7 @@
 
 
 
-      <button id="openVoucherModal">Chọn mã giảm giá</button>
+      <button id="openVoucherModal">Chọn hoặc nhập mã</button>
       <input type="hidden" id="voucherSelect" name="voucherCode"/>
 
       <span id="voucherCount" class="ms-2 text-muted" style="display: none;"></span>
@@ -399,7 +399,15 @@
         <div class="modal-content">
           <span class="close">&times;</span>
           <h3>Chọn Mã Giảm Giá</h3>
-
+          <div class="row align-items-center mb-3">
+            <label for="manualVoucher" class="col-auto fw-bold">Mã Voucher</label>
+            <div class="col">
+              <input type="text" id="manualVoucher" class="form-control" placeholder="Nhập mã voucher">
+            </div>
+            <div class="col-auto">
+              <button id="applyManualVoucher" class="btn btn-outline-primary">Áp dụng</button>
+            </div>
+          </div>
           <div class="voucher-list">
             <c:forEach items="${v}" var="voucher">
               <label class="voucher-item">
@@ -407,8 +415,9 @@
                 <img src="${voucher.imageUrl}" class="voucher-image" alt="Voucher">
                 <div class="voucher-info">
                   <strong>${voucher.name}</strong>
-                  <p>Giảm ${voucher.discount}%</p>
-                  <p>HSD: ${voucher.endDate}</p>
+                  <p class="mb-1">Giảm ${voucher.discount}%</p>
+                  <p class="mb-1">Mã: ${voucher.code}</p>
+                  <p class="mb-0">HSD: ${voucher.endDate}</p>
                 </div>
               </label>
             </c:forEach>

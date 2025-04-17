@@ -17,7 +17,7 @@ public class UserVoucherDao {
     public List<UserVoucher> getUserVoucherById(int userId) throws SQLException {
         List<UserVoucher> list = new ArrayList<>();
         String sql = "SELECT uv.id AS uv_id, uv.user_id, uv.voucher_id, uv.is_used, uv.assigned_at," +
-                "       v.id AS v_id, v.name, v.discount, v.startDate, v.endDate, v.imageUrl" +
+                "       v.id AS v_id, v.name, v.discount, v.startDate, v.endDate, v.imageUrl, v.code" +
                 " FROM user_vouchers uv" +
                 " JOIN vouchers v ON uv.voucher_id = v.id" +
                 " WHERE uv.user_id = ?";
@@ -40,6 +40,7 @@ public class UserVoucherDao {
             v.setStartDate(rs.getTimestamp("startDate"));
             v.setEndDate(rs.getTimestamp("endDate"));
             v.setImageUrl(rs.getString("imageUrl"));
+            v.setCode(rs.getString("code"));
 
             uv.setVoucher(v);
             list.add(uv);

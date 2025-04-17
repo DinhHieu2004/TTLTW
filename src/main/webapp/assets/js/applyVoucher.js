@@ -11,7 +11,6 @@ $(document).ready(function () {
         modal.removeClass("d-flex");
     });
 
-    // Nhấn "Áp dụng"
     $("#applyVoucherBtn").on("click", function () {
         const selectedVoucherIds = $("input[name='voucherOption']:checked")
             .map(function () {
@@ -28,7 +27,6 @@ $(document).ready(function () {
             data: { vid: selectedVoucherIds },
             dataType: "json",
             success: function (response) {
-                // Cập nhật giá
                 $("#finalPrice").text(
                     new Intl.NumberFormat('vi-VN', {
                         style: 'currency',
@@ -36,7 +34,6 @@ $(document).ready(function () {
                     }).format(response.finalPrice)
                 );
 
-                // Đóng modal
                 const modal = $("#voucherModal");
                 modal.addClass("hidden").removeClass("d-flex");
             },
@@ -78,6 +75,34 @@ $(document).ready(function () {
                 alert("Lỗi khi áp dụng voucher.");
             }
         });
-    });
+        $("#applyManualVoucher").on("click", function () {
+            const manualCode = $("#manualVoucher").val().trim();
 
+            if (!manualCode) return;
+
+            $.ajax({
+                url: "applyVoucherByCode",
+                type: "POST",
+                data: { code: manualCode },
+                dataType: "json",
+                success: function (response) {
+                    if (response.success) {
+                        $("#finalPrice").text(
+                            new Intl.NumberFormat('vi-VN', {
+                                style: 'currency',
+                                currency: 'VND'
+                            }).format(response.finalPrice)
+                        );
+
+                        $(`input[name='voucherOption'][value='${response.voucherId}']`).prop("checked", true).trigger("change");
+                    } else {
+                        alert("Mã không hợp lệ hoặc đã hết hạn.");
+                    }
+                },
+                error: function () {
+                    alert("Lỗi khi áp dụng mã voucher.");
+                }
+            });
+        });
+    });
 });
