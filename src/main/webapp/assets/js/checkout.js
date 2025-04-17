@@ -4,10 +4,22 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
     const recipientPhone = $('#recipientPhone').val();
     const paymentMethod = $('#paymentMethod').val();
     const shippingFeeStr = $('#shippingFee').text();
-    const voucherCode = $('#voucherSelect').val();
     const shippingFee = shippingFeeStr.split(' ')[0];
 
-    const amountText = $("#finalPrice").text(); // lấy giá trị từ label
+    // cac voucher đã chọn (checkbox)
+    const selectedVoucherIds = $("input[name='voucherOption']:checked")
+        .map(function () {
+            return $(this).val();
+        }).get(); // array
+
+    // voucher nhập
+    const manualCode = $("#manualVoucher").val().trim();
+
+    // gộp lại
+    const allVoucherCodes = [...selectedVoucherIds];
+    if (manualCode) allVoucherCodes.push(manualCode);
+
+    const amountText = $("#finalPrice").text();
     const amount = parseInt(amountText.replace(/[^\d]/g, ""), 10);
 
 
@@ -20,13 +32,14 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
         $.ajax({
             url: "checkout",
             type: "POST",
+            traditional: true,
             data: {
                 recipientName: recipientName,
                 deliveryAddress: deliveryAddress,
                 recipientPhone: recipientPhone,
                 paymentMethod: paymentMethod,
                 shippingFee: shippingFee,
-                voucherCode: voucherCode
+                voucherCodes: allVoucherCodes
             },
             success: function (response) {
                 alert(response);
@@ -53,12 +66,13 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
         $.ajax({
             url: "ajaxServlet",
             type: "POST",
+            traditional: true,
             data: { amount: amount,
                 recipientName: $("#recipientName").val(),
                 recipientPhone: $("#recipientPhone").val(),
                 deliveryAddress: $("#deliveryAddress").val(),
                 shippingFee : shippingFee,
-                voucherCode: voucherCode
+                voucherCodes: allVoucherCodes
             },
             dataType: "json",
             success: function (response) {
