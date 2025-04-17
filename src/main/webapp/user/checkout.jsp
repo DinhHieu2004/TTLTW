@@ -178,6 +178,7 @@
 
     .price-display {
       display: block;
+      border: 2px solid #ff5722;
       padding: 12px;
       background-color: #f3f4f6;
       border-radius: 6px;
@@ -208,6 +209,130 @@
         gap: 2rem;
       }
     }
+  </style>
+
+  <style>
+    /* Modal phủ toàn màn hình */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+
+    /* Ẩn modal khi có class hidden */
+    .modal.hidden {
+      display: none;
+    }
+
+    /* Nội dung bên trong modal */
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Nút đóng (dấu ×) */
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+      cursor: pointer;
+    }
+
+    /* Danh sách voucher */
+    .voucher-list {
+      margin-top: 15px;
+    }
+
+    /* Một item voucher */
+    .voucher-item {
+      display: flex;
+      align-items: center;
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: border 0.3s, background-color 0.3s;
+    }
+
+    .voucher-item:hover {
+      border-color: #4CAF50;
+      background-color: #f5fff5;
+    }
+
+    /* Ảnh đại diện của voucher */
+    .voucher-image {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      margin-right: 15px;
+      border-radius: 4px;
+    }
+
+    /* Nội dung thông tin của voucher */
+    .voucher-info {
+      flex-grow: 1;
+    }
+
+    /* Radio chọn voucher */
+    .voucher-item input[type="radio"] {
+      margin-right: 12px;
+      transform: scale(1.2);
+    }
+
+    /* Footer của modal: nút áp dụng */
+    .modal-actions {
+      text-align: right;
+      margin-top: 20px;
+    }
+
+    #openVoucherModal {
+      background-color: white;
+      color: #ff5722;
+      border: 2px solid #ff5722;
+      padding: 5px 6px;
+      border-radius: 5px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Nút áp dụng */
+    .apply-btn {
+      background-color: #4CAF50;
+      color: white;
+      padding: 8px 16px;
+      font-size: 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .apply-btn:hover {
+      background-color: #45a049;
+    }
+
   </style>
 </head>
 <body>
@@ -270,23 +395,44 @@
 
 
 
-      <div class="voucher-container">
-        <label for="voucherSelect" class="voucher-label">Chọn mã giảm giá:</label>
-        <select id="voucherSelect" name="voucherCode" class="voucher-select">
-          <option value="">--Chọn mã giảm giá--</option>
-          <c:forEach items="${v}" var="voucher">
-            <option value="${voucher.id}">${voucher.name} - Giảm ${voucher.discount}%</option>
-          </c:forEach>
-        </select>
+      <!-- Nút mở modal -->
+      <button id="openVoucherModal">Chọn mã giảm giá</button>
+      <input type="hidden" id="voucherSelect" name="voucherCode"/>
 
-        <div class="price-display">
-          Giá phải trả: <span id="finalPrice">
+      <div class="price-display">
+        Giá phải trả: <span id="finalPrice">
         <f:formatNumber value="${sessionScope.cart.totalPrice}" type="currency" pattern="#,##0"/>₫
       </span>
+      </div>
+
+      <!-- Modal -->
+      <div id="voucherModal" class="modal hidden">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h3>Chọn Mã Giảm Giá</h3>
+
+          <div class="voucher-list">
+            <c:forEach items="${v}" var="voucher">
+              <label class="voucher-item">
+                <input type="radio" name="voucherOption" value="${voucher.id}" />
+                <img src="${voucher.imageUrl}" class="voucher-image" alt="Voucher">
+                <div class="voucher-info">
+                  <strong>${voucher.name}</strong>
+                  <p>Giảm ${voucher.discount}%</p>
+                  <p>HSD: ${voucher.endDate}</p>
+                </div>
+              </label>
+            </c:forEach>
+          </div>
+
+          <div class="modal-actions">
+            <button id="applyVoucherBtn" class="apply-btn">Áp dụng</button>
+          </div>
         </div>
       </div>
-    </div>
 
+
+    </div>
 
 
     <div class="payment-form">
@@ -389,5 +535,6 @@
 <script src="${pageContext.request.contextPath}/assets/js/checkout.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/applyVoucher.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/location.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 </html>

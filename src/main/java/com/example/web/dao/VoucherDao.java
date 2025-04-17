@@ -25,6 +25,7 @@ public class VoucherDao {
             voucher.setCreateAt(rs.getDate("created_at"));
             voucher.setStartDate(rs.getDate("startDate"));
             voucher.setEndDate(rs.getDate("endDate"));
+            voucher.setImageUrl(rs.getString("imageUrl"));
             list.add(voucher);
         }
         return list;
@@ -44,6 +45,7 @@ public class VoucherDao {
             voucher.setCreateAt(rs.getDate("created_at"));
             voucher.setStartDate(rs.getDate("startDate"));
             voucher.setEndDate(rs.getDate("endDate"));
+            voucher.setImageUrl(rs.getString("imageUrl"));
             list.add(voucher);
         }
         return list;
@@ -63,6 +65,7 @@ public class VoucherDao {
             voucher.setCreateAt(rs.getDate("created_at"));
             voucher.setStartDate(rs.getDate("startDate"));
             voucher.setEndDate(rs.getDate("endDate"));
+            voucher.setImageUrl(rs.getString("imageUrl"));
             return voucher;
         }
         return null;

@@ -1,27 +1,46 @@
 $(document).ready(function () {
-    $("#voucherSelect").on("change", function () {
-        const vid = $(this).val();
-        const finalPriceElement = $("#finalPrice");
+    // Mở modal
+    $("#openVoucherModal").on("click", function () {
+        $("#voucherModal").removeClass("hidden").css("display", "flex");
+    });
 
-        if (!vid) {
-            finalPriceElement.html(
-                "Gía phải trả: <f:formatNumber value=\"${sessionScope.cart.totalPrice}\" type=\"currency\" currencySymbol=\"₫\"/>");
+    // Đóng modal
+    $(".close").on("click", function () {
+        $("#voucherModal").addClass("hidden").css("display", "none");
+    });
+
+    // Nhấn "Áp dụng"
+    $("#applyVoucherBtn").on("click", function () {
+        const selectedVoucherId = $("input[name='voucherOption']:checked").val();
+
+        if (!selectedVoucherId) {
+            alert("Vui lòng chọn một mã giảm giá.");
             return;
         }
 
+        // Set vào hidden input
+        $("#voucherSelect").val(selectedVoucherId);
+
+        // Gửi AJAX để áp dụng
         $.ajax({
-            url: `applyVoucher`,
+            url: "applyVoucher",
             type: "POST",
-            data: { vid: vid },
+            data: { vid: selectedVoucherId },
             dataType: "json",
             success: function (response) {
-                finalPriceElement.html(
-                    `${new Intl.NumberFormat('vi-VN', {style: 'currency', currency: 'VND',}).format(response.finalPrice)}`);
+                $("#finalPrice").text(
+                    new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    }).format(response.finalPrice)
+                );
+
+                // Đóng modal
+                $("#voucherModal").addClass("hidden").css("display", "none");
             },
-            error: function (xhr, status, error) {
-                console.error("Error applying voucher:", error);
-                alert("Có lỗi xảy ra khi áp dụng mã giảm giá.");
-            },
+            error: function () {
+                alert("Lỗi khi áp dụng voucher.");
+            }
         });
     });
 });

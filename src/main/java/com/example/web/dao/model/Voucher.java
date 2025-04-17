@@ -10,8 +10,9 @@ public class Voucher implements java.io.Serializable {
     private Date createAt;
     private Date startDate;
     private Date endDate;
+    private String imageUrl;
 
-    public Voucher(int id, String name, double discount, boolean isActive, Date createAt, Date startDate, Date endDate) {
+    public Voucher(int id, String name, double discount, boolean isActive, Date createAt, Date startDate, Date endDate, String imageUrl) {
         this.id = id;
         this.name = name;
         this.discount = discount;
@@ -19,6 +20,7 @@ public class Voucher implements java.io.Serializable {
         this.createAt = createAt;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.imageUrl = imageUrl;
     }
     public Voucher(int id, String name, double discount, boolean isActive, Date startDate, Date endDate) {
         this.id = id;
@@ -100,6 +102,14 @@ public class Voucher implements java.io.Serializable {
         this.createAt = createAt;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     @Override
     public String toString() {
         return "Voucher{" +
@@ -110,6 +120,7 @@ public class Voucher implements java.io.Serializable {
                 ", createAt=" + createAt +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
+                ", imageUrl='" + imageUrl + '\'' +
                 '}';
     }
 }
