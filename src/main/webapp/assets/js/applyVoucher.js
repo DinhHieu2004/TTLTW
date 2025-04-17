@@ -1,33 +1,34 @@
 $(document).ready(function () {
-    // Mở modal
     $("#openVoucherModal").on("click", function () {
-        $("#voucherModal").removeClass("hidden").css("display", "flex");
+        const modal = $("#voucherModal");
+        modal.removeClass("hidden");
+        modal.addClass("d-flex");
     });
 
-    // Đóng modal
     $(".close").on("click", function () {
-        $("#voucherModal").addClass("hidden").css("display", "none");
+        const modal = $("#voucherModal");
+        modal.addClass("hidden");
+        modal.removeClass("d-flex");
     });
 
     // Nhấn "Áp dụng"
     $("#applyVoucherBtn").on("click", function () {
-        const selectedVoucherId = $("input[name='voucherOption']:checked").val();
+        const selectedVoucherIds = $("input[name='voucherOption']:checked")
+            .map(function () {
+                return $(this).val();
+            }).get();
 
-        if (!selectedVoucherId) {
-            alert("Vui lòng chọn một mã giảm giá.");
-            return;
-        }
 
-        // Set vào hidden input
-        $("#voucherSelect").val(selectedVoucherId);
+        $("#voucherSelect").val(selectedVoucherIds.join(","));
 
-        // Gửi AJAX để áp dụng
         $.ajax({
             url: "applyVoucher",
             type: "POST",
-            data: { vid: selectedVoucherId },
+            traditional: true,
+            data: { vid: selectedVoucherIds },
             dataType: "json",
             success: function (response) {
+                // Cập nhật giá
                 $("#finalPrice").text(
                     new Intl.NumberFormat('vi-VN', {
                         style: 'currency',
@@ -36,11 +37,47 @@ $(document).ready(function () {
                 );
 
                 // Đóng modal
-                $("#voucherModal").addClass("hidden").css("display", "none");
+                const modal = $("#voucherModal");
+                modal.addClass("hidden").removeClass("d-flex");
             },
             error: function () {
                 alert("Lỗi khi áp dụng voucher.");
             }
         });
     });
+
+    // hiển thị giá và so lượng voucher khi người dùng tick trong modal vouchers
+    $("input[name='voucherOption']").on("change", function () {
+        const selectedVoucherIds = $("input[name='voucherOption']:checked")
+            .map(function () {
+                return $(this).val();
+            }).get();
+
+        const $countDisplay = $("#voucherCount");
+        if (selectedVoucherIds.length === 0) {
+            $countDisplay.hide().text("");
+        } else {
+            $countDisplay.text(`${selectedVoucherIds.length} mã áp dụng`).show();
+        }
+
+        $.ajax({
+            url: "applyVoucher",
+            type: "POST",
+            traditional: true,
+            data: { vid: selectedVoucherIds },
+            dataType: "json",
+            success: function (response) {
+                $("#finalPrice").text(
+                    new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    }).format(response.finalPrice)
+                );
+            },
+            error: function () {
+                alert("Lỗi khi áp dụng voucher.");
+            }
+        });
+    });
+
 });

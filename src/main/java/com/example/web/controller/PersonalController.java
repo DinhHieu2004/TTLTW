@@ -28,7 +28,7 @@ public class PersonalController extends HttpServlet {
         User user = (User) req.getSession().getAttribute("user");
         if (user != null) {
             try {
-                List<UserVoucher> userVouchers = userVoucherService.getAllByUserId(user.getId());
+                List<UserVoucher> userVouchers = userVoucherService.getUnusedVouchersByUser(user.getId());
                 req.setAttribute("userVouchers", userVouchers);
             } catch (SQLException e) {
                 e.printStackTrace();

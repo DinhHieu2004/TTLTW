@@ -212,7 +212,6 @@
   </style>
 
   <style>
-    /* Modal phủ toàn màn hình */
     .modal {
       position: fixed;
       top: 0;
@@ -226,12 +225,10 @@
       z-index: 1000;
     }
 
-    /* Ẩn modal khi có class hidden */
     .modal.hidden {
       display: none;
     }
 
-    /* Nội dung bên trong modal */
     .modal-content {
       background-color: white;
       padding: 20px;
@@ -244,7 +241,6 @@
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
 
-    /* Nút đóng (dấu ×) */
     .close {
       position: absolute;
       top: 10px;
@@ -255,12 +251,10 @@
       cursor: pointer;
     }
 
-    /* Danh sách voucher */
     .voucher-list {
       margin-top: 15px;
     }
 
-    /* Một item voucher */
     .voucher-item {
       display: flex;
       align-items: center;
@@ -277,7 +271,6 @@
       background-color: #f5fff5;
     }
 
-    /* Ảnh đại diện của voucher */
     .voucher-image {
       width: 60px;
       height: 60px;
@@ -286,18 +279,15 @@
       border-radius: 4px;
     }
 
-    /* Nội dung thông tin của voucher */
     .voucher-info {
       flex-grow: 1;
     }
 
-    /* Radio chọn voucher */
-    .voucher-item input[type="radio"] {
+    .voucher-item input[type="checkbox"] {
       margin-right: 12px;
       transform: scale(1.2);
     }
 
-    /* Footer của modal: nút áp dụng */
     .modal-actions {
       text-align: right;
       margin-top: 20px;
@@ -318,7 +308,6 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
-    /* Nút áp dụng */
     .apply-btn {
       background-color: #4CAF50;
       color: white;
@@ -395,9 +384,10 @@
 
 
 
-      <!-- Nút mở modal -->
       <button id="openVoucherModal">Chọn mã giảm giá</button>
       <input type="hidden" id="voucherSelect" name="voucherCode"/>
+
+      <span id="voucherCount" class="ms-2 text-muted" style="display: none;"></span>
 
       <div class="price-display">
         Giá phải trả: <span id="finalPrice">
@@ -405,7 +395,6 @@
       </span>
       </div>
 
-      <!-- Modal -->
       <div id="voucherModal" class="modal hidden">
         <div class="modal-content">
           <span class="close">&times;</span>
@@ -414,7 +403,7 @@
           <div class="voucher-list">
             <c:forEach items="${v}" var="voucher">
               <label class="voucher-item">
-                <input type="radio" name="voucherOption" value="${voucher.id}" />
+                <input type="checkbox" name="voucherOption" value="${voucher.id}" />
                 <img src="${voucher.imageUrl}" class="voucher-image" alt="Voucher">
                 <div class="voucher-info">
                   <strong>${voucher.name}</strong>
