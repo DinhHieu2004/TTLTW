@@ -4,10 +4,9 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
     const recipientPhone = $('#recipientPhone').val();
     const paymentMethod = $('#paymentMethod').val();
     const shippingFeeStr = $('#shippingFee').text();
+    const voucherCode = $('#voucherSelect').val();
     const shippingFee = shippingFeeStr.split(' ')[0];
 
-
-    console.log(recipientName + " "+ deliveryAddress+" "+ shippingFee)
     const amountText = $("#finalPrice").text(); // lấy giá trị từ label
     const amount = parseInt(amountText.replace(/[^\d]/g, ""), 10);
 
@@ -16,8 +15,6 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
         alert("Vui lòng điền đầy đủ thông tin.");
         return;
     }
-
-
 
     if (paymentMethod === "1") {
         $.ajax({
@@ -28,7 +25,8 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
                 deliveryAddress: deliveryAddress,
                 recipientPhone: recipientPhone,
                 paymentMethod: paymentMethod,
-                shippingFee: shippingFee
+                shippingFee: shippingFee,
+                voucherCode: voucherCode
             },
             success: function (response) {
                 alert(response);
@@ -59,7 +57,8 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
                 recipientName: $("#recipientName").val(),
                 recipientPhone: $("#recipientPhone").val(),
                 deliveryAddress: $("#deliveryAddress").val(),
-                shippingFee : shippingFee
+                shippingFee : shippingFee,
+                voucherCode: voucherCode
             },
             dataType: "json",
             success: function (response) {

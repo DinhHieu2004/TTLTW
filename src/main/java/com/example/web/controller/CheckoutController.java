@@ -73,9 +73,8 @@ public class CheckoutController extends HttpServlet {
             String recipientPhone = request.getParameter("recipientPhone");
             String paymentMethod = request.getParameter("paymentMethod");
             String shippingFee = request.getParameter("shippingFee");
+            String voucherCode = request.getParameter("voucherCode");
             shippingFee = shippingFee.replace(".", "");
-
-//            System.out.println( recipientName +" "+deliveryAddress+" "+recipientPhone+" "+paymentMethod+" "+shippingFee);
 
             int paymentMethodInt = Integer.parseInt(paymentMethod);
             double shippingFeeDouble = Double.parseDouble(shippingFee);
@@ -110,12 +109,16 @@ public class CheckoutController extends HttpServlet {
                     return;
                 }
                 checkoutService.processCheckout(cart, userId,paymentMethodInt,recipientName, recipientPhone, deliveryAddress, shippingFeeDouble);
+                if(voucherCode != null && !voucherCode.isEmpty()) {
+                    int userVoucherId = Integer.parseInt(voucherCode);
+                    userVoucherService.markAsUsed(userVoucherId, userId);
+                }
                 session.removeAttribute("cart");
                 response.setStatus(HttpServletResponse.SC_OK);
-                response.getWriter().write("Thanh toán thành công!");
+                response.getWriter().write("Đặt hàng thành công!");
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().write("Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại!");
+                response.getWriter().write("Có lỗi xảy ra trong quá trình đặt hàng. Vui lòng thử lại!");
                 e.printStackTrace();
             }
         } catch (Exception e) {

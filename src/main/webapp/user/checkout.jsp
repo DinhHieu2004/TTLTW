@@ -320,7 +320,7 @@
         <input type="text" id="bankName" name="bankName">
       </div>
 
-      <button type="button" id="submitPayment" class="btn btn-primary">Xác nhận thanh toán</button>
+      <button type="button" id="submitPayment" class="btn btn-primary">Xác nhận</button>
     </div>
   </div>
 </div>

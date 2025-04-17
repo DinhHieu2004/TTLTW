@@ -63,12 +63,13 @@ public class UserVoucherDao {
     }
 
     // set voucher đã dùng
-    public boolean markVoucherAsUsed(int userVoucherId) throws SQLException {
-        String sql = "UPDATE user_vouchers SET is_used = true " +
-                "WHERE id = ? AND is_used = false";
+    public boolean markVoucherAsUsed(int voucherId, int userId) throws SQLException {
+        String sql = "UPDATE user_vouchers SET is_used = 1 " +
+                "WHERE voucher_id = ? AND is_used = 0 AND user_id = ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, userVoucherId);
+            ps.setInt(1, voucherId);
+            ps.setInt(2, userId);
             return ps.executeUpdate() > 0;
         }
     }
@@ -89,10 +90,10 @@ public class UserVoucherDao {
     // lấy các voucher chưa dùng
     public List<UserVoucher> getUnusedVouchersByUser(int userId) throws SQLException {
         List<UserVoucher> list = new ArrayList<>();
-        String sql = "SELECT uv.*, v.name, v.discount, v.start_date, v.end_date " +
+        String sql = "SELECT uv.*, v.name, v.discount, v.startDate, v.endDate " +
                 "FROM user_vouchers uv " +
                 "JOIN vouchers v ON uv.voucher_id = v.id " +
-                "WHERE uv.user_id = ? AND uv.is_used = false";
+                "WHERE uv.user_id = ? AND uv.is_used = false AND v.endDate >= CURRENT_DATE";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
@@ -110,8 +111,8 @@ public class UserVoucherDao {
                     voucher.setId(rs.getInt("voucher_id"));
                     voucher.setName(rs.getString("name"));
                     voucher.setDiscount(rs.getInt("discount"));
-                    voucher.setStartDate(rs.getDate("start_date"));
-                    voucher.setEndDate(rs.getDate("end_date"));
+                    voucher.setStartDate(rs.getDate("startDate"));
+                    voucher.setEndDate(rs.getDate("endDate"));
 
                     uv.setVoucher(voucher);
                     list.add(uv);

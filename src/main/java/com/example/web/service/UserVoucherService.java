@@ -20,8 +20,8 @@ public class UserVoucherService {
         return userVoucherDao.assignVoucherToUser(userId, voucherId);
     }
 
-    public boolean markAsUsed(int userVoucherId) throws SQLException {
-        return userVoucherDao.markVoucherAsUsed(userVoucherId);
+    public boolean markAsUsed(int voucherId, int userId) throws SQLException {
+        return userVoucherDao.markVoucherAsUsed(voucherId, userId);
     }
 }
 

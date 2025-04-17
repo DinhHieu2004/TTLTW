@@ -8,13 +8,11 @@ package com.example.web.vnpay;
 import com.example.web.dao.cart.Cart;
 import com.example.web.dao.cart.CartPainting;
 import com.example.web.dao.model.*;
-import com.example.web.service.CheckoutService;
-import com.example.web.service.OrderItemService;
-import com.example.web.service.OrderService;
+import com.example.web.service.*;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import com.example.web.service.UserSerive;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -34,6 +32,7 @@ public class VnpayReturn extends HttpServlet {
     private final OrderItemService orderItemService = new OrderItemService();
     private final UserSerive userSerive = new UserSerive();
     private final CheckoutService checkoutService = new CheckoutService();
+    private final UserVoucherService userVoucherService = new UserVoucherService();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -47,6 +46,7 @@ public class VnpayReturn extends HttpServlet {
         String deliveryAddress = (String) session.getAttribute("deliveryAddress");
         String recipientPhone = (String) session.getAttribute("recipientPhone");
         String shippingFeeStr = (String) session.getAttribute("shippingFee");
+        String voucherCode = (String) session.getAttribute("voucherCode");
 
         shippingFeeStr = shippingFeeStr.replace(".", "");
         double shippingFee = Double.parseDouble(shippingFeeStr);
@@ -117,6 +117,8 @@ public class VnpayReturn extends HttpServlet {
 
                         orderId = checkoutService.processCheckout2(cart, userId, 2, recipientName, recipientPhone, deliveryAddress, vnpTxnRef, shippingFee);
                         orderService.updatePaymentStatus(orderId, "đã thanh toán");
+                        int voucherId = Integer.parseInt(voucherCode);
+                        userVoucherService.markAsUsed(voucherId, userId);
 
 
                         // Lấy thông tin từ db
