@@ -69,6 +69,7 @@ public class VoucherDao {
             voucher.setEndDate(rs.getDate("endDate"));
             voucher.setImageUrl(rs.getString("imageUrl"));
             voucher.setCode(rs.getString("code"));
+            voucher.setType(rs.getString("type"));
             return voucher;
         }
         return null;
@@ -131,6 +132,7 @@ public class VoucherDao {
             voucher.setEndDate(rs.getDate("endDate"));
             voucher.setCode(rs.getString("code"));
             voucher.setImageUrl(rs.getString("imageUrl"));
+            voucher.setType(rs.getString("type"));
             return voucher;
         }
         return null;

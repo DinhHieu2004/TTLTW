@@ -399,6 +399,8 @@
         <div class="modal-content">
           <span class="close">&times;</span>
           <h3>Chọn Mã Giảm Giá</h3>
+
+          <!-- Nhập mã thủ công -->
           <div class="row align-items-center mb-3">
             <label for="manualVoucher" class="col-auto fw-bold">Mã Voucher</label>
             <div class="col">
@@ -408,26 +410,51 @@
               <button id="applyManualVoucher" class="btn btn-outline-primary">Áp dụng</button>
             </div>
           </div>
+
+          <h5 class="mt-3 mb-2">Mã Miễn Phí Vận Chuyển</h5>
           <div class="voucher-list">
             <c:forEach items="${v}" var="voucher">
-              <label class="voucher-item">
-                <input type="checkbox" name="voucherOption" value="${voucher.id}" />
-                <img src="${voucher.imageUrl}" class="voucher-image" alt="Voucher">
-                <div class="voucher-info">
-                  <strong>${voucher.name}</strong>
-                  <p class="mb-1">Giảm ${voucher.discount}%</p>
-                  <p class="mb-1">Mã: ${voucher.code}</p>
-                  <p class="mb-0">HSD: ${voucher.endDate}</p>
-                </div>
-              </label>
+              <c:if test="${voucher.type == 'shipping'}">
+                <label class="voucher-item">
+                  <input type="checkbox" name="voucherOption" value="${voucher.id}" data-type="shipping" />
+                  <img src="${voucher.imageUrl}" class="voucher-image" alt="Voucher">
+                  <div class="voucher-info">
+                    <strong>${voucher.name}</strong>
+                    <f:formatNumber value="${voucher.discount}" type="number" maxFractionDigits="0" var="roundedDiscount" />
+                    <p class="mb-1">Giảm ${roundedDiscount}%</p>
+                    <p class="mb-1">Mã: ${voucher.code}</p>
+                    <p class="mb-0">HSD: ${voucher.endDate}</p>
+                  </div>
+                </label>
+              </c:if>
             </c:forEach>
           </div>
 
-          <div class="modal-actions">
-            <button id="applyVoucherBtn" class="apply-btn">Áp dụng</button>
+          <h5 class="mt-4 mb-2">Mã Giảm Giá Đơn Hàng</h5>
+          <div class="voucher-list">
+            <c:forEach items="${v}" var="voucher">
+              <c:if test="${voucher.type == 'order'}">
+                <label class="voucher-item">
+                  <input type="checkbox" name="voucherOption" value="${voucher.id}" data-type="order" />
+                  <img src="${voucher.imageUrl}" class="voucher-image" alt="Voucher">
+                  <div class="voucher-info">
+                    <strong>${voucher.name}</strong>
+                    <f:formatNumber value="${voucher.discount}" type="number" maxFractionDigits="0" var="roundedDiscount" />
+                    <p class="mb-1">Giảm ${roundedDiscount}%</p>
+                    <p class="mb-1">Mã: ${voucher.code}</p>
+                    <p class="mb-0">HSD: ${voucher.endDate}</p>
+                  </div>
+                </label>
+              </c:if>
+            </c:forEach>
+          </div>
+
+          <div class="modal-actions mt-3">
+            <button id="applyVoucherBtn" class="apply-btn btn btn-success">Áp dụng</button>
           </div>
         </div>
       </div>
+
 
 
     </div>
