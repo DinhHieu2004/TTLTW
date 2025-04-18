@@ -1,8 +1,8 @@
 package com.example.web.dao.model;
 
-public class InventoryTransDetail {
+public class StockInItem {
     private int id;
-    private int inTransId;
+    private int stockInId;
     private int productId;
     private int sizeId;
     private double price;
@@ -10,9 +10,9 @@ public class InventoryTransDetail {
     private double totalPrice;
     private String note;
 
-    public InventoryTransDetail(int id, int inTransId, int productId, int sizeId, double price, int quantity, double totalPrice, String note) {
+    public StockInItem(int id, int stockInId, int productId, int sizeId, double price, int quantity, double totalPrice, String note) {
         this.id = id;
-        this.inTransId = inTransId;
+        this.stockInId = stockInId;
         this.productId = productId;
         this.sizeId = sizeId;
         this.price = price;
@@ -21,7 +21,7 @@ public class InventoryTransDetail {
         this.note = note;
     }
 
-    public InventoryTransDetail() {
+    public StockInItem() {
     }
 
     public int getId() {
@@ -32,12 +32,12 @@ public class InventoryTransDetail {
         this.id = id;
     }
 
-    public int getInTransId() {
-        return inTransId;
+    public int getStockInId() {
+        return stockInId;
     }
 
-    public void setInTransId(int inTransId) {
-        this.inTransId = inTransId;
+    public void setStockInId(int stockInId) {
+        this.stockInId = stockInId;
     }
 
     public int getProductId() {

@@ -61,7 +61,10 @@
     </div>
     <div class="card-body">
       <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addStockModal">
-        + Thêm Phiếu Nhập/Xuất
+        + Thêm Phiếu Nhập kho
+      </button>
+      <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addStockModal">
+        + Thêm Phiếu Xuất kho
       </button>
 
       <div class="table-section">
@@ -72,27 +75,33 @@
           <thead>
           <tr>
             <th>Mã Phiếu</th>
-            <th>Loại Phiếu</th>
             <th>Ngày Tạo</th>
-            <th>Số Sản Phẩm</th>
+            <th>Nhà cung cấp</th>
             <th>Tổng Tiền</th>
             <th>Ghi Chú</th>
             <th>Hành Động</th>
           </tr>
           </thead>
           <tbody>
-          <tr>
-            <td>NK001</td>
-            <td>Nhập kho</td>
-            <td>2025-04-14</td>
-            <td>5</td>
-            <td>12,000,000</td>
-            <td>Nhập từ NCC A</td>
-            <td>
-              <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detailModal">Chi tiết</button>
-              <button class="btn btn-sm btn-danger">Xoá</button>
-            </td>
-          </tr>
+          <c:if test="${empty stockIn}">
+            <tr>
+              <td colspan="6" class="text-center">Không có dữ liệu</td>
+            </tr>
+          </c:if>
+
+          <c:forEach var="si" items="${stockIn}">
+            <tr>
+              <td>${si.id}</td>
+              <td>${si.transactionDate}</td>
+              <td>${si.supplier}</td>
+              <td>${si.totalPrice}</td>
+              <td>${si.note}</td>
+              <td>
+                <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detailModal">Chi tiết</button>
+                <button class="btn btn-sm btn-danger">Xoá</button>
+              </td>
+            </tr>
+          </c:forEach>
           </tbody>
         </table>
       </div>
@@ -107,7 +116,6 @@
             <th>Mã Phiếu</th>
             <th>Loại Phiếu</th>
             <th>Ngày Tạo</th>
-            <th>Số Sản Phẩm</th>
             <th>Tổng Tiền</th>
             <th>Ghi Chú</th>
             <th>Hành Động</th>
@@ -118,7 +126,6 @@
             <td>XK003</td>
             <td>Xuất kho</td>
             <td>2025-04-13</td>
-            <td>3</td>
             <td>8,500,000</td>
             <td>Xuất cho khách B</td>
             <td>
@@ -192,12 +199,17 @@
       </div>
       <div class="modal-body">
         <div class="mb-3">
-          <label>Người thao tác:</label>
-          <input type="text" class="form-control" value="admin01" readonly>
+          <label>Người thực hiện:</label>
+          <input type="text" id="user" class="form-control" value="${sessionScope.user.fullName}" readonly>
+          <input type="hidden" id="userId" name="userId" value="${sessionScope.user.id}">
         </div>
         <div class="mb-3">
-          <label>Ngày tạo:</label>
-          <input type="date" class="form-control" value="2025-04-14">
+          <label>Nhà cung cấp:</label>
+          <input type="text" id="supplier" class="form-control" >
+        </div>
+        <div class="mb-3">
+          <label>Ngày nhập:</label>
+          <input type="date" id="createdDate" class="form-control" >
         </div>
         <div class="mb-3">
           <label>Ghi chú:</label>
@@ -212,8 +224,7 @@
         <table class="table table-bordered" id="productTable">
           <thead>
           <tr>
-            <th>Mã SP</th>
-            <th>Tên SP</th>
+            <th>Sản phẩm</th>
             <th>Size</th>
             <th>Số lượng</th>
             <th>Đơn giá</th>
@@ -227,7 +238,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-success">Lưu Phiếu Nhập</button>
+        <button type="button" class="btn btn-success" onclick="submitStockIn()">Lưu Phiếu Nhập</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
       </div>
     </div>
@@ -235,6 +246,10 @@
 </div>
 
 <script>
+  $(document).ready(function() {
+
+    $('#exportTable').DataTable();
+  });
   function addEmptyRow() {
     const tbody = document.getElementById("productBody");
 
@@ -242,17 +257,16 @@
 
     row.innerHTML = `
     <td><select class="form-select">
-            <option>-- Chọn --</option>
-            <option>SP1</option>
-            <option>SP1</option>
-            <option>SP1</option>
+            <option value="">Chọn sản phẩm</option>
+                    <c:forEach var="p" items="${p}">
+                      <option value="${p.id}" data-name="${p.title}">${p.id} - ${p.title}</option>
+                    </c:forEach>
           </select></td>
-    <td><input type="text" class="form-control" name="productName"></td>
     <td> <select class="form-select">
             <option>-- Chọn --</option>
-            <option>Nhỏ</option>
-            <option>Vừa</option>
-            <option>Lớn</option>
+            <c:forEach var="s" items="${s}">
+                      <option value="${s.idSize}">${s.sizeDescriptions}</option>
+            </c:forEach>
           </select></td>
     <td><input type="number" class="form-control" name="productQuantity"></td>
     <td><input type="number" class="form-control" name="productPrice"></td>
@@ -269,11 +283,78 @@
     const row = btn.closest("tr");
     row.remove();
   }
-  $(document).ready(function() {
-    $('#importTable').DataTable();
-    $('#exportTable').DataTable();
-  });
 
+  function submitStockIn() {
+    const createdId = $('#userId').val();
+    const supplier = $('#supplier').val();
+    const createdDate = $('#createdDate').val();
+    const note = $('#noteInput').val();
+
+    const products = [];
+
+    $('#productBody tr').each(function () {
+      const row = $(this);
+      const productId = row.find('select').eq(0).val();
+      const sizeId = row.find('select').eq(1).val();
+      const quantity = row.find('input[name="productQuantity"]').val();
+      const price = row.find('input[name="productPrice"]').val();
+      const productNote = row.find('input[name="productNote"]').val();
+
+      console.log("Sản phẩm ID:", productId);
+      console.log("Size ID:", sizeId);
+      console.log("Số lượng:", quantity);
+      console.log("Giá:", price);
+      console.log("Ghi chú:", productNote);
+
+      if (productId && quantity > 0 && price >= 0) {
+        products.push({
+          productId,
+          sizeId,
+          quantity,
+          price,
+          note
+        });
+      }
+    });
+
+    if (products.length === 0) {
+      alert("Vui lòng thêm ít nhất một sản phẩm hợp lệ!");
+      return;
+    }
+
+    const productData = JSON.stringify(products);
+
+    $.ajax({
+      url: 'inventoryTrans/addStockIn',
+      type: 'POST',
+      data: {
+        createdId: createdId,
+        supplier: supplier,
+        createdDate: createdDate,
+        note: note,
+        products: productData
+      },
+      success: function (response) {
+        alert('Nhập kho thành công!');
+        console.log(response.stockIn.transactionDate)
+        var importTable = $('#importTable').DataTable();
+        importTable.row.add([
+          response.stockIn.id,
+          response.stockIn.transactionDate,
+          response.stockIn.supplier,
+          response.stockIn.totalPrice,
+          response.stockIn.note ?? '',
+          '<button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detailModal">Chi tiết</button>'+
+          '<button class="btn btn-sm btn-danger">Xoá</button>'
+        ]).draw();
+        $('#addStockModal').modal('hide');
+      },
+      error: function (xhr, status, error) {
+        let errorMessage = xhr.responseText || "Không xác định!";
+        alert('Có lỗi xảy ra khi nhập kho!\nChi tiết: ' + errorMessage);
+      }
+    });
+  }
 </script>
 <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 </body>
