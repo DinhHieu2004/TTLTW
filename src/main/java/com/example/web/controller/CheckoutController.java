@@ -4,6 +4,7 @@ import com.example.web.dao.cart.Cart;
 import com.example.web.dao.cart.CartPainting;
 import com.example.web.dao.model.*;
 import com.example.web.service.CheckoutService;
+import com.example.web.service.UserVoucherService;
 import com.example.web.service.VoucherService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,24 +15,40 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(value = "/checkout")
 public class CheckoutController extends HttpServlet {
     private final CheckoutService checkoutService = new CheckoutService();
     private final VoucherService voucherService = new VoucherService();
+    private final UserVoucherService userVoucherService = new UserVoucherService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        User user = (User) session.getAttribute("user");
+        int userId = user.getId();
+
+        List<UserVoucher> userVouchers = null;
         try {
-            List<Voucher> vouchers = voucherService.getAll();
-            req.setAttribute("v", vouchers);
+            userVouchers = userVoucherService.getAllByUserId(userId);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        List<Voucher> validVouchers = new ArrayList<>();
 
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+
+        for (UserVoucher uv : userVouchers) {
+            Voucher v = uv.getVoucher();
+            if(!uv.getIsUsed() && v.getStartDate().before(now) && v.getEndDate().after(now)) {
+                validVouchers.add(v);
+            }
+        }
+        req.setAttribute("v", validVouchers);
         req.getRequestDispatcher("user/checkout.jsp").forward(req, resp);
-
     }
 
     @Override
@@ -57,8 +74,7 @@ public class CheckoutController extends HttpServlet {
             String paymentMethod = request.getParameter("paymentMethod");
             String shippingFee = request.getParameter("shippingFee");
             shippingFee = shippingFee.replace(".", "");
-
-//            System.out.println( recipientName +" "+deliveryAddress+" "+recipientPhone+" "+paymentMethod+" "+shippingFee);
+            String[] voucherIds  = request.getParameterValues("voucherCodes");
 
             int paymentMethodInt = Integer.parseInt(paymentMethod);
             double shippingFeeDouble = Double.parseDouble(shippingFee);
@@ -93,12 +109,18 @@ public class CheckoutController extends HttpServlet {
                     return;
                 }
                 checkoutService.processCheckout(cart, userId,paymentMethodInt,recipientName, recipientPhone, deliveryAddress, shippingFeeDouble);
+                if (voucherIds != null) {
+                    for (String vidStr : voucherIds) {
+                        int voucherId = Integer.parseInt(vidStr);
+                        userVoucherService.markAsUsed(voucherId, userId);
+                    }
+                }
                 session.removeAttribute("cart");
                 response.setStatus(HttpServletResponse.SC_OK);
-                response.getWriter().write("Thanh toán thành công!");
+                response.getWriter().write("Đặt hàng thành công!");
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().write("Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại!");
+                response.getWriter().write("Có lỗi xảy ra trong quá trình đặt hàng. Vui lòng thử lại!");
                 e.printStackTrace();
             }
         } catch (Exception e) {

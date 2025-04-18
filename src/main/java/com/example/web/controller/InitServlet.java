@@ -1,14 +1,8 @@
 package com.example.web.controller;
 
 import com.example.web.dao.PaintingDao;
-import com.example.web.dao.model.Artist;
-import com.example.web.dao.model.Painting;
-import com.example.web.dao.model.PaintingSize;
-import com.example.web.dao.model.Theme;
-import com.example.web.service.ArtistService;
-import com.example.web.service.PaintingService;
-import com.example.web.service.SizeService;
-import com.example.web.service.ThemeService;
+import com.example.web.dao.model.*;
+import com.example.web.service.*;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -25,6 +19,7 @@ public class InitServlet extends HttpServlet {
     private ThemeService themeService = new ThemeService();
     private PaintingDao paintingDao = new PaintingDao();
     private PaintingService paintingService = new PaintingService();
+    private final DiscountService discountService = new DiscountService();
 
 
     @Override
@@ -48,11 +43,19 @@ public class InitServlet extends HttpServlet {
             context.setAttribute("flashSaleArtworks", flashSaleArtworks);
             context.setAttribute("newP", newP);
 
-            // context.setAttribute("themes", themes);
-
+            String flashSaleEndDateTime = "";
+            List<Discount> list = discountService.getAllDiscount();
+            for (Discount discount : list) {
+                if("Flash Sale".equalsIgnoreCase(discount.getDiscountName())) {
+                    flashSaleEndDateTime = discount.getEndDate().atTime(23, 59, 59).toString();
+                    break;
+                }
+            }
+            context.setAttribute("flashSaleEndDateTime", flashSaleEndDateTime);
 
         } catch (SQLException e) {
             throw new ServletException("Failed to load artists", e);
         }
     }
+
 }
