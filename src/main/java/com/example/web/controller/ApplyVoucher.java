@@ -81,7 +81,7 @@ public class ApplyVoucher extends HttpServlet {
 
         json.append("\"finalPrice\":").append(finalPrice);
 
-        if (discountedShippingFee >= 0) {
+        if (shippingFee != null) {
             json.append(", \"shippingFee\":").append(discountedShippingFee);
         }
 

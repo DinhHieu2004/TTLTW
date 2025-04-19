@@ -40,12 +40,11 @@ $(document).ready(function () {
             data: { vid: selectedVoucherIds },
             dataType: "json",
             success: function (response) {
-                if (response.finalPrice !== undefined) {
-                    renderCurrency("#finalPrice", response.finalPrice);
-                }
-                if (response.shippingFee !== undefined) {
-                    renderCurrency("#shippingFee", response.shippingFee);
-                }
+                const productPrice = response.finalPrice || 0;
+                const shippingFee = response.shippingFee || 0;
+                const total = productPrice + shippingFee;
+
+                renderCurrency("#finalPrice", total);
             },
             error: function () {
                 alert("Lỗi khi áp dụng voucher.");
@@ -68,12 +67,11 @@ $(document).ready(function () {
             data: { vid: selectedVoucherIds },
             dataType: "json",
             success: function (response) {
-                if (response.finalPrice !== undefined) {
-                    renderCurrency("#finalPrice", response.finalPrice);
-                }
-                if (response.shippingFee !== undefined) {
-                    renderCurrency("#shippingFee", response.shippingFee);
-                }
+                const productPrice = response.finalPrice || 0;
+                const shippingFee = response.shippingFee || 0;
+                const total = productPrice + shippingFee;
+
+                renderCurrency("#finalPrice", total);
 
                 const modal = $("#voucherModal");
                 modal.addClass("hidden").removeClass("d-flex");
@@ -96,12 +94,12 @@ $(document).ready(function () {
             dataType: "json",
             success: function (response) {
                 if (response.success) {
-                    if (response.finalPrice !== undefined) {
-                        renderCurrency("#finalPrice", response.finalPrice);
-                    }
-                    if (response.shippingFee !== undefined) {
-                        renderCurrency("#shippingFee", response.shippingFee);
-                    }
+                    const productPrice = response.finalPrice || 0;
+                    const shippingFee = response.shippingFee || 0;
+
+                    const total = productPrice + shippingFee;
+
+                    renderCurrency("#finalPrice", total);
 
                     $(`input[name='voucherOption'][value='${response.voucherId}']`).prop("checked", true).trigger("change");
                 } else {
