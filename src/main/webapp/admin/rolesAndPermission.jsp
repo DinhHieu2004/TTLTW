@@ -328,10 +328,19 @@
             updateRoleList(roleId, roleName, allPermissions);
           },
           error: function (xhr, status, error) {
-            console.error('Lỗi cập nhật quyền:', error);
-            alert('Cập nhật quyền thất bại! Vui lòng thử lại.');
+            if (xhr.status === 403) {
+              let response = JSON.parse(xhr.responseText);
+              alert(response.message || "Bạn không có quyền thực hiện thao tác này!");
+            } else if (xhr.status === 400) {
+              let response = JSON.parse(xhr.responseText);
+              alert("Lỗi dữ liệu: " + response.message);
+            } else {
+              console.error('Lỗi cập nhật quyền:', error);
+              alert('Cập nhật quyền thất bại! Vui lòng thử lại.');
+            }
           }
         });
+
       });
     });
 

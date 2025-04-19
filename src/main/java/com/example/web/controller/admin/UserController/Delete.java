@@ -22,15 +22,6 @@ public class Delete extends HttpServlet {
     private final String permission= "DELETE_USERS";
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
-
-        boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
-        if (!hasPermission) {
-            response.sendRedirect(request.getContextPath() + "/NoPermission.jsp");
-            return;
-        }
-
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
@@ -38,6 +29,19 @@ public class Delete extends HttpServlet {
         PrintWriter out = response.getWriter();
         Gson gson = new Gson();
         Map<String, Object> jsonResponse = new HashMap<>();
+
+
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+
+        boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
+        if (!hasPermission) {
+            jsonResponse.put("status", "error");
+            jsonResponse.put("message", "bạn không có quyền");
+            return;
+        }
+
+
 
         String id = request.getParameter("id");
         System.out.println(id);

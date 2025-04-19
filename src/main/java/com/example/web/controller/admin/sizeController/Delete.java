@@ -23,18 +23,20 @@ public class Delete extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+
+
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
         boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
         if (!hasPermission) {
-            response.sendRedirect(request.getContextPath() + "/NoPermission.jsp");
+            out.write("{\"success\": true, \"message\": \"bạn không có quyền\"}");
             return;
         }
 
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        PrintWriter out = response.getWriter();
 
         try {
             int id = Integer.parseInt(request.getParameter("sizeId"));

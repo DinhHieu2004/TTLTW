@@ -30,7 +30,7 @@ public class Update extends HttpServlet {
 
         boolean hasPermission = CheckPermission.checkPermission(userC, permission, "ADMIN");
         if (!hasPermission) {
-            resp.sendRedirect(req.getContextPath() + "/NoPermission.jsp");
+            resp.getWriter().write("{\"success\": false, \"message\": \"bạn không có quyền.\"}");
             return;
         }
 

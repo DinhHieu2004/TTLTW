@@ -28,7 +28,10 @@ public class Update extends HttpServlet {
 
         boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
         if (!hasPermission) {
-            resp.sendRedirect(req.getContextPath() + "/NoPermission.jsp");
+            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            resp.setContentType("application/json");
+            resp.setCharacterEncoding("UTF-8");
+            resp.getWriter().write("{\"message\": \"Bạn không có quyền!\"}");
             return;
         }
         resp.setContentType("application/json");

@@ -25,9 +25,11 @@ public class Delete extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
+        JsonObject jsonResponse = new JsonObject();
+
         boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
         if (!hasPermission) {
-            response.sendRedirect(request.getContextPath() + "/NoPermission.jsp");
+            jsonResponse.addProperty("message", "bạn không có quyền!");
             return;
         }
 
@@ -35,7 +37,6 @@ public class Delete extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         String pid = request.getParameter("pid");
-        JsonObject jsonResponse = new JsonObject();
 
         try {
             boolean isDeleted = paintingService.deletePainting(Integer.parseInt(pid));

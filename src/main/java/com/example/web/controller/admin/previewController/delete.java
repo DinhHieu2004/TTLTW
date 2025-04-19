@@ -28,7 +28,7 @@ public class delete extends HttpServlet {
 
         boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
         if (!hasPermission) {
-            response.sendRedirect(request.getContextPath() + "/NoPermission.jsp");
+            response.getWriter().write("{\"status\": \"error\", \"message\": \"Bạn không có quyền xóa đánh giá!\"}");
             return;
         }
 

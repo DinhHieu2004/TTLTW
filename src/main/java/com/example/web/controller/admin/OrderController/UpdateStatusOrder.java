@@ -25,15 +25,20 @@ public class UpdateStatusOrder extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
+        PrintWriter out = response.getWriter();
+
+
         boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
         if (!hasPermission) {
-            response.sendRedirect(request.getContextPath() + "/NoPermission.jsp");
+          //  response.sendRedirect(request.getContextPath() + "/NoPermission.jsp");
+
+            out.write("{\"message\": \"ban không có quyền\"}");
+
             return;
         }
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        PrintWriter out = response.getWriter();
 
         String orderIdStr = request.getParameter("orderId");
         String status = request.getParameter("deliveryStatus");

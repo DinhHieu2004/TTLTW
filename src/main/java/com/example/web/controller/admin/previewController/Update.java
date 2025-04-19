@@ -29,7 +29,8 @@ public class Update extends HttpServlet {
 
         boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
         if (!hasPermission) {
-            response.sendRedirect(request.getContextPath() + "/NoPermission.jsp");
+            response.getWriter().print("{\"status\": \"error\", \"message\": \"Bạn không có quyền chỉnh sửa đánh giá!\"}");
+
             return;
         }
 

@@ -32,16 +32,28 @@ public class Update extends HttpServlet {
         HttpSession session = req.getSession();
         User userC = (User) session.getAttribute("user");
 
+        Map<String, Object> responseMap = new HashMap<>();
+        Map<String, String> errors = new HashMap<>();
+
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        Gson gson = new Gson();
+
+
         boolean hasPermission = CheckPermission.checkPermission(userC, permission, "ADMIN");
         if (!hasPermission) {
-            resp.sendRedirect(req.getContextPath() + "/NoPermission.jsp");
-            return;
+
+            resp.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403
+            responseMap.put("message", "bạn không có quyền!");
+
+            try (PrintWriter out = resp.getWriter()) {
+                    out.write(gson.toJson(responseMap));
+                    out.flush();
+                }
+                return;
+
         }
-            resp.setContentType("application/json");
-            resp.setCharacterEncoding("UTF-8");
-            Gson gson = new Gson();
-            Map<String, Object> responseMap = new HashMap<>();
-            Map<String, String> errors = new HashMap<>();
+
 
             try {
                 int id = Integer.parseInt(req.getParameter("id"));

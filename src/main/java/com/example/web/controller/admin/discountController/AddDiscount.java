@@ -1,15 +1,14 @@
 package com.example.web.controller.admin.discountController;
 
+import com.example.web.controller.util.CheckPermission;
 import com.example.web.dao.model.Discount;
+import com.example.web.dao.model.User;
 import com.example.web.service.DiscountService;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
+import jakarta.servlet.http.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,8 +25,20 @@ import java.time.LocalDate;
 public class AddDiscount extends HttpServlet {
     private static final String UPLOAD_DIR = "N:/web//web//src//main//webapp//assets//images//artists";
 
+    private final String permission ="ADD_DISCOUNTS";
+
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User userC = (User) session.getAttribute("user");
+
+        boolean hasPermission = CheckPermission.checkPermission(userC, permission, "ADMIN");
+        if (!hasPermission) {
+            response.sendRedirect(request.getContextPath() + "/NoPermission.jsp");
+            return;
+        }
+
         String discountName = request.getParameter("discountName");
         double discountPercentage = Double.parseDouble(request.getParameter("discountPercentage"));
         String startDate = request.getParameter("startDate");

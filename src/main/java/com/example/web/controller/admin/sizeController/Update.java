@@ -24,18 +24,20 @@ public class Update extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        PrintWriter out = resp.getWriter();
+
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("user");
 
         boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
         if (!hasPermission) {
-            resp.sendRedirect(req.getContextPath() + "/NoPermission.jsp");
+            out.write("{\"success\": true, \"message\": \"bạn không có quyền\"}");
             return;
         }
 
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-        PrintWriter out = resp.getWriter();
+
 
         try {
             int id = Integer.parseInt(req.getParameter("sizeId"));

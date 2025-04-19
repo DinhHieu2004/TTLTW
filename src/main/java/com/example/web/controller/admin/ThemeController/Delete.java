@@ -22,20 +22,22 @@ public class Delete extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
-
-        boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
-        if (!hasPermission) {
-            response.sendRedirect(request.getContextPath() + "/NoPermission.jsp");
-            return;
-        }
-
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
         PrintWriter out = response.getWriter();
         String themeId = request.getParameter("themeId");
+
+
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+
+        boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
+        if (!hasPermission) {
+            out.write("{\"success\": false, \"message\": \"bạn không có quyền\"}");
+            return;
+        }
+
 
         try {
             int id = Integer.parseInt(themeId);

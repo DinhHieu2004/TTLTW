@@ -28,7 +28,7 @@ public class Update extends HttpServlet {
     private static final String UPLOAD_DIR = "D://web/web/src/main/webapp/assets/images/artists";
 
     private final PaintingService paintingService = new PaintingService();
-    private final String permission ="DELETE_DISCOUNTS";
+    private final String permission ="UPDATE_PRODUCTS";
 
 
     @Override
@@ -37,10 +37,7 @@ public class Update extends HttpServlet {
         User user = (User) session.getAttribute("user");
 
         boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
-        if (!hasPermission) {
-            resp.sendRedirect(req.getContextPath() + "/NoPermission.jsp");
-            return;
-        }
+
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
 
@@ -48,7 +45,7 @@ public class Update extends HttpServlet {
         PrintWriter out = resp.getWriter();
 
      //   User user = (User) req.getSession().getAttribute("user");
-        if (user == null || !user.hasPermission("UPDATE_PRODUCT")) {
+        if (user == null || hasPermission) {
             jsonResponse.addProperty("success", false);
             jsonResponse.addProperty("message", "Bạn không có quyền chỉnh sửa sản phẩm!");
             out.print(new Gson().toJson(jsonResponse));
