@@ -14,6 +14,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/discount")
@@ -22,14 +24,24 @@ public class DiscountController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         DiscountDao discountDao = new DiscountDao();
 
-        List<Discount> list = null;
+        List<Discount> validDiscount = new ArrayList<>();
+        List<Discount> list;
         try {
             list = discountDao.getAllDiscount();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        ;
+        LocalDate today = LocalDate.now();
+        for (Discount discount : list) {
+            LocalDate endDate = discount.getEndDate();
 
-        request.setAttribute("list", list);
+            if(!endDate.plusDays(2).isBefore(today)) {
+                validDiscount.add(discount);
+            }
+        }
+
+        request.setAttribute("list", validDiscount);
 
         request.getRequestDispatcher("/user/discount.jsp").forward(request, response);
 

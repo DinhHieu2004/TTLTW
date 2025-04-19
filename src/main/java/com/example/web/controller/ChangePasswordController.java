@@ -52,7 +52,7 @@ public class ChangePasswordController extends HttpServlet {
             }
 
             // Cập nhật mật khẩu mới vào cơ sở dữ liệu
-            boolean isUpdated = userDao.updatePassword(currentUser.getUsername(), newPassword);
+            boolean isUpdated = userDao.updatePassword(currentUser.getId(), newPassword);
             if (isUpdated) {
                 request.setAttribute("successMessage", "Thay đổi mật khẩu thành công!");
             } else {

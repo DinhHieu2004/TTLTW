@@ -27,6 +27,7 @@ $(document).ready(function() {
             success: function(response) {
                 updateArtworkGallery(response.data);
                 updatePagination(response.currentPage, response.totalPages);
+                debugger
             },
             error: function(xhr) {
                 console.error('Error loading paintings:', xhr);
@@ -47,40 +48,42 @@ $(document).ready(function() {
             let price = p.price.toLocaleString('vi-VN');
             const contextPath = '/web_war';
             const fullPhotoUrl = `${window.location.origin}${contextPath}/${p.imageUrl}`;
+            debugger
             let cardHtml = `
-                    <div class="col-6 col-md-3">
-                        <div class="card artwork-card h-100" style="height: 380px !important;">
-                            <a href="painting-detail?pid=${p.id}" class="card-link"></a>
-                            
-                            <img src="${fullPhotoUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
-                            <div class="card-body">
-                                <h5 class="card-title">${p.title}</h5>
-                                <p class="card-text">
-                                    <strong>Họa Sĩ:</strong> ${p.artistName}<br>
-                                    <strong>Chủ đề:</strong> ${p.themeName}<br>
-                                    <span class="rating-stars">
-                                        ${Array(5).fill().map((_, i) => `
-                                            <i class="fas fa-star ${i < p.averageRating ? 'text-warning' : 'text-gray-200'}" style="${i >= p.averageRating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>
-                                        `).join('')}
-                                    </span>
-                                    <span class="ms-1">${p.averageRating}</span>
-                                </p>
-                                ${p.discountPercentage > 0 ? `
-                                    <div class="d-flex align-items-center gap-2">
-                                        <del class="text-muted" style="font-size: 0.8rem;">${price} VNĐ</del>
-                                        <span class="badge bg-success" style="font-size: 0.75rem;">-${p.discountPercentage}%</span>
-                                    </div>
-                                    <div class="text-danger fw-bold" style="font-size: 0.925rem;">${discountPrice} VNĐ</div>
-                                ` : `
-                                    <div class="fw-bold" style="font-size: 0.925rem;">${price} VNĐ</div>
-                                `}
+            <div class="col-6 col-md-3">
+                <div class="card artwork-card h-100" style="height: 380px !important;">
+                    <a href="painting-detail?pid=${p.id}" class="card-link"></a>
+                    
+                    <img src="${fullPhotoUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                    <div class="card-body">
+                        <h5 class="card-title">${p.title}</h5>
+                        <p class="card-text">
+                            <strong>Họa Sĩ:</strong> ${p.artistName}<br>
+                            <strong>Chủ đề:</strong> ${p.themeName}<br>
+                            <span class="rating-stars">
+                                ${Array(5).fill().map((_, i) => `
+                                    <i class="fas fa-star ${i < p.averageRating ? 'text-warning' : 'text-gray-200'}" style="${i >= p.averageRating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>
+                                `).join('')}
+                            </span>
+                            <span class="ms-1">${p.averageRating}</span>
+                        </p>
+                        ${p.discountPercentage > 0 ? `
+                            <div class="d-flex align-items-center gap-2">
+                                <del class="text-muted" style="font-size: 0.8rem;">${price}₫</del>
+                                <span class="badge bg-success" style="font-size: 0.75rem;">-${p.discountPercentage}%</span>
                             </div>
-                        </div>
+                            <div class="text-danger fw-bold" style="font-size: 0.925rem;">${discountPrice}₫</div>
+                        ` : `
+                            <div class="fw-bold" style="font-size: 0.925rem;">${price}₫</div>
+                        `}
                     </div>
-                `;
+                </div>
+            </div>
+        `;
             gallery.append(cardHtml);
         });
     }
+
 
     function updatePagination(currentPage, totalPages) {
         let pagination = $('#pagination');

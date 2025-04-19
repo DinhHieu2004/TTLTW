@@ -226,13 +226,13 @@ public class UserDao {
         return ps.executeUpdate() > 0;
     }
 
-    public void saveTokenForRegister(int userId, String token, String type) {
+    public void saveTokens(int userId, String token, String type, long expiryMillis) {
         String sql = "INSERT INTO tokens (userId, token, expiredAt, type) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setString(2, token);
-            ps.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis() + 24 * 60 * 60 * 1000));
+            ps.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis() + expiryMillis));
             ps.setString(4, type);
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -297,13 +297,19 @@ public class UserDao {
             return rowsAffected > 0;
         }
     }
-    public boolean activateUserByToken(String token) {
+    public boolean activateUserByToken(String token, int userId) {
         try {
             conn.setAutoCommit(false);
             boolean isUserUpdated = updateUserStatusByToken(token);
             if (!isUserUpdated) {
                 conn.rollback();
                 return false;
+            }
+            String insertRoleQuery = "INSERT INTO user_roles (userId, roleId) VALUES (?, ?)";
+            try (PreparedStatement insertRolePs = conn.prepareStatement(insertRoleQuery)) {
+                insertRolePs.setInt(1, userId);
+                insertRolePs.setInt(2, 2);
+                insertRolePs.executeUpdate();
             }
             boolean isTokenDeleted = deleteRegisterToken(token, "register");
             if (!isTokenDeleted) {
@@ -339,6 +345,16 @@ public class UserDao {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+    public void deleteActiveTokens(int userId, String type) {
+        String sql = "DELETE FROM tokens WHERE userId = ? AND type = ? AND expiredAt > CURRENT_TIMESTAMP";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setString(2, type);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
     public boolean addUser(String fullName, String username, String hashPassword, String email, String phone, String role, String address) throws SQLException {
@@ -379,18 +395,17 @@ public class UserDao {
         return ps.executeUpdate() > 0;
     }
 
-    public boolean updatePassword(String username, String hashPassword) throws SQLException {
-        String sql = "UPDATE users SET password = ? WHERE username = ?";
+    public boolean updatePassword(int id, String hashPassword) throws SQLException {
+        String sql = "UPDATE users SET password = ? WHERE id = ?";
              PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, hashPassword);
-            ps.setString(2, username);
+            ps.setInt(2, id);
             return ps.executeUpdate() > 0;
 
     }
 
 
     public static String generateRandomString(int length) {
-        // Biến cục bộ chỉ tồn tại trong hàm này
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         StringBuilder result = new StringBuilder();
         java.util.Random random = new java.util.Random();
@@ -416,85 +431,6 @@ public class UserDao {
         return ps.executeUpdate() > 0;
 
     }
-
-    public static boolean sendMail(String to, String subject, String text) {
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-        props.put("mail.smtp.ssl.protocols", "TLSv1.2");
-        Session session = Session.getInstance(props, new javax.mail.Authenticator() {
-            @Override
-            protected javax.mail.PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("shopsandnlu22@gmail.com", "hdfl yops awzj kgxw");
-            }
-        });
-        try {
-            Message message = new MimeMessage(session);
-            message.setHeader("Content-Type", "text/plain; charset=UTF-8");
-            message.setFrom(new InternetAddress("shopsandnlu22@gmail.com"));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
-            message.setSubject(subject);
-            message.setText(text);
-            Transport.send(message);
-        } catch (MessagingException e) {
-            return false;
-        }
-        return true;
-    }
-
-    public boolean passwordRecovery(String email) throws SQLException {
-        User user = findByEmail(email); // Tìm người dùng theo email
-        if (user == null) {
-            return false; // Không tìm thấy người dùng
-        }
-
-        // Tạo token ngẫu nhiên
-        String token = UUID.randomUUID().toString();
-
-        // Lưu token vào bảng
-        String sql = "INSERT INTO password_reset_tokens (user_id, token) VALUES (?, ?)";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, user.getId());
-            ps.setString(2, token);
-            ps.executeUpdate();
-        }
-
-        // Tạo link đổi mật khẩu
-        String resetLink = "http://localhost:8080/TTLTW_war/user/reset_password?token=" + token;
-
-        // Gửi email
-        String subject = "Yêu cầu đặt lại mật khẩu";
-        String content = "Chào bạn."
-                + " Bạn đã yêu cầu đặt lại mật khẩu. Nhấn vào link bên dưới để đặt lại mật khẩu:"
-                +  resetLink
-                + ". Nếu bạn không yêu cầu hành động này, hãy bỏ qua email.";
-
-        return sendMail(email, subject, content);
-    }
-
-    public int getUserIdByToken(String token) throws SQLException {
-        String sql = "SELECT user_id FROM password_reset_tokens WHERE token = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, token);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("user_id");
-                }
-            }
-        }
-        return -1; // Không tìm thấy token
-    }
-    public void deleteToken(String token) throws SQLException {
-        String sql = "DELETE FROM password_reset_tokens WHERE token = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, token);
-            ps.executeUpdate();
-        }
-    }
-
-
     public String getPasswordByUsername(String username) throws SQLException {
         String sql = "SELECT password FROM users WHERE username = ?";
         PreparedStatement ps = conn.prepareStatement(sql);
@@ -505,7 +441,7 @@ public class UserDao {
             }
         }
 
-        return null; // Không tìm thấy mật khẩu
+        return null;
     }
     public boolean createUserByGoogle(String id, String name, String email, int role) throws SQLException {
         User existingUser = findGoogleUserById(id);
@@ -615,23 +551,6 @@ public class UserDao {
             }
         }
         return null;
-    }
-
-    public static void main(String[] args) {
-        UserDao userDao = new UserDao();
-        String testEmail = "";
-
-        try {
-            boolean isEmailSent = userDao.passwordRecovery(testEmail);
-
-            if (isEmailSent) {
-                System.out.println("Email đã được gửi thành công để đặt lại mật khẩu.");
-            } else {
-                System.out.println("Không tìm thấy người dùng với email " + testEmail + " hoặc có lỗi xảy ra.");
-            }
-        } catch (SQLException e) {
-            System.out.println("Lỗi khi thực hiện yêu cầu phục hồi mật khẩu: " + e.getMessage());
-        }
     }
 
 }

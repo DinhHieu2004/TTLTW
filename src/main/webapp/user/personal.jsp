@@ -60,16 +60,26 @@
                     <p><strong>Email:</strong> ${sessionScope.user.email}</p>
                     <p><strong>Địa chỉ:</strong> ${sessionScope.user.address}</p>
                     <div class="button-group">
-                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#changePassword">Đổi mật khẩu</button>
-                        <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#editPersonalInfoModal">Chỉnh sửa</button>
-                        <button class="btn btn-danger btn-sm" onclick="logout()">Đăng xuất</button>
+                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#changePassword">
+                            <i class="fas fa-key"></i> Đổi mật khẩu
+                        </button>
+                        <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#editPersonalInfoModal">
+                            <i class="fas fa-edit"></i> Chỉnh sửa
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                        </button>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#voucherModal">
+                            <i class="fas fa-ticket-alt"></i> Voucher của tôi
+                        </button>
                         <c:forEach var="role" items="${sessionScope.user.roles}">
                             <c:if test="${role.name == 'ADMIN'}">
-                                <a href="${pageContext.request.contextPath}/admin" class="btn btn-info btn-sm">Đến trang quản lý</a>
+                                <a href="${pageContext.request.contextPath}/admin" class="btn btn-info btn-sm">
+                                    <i class="fas fa-cogs"></i> Đến trang quản lý
+                                </a>
                             </c:if>
                         </c:forEach>
                     </div>
-
                     <div class="modal fade" id="editPersonalInfoModal" tabindex="-1" aria-labelledby="editPersonalInfoModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -81,17 +91,17 @@
                                     <form id="editPersonalInfoForm">
                                         <div class="mb-3">
                                             <label for="nameChange" class="form-label">Họ và tên <span style="color: red;">*</span></label>
-                                            <input type="text" class="form-control" id="nameChange" name="fullName" value="${sessionScope.user.fullName}">
+                                            <input type="text" class="form-control" id="nameChange" name="fullName" data-fullName="${sessionScope.user.fullName}">
                                             <div class="error" id="nameChangeError"></div>
                                         </div>
                                         <div class="mb-3">
                                             <label for="phoneChange" class="form-label">Số điện thoại</label>
-                                            <input type="text" class="form-control" id="phoneChange" name="phone" value="${sessionScope.user.phone}">
+                                            <input type="text" class="form-control" id="phoneChange" name="phone" data-phone="${sessionScope.user.phone}">
                                             <div class="error" id="phoneChangeError"></div>
                                         </div>
                                         <div class="mb-3">
                                             <label for="emailChange" class="form-label">Email <span style="color: red;">*</span></label>
-                                            <input type="email" class="form-control" id="emailChange" name="email" value="${sessionScope.user.email}"
+                                            <input type="email" class="form-control" id="emailChange" name="email" data-email="${sessionScope.user.email}"
                                                    <c:if test="${not empty sessionScope.user.gg_id or not empty sessionScope.user.fb_id}">disabled style="background-color: #e9ecef;"</c:if>>
                                             <div class="error" id="emailChangeError"></div>
                                         </div>
@@ -247,6 +257,56 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="closeAddressModal" data-bs-dismiss="modal">Hủy</button>
                 <button type="button" class="btn btn-primary" id="saveAddress">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+<%-- Model vouchers --%>
+<div class="modal fade" id="voucherModal" tabindex="-1" aria-labelledby="voucherModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="voucherModalLabel">Danh sách voucher của bạn</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <c:choose>
+                    <c:when test="${not empty userVouchers}">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th>Tên voucher</th>
+                                <th>Giảm (%)</th>
+                                <th>Hiệu lực</th>
+                                <th>Hết hạn</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <c:forEach var="v" items="${userVouchers}">
+                                <tr>
+                                    <td>${v.voucher.name}</td>
+                                    <td>${v.voucher.discount}</td>
+                                    <td>${v.voucher.startDate}</td>
+                                    <td>${v.voucher.endDate}</td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${v.isUsed}">Đã dùng</c:when>
+                                            <c:otherwise>Chưa dùng</c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                            </tbody>
+                        </table>
+                    </c:when>
+                    <c:otherwise>
+                        <p class="text-muted">Bạn chưa có voucher nào được tặng.</p>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
             </div>
         </div>
     </div>
