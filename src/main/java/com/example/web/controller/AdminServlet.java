@@ -3,6 +3,7 @@ package com.example.web.controller;
 import com.example.web.dao.model.BestSalePaiting;
 import com.example.web.dao.model.Order;
 import com.example.web.dao.model.Painting;
+import com.example.web.dao.model.User;
 import com.example.web.service.AdminService;
 import com.example.web.service.OrderService;
 import com.example.web.service.PaintingService;
@@ -11,6 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -24,6 +26,12 @@ public class AdminServlet extends HttpServlet {
             throws ServletException, IOException {
         String path = request.getPathInfo();
         AdminService adminService = new AdminService();
+
+        HttpSession session = request.getSession();
+
+        User user = (User) session.getAttribute("user");
+        System.out.println(" user permission at admin: "+ user.getAllRolePermission());
+
 
         if (path == null || path.equals("/")) {
             double totalRevenue = 0;

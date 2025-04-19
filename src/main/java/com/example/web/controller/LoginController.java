@@ -105,7 +105,7 @@ public class LoginController extends HttpServlet {
                     session.removeAttribute("captcha_code");
                     session.removeAttribute("captchaCreationTime");
 
-                    System.out.println(user);
+                 //   System.out.println(user);
 
                     responseMap.put("loginSuccess", "True");
                     response.setStatus(HttpServletResponse.SC_OK);
