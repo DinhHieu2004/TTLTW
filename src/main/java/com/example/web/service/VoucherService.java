@@ -30,4 +30,7 @@ public class VoucherService {
         return voucherDao.updateVoucher(voucher);
     }
 
+    public Voucher getVoucherByCode(String code) throws SQLException {
+        return voucherDao.getVoucherByCode(code);
+    }
 }

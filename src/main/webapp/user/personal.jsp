@@ -69,6 +69,9 @@
                         <button class="btn btn-danger btn-sm" onclick="logout()">
                             <i class="fas fa-sign-out-alt"></i> Đăng xuất
                         </button>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#voucherModal">
+                            <i class="fas fa-ticket-alt"></i> Voucher của tôi
+                        </button>
                         <c:forEach var="role" items="${sessionScope.user.roles}">
                             <c:if test="${role.name == 'ADMIN'}">
                                 <a href="${pageContext.request.contextPath}/admin" class="btn btn-info btn-sm">
@@ -254,6 +257,56 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="closeAddressModal" data-bs-dismiss="modal">Hủy</button>
                 <button type="button" class="btn btn-primary" id="saveAddress">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+<%-- Model vouchers --%>
+<div class="modal fade" id="voucherModal" tabindex="-1" aria-labelledby="voucherModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="voucherModalLabel">Danh sách voucher của bạn</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <c:choose>
+                    <c:when test="${not empty userVouchers}">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th>Tên voucher</th>
+                                <th>Giảm (%)</th>
+                                <th>Hiệu lực</th>
+                                <th>Hết hạn</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <c:forEach var="v" items="${userVouchers}">
+                                <tr>
+                                    <td>${v.voucher.name}</td>
+                                    <td>${v.voucher.discount}</td>
+                                    <td>${v.voucher.startDate}</td>
+                                    <td>${v.voucher.endDate}</td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${v.isUsed}">Đã dùng</c:when>
+                                            <c:otherwise>Chưa dùng</c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                            </tbody>
+                        </table>
+                    </c:when>
+                    <c:otherwise>
+                        <p class="text-muted">Bạn chưa có voucher nào được tặng.</p>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
             </div>
         </div>
     </div>
