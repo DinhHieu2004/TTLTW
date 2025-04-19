@@ -1,5 +1,6 @@
 package com.example.web.controller.admin.VoucherController;
 
+import com.example.web.controller.util.CheckPermission;
 import com.example.web.dao.model.User;
 import com.example.web.dao.model.Voucher;
 import com.example.web.service.VoucherService;
@@ -8,6 +9,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -18,8 +20,20 @@ import java.util.Date;
 @WebServlet("/admin/vouchers/update")
 public class Update extends HttpServlet {
     private VoucherService voucherService = new VoucherService();
+    private final String permission ="UPDATE_VOUCHERS";
+
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        User userC = (User) session.getAttribute("user");
+
+        boolean hasPermission = CheckPermission.checkPermission(userC, permission, "ADMIN");
+        if (!hasPermission) {
+            resp.sendRedirect(req.getContextPath() + "/NoPermission.jsp");
+            return;
+        }
+
         int vid =Integer.parseInt(req.getParameter("vid"));
         String name = req.getParameter("name");
         String isActives = req.getParameter("isActive");

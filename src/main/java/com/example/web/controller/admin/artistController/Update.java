@@ -1,15 +1,14 @@
 package com.example.web.controller.admin.artistController;
 
+import com.example.web.controller.util.CheckPermission;
 import com.example.web.dao.model.Artist;
+import com.example.web.dao.model.User;
 import com.example.web.service.ArtistService;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
+import jakarta.servlet.http.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,10 +24,20 @@ import java.sql.SQLException;
 public class Update extends HttpServlet {
     private static final String UPLOAD_DIR = "N:/web//web//src//main//webapp//assets//images//artists";
     private ArtistService artistService = new ArtistService();
+    private final String permission ="UPDATE_ARTISTS";
 
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        User user = (User) session.getAttribute("user");
+
+        boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
+        if (!hasPermission) {
+            resp.sendRedirect(req.getContextPath() + "/NoPermission.jsp");
+            return;
+        }
+
         req.setCharacterEncoding("utf-8");
 
         int artistId = Integer.parseInt(req.getParameter("id"));

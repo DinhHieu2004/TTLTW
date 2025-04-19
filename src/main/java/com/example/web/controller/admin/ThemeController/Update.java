@@ -1,7 +1,9 @@
 package com.example.web.controller.admin.ThemeController;
 
 
+import com.example.web.controller.util.CheckPermission;
 import com.example.web.dao.ThemeDao;
+import com.example.web.dao.model.User;
 import com.example.web.dao.model.Voucher;
 import com.example.web.service.ThemeService;
 import com.example.web.service.VoucherService;
@@ -10,6 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -18,8 +21,19 @@ import java.sql.SQLException;
 public class Update extends HttpServlet {
     private final ThemeService themeService = new ThemeService();
 
+    private final String permission ="UPDATE_THEMES";
+
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        User user = (User) session.getAttribute("user");
+
+        boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
+        if (!hasPermission) {
+            resp.sendRedirect(req.getContextPath() + "/NoPermission.jsp");
+            return;
+        }
         resp.setContentType("application/json"); // Định dạng JSON
         resp.setCharacterEncoding("UTF-8");
 
