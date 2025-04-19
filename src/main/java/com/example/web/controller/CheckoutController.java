@@ -1,5 +1,6 @@
 package com.example.web.controller;
 
+import com.example.web.controller.util.CheckPermission;
 import com.example.web.dao.cart.Cart;
 import com.example.web.dao.cart.CartPainting;
 import com.example.web.dao.model.*;
@@ -21,8 +22,18 @@ public class CheckoutController extends HttpServlet {
     private final CheckoutService checkoutService = new CheckoutService();
     private final VoucherService voucherService = new VoucherService();
 
+    private final String permission ="BUY_PRODUCTS";
+
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        User userC = getUserInSession(req);
+
+        boolean hasPermission = CheckPermission.checkPermission(userC, permission, "ADMIN");
+        if (!hasPermission) {
+            resp.sendRedirect(req.getContextPath() + "/NoPermission.jsp");
+            return;
+        }
         try {
             List<Voucher> vouchers = voucherService.getAll();
             req.setAttribute("v", vouchers);
@@ -38,12 +49,19 @@ public class CheckoutController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             HttpSession session = request.getSession();
-            User user = (User) session.getAttribute("user");
+            User user = getUserInSession(request);
             if(user == null){
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().println("Bạn cần đăng nhập để tiếp tục thanh toán!");
                 return;
             }
+            boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
+
+            if(!hasPermission){
+                response.getWriter().println("Bạn không có quyền mua hàng");
+
+            }
+
             int userId = user.getId();
             Cart cart = (Cart) request.getSession().getAttribute("cart");
             if (cart == null || cart.getItems().isEmpty()) {
@@ -105,5 +123,9 @@ public class CheckoutController extends HttpServlet {
             response.setContentType("application/json");
             response.getWriter().write("{\"success\": false, \"message\": \"Có lỗi xảy ra: " + e.getMessage() + "\"}");
         }
+    }
+    private User getUserInSession(HttpServletRequest request){
+        HttpSession httpSession = request.getSession();
+        return  (User)httpSession.getAttribute("user");
     }
 }
