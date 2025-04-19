@@ -296,6 +296,9 @@ $(document).ready(function () {
                         let inputId = key.replace("Error", "");
                         $("#" + inputId).addClass('is-invalid');
                     });
+                } else if (xhr.status === 403) {
+                    let response = JSON.parse(xhr.responseText);
+                    alert(response.message || "Bạn không có quyền thực hiện chức năng này!");
                 } else {
                     alert("Lỗi hệ thống: " + xhr.responseText);
                 }

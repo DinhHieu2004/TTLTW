@@ -1,5 +1,6 @@
 package com.example.web.controller;
 
+import com.example.web.controller.util.CheckPermission;
 import com.example.web.dao.cart.Cart;
 import com.example.web.dao.cart.CartPainting;
 import com.example.web.dao.model.*;
@@ -25,6 +26,9 @@ public class CheckoutController extends HttpServlet {
     private final VoucherService voucherService = new VoucherService();
     private final UserVoucherService userVoucherService = new UserVoucherService();
 
+    private final String permission ="BUY_PRODUCTS";
+
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
@@ -49,18 +53,26 @@ public class CheckoutController extends HttpServlet {
         }
         req.setAttribute("v", validVouchers);
         req.getRequestDispatcher("user/checkout.jsp").forward(req, resp);
+
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             HttpSession session = request.getSession();
-            User user = (User) session.getAttribute("user");
+            User user = getUserInSession(request);
             if(user == null){
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().println("Bạn cần đăng nhập để tiếp tục thanh toán!");
                 return;
             }
+            boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
+
+            if(!hasPermission){
+                response.getWriter().println("Bạn không có quyền mua hàng");
+
+            }
+
             int userId = user.getId();
             Cart cart = (Cart) request.getSession().getAttribute("cart");
             if (cart == null || cart.getItems().isEmpty()) {
@@ -117,15 +129,19 @@ public class CheckoutController extends HttpServlet {
                 }
                 session.removeAttribute("cart");
                 response.setStatus(HttpServletResponse.SC_OK);
-                response.getWriter().write("Đặt hàng thành công!");
+                response.getWriter().write("Thanh toán thành công!");
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().write("Có lỗi xảy ra trong quá trình đặt hàng. Vui lòng thử lại!");
+                response.getWriter().write("Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại!");
                 e.printStackTrace();
             }
         } catch (Exception e) {
             response.setContentType("application/json");
             response.getWriter().write("{\"success\": false, \"message\": \"Có lỗi xảy ra: " + e.getMessage() + "\"}");
         }
+    }
+    private User getUserInSession(HttpServletRequest request){
+        HttpSession httpSession = request.getSession();
+        return  (User)httpSession.getAttribute("user");
     }
 }

@@ -1,5 +1,7 @@
 package com.example.web.controller.admin.discountController;
 
+import com.example.web.controller.util.CheckPermission;
+import com.example.web.dao.model.User;
 import com.example.web.service.DiscountService;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -7,6 +9,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
@@ -14,10 +17,19 @@ import java.io.IOException;
 public class DeleteDiscount extends HttpServlet {
 
     private DiscountService discountService = new DiscountService(); // Khởi tạo Service
+    private final String permission ="DELETE_DISCOUNTS";
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Lấy discountId từ yêu cầu POST
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+
+        boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
+        if (!hasPermission) {
+            response.sendRedirect(request.getContextPath() + "/NoPermission.jsp");
+            return;
+        }
         String discountIdStr = request.getParameter("discountId");
         int discountId = 0;
 

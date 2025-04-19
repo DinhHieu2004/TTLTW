@@ -1,5 +1,6 @@
 package com.example.web.controller.admin.UserController;
 
+import com.example.web.controller.util.CheckPermission;
 import com.example.web.dao.model.User;
 import com.example.web.service.UserSerive;
 import com.google.gson.Gson;
@@ -8,6 +9,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -22,13 +24,36 @@ import java.util.Set;
 public class Update extends HttpServlet {
     private UserSerive userSerive = new UserSerive();
 
-        @Override
-        protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-            resp.setContentType("application/json");
-            resp.setCharacterEncoding("UTF-8");
-            Gson gson = new Gson();
-            Map<String, Object> responseMap = new HashMap<>();
-            Map<String, String> errors = new HashMap<>();
+    private final String permission ="UPDATE_USERS";
+
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        User userC = (User) session.getAttribute("user");
+
+        Map<String, Object> responseMap = new HashMap<>();
+        Map<String, String> errors = new HashMap<>();
+
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        Gson gson = new Gson();
+
+
+        boolean hasPermission = CheckPermission.checkPermission(userC, permission, "ADMIN");
+        if (!hasPermission) {
+
+            resp.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403
+            responseMap.put("message", "bạn không có quyền!");
+
+            try (PrintWriter out = resp.getWriter()) {
+                    out.write(gson.toJson(responseMap));
+                    out.flush();
+                }
+                return;
+
+        }
+
 
             try {
                 int id = Integer.parseInt(req.getParameter("id"));
