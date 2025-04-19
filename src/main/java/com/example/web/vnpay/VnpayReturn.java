@@ -47,6 +47,7 @@ public class VnpayReturn extends HttpServlet {
         String recipientPhone = (String) session.getAttribute("recipientPhone");
         String shippingFeeStr = (String) session.getAttribute("shippingFee");
         String[] voucherIds = (String[]) session.getAttribute("voucherIds");
+        String appliedVoucherIds = (voucherIds != null) ? String.join(",", voucherIds) : null;
 
         shippingFeeStr = shippingFeeStr.replace(".", "");
         double shippingFee = Double.parseDouble(shippingFeeStr);
@@ -115,7 +116,7 @@ public class VnpayReturn extends HttpServlet {
                             return;
                         }
 
-                        orderId = checkoutService.processCheckout2(cart, userId, 2, recipientName, recipientPhone, deliveryAddress, vnpTxnRef, shippingFee);
+                        orderId = checkoutService.processCheckout2(cart, userId, 2, recipientName, recipientPhone, deliveryAddress, vnpTxnRef, shippingFee, appliedVoucherIds);
                         orderService.updatePaymentStatus(orderId, "đã thanh toán");
                         if (voucherIds != null) {
                             for (String vidStr : voucherIds) {

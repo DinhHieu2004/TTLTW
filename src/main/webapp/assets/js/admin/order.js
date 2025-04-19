@@ -55,7 +55,7 @@ $(document).ready(function () {
 
                 `);
 
-                    modelPrice.html(`<p><strong>Tổng trả:</strong> ${order.totalAmount || 0}</p>`)
+                    modelPrice.html(`<p><strong>Tổng trả:</strong> ${order.priceAfterShipping || 0}</p>`)
                     deliveryStatus.text(order.deliveryStatus || '');
                     if (statusSelect.length) {
                         statusSelect.val(deliveryStatus);

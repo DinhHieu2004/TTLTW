@@ -74,6 +74,7 @@ $(document).ready(function () {
                         modelPrice.html(`
                         <p><strong>Phí giao hàng:</strong> ${order.shippingFee}</p>
                         <p><strong>Tiền hàng:</strong> ${order.totalAmount}</p>
+                        <p><strong>Voucher áp dụng:</strong> ${order.appliedVoucherIds}</p>
                         <p><strong>Tổng trả:</strong> ${order.priceAfterShipping}</p>
 `);                     debugger
                         if (order.deliveryStatus.trim().toLowerCase()  === 'chờ' ||

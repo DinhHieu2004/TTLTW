@@ -93,7 +93,7 @@ public class UserVoucherDao {
     // lấy các voucher chưa dùng
     public List<UserVoucher> getUnusedVouchersByUser(int userId) throws SQLException {
         List<UserVoucher> list = new ArrayList<>();
-        String sql = "SELECT uv.*, v.name, v.discount, v.startDate, v.endDate " +
+        String sql = "SELECT uv.*, v.name, v.discount, v.startDate, v.endDate, v.code " +
                 "FROM user_vouchers uv " +
                 "JOIN vouchers v ON uv.voucher_id = v.id " +
                 "WHERE uv.user_id = ? AND uv.is_used = false AND v.endDate >= CURRENT_DATE";
@@ -116,6 +116,7 @@ public class UserVoucherDao {
                     voucher.setDiscount(rs.getInt("discount"));
                     voucher.setStartDate(rs.getDate("startDate"));
                     voucher.setEndDate(rs.getDate("endDate"));
+                    voucher.setCode(rs.getString("code"));
 
                     uv.setVoucher(voucher);
                     list.add(uv);
