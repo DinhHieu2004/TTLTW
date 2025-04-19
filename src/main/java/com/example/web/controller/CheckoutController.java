@@ -23,7 +23,7 @@ import java.util.List;
 @WebServlet(value = "/checkout")
 public class CheckoutController extends HttpServlet {
     private final CheckoutService checkoutService = new CheckoutService();
-    private final VoucherService voucherService = new VoucherService();
+  //  private final VoucherService voucherService = new VoucherService();
     private final UserVoucherService userVoucherService = new UserVoucherService();
 
     private final String permission ="BUY_PRODUCTS";
@@ -31,8 +31,8 @@ public class CheckoutController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession();
-        User user = (User) session.getAttribute("user");
+       // HttpSession session = req.getSession();
+        User user = getUserInSession(req);
         int userId = user.getId();
 
         List<UserVoucher> userVouchers = null;
