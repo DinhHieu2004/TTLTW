@@ -46,6 +46,9 @@ public class AddStockIn extends HttpServlet {
         } else if (supplier == null || supplier.isEmpty()) {
             responseMap.put("status", "error");
             responseMap.put("message", "Vui lòng nhập nhà cung cấp!");
+        } else if (createdDate == null || createdDate.isEmpty()) {
+            responseMap.put("status", "error");
+            responseMap.put("message", "Vui lòng chọn ngày nhập!");
         } else {
             Type productListType = new TypeToken<List<StockInItem>>(){}.getType();
             products = gson.fromJson(productsJson, productListType);
@@ -61,7 +64,7 @@ public class AddStockIn extends HttpServlet {
                         break;
                     } else if (product.getSizeId() <= 0) {
                         responseMap.put("status", "error");
-                        responseMap.put("message", "Vui lòng nhập kích thước!");
+                        responseMap.put("message", "Vui lòng chọn kích thước!");
                         break;
                     } else if (product.getPrice() <= 0) {
                         responseMap.put("status", "error");

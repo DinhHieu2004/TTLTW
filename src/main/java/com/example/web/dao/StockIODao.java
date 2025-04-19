@@ -168,4 +168,47 @@ public class StockIODao {
 
         return items;
     }
+
+    public boolean deleteStockInById(int id) {
+        String deleteStockInSQL = "DELETE FROM stock_in WHERE id = ?";
+        String deleteStockInItemsSQL = "DELETE FROM stock_in_items WHERE stockInId = ?";
+
+        try {
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement ps = conn.prepareStatement(deleteStockInItemsSQL)) {
+                ps.setInt(1, id);
+                int rowsDeletedItems = ps.executeUpdate();
+                if (rowsDeletedItems == 0) {
+                    conn.rollback();
+                    return false;
+                }
+            }
+
+            try (PreparedStatement ps = conn.prepareStatement(deleteStockInSQL)) {
+                ps.setInt(1, id);
+                int rowsDeletedStockIn = ps.executeUpdate();
+                if (rowsDeletedStockIn == 0) {
+                    conn.rollback();
+                    return false;
+                }
+            }
+            conn.commit();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+            return false;
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

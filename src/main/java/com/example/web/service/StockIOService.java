@@ -19,4 +19,8 @@ public class StockIOService {
     public StockIn getStockInDetail(String id) throws SQLException {
         return stockIODao.getStockInDetail(Integer.parseInt(id));
     }
+
+    public boolean deleteStockInById(String id) {
+        return stockIODao.deleteStockInById(Integer.parseInt(id));
+    }
 }

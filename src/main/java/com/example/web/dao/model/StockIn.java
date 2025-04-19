@@ -22,18 +22,6 @@ public class StockIn {
         this.totalPrice = totalPrice;
         this.transactionDate = transactionDate;
     }
-
-    public StockIn(int id, int createdId, String createdName, String supplier, String note, Date transactionDate, double totalPrice, List<StockInItem> listPro) {
-        this.id = id;
-        this.createdId = createdId;
-        this.createdName = createdName;
-        this.supplier = supplier;
-        this.note = note;
-        this.transactionDate = transactionDate;
-        this.totalPrice = totalPrice;
-        this.listPro = listPro;
-    }
-
     public StockIn() {
     }
 

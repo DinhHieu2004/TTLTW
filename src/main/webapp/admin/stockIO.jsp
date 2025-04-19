@@ -9,7 +9,9 @@
   <title>Admin Panel</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
   <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -91,15 +93,15 @@
           </c:if>
 
           <c:forEach var="si" items="${stockIn}">
-            <tr>
+            <tr data-si-id="${si.id}">
               <td>${si.id}</td>
               <td>${si.transactionDate}</td>
               <td>${si.supplier}</td>
-              <td>${si.totalPrice}</td>
+              <td><f:formatNumber value="${si.totalPrice}" type="currency" pattern="#,##0"/> VND</td>
               <td>${si.note}</td>
               <td>
                 <button class="btn btn-sm btn-info viewDetailSIButton" data-stockin-id="${si.id}" data-bs-toggle="modal" data-bs-target="#detailModal">Chi tiết</button>
-                <button class="btn btn-sm btn-danger">Xoá</button>
+                <button class="btn btn-sm btn-danger deleteStockInButton" data-id="${si.id}">Xoá</button>
               </td>
             </tr>
           </c:forEach>
@@ -206,6 +208,7 @@
 
 <script>
   $(document).ready(function() {
+
     let importTable = $('#importTable').DataTable({
       "order": [[1, "desc"]],
       "columnDefs": [
@@ -233,12 +236,12 @@
           $('#createBy').text(response.createdName);
           $('#detailSup').text(response.supplier);
           $('#note').text(response.note);
-          $('#totalPrice').text(response.totalPrice);
+          $('#totalPrice').text(response.totalPrice.toLocaleString());
 
           $('#stockinItemBody').empty();
 
           $.each(response.listPro, function(index, product) {
-            var productRow = '<tr>' +
+            var productRow = '<tr data-si-id="'+product.productId+'">' +
                     '<td>' + product.productId + '</td>' +
                     '<td>' + product.productName + '</td>' +
                     '<td>' + product.sizeName + '</td>' +
@@ -255,6 +258,57 @@
         }
       });
     });
+
+    $(".deleteStockInButton").click(function() {
+      var stockInId = $(this).data("id");
+
+      Swal.fire({
+        title: 'Bạn có chắc chắn muốn xóa phiếu nhập kho này?',
+        text: "Việc này không thể hoàn tác!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Có, xóa!',
+        cancelButtonText: 'Hủy'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: 'inventoryTrans/delete',
+            type: 'POST',
+            data: {
+              type: 'in',
+              id: stockInId
+            },
+            success: function(response) {
+              if (response.success) {
+                var $row = $('[data-si-id="' + stockInId + '"]').closest('tr');
+                importTable.row($row).remove().draw();
+
+                Swal.fire(
+                        'Đã xóa!',
+                        'Phiếu nhập kho đã được xóa.',
+                        'success'
+                );
+              } else {
+                Swal.fire(
+                        'Lỗi!',
+                        response.message || 'Có lỗi xảy ra khi xóa phiếu nhập kho.',
+                        'error'
+                );
+              }
+            },
+            error: function() {
+              Swal.fire(
+                      'Lỗi!',
+                      'Đã xảy ra lỗi với yêu cầu xóa.',
+                      'error'
+              );
+            }
+          });
+        }
+      });
+    });
   });
   function addEmptyRow() {
     const tbody = document.getElementById("productBody");
@@ -262,7 +316,7 @@
     const row = document.createElement("tr");
 
     row.innerHTML = `
-    <td><select class="form-select">
+    <td><select class="form-select product-select">
             <option value="">Chọn sản phẩm</option>
                     <c:forEach var="p" items="${p}">
                       <option value="${p.id}" data-name="${p.title}">${p.id} - ${p.title}</option>
@@ -283,6 +337,7 @@
   `;
 
     tbody.appendChild(row);
+
   }
 
   function removeRow(btn) {
@@ -341,10 +396,7 @@
       isValid = false;
     }
     if (!isValid) {
-      console.log('Các lỗi:', errorMessages);
-
       let errorText = errorMessages.join('<br>');
-
       Swal.fire({
         icon: 'error',
         title: 'Lỗi nhập liệu',
@@ -383,7 +435,7 @@
           '<button class="btn btn-sm btn-info viewDetailSIButton" data-stockin-id="'+ response.stockIn.id +'"  data-bs-toggle="modal" data-bs-target="#detailModal">Chi tiết</button>'+
           '<button class="btn btn-sm btn-danger">Xoá</button>'
         ]).draw();
-        $('#addStockModal').modal('hide');
+        resetForm();
       },
       error: function (xhr, status, error) {
         let errorMessage = xhr.responseText || "Không xác định!";
@@ -395,6 +447,13 @@
         });
       }
     });
+  }
+  function resetForm() {
+    $("#supplier, #createdDate").val("");
+    $("textarea").val("");
+    $("#productBody").empty();
+
+    $('#addStockModal').modal('hide');
   }
 </script>
 <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
