@@ -22,11 +22,11 @@ public class User  implements Serializable {
 
 
     public String getAllRolePermission() {
-        String result="";
+        String result ="";
         for(Role role : roles) {
-            result+= "ROLE_"+role.getName()+" ";
+            result += "ROLE_"+role.getName()+" ";
             for(Permission permission : role.getPermissions()) {
-                result+= permission.getName()+" ";
+                result += permission.getName()+" ";
             }
         }
         this.allRolePermission = result;
@@ -134,7 +134,7 @@ public class User  implements Serializable {
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
                 ", password='" + password + '\'' +
-                ", roles=" + roles +
+                ", permission=" + allRolePermission +
                 '}';
     }
 
