@@ -15,4 +15,8 @@ public class StockIOService {
     public int saveStockInWithItems(StockIn stockIn) throws SQLException {
         return stockIODao.saveStockInWithItems(stockIn);
     }
+
+    public StockIn getStockInDetail(String id) throws SQLException {
+        return stockIODao.getStockInDetail(Integer.parseInt(id));
+    }
 }

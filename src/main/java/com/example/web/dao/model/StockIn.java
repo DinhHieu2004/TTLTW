@@ -7,6 +7,7 @@ import java.util.List;
 public class StockIn {
     private int id;
     private int createdId;
+    private String createdName;
     private String supplier;
     private String note;
     private Date transactionDate;
@@ -21,11 +22,16 @@ public class StockIn {
         this.totalPrice = totalPrice;
         this.transactionDate = transactionDate;
     }
-    public StockIn(int createdId, String supplier, String note, Date transactionDate){
+
+    public StockIn(int id, int createdId, String createdName, String supplier, String note, Date transactionDate, double totalPrice, List<StockInItem> listPro) {
+        this.id = id;
         this.createdId = createdId;
+        this.createdName = createdName;
         this.supplier = supplier;
         this.note = note;
         this.transactionDate = transactionDate;
+        this.totalPrice = totalPrice;
+        this.listPro = listPro;
     }
 
     public StockIn() {
@@ -85,5 +91,13 @@ public class StockIn {
 
     public void setListPro(List<StockInItem> listPro) {
         this.listPro = listPro;
+    }
+
+    public String getCreatedName() {
+        return createdName;
+    }
+
+    public void setCreatedName(String createdName) {
+        this.createdName = createdName;
     }
 }

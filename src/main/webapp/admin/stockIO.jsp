@@ -12,6 +12,7 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <!-- DataTables Buttons CSS -->
   <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
 
@@ -63,7 +64,7 @@
       <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addStockModal">
         + Thêm Phiếu Nhập kho
       </button>
-      <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addStockModal">
+      <button class="btn btn-success mb-3" data-bs-toggle="modal">
         + Thêm Phiếu Xuất kho
       </button>
 
@@ -97,43 +98,11 @@
               <td>${si.totalPrice}</td>
               <td>${si.note}</td>
               <td>
-                <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detailModal">Chi tiết</button>
+                <button class="btn btn-sm btn-info viewDetailSIButton" data-stockin-id="${si.id}" data-bs-toggle="modal" data-bs-target="#detailModal">Chi tiết</button>
                 <button class="btn btn-sm btn-danger">Xoá</button>
               </td>
             </tr>
           </c:forEach>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="table-section mt-4">
-        <div class="card-header bg-success text-white mt-4" style="background: #198754  !important;">
-          <h5>Xuất Kho</h5>
-        </div>
-        <table id="exportTable" class="table table-bordered display">
-          <thead>
-          <tr>
-            <th>Mã Phiếu</th>
-            <th>Loại Phiếu</th>
-            <th>Ngày Tạo</th>
-            <th>Tổng Tiền</th>
-            <th>Ghi Chú</th>
-            <th>Hành Động</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr>
-            <td>XK003</td>
-            <td>Xuất kho</td>
-            <td>2025-04-13</td>
-            <td>8,500,000</td>
-            <td>Xuất cho khách B</td>
-            <td>
-              <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detailModal">Chi tiết</button>
-              <button class="btn btn-sm btn-danger">Xoá</button>
-            </td>
-          </tr>
-          <!-- Add more export rows here -->
           </tbody>
         </table>
       </div>
@@ -144,45 +113,35 @@
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title" id="detailModalLabel">Chi tiết Phiếu Nhập/Xuất</h5>
+          <h5 class="modal-title" id="detailModalLabel">Chi tiết Phiếu Nhập kho</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
         </div>
         <div class="modal-body">
-          <p><strong>Mã phiếu:</strong> NK001</p>
+          <p><strong>Mã phiếu:</strong> <span id="siId"></span></p>
+          <p><strong>Người lập:</strong> <span id="createBy"></span></p>
           <p><strong>Loại:</strong> Nhập kho</p>
-          <p><strong>Ngày tạo:</strong> 2025-04-14</p>
-          <p><strong>Ghi chú:</strong> Nhập từ NCC A</p>
+          <p><strong>Nhà cung cấp:</strong> <span id="detailSup"></span></p>
+          <p><strong>Ngày tạo:</strong> <span id="importDate"></span></p>
+          <p><strong>Ghi chú:</strong> <span id="note"></span></p>
 
-          <table class="table table-bordered mt-3">
+          <table id="stockInItem" class="table table-bordered mt-3">
             <thead>
             <tr>
               <th>Mã SP</th>
               <th>Tên SP</th>
+              <th>Kích thước</th>
               <th>Số lượng</th>
               <th>Đơn giá</th>
               <th>Thành tiền</th>
+              <th>Ghi chú</th>
             </tr>
             </thead>
-            <tbody>
-            <tr>
-              <td>1</td>
-              <td>Ram 16GB</td>
-              <td>2</td>
-              <td>1,200,000</td>
-              <td>2,400,000</td>
-            </tr>
-            <tr>
-              <td>SP02</td>
-              <td>SSD 1TB</td>
-              <td>3</td>
-              <td>1,600,000</td>
-              <td>4,800,000</td>
-            </tr>
+            <tbody id="stockinItemBody">
             </tbody>
           </table>
         </div>
         <div class="modal-footer">
-          <strong class="me-auto">Tổng tiền: 12,000,000</strong>
+          <strong class="me-auto"> Tổng tiền: <span id="totalPrice"></span></strong>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
         </div>
       </div>
@@ -224,7 +183,7 @@
         <table class="table table-bordered" id="productTable">
           <thead>
           <tr>
-            <th>Sản phẩm</th>
+            <th>Mã Sản phẩm</th>
             <th>Size</th>
             <th>Số lượng</th>
             <th>Đơn giá</th>
@@ -247,8 +206,55 @@
 
 <script>
   $(document).ready(function() {
+    let importTable = $('#importTable').DataTable({
+      "order": [[1, "desc"]],
+      "columnDefs": [
+        { "type": "date", "targets": 1 }
+      ],
+      dom: '<"d-flex justify-content-between align-items-center"lfB>rtip',
+      buttons: [
+        { extend: 'copy', title: 'Danh sách Nhập kho' },
+        { extend: 'csv', title: 'Danh sách Nhập kho' },
+        { extend: 'excel', title: 'Danh sách Nhập kho' },
+        { extend: 'pdf', title: 'Danh sách Nhập kho' },
+        { extend: 'print', title: 'Danh sách Nhập kho' }
+      ]
+    });
+    $(document).on('click', '.viewDetailSIButton', function () {
+      const stockInId = $(this).data('stockin-id');
+      $.ajax({
+        url: 'inventoryTrans/detail',
+        method: 'GET',
+        data: { id: stockInId, type: "in" },
+        success: function(response) {
+          console.log(response);
+          $('#siId').text(response.id);
+          $('#importDate').text(response.transactionDate);
+          $('#createBy').text(response.createdName);
+          $('#detailSup').text(response.supplier);
+          $('#note').text(response.note);
+          $('#totalPrice').text(response.totalPrice);
 
-    $('#exportTable').DataTable();
+          $('#stockinItemBody').empty();
+
+          $.each(response.listPro, function(index, product) {
+            var productRow = '<tr>' +
+                    '<td>' + product.productId + '</td>' +
+                    '<td>' + product.productName + '</td>' +
+                    '<td>' + product.sizeName + '</td>' +
+                    '<td>' + product.quantity + '</td>' +
+                    '<td>' + product.price.toLocaleString() + '</td>' +
+                    '<td>' + product.totalPrice.toLocaleString() + '</td>' +
+                    '<td>' + (product.note ?? '') + '</td>' +
+                    '</tr>';
+            $('#stockinItemBody').append(productRow);
+          });
+        },
+        error: function(xhr, status, error) {
+          console.error('Có lỗi xảy ra: ' + error);
+        }
+      });
+    });
   });
   function addEmptyRow() {
     const tbody = document.getElementById("productBody");
@@ -292,21 +298,31 @@
 
     const products = [];
 
-    $('#productBody tr').each(function () {
+    let isValid = true;
+    let errorMessages = [];
+
+    $('.error-message').remove();
+    if (!supplier) {
+      $('#supplier').after('<div class="error-message" style="color:red;font-size:12px;">Vui lòng nhập nhà cung cấp</div>');
+      isValid = false;
+      errorMessages.push("Thiếu nhà cung cấp");
+    }
+
+    if (!createdDate) {
+      $('#createdDate').after('<div class="error-message" style="color:red;font-size:12px;">Vui lòng chọn ngày nhập</div>');
+      isValid = false;
+      errorMessages.push("Thiếu ngày nhập");
+    }
+
+    $('#productBody tr').each(function (index) {
       const row = $(this);
       const productId = row.find('select').eq(0).val();
       const sizeId = row.find('select').eq(1).val();
       const quantity = row.find('input[name="productQuantity"]').val();
       const price = row.find('input[name="productPrice"]').val();
-      const productNote = row.find('input[name="productNote"]').val();
+      const note = row.find('input[name="productNote"]').val();
 
-      console.log("Sản phẩm ID:", productId);
-      console.log("Size ID:", sizeId);
-      console.log("Số lượng:", quantity);
-      console.log("Giá:", price);
-      console.log("Ghi chú:", productNote);
-
-      if (productId && quantity > 0 && price >= 0) {
+      if (productId && sizeId >0 && quantity > 0 && price >= 0) {
         products.push({
           productId,
           sizeId,
@@ -314,11 +330,27 @@
           price,
           note
         });
+      }else {
+        isValid = false;
+        errorMessages.push(`Thông tin sản phẩm chưa hợp lệ`);
       }
     });
 
     if (products.length === 0) {
-      alert("Vui lòng thêm ít nhất một sản phẩm hợp lệ!");
+      errorMessages.push(`Chưa có sản phẩm`);
+      isValid = false;
+    }
+    if (!isValid) {
+      console.log('Các lỗi:', errorMessages);
+
+      let errorText = errorMessages.join('<br>');
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi nhập liệu',
+        html: errorText,
+        confirmButtonText: 'OK'
+      });
       return;
     }
 
@@ -335,7 +367,11 @@
         products: productData
       },
       success: function (response) {
-        alert('Nhập kho thành công!');
+        Swal.fire({
+          icon: 'success',
+          title: 'Thành công',
+          text: 'Phiếu nhập đã được tạo.',
+        });
         console.log(response.stockIn.transactionDate)
         var importTable = $('#importTable').DataTable();
         importTable.row.add([
@@ -344,18 +380,24 @@
           response.stockIn.supplier,
           response.stockIn.totalPrice,
           response.stockIn.note ?? '',
-          '<button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detailModal">Chi tiết</button>'+
+          '<button class="btn btn-sm btn-info viewDetailSIButton" data-stockin-id="'+ response.stockIn.id +'"  data-bs-toggle="modal" data-bs-target="#detailModal">Chi tiết</button>'+
           '<button class="btn btn-sm btn-danger">Xoá</button>'
         ]).draw();
         $('#addStockModal').modal('hide');
       },
       error: function (xhr, status, error) {
         let errorMessage = xhr.responseText || "Không xác định!";
-        alert('Có lỗi xảy ra khi nhập kho!\nChi tiết: ' + errorMessage);
+        Swal.fire({
+          icon: 'error',
+          title: 'Có lỗi xảy ra khi nhập kho!',
+          text: 'Chi tiết: ' + errorMessage,
+          confirmButtonText: 'OK'
+        });
       }
     });
   }
 </script>
 <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>

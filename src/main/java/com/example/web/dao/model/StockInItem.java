@@ -4,17 +4,20 @@ public class StockInItem {
     private int id;
     private int stockInId;
     private int productId;
+    private String productName;
     private int sizeId;
+    private String sizeName;
     private double price;
     private int quantity;
     private double totalPrice;
     private String note;
-
-    public StockInItem(int id, int stockInId, int productId, int sizeId, double price, int quantity, double totalPrice, String note) {
+    public StockInItem(int id, int stockInId, int productId, String productName, int sizeId, String sizeName, double price, int quantity, double totalPrice, String note) {
         this.id = id;
         this.stockInId = stockInId;
         this.productId = productId;
+        this.productName = productName;
         this.sizeId = sizeId;
+        this.sizeName = sizeName;
         this.price = price;
         this.quantity = quantity;
         this.totalPrice = totalPrice;
@@ -86,5 +89,21 @@ public class StockInItem {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getSizeName() {
+        return sizeName;
+    }
+
+    public void setSizeName(String sizeName) {
+        this.sizeName = sizeName;
     }
 }

@@ -113,4 +113,59 @@ public class StockIODao {
             return true;
         }
     }
+
+    public StockIn getStockInDetail(int id) throws SQLException {
+        StockIn stockIn = null;
+
+        String sql = "SELECT si.*, u.fullName FROM stock_in si JOIN users u ON si.createdId = u.id WHERE si.id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                stockIn = new StockIn();
+                stockIn.setId(rs.getInt("id"));
+                stockIn.setCreatedId(rs.getInt("createdId"));
+                stockIn.setCreatedName(rs.getString("fullName"));
+                stockIn.setSupplier(rs.getString("supplier"));
+                stockIn.setNote(rs.getString("note"));
+                stockIn.setTransactionDate(rs.getDate("importDate"));
+                stockIn.setTotalPrice(rs.getDouble("totalPrice"));
+                stockIn.setListPro(findItemsByStockInId(id));
+            }
+        }
+
+        return stockIn;
+    }
+
+    private List<StockInItem> findItemsByStockInId(int stockInId) throws SQLException {
+        List<StockInItem> items = new ArrayList<>();
+
+        String sql = "SELECT sii.*, p.title AS productName, s.sizeDescription " +
+                "FROM stock_in_items sii " +
+                "JOIN paintings p ON sii.paintingId = p.id " +
+                "JOIN sizes s ON sii.sizeId = s.id " +
+                "WHERE sii.stockInId = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, stockInId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                StockInItem item = new StockInItem();
+                item.setId(rs.getInt("id"));
+                item.setStockInId(rs.getInt("stockInId"));
+                item.setProductId(rs.getInt("paintingId"));
+                item.setProductName(rs.getString("productName"));
+                item.setSizeId(rs.getInt("sizeId"));
+                item.setSizeName(rs.getString("sizeDescription"));
+                item.setPrice(rs.getDouble("price"));
+                item.setQuantity(rs.getInt("quantity"));
+                item.setTotalPrice(rs.getDouble("totalPrice"));
+                item.setNote(rs.getString("note"));
+                items.add(item);
+            }
+        }
+
+        return items;
+    }
 }
