@@ -1,9 +1,7 @@
 package com.example.web.controller.admin.paintingController;
 
-import com.example.web.dao.model.Artist;
-import com.example.web.dao.model.Painting;
-import com.example.web.dao.model.PaintingSize;
-import com.example.web.dao.model.Theme;
+import com.example.web.controller.util.CheckPermission;
+import com.example.web.dao.model.*;
 import com.example.web.service.ArtistService;
 import com.example.web.service.PaintingService;
 import com.example.web.service.SizeService;
@@ -14,6 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -26,8 +25,22 @@ public class GetList extends HttpServlet {
     private SizeService sizeService = new SizeService();
     private ThemeService themeService = new ThemeService();
     private ArtistService artistService = new ArtistService();
+    private final String  permission = "VIEW_PRODUCTS";
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+
+        HttpSession session = req.getSession();
+        User user = (User) session.getAttribute("user");
+
+        boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
+        if (!hasPermission) {
+            resp.sendRedirect(req.getContextPath() + "/NoPermission.jsp");
+            return;
+        }
+
+
+
         List<Painting> listP  ;
         List<PaintingSize> listS  ;
         List<Theme> listP2  ;

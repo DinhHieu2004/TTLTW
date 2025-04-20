@@ -1,13 +1,22 @@
 package com.example.web.controller;
 
 import com.example.web.dao.PaintingDao;
-import com.example.web.dao.model.*;
-import com.example.web.service.*;
+import com.example.web.dao.model.Artist;
+import com.example.web.dao.model.Painting;
+import com.example.web.dao.model.PaintingSize;
+import com.example.web.dao.model.Theme;
+import com.example.web.service.ArtistService;
+import com.example.web.service.PaintingService;
+import com.example.web.service.SizeService;
+import com.example.web.service.ThemeService;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
+import java.net.http.HttpRequest;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -20,6 +29,8 @@ public class InitServlet extends HttpServlet {
     private PaintingDao paintingDao = new PaintingDao();
     private PaintingService paintingService = new PaintingService();
     private final DiscountService discountService = new DiscountService();
+
+    private static User currentUser ;
 
 
     @Override
@@ -52,6 +63,7 @@ public class InitServlet extends HttpServlet {
                 }
             }
             context.setAttribute("flashSaleEndDateTime", flashSaleEndDateTime);
+
 
         } catch (SQLException e) {
             throw new ServletException("Failed to load artists", e);

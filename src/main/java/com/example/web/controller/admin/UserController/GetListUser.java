@@ -1,5 +1,7 @@
 package com.example.web.controller.admin.UserController;
 
+import com.example.web.controller.InitServlet;
+import com.example.web.controller.util.CheckPermission;
 import com.example.web.dao.model.Permission;
 import com.example.web.dao.model.Role;
 import com.example.web.dao.model.User;
@@ -11,6 +13,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -22,9 +25,22 @@ public class GetListUser extends HttpServlet {
     private RoleService roleService = new RoleService();
     private PermissionService permissionService= new PermissionService();
 
+    private final String permission = "VIEW_USERS";
+
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        HttpSession session = req.getSession();
+        User user = (User) session.getAttribute("user");
+
+        boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
+        if (!hasPermission) {
+            resp.sendRedirect(req.getContextPath() + "/NoPermission.jsp");
+            return;
+        }
         try {
+
             List<User> users = userSerive.getListUser();
             List<Role> roles = roleService.getAllRoles();
             List<Permission> permissions = permissionService.getAll();

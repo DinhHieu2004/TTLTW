@@ -1,0 +1,214 @@
+package com.example.web.dao;
+
+import com.example.web.dao.db.DbConnect;
+import com.example.web.dao.model.StockIn;
+import com.example.web.dao.model.StockInItem;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+public class StockIODao {
+    static Connection conn = DbConnect.getConnection();
+
+    public int saveStockInWithItems(StockIn stockIn) {
+        try {
+            conn.setAutoCommit(false);
+
+            int stockInId = addStockInTrans(stockIn);
+            if (stockInId == -1) {
+                conn.rollback();
+                return -1;
+            }
+
+            boolean success = addStockInItems(stockInId, stockIn.getListPro());
+            if (!success) {
+                conn.rollback();
+                return -1;
+            }
+
+            conn.commit();
+            return stockInId;
+        } catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            return -1;
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    public int addStockInTrans(StockIn stockIn) throws SQLException{
+        String stockInSql = "INSERT INTO stock_in (createdId, supplier, note, totalPrice, importDate) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = conn.prepareStatement(stockInSql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, stockIn.getCreatedId());
+            ps.setString(2, stockIn.getSupplier());
+            ps.setString(3, stockIn.getNote());
+            ps.setDouble(4, stockIn.getTotalPrice());
+            ps.setDate(5, new java.sql.Date(stockIn.getTransactionDate().getTime()));
+
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+        e.printStackTrace();
+        throw new SQLException("Lỗi khi thêm nhập kho");
+        }
+        return -1;
+    }
+
+    public List<StockIn> getAll() throws SQLException{
+        List<StockIn> stockInList = new ArrayList<>();
+        String sql = "SELECT * FROM stock_in";
+
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            int createdId = rs.getInt("createdId");
+            String supplier = rs.getString("supplier");
+            String note = rs.getString("note");
+            double totalPrice = rs.getDouble("totalPrice");
+            Date transactionDate = rs.getDate("importDate");
+
+            StockIn stockIn = new StockIn(id, createdId, supplier, note, totalPrice, transactionDate);
+            stockInList.add(stockIn);
+        }
+        return stockInList;
+    }
+
+    public boolean addStockInItems(int stockInId, List<StockInItem> listItem) throws SQLException {
+        String insertSql = "INSERT INTO stock_in_items (stockInId, paintingId, sizeId, price, quantity, totalPrice, note) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
+            for (StockInItem item : listItem) {
+                ps.setInt(1, stockInId);
+                ps.setInt(2, item.getProductId());
+                ps.setInt(3, item.getSizeId());
+                ps.setDouble(4, item.getPrice());
+                ps.setInt(5, item.getQuantity());
+                ps.setDouble(6, item.getTotalPrice());
+                ps.setString(7, item.getNote());
+
+                ps.addBatch();
+            }
+
+            int[] result = ps.executeBatch();
+            for (int res : result) {
+                if (res == Statement.EXECUTE_FAILED) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    public StockIn getStockInDetail(int id) throws SQLException {
+        StockIn stockIn = null;
+
+        String sql = "SELECT si.*, u.fullName FROM stock_in si JOIN users u ON si.createdId = u.id WHERE si.id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                stockIn = new StockIn();
+                stockIn.setId(rs.getInt("id"));
+                stockIn.setCreatedId(rs.getInt("createdId"));
+                stockIn.setCreatedName(rs.getString("fullName"));
+                stockIn.setSupplier(rs.getString("supplier"));
+                stockIn.setNote(rs.getString("note"));
+                stockIn.setTransactionDate(rs.getDate("importDate"));
+                stockIn.setTotalPrice(rs.getDouble("totalPrice"));
+                stockIn.setListPro(findItemsByStockInId(id));
+            }
+        }
+
+        return stockIn;
+    }
+
+    private List<StockInItem> findItemsByStockInId(int stockInId) throws SQLException {
+        List<StockInItem> items = new ArrayList<>();
+
+        String sql = "SELECT sii.*, p.title AS productName, s.sizeDescription " +
+                "FROM stock_in_items sii " +
+                "JOIN paintings p ON sii.paintingId = p.id " +
+                "JOIN sizes s ON sii.sizeId = s.id " +
+                "WHERE sii.stockInId = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, stockInId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                StockInItem item = new StockInItem();
+                item.setId(rs.getInt("id"));
+                item.setStockInId(rs.getInt("stockInId"));
+                item.setProductId(rs.getInt("paintingId"));
+                item.setProductName(rs.getString("productName"));
+                item.setSizeId(rs.getInt("sizeId"));
+                item.setSizeName(rs.getString("sizeDescription"));
+                item.setPrice(rs.getDouble("price"));
+                item.setQuantity(rs.getInt("quantity"));
+                item.setTotalPrice(rs.getDouble("totalPrice"));
+                item.setNote(rs.getString("note"));
+                items.add(item);
+            }
+        }
+
+        return items;
+    }
+
+    public boolean deleteStockInById(int id) {
+        String deleteStockInSQL = "DELETE FROM stock_in WHERE id = ?";
+        String deleteStockInItemsSQL = "DELETE FROM stock_in_items WHERE stockInId = ?";
+
+        try {
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement ps = conn.prepareStatement(deleteStockInItemsSQL)) {
+                ps.setInt(1, id);
+                int rowsDeletedItems = ps.executeUpdate();
+                if (rowsDeletedItems == 0) {
+                    conn.rollback();
+                    return false;
+                }
+            }
+
+            try (PreparedStatement ps = conn.prepareStatement(deleteStockInSQL)) {
+                ps.setInt(1, id);
+                int rowsDeletedStockIn = ps.executeUpdate();
+                if (rowsDeletedStockIn == 0) {
+                    conn.rollback();
+                    return false;
+                }
+            }
+            conn.commit();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+            return false;
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
