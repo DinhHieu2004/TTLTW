@@ -71,6 +71,8 @@ public class ResetPasswordController extends HttpServlet {
             errors.put("newPassword", "Vui lòng nhập mật khẩu mới.");
         } else if (!newPassword.equals(confirmPassword)) {
             errors.put("confirmPassword", "Mật khẩu xác nhận không khớp.");
+        }else if (!newPassword.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")) {
+            errors.put("errorPassword", "Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt!");
         }
 
         if (!errors.isEmpty()) {
