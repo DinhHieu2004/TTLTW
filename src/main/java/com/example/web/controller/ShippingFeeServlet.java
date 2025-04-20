@@ -1,6 +1,8 @@
 package com.example.web.controller;
 import com.example.web.dao.cart.Cart;
 import com.example.web.dao.cart.CartPainting;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -84,11 +86,28 @@ public class ShippingFeeServlet extends HttpServlet {
             LOGGER.info("GHTK Response Body: " + result.toString());
 
             if (responseCode == 200) {
-                out.write(result.toString());
-            } else {
-                out.write("{\"success\": false, \"message\": " + "\"" + result.toString() + "\"}");
-            }
+                String responseBody = result.toString();
 
+                try {
+                    JsonObject json = JsonParser.parseString(responseBody).getAsJsonObject();
+                    if (json.get("success").getAsBoolean() && json.has("fee")) {
+                        JsonObject feeObj = json.getAsJsonObject("fee");
+
+                        double fee = feeObj.get("fee").getAsDouble();
+                        double insuranceFee = feeObj.has("insurance_fee")
+                                ? feeObj.get("insurance_fee").getAsDouble()
+                                : 0.0;
+
+                        double totalFee = fee + insuranceFee;
+
+                        request.getSession().setAttribute("shippingFee", totalFee);
+                    }
+                } catch (Exception e) {
+                    LOGGER.warning("Không thể parse JSON bằng Gson: " + e.getMessage());
+                }
+
+                out.write(responseBody);
+            }
         } catch (Exception e) {
             LOGGER.severe("Exception: " + e.getMessage());
             out.write("{\"success\": false, \"message\": \"Lỗi kết nối đến GHTK: " + e.getMessage() + "\"}");

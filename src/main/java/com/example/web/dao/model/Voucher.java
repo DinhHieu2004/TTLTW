@@ -12,8 +12,9 @@ public class Voucher implements java.io.Serializable {
     private Date endDate;
     private String imageUrl;
     private String code;
+    private String type;
 
-    public Voucher(int id, String name, double discount, boolean isActive, Date createAt, Date startDate, Date endDate, String imageUrl, String code) {
+    public Voucher(int id, String name, double discount, boolean isActive, Date createAt, Date startDate, Date endDate, String imageUrl, String code, String type) {
         this.id = id;
         this.name = name;
         this.discount = discount;
@@ -23,6 +24,7 @@ public class Voucher implements java.io.Serializable {
         this.endDate = endDate;
         this.imageUrl = imageUrl;
         this.code = code;
+        this.type = type;
     }
     public Voucher(int id, String name, double discount, boolean isActive, Date startDate, Date endDate) {
         this.id = id;
@@ -120,6 +122,14 @@ public class Voucher implements java.io.Serializable {
         this.imageUrl = imageUrl;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         return "Voucher{" +
@@ -132,6 +142,7 @@ public class Voucher implements java.io.Serializable {
                 ", endDate=" + endDate +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", code='" + code + '\'' +
+                ", type='" + type + '\'' +
                 '}';
     }
 }

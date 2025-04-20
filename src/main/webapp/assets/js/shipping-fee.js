@@ -15,10 +15,19 @@ function updateFinalPrice() {
     }
 }
 
+function renderCurrency(selector, value) {
+    $(selector).text(
+        new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        }).format(value)
+    );
+}
+
 async function calculateShippingFee(province, district, address) {
     try {
         if (!province || !district || !address) {
-            console.error("Thiếu tham số cần thiết để tính phí vận chuyển");
+            console.error("Thiếu địa chỉ");
             document.getElementById('shippingFee').textContent = 'Thiếu thông tin';
             return;
         }
@@ -27,36 +36,73 @@ async function calculateShippingFee(province, district, address) {
         const encodedDistrict = encodeURIComponent(district);
         const encodedAddress = encodeURIComponent(address);
 
-        console.log("Địa chỉ nhận hàng:", province, district, address);
-
         const contextPath = window.location.origin;
         const baseUrl = contextPath + "/web_war/api/shipping-fee";
         const url = `${baseUrl}?province=${encodedProvince}&district=${encodedDistrict}&address=${encodedAddress}`;
 
-        console.log("Full URL:", url);
-
         const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error("GHTK error");
 
         const data = await response.json();
-        console.log("API Response:", data);
 
         if (data.success) {
             const shippingFee = data.fee.fee + (data.fee.insurance_fee || 0);
-            document.getElementById('shippingFee').textContent = shippingFee.toLocaleString('vi-VN') + ' VND';
 
-            updateFinalPrice();
+            document.getElementById('shippingFee').textContent =
+                shippingFee.toLocaleString('vi-VN') + ' VND';
+
+            const hasShippingVoucher = Array.from(
+                document.querySelectorAll("input[name='voucherOption']:checked")
+            ).some(el => el.dataset.type === "shipping");
+
+            if (hasShippingVoucher) {
+                const selectedVoucherIds = Array.from(
+                    document.querySelectorAll("input[name='voucherOption']:checked")
+                ).map(el => el.value);
+
+                $.ajax({
+                    url: "applyVoucher",
+                    type: "POST",
+                    traditional: true,
+                    data: { vid: selectedVoucherIds },
+                    dataType: "json",
+                    success: function (response) {
+                        const productPrice = parseFloat(response.finalPrice) || 0;
+                        const shipping = parseFloat(response.shippingFee ?? shippingFee) || 0;
+
+                        const total = productPrice + shipping;
+                        renderCurrency("#finalPrice", total);
+
+                        document.querySelectorAll("input[name='voucherOption']:checked").forEach(el => {
+                            el.dispatchEvent(new Event("change"));
+                        });
+                    },
+                    error: function () {
+                        alert("Lỗi khi áp dụng lại voucher sau khi tính phí.");
+                    }
+                });
+            } else {
+                let productPrice = 0;
+
+                if ($("#finalPrice").data("original-price")) {
+                    productPrice = parseFloat($("#finalPrice").data("original-price"));
+                } else if ($("#total-price").length) {
+                    productPrice = parseFloat($("#total-price").text().replace(/[^\d]/g, ""));
+                }
+                const total = productPrice + parseFloat(shippingFee);;
+                renderCurrency("#finalPrice", total);
+                debugger
+            }
         } else {
             document.getElementById('shippingFee').textContent = 'Không tính được';
-            console.error("API trả về không thành công:", data.message);
         }
+
     } catch (error) {
         console.error('Lỗi khi tính phí vận chuyển:', error);
         document.getElementById('shippingFee').textContent = 'Lỗi tính phí';
     }
 }
+
 
 
 function handleAddressSave() {

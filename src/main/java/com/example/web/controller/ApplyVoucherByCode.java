@@ -8,6 +8,7 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.Date;
 
@@ -17,29 +18,47 @@ public class ApplyVoucherByCode extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Cart cart = (Cart) req.getSession().getAttribute("cart");
+        HttpSession session = req.getSession();
+        Cart cart = (Cart) session.getAttribute("cart");
         double totalPrice = cart.getTotalPrice();
+        Double shippingFee = (Double) session.getAttribute("shippingFee");
+
         String code = req.getParameter("code");
         Voucher voucher = null;
+
         try {
             voucher = voucherService.getVoucherByCode(code);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
+        resp.setContentType("application/json");
+        PrintWriter out = resp.getWriter();
+
         if (voucher != null && voucher.isActive() && voucher.getEndDate().after(new Date())) {
+            String type = voucher.getType(); // "order" hoặc "shipping"
             double discount = voucher.getDiscount();
-            double finalPrice = totalPrice - (totalPrice * discount / 100);
 
-            cart.setAfterPrice(finalPrice);
-            req.getSession().setAttribute("cart", cart);
+            StringBuilder json = new StringBuilder();
+            json.append("{\"success\": true, ");
 
-            resp.setContentType("application/json");
-            resp.getWriter().write("{\"success\": true, \"finalPrice\": " + finalPrice + ", \"voucherId\": \"" + voucher.getId() + "\"}");
+            if ("order".equalsIgnoreCase(type)) {
+                double finalPrice = totalPrice - (totalPrice * discount / 100);
+                cart.setAfterPrice(finalPrice);
+                session.setAttribute("cart", cart);
+                json.append("\"finalPrice\": ").append(finalPrice).append(", ");
+            } else if ("shipping".equalsIgnoreCase(type)) {
+                if (shippingFee != null) {
+                    double discountedShippingFee = shippingFee - (shippingFee * discount / 100);
+                    session.setAttribute("shippingFeeAfterVoucher", discountedShippingFee);
+                    json.append("\"shippingFee\": ").append(discountedShippingFee).append(", ");
+                }
+            }
+
+            json.append("\"voucherId\": \"").append(voucher.getId()).append("\"}");
+            out.write(json.toString());
         } else {
-            resp.setContentType("application/json");
-            resp.getWriter().write("{\"success\": false}");
+            out.write("{\"success\": false}");
         }
-
     }
 }
