@@ -149,6 +149,22 @@ public class VoucherDao {
         return null;
     }
 
+    public List<Voucher> getAllAvailableVouchers() throws SQLException {
+        List<Voucher> vouchers = new ArrayList<>();
+        String sql = "SELECT * FROM vouchers WHERE is_active = 1 AND startDate <= NOW() AND endDate >= NOW()";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                vouchers.add(extractVoucher(rs));
+            }
+        }
+
+        return vouchers;
+    }
+
+
     private Voucher extractVoucher(ResultSet rs) throws SQLException {
         Voucher voucher = new Voucher();
         voucher.setId(rs.getInt("id"));
@@ -161,5 +177,17 @@ public class VoucherDao {
         voucher.setEndDate(rs.getDate("endDate"));
         voucher.setImageUrl(rs.getString("imageUrl"));
         return voucher;
+    }
+
+    public String getCodeById(int id) throws SQLException {
+        String sql = "SELECT code FROM vouchers WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getString("code");
+            }
+        }
+        return null;
     }
 }

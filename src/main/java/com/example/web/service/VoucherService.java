@@ -37,9 +37,18 @@ public class VoucherService {
     }
 
     public void giveDefaultVoucherToUser(int userId) throws SQLException {
-        Voucher defaultVoucher = voucherDao.getRandomAvailableVoucher();
-        if (defaultVoucher != null && !userVoucherDao.isVoucherAlreadyAssigned(userId, defaultVoucher.getId())) {
-            userVoucherDao.assignVoucherToUser(userId, defaultVoucher.getId());
+        List<Voucher> availableVouchers = voucherDao.getAllAvailableVouchers();
+        Collections.shuffle(availableVouchers);
+
+        for (Voucher voucher : availableVouchers) {
+            if (!userVoucherDao.isVoucherAlreadyAssigned(userId, voucher.getId())) {
+                userVoucherDao.assignVoucherToUser(userId, voucher.getId());
+                break;
+            }
         }
+    }
+
+    public String getVoucherCodeById(int id) throws SQLException {
+        return voucherDao.getCodeById(id);
     }
 }
