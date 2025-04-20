@@ -67,8 +67,8 @@ async function calculateShippingFee(province, district, address) {
                     data: { vid: selectedVoucherIds },
                     dataType: "json",
                     success: function (response) {
-                        const productPrice = response.finalPrice || 0;
-                        const shipping = response.shippingFee ?? shippingFee;
+                        const productPrice = parseFloat(response.finalPrice) || 0;
+                        const shipping = parseFloat(response.shippingFee ?? shippingFee) || 0;
 
                         const total = productPrice + shipping;
                         renderCurrency("#finalPrice", total);
@@ -81,6 +81,17 @@ async function calculateShippingFee(province, district, address) {
                         alert("Lỗi khi áp dụng lại voucher sau khi tính phí.");
                     }
                 });
+            } else {
+                let productPrice = 0;
+
+                if ($("#finalPrice").data("original-price")) {
+                    productPrice = parseFloat($("#finalPrice").data("original-price"));
+                } else if ($("#total-price").length) {
+                    productPrice = parseFloat($("#total-price").text().replace(/[^\d]/g, ""));
+                }
+                const total = productPrice + parseFloat(shippingFee);;
+                renderCurrency("#finalPrice", total);
+                debugger
             }
         } else {
             document.getElementById('shippingFee').textContent = 'Không tính được';

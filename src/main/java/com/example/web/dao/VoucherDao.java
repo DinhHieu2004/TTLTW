@@ -138,9 +138,28 @@ public class VoucherDao {
         return null;
     }
 
-    public static void main(String[] args) throws SQLException {
-        VoucherDao dao = new VoucherDao();
-        System.out.println(dao.getAllAdmin());
+    public Voucher getRandomAvailableVoucher() throws SQLException {
+        String sql = "SELECT * FROM vouchers WHERE is_active = true AND startDate <= CURRENT_DATE AND endDate >= CURRENT_DATE ORDER BY RAND() LIMIT 1";
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return extractVoucher(rs);
+            }
+        }
+        return null;
     }
 
+    private Voucher extractVoucher(ResultSet rs) throws SQLException {
+        Voucher voucher = new Voucher();
+        voucher.setId(rs.getInt("id"));
+        voucher.setCode(rs.getString("code"));
+        voucher.setName(rs.getString("name"));
+        voucher.setType(rs.getString("type"));
+        voucher.setDiscount(rs.getDouble("discount"));
+        voucher.setActive(rs.getBoolean("is_active"));
+        voucher.setStartDate(rs.getDate("startDate"));
+        voucher.setEndDate(rs.getDate("endDate"));
+        voucher.setImageUrl(rs.getString("imageUrl"));
+        return voucher;
+    }
 }

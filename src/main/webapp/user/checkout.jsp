@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/footer.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/header.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     :root {
       --text-color: #333;
@@ -327,6 +328,12 @@
 <body>
 <%@ include file="/partials/header.jsp" %>
 
+<%
+  session.removeAttribute("shippingFee");
+  session.removeAttribute("shippingFeeAfterVoucher");
+  session.removeAttribute("appliedVoucherIds");
+%>
+
 <div class="checkout-container">
   <h2>Thanh toán</h2>
   <div class="checkout-layout">
@@ -375,6 +382,9 @@
           <div class="alert alert-info text-center" role="alert">
             Giỏ hàng của bạn đang trống.
           </div>
+          <div class="text-center mt-3">
+            <a href="${pageContext.request.contextPath}/artwork" class="btn btn-primary">Tiếp tục mua hàng</a>
+          </div>
         </c:otherwise>
       </c:choose>
 
@@ -383,14 +393,13 @@
       </div>
 
 
-
       <button id="openVoucherModal">Chọn hoặc nhập mã</button>
       <input type="hidden" id="voucherSelect" name="voucherCode"/>
 
       <span id="voucherCount" class="ms-2 text-muted" style="display: none;"></span>
 
       <div class="price-display">
-        Giá phải trả: <span id="finalPrice">
+        Giá phải trả: <span id="finalPrice" data-original-price="${sessionScope.cart.totalPrice}">
         <f:formatNumber value="${sessionScope.cart.totalPrice}" type="currency" pattern="#,##0"/>₫
       </span>
       </div>
@@ -560,6 +569,9 @@
 <script src="${pageContext.request.contextPath}/assets/js/checkout.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/applyVoucher.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/location.js"></script>
+<script>
+  const contextPath = '${pageContext.request.contextPath}';
+</script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 </html>

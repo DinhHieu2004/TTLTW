@@ -28,12 +28,19 @@ public class CheckoutService {
 
     }
 
-    public void processCheckout(Cart cart, int userId, int paymentMethodId, String recipientName, String recipientPhone, String deliveryAddress, double shippingFee, String appliedVoucherIds) throws Exception {
+    public void processCheckout(Cart cart, int userId, int paymentMethodId, String recipientName, String recipientPhone, String deliveryAddress, double shippingFee, String appliedVoucherIds, double shippingFeeAfterVoucher) throws Exception {
+        double originalPrice = cart.getTotalPrice();
+        double discountPrice = cart.getFinalPrice();
+        if(discountPrice == 0) {
+            discountPrice = originalPrice;
+        }
+        double shippingFeeFinal = (shippingFeeAfterVoucher >= 0) ? shippingFeeAfterVoucher : shippingFee;
+        double priceAfterShipping = discountPrice + shippingFeeFinal;
 
         Order order = new Order();
         order.setUserId(userId);
         order.setTotalAmount(cart.getTotalPrice());
-        order.setPriceAfterShipping(cart.getAfterPrice());
+        order.setPriceAfterShipping(priceAfterShipping);
         order.setPaymentStatus("chưa thanh toán");
         order.setDeliveryStatus("chờ");
         order.setDeliveryAddress(deliveryAddress);

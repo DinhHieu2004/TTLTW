@@ -1,5 +1,6 @@
 package com.example.web.service;
 
+import com.example.web.dao.UserVoucherDao;
 import com.example.web.dao.VoucherDao;
 import com.example.web.dao.model.Voucher;
 
@@ -8,6 +9,7 @@ import java.util.*;
 
 public class VoucherService {
     private VoucherDao voucherDao = new VoucherDao();
+    private UserVoucherDao userVoucherDao = new UserVoucherDao();
 
     public List<Voucher> getAll() throws SQLException {
         return  voucherDao.getAll();
@@ -32,5 +34,12 @@ public class VoucherService {
 
     public Voucher getVoucherByCode(String code) throws SQLException {
         return voucherDao.getVoucherByCode(code);
+    }
+
+    public void giveDefaultVoucherToUser(int userId) throws SQLException {
+        Voucher defaultVoucher = voucherDao.getRandomAvailableVoucher();
+        if (defaultVoucher != null && !userVoucherDao.isVoucherAlreadyAssigned(userId, defaultVoucher.getId())) {
+            userVoucherDao.assignVoucherToUser(userId, defaultVoucher.getId());
+        }
     }
 }
