@@ -46,7 +46,6 @@ $(document).ready(function() {
         data.forEach(function(p) {
             let discountPrice = p.discountPercentage > 0 ? (p.price * (1 - p.discountPercentage / 100)).toLocaleString('vi-VN') : null;
             let price = p.price.toLocaleString('vi-VN');
-            const contextPath = '/web_war';
             const fullPhotoUrl = `${window.location.origin}${contextPath}/${p.imageUrl}`;
             debugger
             let cardHtml = `
@@ -54,7 +53,7 @@ $(document).ready(function() {
                 <div class="card artwork-card h-100" style="height: 380px !important;">
                     <a href="painting-detail?pid=${p.id}" class="card-link"></a>
                     
-                    <img src="${fullPhotoUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                    <img loading="lazy" src="${fullPhotoUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
                     <div class="card-body">
                         <h5 class="card-title">${p.title}</h5>
                         <p class="card-text">

@@ -43,7 +43,7 @@
                         <c:forEach items="${sessionScope.cart.items}" var="cp" varStatus="status">
                             <tr id="cart-item-${cp.productId}-${cp.sizeId}">
                                 <td>${status.index + 1}</td>
-                                <td><img src="${cp.imageUrl}" alt="${cp.productName}" width="50"></td>
+                                <td><img loading="lazy" src="${cp.imageUrl}" alt="${cp.productName}" width="50"></td>
                                 <td>${cp.productName}</td>
                                 <td>${cp.sizeDescriptions}</td>
                                 <td>

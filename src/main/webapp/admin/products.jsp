@@ -155,7 +155,7 @@
         <c:forEach var="p" items="${products}">
           <tr>
             <td>${p.id}</td>
-            <td><img src="${pageContext.request.contextPath}/${p.imageUrl}" alt="${p.imageUrl}" width="60"></td>
+            <td><img loading="lazy" src="${pageContext.request.contextPath}/${p.imageUrl}" alt="${p.imageUrl}" width="60"></td>
 
             <td>${p.title}</td>
             <td>${p.available ? 'Không hoạt động' : 'Hoạt động'}</td>

@@ -162,7 +162,7 @@
             <div class="col-6 col-md-3">
                 <div class="card artwork-card">
                     <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="card-link"></a>
-                    <img src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                    <img loading="lazy" src="${p.imageUrlCloud}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
                     <div class="card-body">
                         <h5 class="card-title">${p.title}</h5>
                         <p class="card-text">
@@ -240,7 +240,7 @@
                 <div class="col-6 col-md-3">
                     <div class="card artwork-card">
                         <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="card-link"></a>
-                        <img src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                        <img loading="lazy" src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
                         <div class="card-body">
                             <h5 class="card-title">${p.title}</h5>
                             <p class="card-text">
@@ -298,7 +298,7 @@
             <div class="col-6 col-md-3">
                 <div class="card artwork-card">
                     <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="card-link"></a>
-                    <img src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                    <img loading="lazy" src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
                     <div class="card-body">
                         <h5 class="card-title">${p.title}</h5>
                         <p class="card-text">
@@ -374,7 +374,7 @@
             <div class="col-6 col-md-3">
                 <div class="card artwork-card">
                     <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="card-link"></a>
-                    <img src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                    <img loading="lazy" src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
                     <div class="card-body">
                         <h5 class="card-title">${p.title}</h5>
                         <p class="card-text">
@@ -453,7 +453,7 @@
                 <a href="artwork?theme=${themes.id}" class="collection-link">
             <div class="collection">
                 <div class="img_container">
-                    <img src="https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YXJ0aXN0fGVufDB8fDB8fHww"
+                    <img loading="lazy" src="https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YXJ0aXN0fGVufDB8fDB8fHww"
                         class="card-img-top artwork-image" alt="${themes.themeName}">
                     <div class="collection_description">
                         <p>${themes.themeName}</p>
@@ -466,18 +466,18 @@
     </div>
     <div id="icon_section">
         <div class="icon_first_col">
-            <img src="assets/images/fast-delivery-1.png">
+            <img loading="lazy" src="assets/images/fast-delivery-1.png">
             <h4>GIAO HÀNG TOÀN QUỐC</h4>
             <p>Chúng tôi nhận đóng gói và vận chuyển cho mọi khách hàng trên toàn quốc</p>
         </div>
         <div class="icon_second_col">
-            <img src="assets/images/quality.png">
+            <img loading="lazy" src="assets/images/quality.png">
             <h4>CHẤT LƯỢNG HÀNG ĐẦU</h4>
             <p>Chất lượng tuyệt hảo, đường nét sống động được vẽ bởi các họa sĩ sáng tạo, có tên tuổi trong giới nghệ
                 thuật</p>
         </div>
         <div class="icon_third_col">
-            <img src="assets/images/feature-selection.png">
+            <img loading="lazy" src="assets/images/feature-selection.png">
             <h4>SẢN PHẨM ĐA DẠNG</h4>
             <p>Chúng tôi có nhiều tác phẩm ở nhiều thể loại. Ngoài ra, cũng có nhiều lựa chọn theo yêu cầu của khách
                 hàng</p>

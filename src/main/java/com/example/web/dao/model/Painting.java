@@ -11,6 +11,7 @@ public class Painting implements Serializable{
         private double price;
         private String description;
         private String imageUrl;
+        private String imageUrlCloud;
         private String artistName;
         private String themeName;
         private List<PaintingSize> sizes = new ArrayList<>();
@@ -22,12 +23,13 @@ public class Painting implements Serializable{
         private Date createDate;
         private double averageRating;
 
-        public Painting(int id, String title, double price, String description, String imageUrl, String artistName, String themeName, boolean isFeatured, Date createDate, double averageRating) {
+        public Painting(int id, String title, double price, String description, String imageUrl, String imageUrlCloud, String artistName, String themeName, boolean isFeatured, Date createDate, double averageRating) {
             this.id = id;
             this.title = title;
             this.price = price;
             this.description = description;
             this.imageUrl = imageUrl;
+            this.imageUrlCloud = imageUrlCloud;
             this.artistName = artistName;
             this.themeName = themeName;
             this.isFeatured = isFeatured;
@@ -85,6 +87,14 @@ public class Painting implements Serializable{
 
     public Date getCreateDate() {
         return createDate;
+    }
+
+    public String getImageUrlCloud() {
+        return imageUrlCloud;
+    }
+
+    public void setImageUrlCloud(String imageUrlCloud) {
+        this.imageUrlCloud = imageUrlCloud;
     }
 
     public void setCreateDate(Date createDate) {
