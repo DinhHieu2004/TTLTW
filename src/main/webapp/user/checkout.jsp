@@ -356,7 +356,16 @@
             <c:forEach items="${sessionScope.cart.items}" var="cp" varStatus="status">
               <tr id="cart-item-${cp.productId}-${cp.sizeId}">
                 <td>${status.index + 1}</td>
-                <td><img src="${cp.imageUrlCloud}" alt="${cp.productName}" width="50"></td>
+                <td>
+                  <c:choose>
+                    <c:when test="${not empty cp.imageUrlCloud}">
+                      <img src="${cp.imageUrlCloud}?f_auto,q_auto,w_50" alt="${cp.productName}" width="50">
+                    </c:when>
+                    <c:otherwise>
+                      <img src="${pageContext.request.contextPath}/${cp.imageUrl}" alt="${cp.productName}" width="50">
+                    </c:otherwise>
+                  </c:choose>
+                </td>
                 <td>${cp.productName}</td>
                 <td>${cp.sizeDescriptions}</td>
                 <td>
@@ -426,7 +435,14 @@
               <c:if test="${voucher.type == 'shipping'}">
                 <label class="voucher-item">
                   <input type="checkbox" name="voucherOption" value="${voucher.id}" data-type="shipping" />
-                  <img src="${voucher.imageUrlCloud}" class="voucher-image" alt="Voucher">
+                  <c:choose>
+                    <c:when test="${not empty voucher.imageUrlCloud}">
+                      <img src="${voucher.imageUrlCloud}?f_auto,q_auto,w_300" class="voucher-image" alt="Voucher">
+                    </c:when>
+                    <c:otherwise>
+                      <img src="${pageContext.request.contextPath}/${voucher.imageUrl}" class="voucher-image" alt="Voucher">
+                    </c:otherwise>
+                  </c:choose>
                   <div class="voucher-info">
                     <strong>${voucher.name}</strong>
                     <f:formatNumber value="${voucher.discount}" type="number" maxFractionDigits="0" var="roundedDiscount" />
@@ -445,7 +461,14 @@
               <c:if test="${voucher.type == 'order'}">
                 <label class="voucher-item">
                   <input type="checkbox" name="voucherOption" value="${voucher.id}" data-type="order" />
-                  <img src="${voucher.imageUrlCloud}" class="voucher-image" alt="Voucher">
+                  <c:choose>
+                    <c:when test="${not empty voucher.imageUrlCloud}">
+                      <img src="${voucher.imageUrlCloud}?f_auto,q_auto,w_300" class="voucher-image" alt="Voucher">
+                    </c:when>
+                    <c:otherwise>
+                      <img src="${pageContext.request.contextPath}/${voucher.imageUrl}" class="voucher-image" alt="Voucher">
+                    </c:otherwise>
+                  </c:choose>
                   <div class="voucher-info">
                     <strong>${voucher.name}</strong>
                     <f:formatNumber value="${voucher.discount}" type="number" maxFractionDigits="0" var="roundedDiscount" />

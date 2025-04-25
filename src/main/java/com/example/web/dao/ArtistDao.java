@@ -32,7 +32,8 @@ public class ArtistDao {
             Date date = rs.getDate("birthDate");
             String nationality = rs.getString("nationality");
             String photoUrl = rs.getString("photoUrl");
-            artists.add(new Artist(id, name, bio, date, nationality, photoUrl));
+            String imageUrlCloud = rs.getString("imageUrlCloud");
+            artists.add(new Artist(id, name, bio, date, nationality, photoUrl, imageUrlCloud));
         }
         return artists;
     }
@@ -48,7 +49,8 @@ public class ArtistDao {
             Date date = rs.getDate("birthDate");
             String nationality = rs.getString("nationality");
             String photoUrl = rs.getString("photoUrl");
-            return new Artist(id, name, bio, date, nationality, photoUrl);
+            String imageUrlCloud = rs.getString("imageUrlCloud");
+            return new Artist(id, name, bio, date, nationality, photoUrl, imageUrlCloud);
         }
         return null;
     }
@@ -107,15 +109,4 @@ public class ArtistDao {
         }
         return imagePath;
     }
-    public static void main(String[] args) throws SQLException, ParseException {
-        ArtistDao dao = new ArtistDao();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date specificDate = formatter.parse("2025-01-01");
-        Artist artist = new Artist(80,"hieu", "abc", specificDate, "vietnam", "abc");
-          System.out.println(dao.addArtist(artist));
-
-        dao.deleteArtist(26);
-    }
-
-
 }

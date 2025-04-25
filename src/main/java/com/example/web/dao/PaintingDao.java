@@ -136,6 +136,7 @@ public class PaintingDao {
                         p.title,
                         p.description,
                         p.imageUrl,
+                        p.imageUrlCloud,
                         a.name AS artistName,
                         t.themeName AS themeName,
                         p.price,
@@ -154,6 +155,7 @@ public class PaintingDao {
             String title = rs.getString("title");
             double price = rs.getDouble("price");
             String imageUrl = rs.getString("imageUrl");
+            String imageUrlCloud = rs.getString("imageUrlCloud");
             String theme = rs.getString("themeName");
             Date createdAt = rs.getDate("createdAt");
             String artistName = rs.getString("artistName");
@@ -162,6 +164,7 @@ public class PaintingDao {
             painting.setTitle(title);
             painting.setPrice(price);
             painting.setImageUrl(imageUrl);
+            painting.setImageUrlCloud(imageUrlCloud);
             painting.setThemeName(theme);
             painting.setThemeName(theme);
             painting.setArtistName(artistName);
@@ -430,7 +433,7 @@ public class PaintingDao {
                     p.title AS paintingTitle,
                     p.price,
                     p.imageUrl,
-                    p.imageUrlCloud
+                    p.imageUrlCloud,
                     a.name AS artistName,
                     t.themeName AS theme,
                     IFNULL(d.discountPercentage, 0) AS discount

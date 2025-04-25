@@ -61,6 +61,7 @@ public class DiscountDao {
             p.title AS paintingTitle,
             p.price,
             p.imageUrl,
+            p.imageUrlCloud,
             a.name AS artistName,
             t.themeName AS theme,
             IFNULL(d.discountPercentage, 0) AS discount,
@@ -126,6 +127,7 @@ public class DiscountDao {
                     painting.setId(rs.getInt("paintingId"));
                     painting.setTitle(rs.getString("paintingTitle"));
                     painting.setImageUrl(rs.getString("imageUrl"));
+                    painting.setImageUrlCloud(rs.getString("imageUrlCloud"));
                     painting.setArtistName(rs.getString("artistName"));
                     painting.setThemeName(rs.getString("theme"));
                     painting.setDiscountPercentage(rs.getDouble("discount"));

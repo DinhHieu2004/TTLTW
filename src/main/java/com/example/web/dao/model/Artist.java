@@ -10,16 +10,18 @@ public class Artist implements Serializable {
     private Date birthDate;
     private String nationality;
     private String photoUrl;
+    private String imageUrlCloud;
 
 
     public Artist() {}
-    public Artist(int id, String name, String bio, Date birthDate, String nationality, String photoUrl) {
+    public Artist(int id, String name, String bio, Date birthDate, String nationality, String photoUrl, String imageUrlCloud) {
         this.id = id;
         this.name = name;
         this.bio = bio;
         this.birthDate = birthDate;
         this.nationality = nationality;
         this.photoUrl = photoUrl;
+        this.imageUrlCloud = imageUrlCloud;
     }
     public Artist( String name, String bio, Date birthDate, String nationality, String photoUrl) {
         this.name = name;
@@ -44,6 +46,14 @@ public class Artist implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getImageUrlCloud() {
+        return imageUrlCloud;
+    }
+
+    public void setImageUrlCloud(String imageUrlCloud) {
+        this.imageUrlCloud = imageUrlCloud;
     }
 
     public String getBio() {
@@ -87,6 +97,7 @@ public class Artist implements Serializable {
                 ", birthDate=" + birthDate +
                 ", nationality='" + nationality + '\'' +
                 ", photoUrl='" + photoUrl + '\'' +
+                ", imageUrlCloud='" + imageUrlCloud + '\'' +
                 '}';
     }
 }
