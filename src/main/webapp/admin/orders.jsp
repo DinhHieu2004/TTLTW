@@ -190,7 +190,6 @@
             <option value="hoàn thành">hoàn thành</option>
             <option value="giao hàng thất bại">giao hàng thất bại</option>
             <option value="đã hủy giao hàng">đã hủy giao hàng</option>
-            <option value="đã giao">đã giao</option>
           </select>
 
           <button id="updateStatusBtn" class="btn btn-primary mt-3">Cập nhật đơn hàng</button>

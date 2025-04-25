@@ -4,7 +4,6 @@ import com.example.web.dao.cart.CartPainting;
 import com.example.web.dao.db.DbConnect;
 import com.example.web.dao.model.Painting;
 import com.example.web.dao.model.Theme;
-import com.example.web.service.PaintingService;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -166,87 +165,98 @@ public class PaintingDao {
     public Painting getPaintingDetail(int paintingId) throws SQLException {
         Painting paintingDetail = null;
         String sql = """
-                    SELECT 
-                        p.id AS paintingId,
-                        p.title AS paintingTitle,
-                        p.price,
-                        p.isSold,
-                        p.description,
-                        p.createdAt,
-                        p.isFeatured,
-                        p.imageUrl,
-                        a.name AS artistName,
-                        t.themeName,
-                        d.discountName,
-                        d.discountPercentage,
-                        s.sizeDescription,
-                        s.weight,
-                        s.id AS idSize,
-                        ps.quantity AS sizeQuantity,
-                        dp.discountId
-                
-                    FROM paintings p
-                    LEFT JOIN artists a ON p.artistId = a.id
-                    LEFT JOIN themes t ON p.themeId = t.id
-                    LEFT JOIN discount_paintings dp ON p.id = dp.paintingId
-                    LEFT JOIN discounts d ON dp.discountId = d.id
-                    LEFT JOIN painting_sizes ps ON p.id = ps.paintingId
-                    LEFT JOIN sizes s ON ps.sizeId = s.id
-                    WHERE p.id = ?;
-                """;
+                SELECT 
+                    p.id AS paintingId,
+                    p.title AS paintingTitle,
+                    p.price,
+                    p.isSold,
+                    p.description,
+                    p.createdAt,
+                    p.isFeatured,
+                    p.imageUrl,
+                    a.name AS artistName,
+                    t.themeName,
+                    d.discountName,
+                    IF (NOW() BETWEEN d.startDate AND d.endDate, d.discountPercentage, 0) AS discountPercentage,
+                    s.sizeDescription,
+                    s.weight,
+                    s.id AS idSize,
+                    ps.quantity AS sizeQuantity,
+                    dp.discountId
+                FROM paintings p
+                LEFT JOIN artists a ON p.artistId = a.id
+                LEFT JOIN themes t ON p.themeId = t.id
+                LEFT JOIN discount_paintings dp ON p.id = dp.paintingId
+                LEFT JOIN discounts d ON dp.discountId = d.id
+                LEFT JOIN painting_sizes ps ON p.id = ps.paintingId
+                LEFT JOIN sizes s ON ps.sizeId = s.id
+                WHERE p.id = ?;
+            """;
 
         try (PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setInt(1, paintingId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     if (paintingDetail == null) {
-                        // Initialize the PaintingDetail object
-                        paintingDetail = new Painting(rs.getInt("paintingId"), rs.getString("paintingTitle"), rs.getDouble("price"), rs.getString("description"), rs.getString("imageUrl"), rs.getString("artistName"), rs.getString("themeName"), rs.getBoolean("isFeatured"),rs.getDate("createdAt"),getPaintingRating(rs.getInt("paintingId")),rs.getBoolean("isSold") );
+                        paintingDetail = new Painting(
+                                rs.getInt("paintingId"),
+                                rs.getString("paintingTitle"),
+                                rs.getDouble("price"),
+                                rs.getString("description"),
+                                rs.getString("imageUrl"),
+                                rs.getString("artistName"),
+                                rs.getString("themeName"),
+                                rs.getBoolean("isFeatured"),
+                                rs.getDate("createdAt"),
+                                getPaintingRating(rs.getInt("paintingId")),
+                                rs.getBoolean("isSold")
+                        );
                     }
-                    // Add size and quantity to the painting detail
+
                     int idSize = rs.getInt("idSize");
                     double weight = rs.getDouble("weight");
                     String sizeDescription = rs.getString("sizeDescription");
                     int sizeQuantity = rs.getInt("sizeQuantity");
                     paintingDetail.addSize(idSize, sizeDescription, sizeQuantity, weight);
 
-                    // Add discount information if exists
-                    if (rs.getString("discountName") != null) {
-                        paintingDetail.setDiscount(rs.getString("discountName"), rs.getDouble("discountPercentage"));
+                    double discountPercentage = rs.getDouble("discountPercentage");
+                    if (discountPercentage > 0) {
+                        paintingDetail.setDiscount(rs.getString("discountName"), discountPercentage);
                     }
                 }
             }
         }
         return paintingDetail;
     }
+
     public List<Painting> getRandomTopRatedPaintings() throws SQLException {
         List<Painting> paintingList = new ArrayList<>();
         StringBuilder sql = new StringBuilder("""
-                WITH TopRatedPaintings AS (
-                    SELECT 
-                        p.id AS paintingId,
-                        p.title AS paintingTitle,
-                        p.price,
-                        p.imageUrl,
-                        a.name AS artistName,
-                        t.themeName AS theme,
-                        IFNULL(d.discountPercentage, 0) AS discount,
-                        COALESCE(AVG(r.rating), 0) as avgRating
-                    FROM paintings p
-                    LEFT JOIN artists a ON p.artistId = a.id
-                    LEFT JOIN themes t ON p.themeId = t.id
-                    LEFT JOIN discount_paintings dp ON p.id = dp.paintingId
-                    LEFT JOIN discounts d ON dp.discountId = d.id
-                    LEFT JOIN product_reviews r ON p.id = r.paintingId
-                    GROUP BY p.id, p.title, p.price, p.imageUrl, a.name, t.themeName, d.discountPercentage
-                    HAVING avgRating > 0
-                    ORDER BY avgRating DESC
-                    LIMIT 20
-                )
-                SELECT * FROM TopRatedPaintings
-                ORDER BY RAND()
-                LIMIT 4
-            """);
+                    WITH TopRatedPaintings AS (
+                        SELECT 
+                            p.id AS paintingId,
+                            p.title AS paintingTitle,
+                            p.price,
+                            p.imageUrl,
+                            a.name AS artistName,
+                            t.themeName AS theme,
+                            IF(NOW() BETWEEN d.startDate AND d.endDate, d.discountPercentage, 0) AS discount,
+                            COALESCE(AVG(r.rating), 0) as avgRating
+                        FROM paintings p
+                        LEFT JOIN artists a ON p.artistId = a.id
+                        LEFT JOIN themes t ON p.themeId = t.id
+                        LEFT JOIN discount_paintings dp ON p.id = dp.paintingId
+                        LEFT JOIN discounts d ON dp.discountId = d.id
+                        LEFT JOIN product_reviews r ON p.id = r.paintingId
+                        GROUP BY p.id, p.title, p.price, p.imageUrl, a.name, t.themeName, d.startDate, d.endDate, d.discountPercentage
+                        HAVING avgRating > 0
+                        ORDER BY avgRating DESC
+                        LIMIT 20
+                    )
+                    SELECT * FROM TopRatedPaintings
+                    ORDER BY RAND()
+                    LIMIT 4
+                """);
 
         try (PreparedStatement stmt = con.prepareStatement(sql.toString())) {
             try (ResultSet rs = stmt.executeQuery()) {
@@ -271,29 +281,31 @@ public class PaintingDao {
         return paintingList;
     }
 
-    public List<Painting> getPaintingList(String searchKeyword, Double minPrice, Double maxPrice, String[] themes, String[] artists, String startDate, String endDate, boolean sortRating,boolean snew, int currentPage, int recordsPerPage) throws SQLException {
+    public List<Painting> getPaintingList(String searchKeyword, Double minPrice, Double maxPrice, String[] themes, String[] artists, String startDate, String endDate, boolean sortRating, boolean snew, int currentPage, int recordsPerPage) throws SQLException {
         List<Painting> paintingList = new ArrayList<>();
 
         StringBuilder sql = new StringBuilder("""
-        SELECT 
-            p.id AS paintingId,
-            p.title AS paintingTitle,
-            p.price,
-            p.imageUrl,
-            a.name AS artistName,
-            t.themeName AS theme,
-            IFNULL(d.discountPercentage, 0) AS discount,
-            IFNULL((SELECT AVG(rating) FROM product_reviews WHERE paintingId = p.id), 0) as averageRating
-                
-        FROM paintings p
-        LEFT JOIN artists a ON p.artistId = a.id
-        LEFT JOIN themes t ON p.themeId = t.id
-        LEFT JOIN discount_paintings dp ON p.id = dp.paintingId
-        LEFT JOIN discounts d ON dp.discountId = d.id
-        WHERE 1=1 AND p.isSold = 0
-    """
-
-        );
+                SELECT\s
+                        p.id AS paintingId,
+                        p.title AS paintingTitle,
+                        p.price,
+                        p.imageUrl,
+                        a.name AS artistName,
+                        t.themeName AS theme,
+                        IF (
+                            d.startDate IS NOT NULL AND d.endDate IS NOT NULL\s
+                            AND NOW() BETWEEN d.startDate AND d.endDate,
+                            d.discountPercentage,
+                            0
+                        ) AS discountPercentage,
+                        IFNULL((SELECT AVG(rating) FROM product_reviews WHERE paintingId = p.id), 0) AS averageRating
+                    FROM paintings p
+                    LEFT JOIN artists a ON p.artistId = a.id
+                    LEFT JOIN themes t ON p.themeId = t.id
+                    LEFT JOIN discount_paintings dp ON p.id = dp.paintingId
+                    LEFT JOIN discounts d ON dp.discountId = d.id
+                    WHERE 1=1 AND p.isSold = 0
+            """);
 
         List<Object> params = new ArrayList<>();
 
@@ -347,18 +359,15 @@ public class PaintingDao {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    int id = rs.getInt("paintingId");
-                    System.out.println(id);
                     Painting painting = new Painting();
                     painting.setId(rs.getInt("paintingId"));
                     painting.setTitle(rs.getString("paintingTitle"));
                     painting.setImageUrl(rs.getString("imageUrl"));
                     painting.setArtistName(rs.getString("artistName"));
                     painting.setThemeName(rs.getString("theme"));
-                    painting.setDiscountPercentage(rs.getDouble("discount"));
+                    painting.setDiscountPercentage(rs.getDouble("discountPercentage"));
                     painting.setPrice(rs.getDouble("price"));
-                    painting.setAverageRating(getPaintingRating(id));
-                    System.out.println(getPaintingRating(id));
+                    painting.setAverageRating(getPaintingRating(painting.getId()));
                     painting.setSizes(new ArrayList<>());
 
                     paintingList.add(painting);
@@ -366,9 +375,11 @@ public class PaintingDao {
             }
         }
 
-
         return paintingList;
     }
+
+
+
 
     public double getPaintingRating(int paintingId) throws SQLException {
         String sql = """
@@ -527,10 +538,10 @@ public class PaintingDao {
             con.setAutoCommit(true);
         }
     }
-//
+
     public List<Painting> getFeaturedArtworks() {
         String sql = "SELECT p.id, p.title, p.imageUrl, ar.name AS artist_name, t.themeName, p.price, " +
-                "IFNULL(d.discountPercentage, 0) AS discount, " +
+                "IF(NOW() BETWEEN d.startDate AND d.endDate, d.discountPercentage, 0) AS discount, " +
                 "(SELECT AVG(r.rating) FROM product_reviews r WHERE r.paintingId = p.id) AS average_rating " +
                 "FROM paintings p " +
                 "JOIN artists ar ON p.artistId = ar.id " +
@@ -561,6 +572,41 @@ public class PaintingDao {
         }
 
         return featuredArtworks;
+    }
+
+    public List<Painting> getFlashSaleArtworks() {
+        String sql = "SELECT p.id, p.title, p.imageUrl, ar.name AS artist_name, t.themeName, p.price, " +
+                "IF(NOW() BETWEEN d.startDate AND d.endDate, d.discountPercentage, 0) AS discount, " +
+                "(SELECT AVG(r.rating) FROM product_reviews r WHERE r.paintingId = p.id) AS average_rating " +
+                "FROM paintings p " +
+                "JOIN artists ar ON p.artistId = ar.id " +
+                "JOIN themes t ON p.themeId = t.id " +
+                "JOIN discount_paintings dp ON p.id = dp.paintingId " +
+                "JOIN discounts d ON dp.discountId = d.id " +
+                "WHERE d.id = 3 AND NOW() BETWEEN d.startDate AND d.endDate";
+        List<Painting> flashSaleArtworks = new ArrayList<>();
+
+        try (PreparedStatement stmt = con.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Painting painting = new Painting();
+                int id = rs.getInt("id");
+                painting.setId(id);
+                painting.setTitle(rs.getString("title"));
+                painting.setImageUrl(rs.getString("imageUrl"));
+                painting.setThemeName(rs.getString("themeName"));
+                painting.setArtistName(rs.getString("artist_name"));
+                painting.setPrice(rs.getDouble("price"));
+                painting.setDiscountPercentage(rs.getDouble("discount"));
+                painting.setAverageRating(getPaintingRating(id));
+                flashSaleArtworks.add(painting);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return flashSaleArtworks;
     }
 
     public List<Theme> getTheme() throws SQLException {
@@ -715,27 +761,29 @@ public class PaintingDao {
             }
         return imagePath;
     }
+
     public List<Painting> getNewestPaintings(int limit) throws SQLException {
         List<Painting> paintingList = new ArrayList<>();
 
         String sql = """
-        SELECT 
-            p.id AS paintingId,
-            p.title AS paintingTitle,
-            p.price,
-            p.imageUrl,
-            a.name AS artistName,
-            t.themeName AS theme,
-            IFNULL(d.discountPercentage, 0) AS discount,
-            IFNULL((SELECT AVG(rating) FROM product_reviews WHERE paintingId = p.id), 0) as averageRating
-        FROM paintings p
-        LEFT JOIN artists a ON p.artistId = a.id
-        LEFT JOIN themes t ON p.themeId = t.id
-        LEFT JOIN discount_paintings dp ON p.id = dp.paintingId
-        LEFT JOIN discounts d ON dp.discountId = d.id
-        ORDER BY p.createdAt DESC
-        LIMIT ?
-    """;
+                    SELECT 
+                        p.id AS paintingId,
+                        p.title AS paintingTitle,
+                        p.price,
+                        p.imageUrl,
+                        a.name AS artistName,
+                        t.themeName AS theme,
+                        IF(NOW() BETWEEN d.startDate AND d.endDate, d.discountPercentage, 0) AS discount,
+                        IFNULL((SELECT AVG(rating) FROM product_reviews WHERE paintingId = p.id), 0) as averageRating
+                    FROM paintings p
+                    LEFT JOIN artists a ON p.artistId = a.id
+                    LEFT JOIN themes t ON p.themeId = t.id
+                    LEFT JOIN discount_paintings dp ON p.id = dp.paintingId
+                    LEFT JOIN discounts d ON dp.discountId = d.id
+                    ORDER BY p.createdAt DESC
+                    LIMIT ?
+                """;
+
 
         try (PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setInt(1, limit);
@@ -816,8 +864,6 @@ public class PaintingDao {
 
     public static void main(String[] args) throws SQLException {
         PaintingDao paintingDao = new PaintingDao();
-        Double m1 = null;
-        Double m2 = null;
 
         String[] sizes = null;
         String[] themes = {"1"};

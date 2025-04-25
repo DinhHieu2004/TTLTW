@@ -59,17 +59,24 @@
                         <c:choose>
                             <c:when test="${p.discountPercentage > 0}">
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="text-muted text-decoration-line-through"><f:formatNumber value="${p.price}" type="currency" currencySymbol="VNĐ"/></span>
-                                    <span class="h4 text-danger mb-0"> <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}" type="currency" currencySymbol="VNĐ"/></span>
+                                    <span class="text-muted text-decoration-line-through">
+                                        <f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫
+                                    </span>
+                                    <span class="h4 text-danger mb-0">
+                                        <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}"
+                                                        type="currency" pattern="#,##0"/>₫
+                                    </span>
                                     <span class="badge bg-success">-${p.discountPercentage}%</span>
                                 </div>
                             </c:when>
                             <c:otherwise>
-                                <span class="h4"> <f:formatNumber value="${p.price}" type="currency" currencySymbol="VNĐ"/></span>
-
+                            <span class="h4">
+                                <f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫
+                            </span>
                             </c:otherwise>
                         </c:choose>
                     </div>
+
 
                     <!-- Form thêm vào giỏ hàng -->
                     <form id="addToCartForm" class="needs-validation" novalidate>

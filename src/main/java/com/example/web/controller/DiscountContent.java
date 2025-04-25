@@ -9,9 +9,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
 @WebServlet("/discount_content")
@@ -39,6 +41,13 @@ public class DiscountContent extends HttpServlet {
             discountId = Integer.parseInt(discountIdParam);
         } catch (NumberFormatException e) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid discount ID");
+            return;
+        }
+        Discount discount = ds.getDiscountById(discountId);
+        if (isDiscountExpired(discount)) {
+            HttpSession session = req.getSession();
+            session.setAttribute("expiredMessage", "Chương trình giảm giá đã hết hạn!");
+            resp.sendRedirect(req.getContextPath() + "/discount");
             return;
         }
 
@@ -83,12 +92,6 @@ public class DiscountContent extends HttpServlet {
                 return;
             }
 
-            // Lấy thông tin giảm giá
-            Discount discount = ds.getDiscountById(discountId);
-            if (discount == null) {
-                resp.sendRedirect("/user/discount");
-                return;
-            }
 
             // Lấy danh sách tranh có giảm giá
             data = ds.getPaintingsByDiscountId(
@@ -120,5 +123,13 @@ public class DiscountContent extends HttpServlet {
 
         // Chuyển tiếp đến JSP
         req.getRequestDispatcher("user/discount_content.jsp").forward(req, resp);
+    }
+
+    private boolean isDiscountExpired(Discount discount) {
+        LocalDate currentDate = LocalDate.now();
+
+        LocalDate endDate = discount.getEndDate();
+
+        return currentDate.isAfter(endDate);
     }
 }

@@ -3,6 +3,7 @@ package com.example.web.controller.admin.UserController;
 import com.example.web.controller.util.CheckPermission;
 import com.example.web.dao.model.User;
 import com.example.web.service.UserSerive;
+import com.example.web.utils.SessionManager;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -121,6 +122,19 @@ public class Update extends HttpServlet {
 
                 if (isUpdated) {
                     User up = userSerive.getUser(user.getId());
+
+                    //khi thay đổi bất kì thong tin nào thì cũng nên buộc đăng xuất
+                    HttpSession userSession = SessionManager.userSessions.get(up.getId()+"");
+                    if (userSession != null) {
+                        userSession.invalidate();
+                        SessionManager.userSessions.remove(up.getEmail());
+                    }
+
+                    responseMap.put("message", "Cập nhật thành công!");
+                    responseMap.put("user", up);
+                    resp.setStatus(HttpServletResponse.SC_OK);
+
+
                     responseMap.put("message", "Cập nhật thành công!");
                     responseMap.put("user", up);
                     resp.setStatus(HttpServletResponse.SC_OK);

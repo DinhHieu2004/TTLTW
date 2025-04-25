@@ -2,6 +2,7 @@ package com.example.web.controller;
 
 import com.example.web.dao.model.User;
 import com.example.web.service.AuthService;
+import com.example.web.utils.SessionManager;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import jakarta.servlet.annotation.WebServlet;
@@ -84,6 +85,13 @@ public class LoginFaceController extends HttpServlet {
                 session = request.getSession(true);
             }
             session.setAttribute("user", user);
+
+
+            session.setAttribute("uid", String.valueOf(user.getId()));
+            SessionManager.userSessions.put(user.getId()+"", session);
+
+
+
             response.setStatus(HttpServletResponse.SC_OK);
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();

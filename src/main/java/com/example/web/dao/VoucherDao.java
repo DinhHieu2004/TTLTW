@@ -25,6 +25,8 @@ public class VoucherDao {
             voucher.setCreateAt(rs.getDate("created_at"));
             voucher.setStartDate(rs.getDate("startDate"));
             voucher.setEndDate(rs.getDate("endDate"));
+            voucher.setImageUrl(rs.getString("imageUrl"));
+            voucher.setCode(rs.getString("code"));
             list.add(voucher);
         }
         return list;
@@ -44,6 +46,8 @@ public class VoucherDao {
             voucher.setCreateAt(rs.getDate("created_at"));
             voucher.setStartDate(rs.getDate("startDate"));
             voucher.setEndDate(rs.getDate("endDate"));
+            voucher.setImageUrl(rs.getString("imageUrl"));
+            voucher.setCode(rs.getString("code"));
             list.add(voucher);
         }
         return list;
@@ -63,6 +67,8 @@ public class VoucherDao {
             voucher.setCreateAt(rs.getDate("created_at"));
             voucher.setStartDate(rs.getDate("startDate"));
             voucher.setEndDate(rs.getDate("endDate"));
+            voucher.setImageUrl(rs.getString("imageUrl"));
+            voucher.setCode(rs.getString("code"));
             return voucher;
         }
         return null;
@@ -109,9 +115,30 @@ public class VoucherDao {
 
 
     }
+    public Voucher getVoucherByCode(String code) throws SQLException {
+        String sql = "SELECT * FROM vouchers WHERE code = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, code);
+
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            Voucher voucher = new Voucher();
+            voucher.setId(rs.getInt("id"));
+            voucher.setName(rs.getString("name"));
+            voucher.setDiscount(rs.getDouble("discount"));
+            voucher.setActive(rs.getBoolean("is_active"));
+            voucher.setStartDate(rs.getDate("startDate"));
+            voucher.setEndDate(rs.getDate("endDate"));
+            voucher.setCode(rs.getString("code"));
+            voucher.setImageUrl(rs.getString("imageUrl"));
+            return voucher;
+        }
+        return null;
+    }
 
     public static void main(String[] args) throws SQLException {
         VoucherDao dao = new VoucherDao();
         System.out.println(dao.getAllAdmin());
     }
+
 }
