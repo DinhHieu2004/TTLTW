@@ -41,7 +41,7 @@
     <div id="discount_list">
         <c:forEach var="discount" items="${list}">
             <a href="${pageContext.request.contextPath}/discount_content?id=${discount.id}" class="discount_item">
-            <img src="${discount.imageUrl}" alt="${discount.discountName}">
+            <img src="${discount.imageUrlCloud}" alt="${discount.discountName}">
             <p class="content" style="color: #e7621b"><strong>${discount.discountName}</strong></p>
             <p class="content">(Áp dụng từ ngày ${discount.startDate} đến ${discount.endDate})</p>
         </a>

@@ -31,7 +31,7 @@
     <div class="row">
         <div class="col-md-6">
             <div class="card">
-                <img loading="lazy" src="${p.imageUrl}" alt="${p.title}" class="card-img-top img-fluid">
+                <img loading="lazy" src="${p.imageUrlCloud}?f_auto,q_auto,w_600" alt="${p.title}" class="card-img-top img-fluid">
             </div>
         </div>
 

@@ -36,12 +36,13 @@ public class Painting implements Serializable{
             this.createDate = createDate;
             this.averageRating = averageRating;
         }
-    public Painting(int id, String title, double price, String description, String imageUrl, String artistName, String themeName, boolean isFeatured, Date createDate, double averageRating, boolean isSold) {
+    public Painting(int id, String title, double price, String description, String imageUrl, String imageUrlCloud, String artistName, String themeName, boolean isFeatured, Date createDate, double averageRating, boolean isSold) {
         this.id = id;
         this.title = title;
         this.price = price;
         this.description = description;
         this.imageUrl = imageUrl;
+        this.imageUrlCloud = imageUrlCloud;
         this.artistName = artistName;
         this.themeName = themeName;
         this.isFeatured = isFeatured;
@@ -210,6 +211,7 @@ public class Painting implements Serializable{
                 ", price=" + price +
                 ", description='" + description + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
+                ", imageUrlCloud='" + imageUrlCloud + '\'' +
                 ", artistName='" + artistName + '\'' +
                 ", themeName='" + themeName + '\'' +
                 ", sizes=" + sizes +

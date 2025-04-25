@@ -43,7 +43,7 @@
                         <c:forEach items="${sessionScope.cart.items}" var="cp" varStatus="status">
                             <tr id="cart-item-${cp.productId}-${cp.sizeId}">
                                 <td>${status.index + 1}</td>
-                                <td><img loading="lazy" src="${cp.imageUrl}" alt="${cp.productName}" width="50"></td>
+                                <td><img loading="lazy" src="${cp.imageUrlCloud}" alt="${cp.productName}" width="50"></td>
                                 <td>${cp.productName}</td>
                                 <td>${cp.sizeDescriptions}</td>
                                 <td>
@@ -137,7 +137,7 @@
                             <c:forEach items="${sessionScope.cart.items}" var="cp" varStatus="status">
                                 <tr id="cart-itemp-${cp.productId}-${cp.sizeId}">
                                     <td>${status.index + 1}</td>
-                                    <td><img src="${cp.imageUrl}" alt="${cp.productName}" width="50"></td>
+                                    <td><img src="${cp.imageUrlCloud}" alt="${cp.productName}" width="50"></td>
                                     <td>${cp.productName}</td>
                                     <td><span class="mx-2 quantity">${cp.quantity}</span></td>
                                     <td><f:formatNumber value="${cp.totalPrice}" type="currency" currencySymbol="VNĐ"/></td>

@@ -144,7 +144,7 @@
                                         <c:forEach items="${requestScope.orderItems}" var="item" varStatus="status">
                                             <tr>
                                                 <td>${status.index + 1}</td>
-                                                <td><img src="${item.img}" alt="${item.name}" width="50"></td>
+                                                <td><img src="${item.imageUrlCloud}" alt="${item.name}" width="50"></td>
                                                 <td>${item.name}</td>
                                                 <td>${item.sizeDescription}</td>
                                                 <td>${item.quantity}</td>

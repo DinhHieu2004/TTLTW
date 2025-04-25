@@ -46,7 +46,10 @@ $(document).ready(function() {
         data.forEach(function(p) {
             let discountPrice = p.discountPercentage > 0 ? (p.price * (1 - p.discountPercentage / 100)).toLocaleString('vi-VN') : null;
             let price = p.price.toLocaleString('vi-VN');
-            const fullPhotoUrl = `${window.location.origin}${contextPath}/${p.imageUrl}`;
+            const fullPhotoUrl = p.imageUrlCloud && p.imageUrlCloud.trim() !== ""
+                ? `${p.imageUrlCloud}?f_auto,q_auto,w_400`
+                : `${window.location.origin}${contextPath}/${p.imageUrl}`;
+
             debugger
             let cardHtml = `
             <div class="col-6 col-md-3">

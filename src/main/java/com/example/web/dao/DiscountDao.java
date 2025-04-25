@@ -36,6 +36,7 @@ public class DiscountDao {
             Discount discount = new Discount(
                     rs.getInt("id"),
                     rs.getString("imageUrl"),
+                    rs.getString("imageUrlCloud"),
                     rs.getString("discountName"),
                     rs.getBigDecimal("discountPercentage"),
                     rs.getDate("startDate").toLocalDate(),
@@ -332,6 +333,7 @@ public class DiscountDao {
                     // Lấy thông tin từ ResultSet
                     int id = rs.getInt("id");
                     String imageUrl = rs.getString("imageUrl");
+                    String imageUrlCloud = rs.getString("imageUrlCloud");
                     String discountName = rs.getString("discountName");
                     BigDecimal discountPercentage = rs.getBigDecimal("discountPercentage");
                     LocalDate localStartDate = rs.getDate("startDate").toLocalDate();
@@ -342,7 +344,7 @@ public class DiscountDao {
                     LocalDateTime localCreatedAt = (createdAt != null) ? createdAt.toLocalDateTime() : null;
 
                     // Tạo đối tượng Discount từ kết quả truy vấn
-                    discount = new Discount(id, imageUrl, discountName, discountPercentage, localStartDate, localEndDate, localCreatedAt);
+                    discount = new Discount(id, imageUrl, imageUrlCloud, discountName, discountPercentage, localStartDate, localEndDate, localCreatedAt);
                 }
             }
         } catch (SQLException e) {

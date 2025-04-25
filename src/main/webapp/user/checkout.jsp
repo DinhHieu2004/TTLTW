@@ -356,7 +356,7 @@
             <c:forEach items="${sessionScope.cart.items}" var="cp" varStatus="status">
               <tr id="cart-item-${cp.productId}-${cp.sizeId}">
                 <td>${status.index + 1}</td>
-                <td><img src="${cp.imageUrl}" alt="${cp.productName}" width="50"></td>
+                <td><img src="${cp.imageUrlCloud}" alt="${cp.productName}" width="50"></td>
                 <td>${cp.productName}</td>
                 <td>${cp.sizeDescriptions}</td>
                 <td>
@@ -426,7 +426,7 @@
               <c:if test="${voucher.type == 'shipping'}">
                 <label class="voucher-item">
                   <input type="checkbox" name="voucherOption" value="${voucher.id}" data-type="shipping" />
-                  <img src="${voucher.imageUrl}" class="voucher-image" alt="Voucher">
+                  <img src="${voucher.imageUrlCloud}" class="voucher-image" alt="Voucher">
                   <div class="voucher-info">
                     <strong>${voucher.name}</strong>
                     <f:formatNumber value="${voucher.discount}" type="number" maxFractionDigits="0" var="roundedDiscount" />
@@ -445,7 +445,7 @@
               <c:if test="${voucher.type == 'order'}">
                 <label class="voucher-item">
                   <input type="checkbox" name="voucherOption" value="${voucher.id}" data-type="order" />
-                  <img src="${voucher.imageUrl}" class="voucher-image" alt="Voucher">
+                  <img src="${voucher.imageUrlCloud}" class="voucher-image" alt="Voucher">
                   <div class="voucher-info">
                     <strong>${voucher.name}</strong>
                     <f:formatNumber value="${voucher.discount}" type="number" maxFractionDigits="0" var="roundedDiscount" />
