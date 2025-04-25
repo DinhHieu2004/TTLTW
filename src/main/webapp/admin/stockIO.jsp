@@ -7,13 +7,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Panel</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
   <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <!-- DataTables Buttons CSS -->
   <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
@@ -66,7 +64,7 @@
       <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addStockModal">
         + Thêm Phiếu Nhập kho
       </button>
-      <button class="btn btn-success mb-3" data-bs-toggle="modal">
+      <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addStockOutModal">
         + Thêm Phiếu Xuất kho
       </button>
 
@@ -79,6 +77,7 @@
           <tr>
             <th>Mã Phiếu</th>
             <th>Ngày Tạo</th>
+            <th>Người tạo</th>
             <th>Nhà cung cấp</th>
             <th>Tổng Tiền</th>
             <th>Ghi Chú</th>
@@ -96,12 +95,54 @@
             <tr data-si-id="${si.id}">
               <td>${si.id}</td>
               <td>${si.transactionDate}</td>
+              <td>${si.createdName}</td>
               <td>${si.supplier}</td>
               <td><f:formatNumber value="${si.totalPrice}" type="currency" pattern="#,##0"/> VND</td>
               <td>${si.note}</td>
               <td>
                 <button class="btn btn-sm btn-info viewDetailSIButton" data-stockin-id="${si.id}" data-bs-toggle="modal" data-bs-target="#detailModal">Chi tiết</button>
                 <button class="btn btn-sm btn-danger deleteStockInButton" data-id="${si.id}">Xoá</button>
+              </td>
+            </tr>
+          </c:forEach>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-section">
+        <div class="card-header bg-success text-white mt-4" style="background: #198754 !important;">
+          <h5>Xuất Kho</h5>
+        </div>
+        <table id="exportTable" class="table table-bordered display">
+          <thead>
+          <tr>
+            <th>Mã Phiếu</th>
+            <th>Ngày Tạo</th>
+            <th>Người tạo</th>
+            <th>Lý do</th>
+            <th>Tổng Tiền</th>
+            <th>Ghi Chú</th>
+            <th>Hành Động</th>
+          </tr>
+          </thead>
+          <tbody>
+          <c:if test="${empty stockOut}">
+            <tr>
+              <td colspan="6" class="text-center">Không có dữ liệu</td>
+            </tr>
+          </c:if>
+
+          <c:forEach var="so" items="${stockOut}">
+            <tr data-si-id="${so.id}">
+              <td>${so.id}</td>
+              <td>${so.transactionDate}</td>
+              <td>${so.createdName}</td>
+              <td>${so.reason}</td>
+              <td><f:formatNumber value="${so.totalPrice}" type="currency" pattern="#,##0"/> VND</td>
+              <td>${si.note}</td>
+              <td>
+                <button class="btn btn-sm btn-info viewDetailSIButton" data-stockin-id="${so.id}" data-bs-toggle="modal" data-bs-target="#detailModal">Chi tiết</button>
+                <button class="btn btn-sm btn-danger deleteStockInButton" data-id="${so.id}">Xoá</button>
               </td>
             </tr>
           </c:forEach>
@@ -179,7 +220,7 @@
 
         <div class="mb-2 d-flex justify-content-between align-items-center">
           <h5>Danh sách sản phẩm</h5>
-          <button class="btn btn-sm btn-primary" onclick="addEmptyRow()">+ Thêm sản phẩm</button>
+          <button class="btn btn-sm btn-primary btn-addProd" onclick="addEmptyRow()">+ Thêm sản phẩm</button>
         </div>
         <div style="max-height: 300px; overflow-y: auto;">
         <table class="table table-bordered" id="productTable">
@@ -206,9 +247,82 @@
   </div>
 </div>
 
+<div class="modal fade" id="addStockOutModal" tabindex="-1" aria-labelledby="addStockOutModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="addStockOutModalLabel">Tạo Phiếu Xuất Kho</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label>Người thực hiện:</label>
+          <input type="text" id="userSO" class="form-control" value="${sessionScope.user.fullName}" readonly>
+          <input type="hidden" id="userIdSO" name="userId" value="${sessionScope.user.id}">
+        </div>
+        <div class="mb-3">
+          <label>Lý do xuất kho:</label>
+          <select id="reason" class="form-select" onchange="onReasonChange(this)">
+            <option value="">-- Chọn lý do --</option>
+            <option value="Giao hàng">Giao hàng</option>
+            <option value="Xuất hỏng">Xuất hỏng</option>
+            <option value="Khác">Khác</option>
+          </select>
+        </div>
+        <div class="mb-3" id="otherReasonWrapper" style="display: none;">
+          <label>Nhập lý do khác:</label>
+          <input type="text" id="otherReason" class="form-control">
+        </div>
+        <div class="mb-3" id="orderSelectWrapper" style="display: none;">
+          <label>Chọn hóa đơn:</label>
+          <select id="orderSelect" class="form-select" onchange="onOrderChange(this)">
+            <option value="">-- Không chọn --</option>
+            <c:forEach var="order" items="${orderList}">
+              <option value="${order.id}">#${order.id} - ${order.customerName}</option>
+            </c:forEach>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label>Ngày xuất kho:</label>
+          <input type="date" id="createdDateSO" class="form-control" >
+        </div>
+        <div class="mb-3">
+          <label>Ghi chú:</label>
+          <textarea class="form-control"></textarea>
+        </div>
+
+        <div class="mb-2 d-flex justify-content-between align-items-center">
+          <h5>Danh sách sản phẩm</h5>
+          <button class="btn btn-sm btn-primary " id="addProdOut"  onclick="addEmptyRow()">+ Thêm sản phẩm</button>
+        </div>
+        <div style="max-height: 300px; overflow-y: auto;">
+          <table class="table table-bordered" id="productTableSO">
+            <thead>
+            <tr>
+              <th>Mã Sản phẩm</th>
+              <th>Size</th>
+              <th>Số lượng</th>
+              <th>Đơn giá</th>
+              <th>Ghi chú</th>
+              <th>Hành động</th>
+            </tr>
+            </thead>
+            <tbody id="productBodySO">
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" onclick="submitStockIn()">Lưu Phiếu Nhập</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   $(document).ready(function() {
-
     let importTable = $('#importTable').DataTable({
       "order": [[1, "desc"]],
       "columnDefs": [
@@ -223,6 +337,21 @@
         { extend: 'print', title: 'Danh sách Nhập kho' }
       ]
     });
+    let exportTable = $('#exportTable').DataTable({
+      "order": [[1, "desc"]],
+      "columnDefs": [
+        { "type": "date", "targets": 1 }
+      ],
+      dom: '<"d-flex justify-content-between align-items-center"lfB>rtip',
+      buttons: [
+        { extend: 'copy', title: 'Danh sách Xuất kho' },
+        { extend: 'csv', title: 'Danh sách Xuất kho' },
+        { extend: 'excel', title: 'Danh sách Xuất kho' },
+        { extend: 'pdf', title: 'Danh sách Xuất kho' },
+        { extend: 'print', title: 'Danh sách Xuất kho' }
+      ]
+    });
+
     $(document).on('click', '.viewDetailSIButton', function () {
       const stockInId = $(this).data('stockin-id');
       $.ajax({
@@ -455,6 +584,28 @@
 
     $('#addStockModal').modal('hide');
   }
+  function onReasonChange(select) {
+    const reason = select.value;
+    const otherReasonWrapper = document.getElementById("otherReasonWrapper");
+    const orderSelectWrapper = document.getElementById("orderSelectWrapper");
+
+    if (reason === "Khác") {
+      otherReasonWrapper.style.display = "block";
+    } else {
+      otherReasonWrapper.style.display = "none";
+      document.getElementById("otherReason").value = "";
+    }
+
+    if (reason === "Giao hàng") {
+      document.getElementById("addProdOut").style.display = "none";
+      orderSelectWrapper.style.display = "block";
+    } else {
+      document.getElementById("addProdOut").style.display = "block";
+      orderSelectWrapper.style.display = "none";
+      document.getElementById("orderSelect").value = "";
+    }
+  }
+
 </script>
 <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

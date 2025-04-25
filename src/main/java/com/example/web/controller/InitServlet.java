@@ -1,14 +1,8 @@
 package com.example.web.controller;
 
 import com.example.web.dao.PaintingDao;
-import com.example.web.dao.model.Artist;
-import com.example.web.dao.model.Painting;
-import com.example.web.dao.model.PaintingSize;
-import com.example.web.dao.model.Theme;
-import com.example.web.service.ArtistService;
-import com.example.web.service.PaintingService;
-import com.example.web.service.SizeService;
-import com.example.web.service.ThemeService;
+import com.example.web.dao.model.*;
+import com.example.web.service.*;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
