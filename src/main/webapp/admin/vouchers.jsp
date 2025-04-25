@@ -243,6 +243,8 @@
         });
     });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="${pageContext.request.contextPath}/assets/js/checkSession.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/admin/vouchers.js"></script>
 </body>
 </html>

@@ -1007,5 +1007,7 @@ $("#editPaintingForm").submit(function (event) {
 <script src="${pageContext.request.contextPath}/assets/js/admin/product.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/admin/theme.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/admin/sizes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="${pageContext.request.contextPath}/assets/js/checkSession.js"></script>
 </body>
 </html>

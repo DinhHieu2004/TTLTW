@@ -534,5 +534,7 @@
 <script src="${pageContext.request.contextPath}/assets/js/applyVoucher.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/location.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="${pageContext.request.contextPath}/assets/js/checkSession.js"></script>
 
 </html>
