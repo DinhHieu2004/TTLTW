@@ -23,6 +23,9 @@ public class StockOutItem {
         this.note = note;
     }
 
+    public StockOutItem() {
+    }
+
     public int getId() {
         return id;
     }

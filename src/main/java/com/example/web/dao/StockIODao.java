@@ -3,6 +3,8 @@ package com.example.web.dao;
 import com.example.web.dao.db.DbConnect;
 import com.example.web.dao.model.StockIn;
 import com.example.web.dao.model.StockInItem;
+import com.example.web.dao.model.StockOut;
+import com.example.web.dao.model.StockOutItem;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -70,19 +72,20 @@ public class StockIODao {
 
     public List<StockIn> getAll() throws SQLException{
         List<StockIn> stockInList = new ArrayList<>();
-        String sql = "SELECT * FROM stock_in";
+        String sql = "SELECT si.*, u.fullName as createdName FROM stock_in si JOIN users u ON si.createdId = u.id";
 
         PreparedStatement ps = conn.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
             int id = rs.getInt("id");
             int createdId = rs.getInt("createdId");
+            String createdName = rs.getString("createdName");
             String supplier = rs.getString("supplier");
             String note = rs.getString("note");
             double totalPrice = rs.getDouble("totalPrice");
             Date transactionDate = rs.getDate("importDate");
 
-            StockIn stockIn = new StockIn(id, createdId, supplier, note, totalPrice, transactionDate);
+            StockIn stockIn = new StockIn(id, createdId, createdName,  supplier, note, totalPrice, transactionDate);
             stockInList.add(stockIn);
         }
         return stockInList;
@@ -210,5 +213,103 @@ public class StockIODao {
                 e.printStackTrace();
             }
         }
+    }
+    public StockIn getSIById(int stockInId) throws SQLException {
+        StockIn stockIn = null;
+        String sql = "SELECT si.*, u.fullName as createdName FROM stock_in si JOIN users u ON si.createdId = u.id" +
+                " WHERE si.id = ?";
+
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, stockInId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            int createdId = rs.getInt("createdId");
+            String createdName = rs.getString("createdName");
+            String supplier = rs.getString("supplier");
+            String note = rs.getString("note");
+            double totalPrice = rs.getDouble("totalPrice");
+            Date transactionDate = rs.getDate("importDate");
+
+            stockIn = new StockIn(id, createdId, createdName,  supplier, note, totalPrice, transactionDate);
+        }
+        return stockIn;
+    }
+
+    public List<StockOut> getAllOut() throws SQLException {
+        List<StockOut> stockOutList = new ArrayList<>();
+        String sql = "SELECT so.*, u.fullName as createdName FROM stock_out so JOIN users u ON so.createdId = u.id";
+
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            int createdId = rs.getInt("createdId");
+            String createdName = rs.getString("createdName");
+            String reason = rs.getString("reason");
+            String note = rs.getString("note");
+            int orderId = rs.getInt("orderId");
+            double totalPrice = rs.getDouble("totalPrice");
+            Date transactionDate = rs.getDate("exportDate");
+
+            StockOut stockOut = new StockOut(id, createdId, createdName, reason, orderId, note, transactionDate, totalPrice);
+            stockOutList.add(stockOut);
+        }
+        return stockOutList;
+    }
+
+    public StockOut getStockOutDetail(int id) throws SQLException {
+        StockOut stockOut = null;
+
+        String sql = "SELECT so.*, u.fullName FROM stock_out so JOIN users u ON si.createdId = u.id WHERE so.id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                stockOut = new StockOut();
+                stockOut.setId(rs.getInt("id"));
+                stockOut.setCreatedId(rs.getInt("createdId"));
+                stockOut.setCreatedName(rs.getString("fullName"));
+                stockOut.setReason(rs.getString("reason"));
+                stockOut.setNote(rs.getString("note"));
+                stockOut.setTransactionDate(rs.getDate("exportDate"));
+                stockOut.setTotalPrice(rs.getDouble("totalPrice"));
+                stockOut.setListPro(findItemsByStockOutId(id));
+            }
+        }
+
+        return stockOut;
+    }
+
+    private List<StockOutItem> findItemsByStockOutId(int id) throws SQLException {
+        List<StockOutItem> items = new ArrayList<>();
+
+        String sql = "SELECT soi.*, p.title AS productName, s.sizeDescription " +
+                "FROM stock_out_items soi " +
+                "JOIN paintings p ON sii.paintingId = p.id " +
+                "JOIN sizes s ON soi.sizeId = s.id " +
+                "WHERE soi.stockOutId = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                StockOutItem item = new StockOutItem();
+                item.setId(rs.getInt("id"));
+                item.setStockOutId(rs.getInt("stockOutId"));
+                item.setProductId(rs.getInt("paintingId"));
+                item.setProductName(rs.getString("productName"));
+                item.setSizeId(rs.getInt("sizeId"));
+                item.setSizeName(rs.getString("sizeDescription"));
+                item.setPrice(rs.getDouble("price"));
+                item.setQuantity(rs.getInt("quantity"));
+                item.setTotalPrice(rs.getDouble("totalPrice"));
+                item.setNote(rs.getString("note"));
+                items.add(item);
+            }
+        }
+
+        return items;
     }
 }

@@ -25,6 +25,17 @@ public class StockOut {
         this.totalPrice = totalPrice;
     }
 
+    public StockOut(int id, int createdId, String createdName, String reason, Integer orderId, String note, Date transactionDate, double totalPrice) {
+        this.id = id;
+        this.createdId = createdId;
+        this.createdName = createdName;
+        this.reason = reason;
+        this.orderId = orderId;
+        this.note = note;
+        this.transactionDate = transactionDate;
+        this.totalPrice = totalPrice;
+    }
+
     public StockOut() {
     }
 
