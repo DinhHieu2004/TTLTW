@@ -26,7 +26,11 @@ public class UploadImageBatchToCloudinary {
         for (File file : files) {
             if (file.isFile()) {
                 try {
-                    String webappPath = new File("src/main/webapp").getAbsolutePath();
+String webappPath = new File("src/main/webapp").getAbsolutePath();
+        for (File file : files) {
+             if (file.isFile()) {
+                try {
+
                     String imagePath = file.getAbsolutePath();
                     String relativePath = imagePath.replace(webappPath + File.separator, "");
                     String cloudinaryFolder = relativePath
