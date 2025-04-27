@@ -422,4 +422,47 @@ public class StockIODao {
         }
         return stockOut;
     }
+
+    public boolean deleteStockOutById(int id) {
+        String deleteStockOutSQL = "DELETE FROM stock_out WHERE id = ?";
+        String deleteStockOutItemsSQL = "DELETE FROM stock_out_items WHERE stockOutId = ?";
+
+        try {
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement ps = conn.prepareStatement(deleteStockOutItemsSQL)) {
+                ps.setInt(1, id);
+                int rowsDeletedItems = ps.executeUpdate();
+                if (rowsDeletedItems == 0) {
+                    conn.rollback();
+                    return false;
+                }
+            }
+
+            try (PreparedStatement ps = conn.prepareStatement(deleteStockOutSQL)) {
+                ps.setInt(1, id);
+                int rowsDeletedStockOut = ps.executeUpdate();
+                if (rowsDeletedStockOut == 0) {
+                    conn.rollback();
+                    return false;
+                }
+            }
+            conn.commit();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+            return false;
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

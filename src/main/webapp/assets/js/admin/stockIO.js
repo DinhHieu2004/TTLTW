@@ -158,6 +158,56 @@ $(document).ready(function() {
             }
         });
     });
+    $(".deleteStockOutButton").click(function() {
+        var stockOutId = $(this).data("id");
+
+        Swal.fire({
+            title: 'Bạn có chắc chắn muốn xóa phiếu xuất kho này?',
+            text: "Việc này không thể hoàn tác!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Có, xóa!',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: 'inventoryTrans/delete',
+                    type: 'POST',
+                    data: {
+                        type: 'out',
+                        id: stockOutId
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            var $row = $('[data-si-id="' + stockOutId + '"]').closest('tr');
+                            exportTable.row($row).remove().draw();
+
+                            Swal.fire(
+                                'Đã xóa!',
+                                'Phiếu xuất kho đã được xóa.',
+                                'success'
+                            );
+                        } else {
+                            Swal.fire(
+                                'Lỗi!',
+                                response.message || 'Có lỗi xảy ra khi xóa phiếu xuất kho.',
+                                'error'
+                            );
+                        }
+                    },
+                    error: function() {
+                        Swal.fire(
+                            'Lỗi!',
+                            'Đã xảy ra lỗi với yêu cầu xóa.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    });
 });
 function removeRow(btn) {
     const row = btn.closest("tr");

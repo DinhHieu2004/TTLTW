@@ -44,4 +44,8 @@ public class StockIOService {
     public StockOut getSOById(int stockOutId) throws SQLException {
         return stockIODao.getSOById(stockOutId);
     }
+
+    public boolean deleteStockOutById(String id) {
+        return stockIODao.deleteStockOutById(Integer.parseInt(id));
+    }
 }
