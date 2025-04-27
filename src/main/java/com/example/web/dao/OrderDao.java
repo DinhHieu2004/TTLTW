@@ -207,4 +207,20 @@ public class OrderDao {
         }
         return orders;
     }
+
+    public boolean isPendingOrder(int id) throws SQLException {
+        String query = "SELECT COUNT(*) FROM orders WHERE id = ? AND status = 'chờ'";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, id);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
 }

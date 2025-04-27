@@ -91,7 +91,7 @@ public class StockOutItem {
     }
 
     public double getTotalPrice() {
-        return totalPrice;
+        return this.price * this.quantity;
     }
 
     public void setTotalPrice(double totalPrice) {

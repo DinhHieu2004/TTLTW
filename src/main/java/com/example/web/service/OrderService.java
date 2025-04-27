@@ -45,4 +45,8 @@ public class OrderService {
     public List<Order> getOrderByDelStatus(String status) throws Exception {
         return orderDao.getOrderByDelStatus(status);
     }
+
+    public boolean isPendingOrder(int id) throws SQLException {
+        return orderDao.isPendingOrder(id);
+    }
 }

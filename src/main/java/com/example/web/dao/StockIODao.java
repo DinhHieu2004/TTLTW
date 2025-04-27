@@ -312,4 +312,114 @@ public class StockIODao {
 
         return items;
     }
+
+    public int saveStockOutWithItems(StockOut stockOut) {
+        try {
+            conn.setAutoCommit(false);
+
+            int stockOutId = addStockOutTrans(stockOut);
+            if (stockOutId == -1) {
+                conn.rollback();
+                return -1;
+            }
+
+            boolean success = addStockOutItems(stockOutId, stockOut.getListPro());
+            if (!success) {
+                conn.rollback();
+                return -1;
+            }
+
+            conn.commit();
+            return stockOutId;
+        } catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            return -1;
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private boolean addStockOutItems(int stockOutId, List<StockOutItem> listItem) throws SQLException {
+        String insertSql = "INSERT INTO stock_out_items (stockOutId, paintingId, sizeId, price, quantity, totalPrice, note) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
+            for (StockOutItem item : listItem) {
+                ps.setInt(1, stockOutId);
+                ps.setInt(2, item.getProductId());
+                ps.setInt(3, item.getSizeId());
+                ps.setDouble(4, item.getPrice());
+                ps.setInt(5, item.getQuantity());
+                ps.setDouble(6, item.getTotalPrice());
+                ps.setString(7, item.getNote());
+
+                ps.addBatch();
+            }
+
+            int[] result = ps.executeBatch();
+            for (int res : result) {
+                if (res == Statement.EXECUTE_FAILED) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    private int addStockOutTrans(StockOut stockOut) throws SQLException{
+        String stockOutSql = "INSERT INTO stock_out (createdId, reason, orderId, note, totalPrice, exportDate) VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = conn.prepareStatement(stockOutSql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, stockOut.getCreatedId());
+            ps.setString(2, stockOut.getReason());
+            if (stockOut.getOrderId() <= 0) {
+                ps.setNull(3, java.sql.Types.INTEGER);
+            } else {
+                ps.setInt(3, stockOut.getOrderId());
+            }
+            ps.setString(4, stockOut.getNote());
+            ps.setDouble(5, stockOut.getTotalPrice());
+            ps.setDate(6, new java.sql.Date(stockOut.getTransactionDate().getTime()));
+
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("Lỗi khi thêm xuất kho");
+        }
+        return -1;
+    }
+
+    public StockOut getSOById(int stockOutId) throws SQLException {
+        StockOut stockOut = null;
+        String sql = "SELECT so.*, u.fullName as createdName FROM stock_out so JOIN users u ON so.createdId = u.id" +
+                " WHERE so.id = ?";
+
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, stockOutId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            int createdId = rs.getInt("createdId");
+            String createdName = rs.getString("createdName");
+            String reason = rs.getString("reason");
+            String note = rs.getString("note");
+            double totalPrice = rs.getDouble("totalPrice");
+            Date transactionDate = rs.getDate("exportDate");
+
+            stockOut = new StockOut(id, createdId, createdName,  reason, note, transactionDate, totalPrice);
+        }
+        return stockOut;
+    }
 }

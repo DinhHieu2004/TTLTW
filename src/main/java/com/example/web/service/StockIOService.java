@@ -36,4 +36,12 @@ public class StockIOService {
     public StockOut getStockOutDetail(String id) throws SQLException{
         return stockIODao.getStockOutDetail(Integer.parseInt(id));
     }
+
+    public int saveStockOutWithItems(StockOut stockOut) {
+        return stockIODao.saveStockOutWithItems(stockOut);
+    }
+
+    public StockOut getSOById(int stockOutId) throws SQLException {
+        return stockIODao.getSOById(stockOutId);
+    }
 }
