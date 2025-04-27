@@ -159,36 +159,6 @@ $(document).ready(function() {
         });
     });
 });
-function addEmptyRow(tableId) {
-    const tbody = document.getElementById(tableId).querySelector("tbody");
-
-    const row = document.createElement("tr");
-
-    row.innerHTML = `
-    <td><select class="form-select product-select">
-            <option value="">Chọn sản phẩm</option>
-                    <c:forEach var="p" items="${p}">
-                      <option value="${p.id}" data-name="${p.title}">${p.id} - ${p.title}</option>
-                    </c:forEach>
-          </select></td>
-    <td> <select class="form-select">
-            <option>-- Chọn --</option>
-            <c:forEach var="s" items="${s}">
-                      <option value="${s.idSize}">${s.sizeDescriptions}</option>
-            </c:forEach>
-          </select></td>
-    <td><input type="number" class="form-control" name="productQuantity"></td>
-    <td><input type="number" class="form-control" name="productPrice"></td>
-    <td><input type="text" class="form-control" name="productNote"></td>
-    <td>
-      <button class="btn btn-danger btn-sm" onclick="removeRow(this)">Xoá</button>
-    </td>
-  `;
-
-    tbody.appendChild(row);
-
-}
-
 function removeRow(btn) {
     const row = btn.closest("tr");
     row.remove();
@@ -258,7 +228,7 @@ function submitStockIn() {
     const productData = JSON.stringify(products);
 
     $.ajax({
-        url: 'inventoryTrans/addStockIn',
+        url: 'inventoryTrans/addStock',
         type: 'POST',
         data: {
             createdId: createdId,
@@ -298,12 +268,141 @@ function submitStockIn() {
         }
     });
 }
+function submitStockOut() {
+    const createdId = $('#userIdSO').val();
+    const reason = $('#reason').val();
+    const createdDate = $('#createdDateSO').val();
+    const noteIn = $('#noteOut').val();
+    const orderId = $('#orderSelect').val();
+    const otherReason = $('#otherReason').val();
+
+    let reasonToSubmit = reason;
+
+    const products = [];
+
+    let isValid = true;
+    let errorMessages = [];
+
+    $('.error-message').remove();
+
+    if (!reason) {
+        $('#reason').after('<div class="error-message" style="color:red;font-size:12px;">Vui lòng nhập nhà cung cấp</div>');
+        isValid = false;
+        errorMessages.push("Thiếu lý do!");
+    }
+    if (reason === "Khác" && otherReason.trim() === "") {
+        $('#otherReason').after('<div class="error-message" style="color:red;font-size:12px;">Vui lòng nhập lý do</div>');
+        isValid = false;
+        errorMessages.push("Thiếu lý do! ");
+    } else if (reason === "Khác") {
+        reasonToSubmit = otherReason.trim();
+    }
+    if (reason === "Giao hàng" && !orderId) {
+        $('#orderSelect').after('<div class="error-message" style="color:red;font-size:12px;">Vui lòng chọn hóa đơn</div>');
+        isValid = false;
+        errorMessages.push("Thiếu đơn hàng");
+    }
+
+    if (!createdDate) {
+        $('#createdDateSO').after('<div class="error-message" style="color:red;font-size:12px;">Vui lòng chọn ngày nhập</div>');
+        isValid = false;
+        errorMessages.push("Thiếu ngày nhập");
+    }
+
+    $('#productBodySO tr').each(function (index) {
+        const row = $(this);
+        const productId = row.find('select').eq(0).val();
+        const sizeId = row.find('select').eq(1).val();
+        const quantity = row.find('input[name="productQuantity"]').val();
+        const price = row.find('input[name="productPrice"]').val();
+        const note = row.find('input[name="productNote"]').val();
+
+        if (productId && sizeId >0 && quantity > 0 && price >= 0) {
+            products.push({
+                productId,
+                sizeId,
+                quantity,
+                price,
+                note
+            });
+        }else {
+            isValid = false;
+            console.log(row, price, productId, sizeId, quantity)
+            errorMessages.push(`Thông tin sản phẩm chưa hợp lệ`);
+        }
+    });
+
+    if (products.length === 0) {
+        errorMessages.push(`Chưa có sản phẩm`);
+        isValid = false;
+    }
+    if (!isValid) {
+        let errorText = errorMessages.join('<br>');
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi nhập liệu',
+            html: errorText,
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    const productData = JSON.stringify(products);
+
+    $.ajax({
+        url: 'inventoryTrans/addStockOut',
+        type: 'POST',
+        data: {
+            createdId: createdId,
+            reason: reasonToSubmit,
+            createdDate: createdDate,
+            note: noteIn,
+            orderId: orderId,
+            products: productData
+        },
+        success: function (response) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công',
+                text: 'Phiếu nhập đã được tạo.',
+            });
+            var exportTable = $('#exportTable').DataTable();
+            exportTable.row.add([
+                response.stockOut.id,
+                response.stockOut.transactionDate,
+                response.stockOut.createdName,
+                response.stockOut.reason,
+                response.stockOut.totalPrice.toLocaleString() + ' VND',
+                response.stockOut.note ?? '',
+                '<button class="btn btn-sm btn-info viewDetailSOButton" data-stockout-id="'+ response.stockOut.id +'"  data-bs-toggle="modal" data-bs-target="#detailModal">Chi tiết</button>'+
+                '<button class="btn btn-sm btn-danger">Xoá</button>'
+            ]).draw();
+            resetFormOut();
+        },
+        error: function (xhr, status, error) {
+            let errorMessage = xhr.responseText || "Không xác định!";
+            Swal.fire({
+                icon: 'error',
+                title: 'Có lỗi xảy ra khi nhập kho!',
+                text: 'Chi tiết: ' + errorMessage,
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
 function resetForm() {
     $("#supplier, #createdDate").val("");
     $("textarea").val("");
     $("#productBody").empty();
 
     $('#addStockModal').modal('hide');
+}
+function resetFormOut() {
+    $("#reason, #createdDateSO, #orderSelect, #otherReason").val("");
+    $("textarea").val("");
+    $("#productBodySO").empty();
+
+    $('#addStockOutModal').modal('hide');
 }
 function onReasonChange(select) {
     const reason = select.value;

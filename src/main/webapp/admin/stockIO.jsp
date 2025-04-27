@@ -244,7 +244,7 @@
         </div>
         <div class="mb-3">
           <label>Ghi chú:</label>
-          <textarea class="form-control"></textarea>
+          <textarea class="form-control" id="noteInput"></textarea>
         </div>
 
         <div class="mb-2 d-flex justify-content-between align-items-center">
@@ -318,7 +318,7 @@
         </div>
         <div class="mb-3">
           <label>Ghi chú:</label>
-          <textarea class="form-control"></textarea>
+          <textarea class="form-control" id="noteOut"></textarea>
         </div>
 
         <div class="mb-2 d-flex justify-content-between align-items-center">
@@ -350,5 +350,36 @@
   </div>
 </div>
 <script src="${pageContext.request.contextPath}/assets/js/admin/stockIO.js"></script>
+<script>
+  function addEmptyRow(tableId) {
+    const tbody = document.getElementById(tableId).querySelector("tbody");
+
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+    <td><select class="form-select product-select">
+            <option value="">Chọn sản phẩm</option>
+                    <c:forEach var="p" items="${p}">
+                      <option value="${p.id}" data-name="${p.title}">${p.id} - ${p.title}</option>
+                    </c:forEach>
+          </select></td>
+    <td> <select class="form-select">
+            <option>-- Chọn --</option>
+            <c:forEach var="s" items="${s}">
+                      <option value="${s.idSize}">${s.sizeDescriptions}</option>
+            </c:forEach>
+          </select></td>
+    <td><input type="number" class="form-control" name="productQuantity"></td>
+    <td><input type="number" class="form-control" name="productPrice"></td>
+    <td><input type="text" class="form-control" name="productNote"></td>
+    <td>
+      <button class="btn btn-danger btn-sm" onclick="removeRow(this)">Xoá</button>
+    </td>
+  `;
+
+    tbody.appendChild(row);
+
+  }
+</script>
 </body>
 </html>
