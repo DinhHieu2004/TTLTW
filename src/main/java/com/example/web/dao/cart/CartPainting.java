@@ -9,6 +9,7 @@ public class CartPainting implements Serializable {
     private String sizeDescriptions;
     private String sizeId;
     private String imageUrl;
+    private String imageUrlCloud;
     private int quantity;
     private double price;
     private double totalPrice;
@@ -18,7 +19,7 @@ public class CartPainting implements Serializable {
     private double weight;
 
 
-    public CartPainting(int productId, String productName, String sizeId,String sizeDescriptions,double weight, int quantity, double price, String imageUrl, int quanlytiOfSize , double discountPercent) {
+    public CartPainting(int productId, String productName, String sizeId,String sizeDescriptions,double weight, int quantity, double price, String imageUrl, String imageUrlCloud, int quanlytiOfSize , double discountPercent) {
         this.productId = productId;
         this.productName = productName;
         this.sizeDescriptions = sizeDescriptions;
@@ -27,6 +28,7 @@ public class CartPainting implements Serializable {
         this.price = price;
         this.totalPrice = price * quantity;
         this.imageUrl = imageUrl;
+        this.imageUrlCloud = imageUrlCloud;
         this.discountPrice = totalPrice * (1-discountPercent/ 100);
         this.quanlytiOfSize = quanlytiOfSize;
         this.discountPercent = discountPercent;
@@ -42,6 +44,14 @@ public class CartPainting implements Serializable {
 
     public double getWeight() {
         return weight;
+    }
+
+    public String getImageUrlCloud() {
+        return imageUrlCloud;
+    }
+
+    public void setImageUrlCloud(String imageUrlCloud) {
+        this.imageUrlCloud = imageUrlCloud;
     }
 
     public void setWeight(double weight) {
@@ -142,15 +152,16 @@ public class CartPainting implements Serializable {
                 ", sizeDescriptions='" + sizeDescriptions + '\'' +
                 ", sizeId='" + sizeId + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
+                ", imageUrlCloud='" + imageUrlCloud + '\'' +
                 ", quantity=" + quantity +
                 ", price=" + price +
                 ", totalPrice=" + totalPrice +
                 ", quanlytiOfSize=" + quanlytiOfSize +
                 ", discountPrice=" + discountPrice +
                 ", discountPercent=" + discountPercent +
+                ", weight=" + weight +
                 '}';
     }
-
 
     public void updateQuantityItem(int quantity){
         this.quantity = quantity;

@@ -91,7 +91,7 @@
                                 <c:otherwise>
                                     <c:forEach items="${sessionScope.cart.items}" var="cp">
                                         <div class="cart-item" id="mini-cart-item-${cp.productId}-${cp.sizeId}">
-                                            <img src="${cp.imageUrl}" alt="${cp.productName}" class="cart-item-image"/>
+                                            <img src="${cp.imageUrlCloud}" alt="${cp.productName}" class="cart-item-image"/>
 
                                             <div class="cart-item-details">
                                                 <div class="cart-item-name-price">

@@ -31,8 +31,20 @@
 
         <div class="row">
             <div class="col-md-4">
-                <img src="${data.photoUrl}"
-                    alt="Họa Sĩ" class="artist-photo">
+                <c:choose>
+                    <c:when test="${not empty data.imageUrlCloud}">
+                        <img loading="lazy"
+                             src="${data.imageUrlCloud}?f_auto,q_auto,w_400"
+                             alt="Họa Sĩ"
+                             class="artist-photo">
+                    </c:when>
+                    <c:otherwise>
+                        <img loading="lazy"
+                             src="${pageContext.request.contextPath}/${data.photoUrl}"
+                             alt="Họa Sĩ"
+                             class="artist-photo">
+                    </c:otherwise>
+                </c:choose>
             </div>
 
             <div class="col-md-8">
@@ -58,7 +70,22 @@
                         <div class="col-6 col-md-3">
                             <div class="card artwork-card h-100" style="height: 380px !important;">
                                 <a href="painting-detail?pid=${p.id}" class="card-link"></a>
-                                <img src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                                <c:choose>
+                                    <c:when test="${not empty p.imageUrlCloud}">
+                                        <img loading="lazy"
+                                             src="${p.imageUrlCloud}?f_auto,q_auto,w_400"
+                                             class="card-img-top artwork-image"
+                                             alt="${p.title}"
+                                             style="width: 100%; height:180px !important;">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img loading="lazy"
+                                             src="${pageContext.request.contextPath}/${p.imageUrl}"
+                                             class="card-img-top artwork-image"
+                                             alt="${p.title}"
+                                             style="width: 100%; height:180px !important;">
+                                    </c:otherwise>
+                                </c:choose>
                                 <div class="card-body">
                                     <h5 class="card-title">${p.title}</h5>
                                     <p class="card-text">

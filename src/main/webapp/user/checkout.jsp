@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/footer.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/header.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     :root {
       --text-color: #333;
@@ -327,6 +328,12 @@
 <body>
 <%@ include file="/partials/header.jsp" %>
 
+<%
+  session.removeAttribute("shippingFee");
+  session.removeAttribute("shippingFeeAfterVoucher");
+  session.removeAttribute("appliedVoucherIds");
+%>
+
 <div class="checkout-container">
   <h2>Thanh toán</h2>
   <div class="checkout-layout">
@@ -349,7 +356,16 @@
             <c:forEach items="${sessionScope.cart.items}" var="cp" varStatus="status">
               <tr id="cart-item-${cp.productId}-${cp.sizeId}">
                 <td>${status.index + 1}</td>
-                <td><img src="${cp.imageUrl}" alt="${cp.productName}" width="50"></td>
+                <td>
+                  <c:choose>
+                    <c:when test="${not empty cp.imageUrlCloud}">
+                      <img src="${cp.imageUrlCloud}?f_auto,q_auto,w_50" alt="${cp.productName}" width="50">
+                    </c:when>
+                    <c:otherwise>
+                      <img src="${pageContext.request.contextPath}/${cp.imageUrl}" alt="${cp.productName}" width="50">
+                    </c:otherwise>
+                  </c:choose>
+                </td>
                 <td>${cp.productName}</td>
                 <td>${cp.sizeDescriptions}</td>
                 <td>
@@ -375,6 +391,9 @@
           <div class="alert alert-info text-center" role="alert">
             Giỏ hàng của bạn đang trống.
           </div>
+          <div class="text-center mt-3">
+            <a href="${pageContext.request.contextPath}/artwork" class="btn btn-primary">Tiếp tục mua hàng</a>
+          </div>
         </c:otherwise>
       </c:choose>
 
@@ -383,14 +402,13 @@
       </div>
 
 
-
       <button id="openVoucherModal">Chọn hoặc nhập mã</button>
       <input type="hidden" id="voucherSelect" name="voucherCode"/>
 
       <span id="voucherCount" class="ms-2 text-muted" style="display: none;"></span>
 
       <div class="price-display">
-        Giá phải trả: <span id="finalPrice">
+        Giá phải trả: <span id="finalPrice" data-original-price="${sessionScope.cart.totalPrice}">
         <f:formatNumber value="${sessionScope.cart.totalPrice}" type="currency" pattern="#,##0"/>₫
       </span>
       </div>
@@ -399,6 +417,8 @@
         <div class="modal-content">
           <span class="close">&times;</span>
           <h3>Chọn Mã Giảm Giá</h3>
+
+          <!-- Nhập mã thủ công -->
           <div class="row align-items-center mb-3">
             <label for="manualVoucher" class="col-auto fw-bold">Mã Voucher</label>
             <div class="col">
@@ -408,26 +428,65 @@
               <button id="applyManualVoucher" class="btn btn-outline-primary">Áp dụng</button>
             </div>
           </div>
+
+          <h5 class="mt-3 mb-2">Mã Miễn Phí Vận Chuyển</h5>
           <div class="voucher-list">
             <c:forEach items="${v}" var="voucher">
-              <label class="voucher-item">
-                <input type="checkbox" name="voucherOption" value="${voucher.id}" />
-                <img src="${voucher.imageUrl}" class="voucher-image" alt="Voucher">
-                <div class="voucher-info">
-                  <strong>${voucher.name}</strong>
-                  <p class="mb-1">Giảm ${voucher.discount}%</p>
-                  <p class="mb-1">Mã: ${voucher.code}</p>
-                  <p class="mb-0">HSD: ${voucher.endDate}</p>
-                </div>
-              </label>
+              <c:if test="${voucher.type == 'shipping'}">
+                <label class="voucher-item">
+                  <input type="checkbox" name="voucherOption" value="${voucher.id}" data-type="shipping" />
+                  <c:choose>
+                    <c:when test="${not empty voucher.imageUrlCloud}">
+                      <img src="${voucher.imageUrlCloud}?f_auto,q_auto,w_300" class="voucher-image" alt="Voucher">
+                    </c:when>
+                    <c:otherwise>
+                      <img src="${pageContext.request.contextPath}/${voucher.imageUrl}" class="voucher-image" alt="Voucher">
+                    </c:otherwise>
+                  </c:choose>
+                  <div class="voucher-info">
+                    <strong>${voucher.name}</strong>
+                    <f:formatNumber value="${voucher.discount}" type="number" maxFractionDigits="0" var="roundedDiscount" />
+                    <p class="mb-1">Giảm ${roundedDiscount}%</p>
+                    <p class="mb-1">Mã: ${voucher.code}</p>
+                    <p class="mb-0">HSD: ${voucher.endDate}</p>
+                  </div>
+                </label>
+              </c:if>
             </c:forEach>
           </div>
 
-          <div class="modal-actions">
-            <button id="applyVoucherBtn" class="apply-btn">Áp dụng</button>
+          <h5 class="mt-4 mb-2">Mã Giảm Giá Đơn Hàng</h5>
+          <div class="voucher-list">
+            <c:forEach items="${v}" var="voucher">
+              <c:if test="${voucher.type == 'order'}">
+                <label class="voucher-item">
+                  <input type="checkbox" name="voucherOption" value="${voucher.id}" data-type="order" />
+                  <c:choose>
+                    <c:when test="${not empty voucher.imageUrlCloud}">
+                      <img src="${voucher.imageUrlCloud}?f_auto,q_auto,w_300" class="voucher-image" alt="Voucher">
+                    </c:when>
+                    <c:otherwise>
+                      <img src="${pageContext.request.contextPath}/${voucher.imageUrl}" class="voucher-image" alt="Voucher">
+                    </c:otherwise>
+                  </c:choose>
+                  <div class="voucher-info">
+                    <strong>${voucher.name}</strong>
+                    <f:formatNumber value="${voucher.discount}" type="number" maxFractionDigits="0" var="roundedDiscount" />
+                    <p class="mb-1">Giảm ${roundedDiscount}%</p>
+                    <p class="mb-1">Mã: ${voucher.code}</p>
+                    <p class="mb-0">HSD: ${voucher.endDate}</p>
+                  </div>
+                </label>
+              </c:if>
+            </c:forEach>
+          </div>
+
+          <div class="modal-actions mt-3">
+            <button id="applyVoucherBtn" class="apply-btn btn btn-success">Áp dụng</button>
           </div>
         </div>
       </div>
+
 
 
     </div>
@@ -533,6 +592,9 @@
 <script src="${pageContext.request.contextPath}/assets/js/checkout.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/applyVoucher.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/location.js"></script>
+<script>
+  const contextPath = '${pageContext.request.contextPath}';
+</script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="${pageContext.request.contextPath}/assets/js/checkSession.js"></script>

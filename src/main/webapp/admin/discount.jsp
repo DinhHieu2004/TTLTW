@@ -79,7 +79,21 @@
           <tr>
             <td>${discount.id}</td>
             <td>
-            <td><img src="${pageContext.request.contextPath}/${discount.imageUrl}" alt="${discount.imageUrl}" width="60"></td>
+              <c:choose>
+                <c:when test="${not empty discount.imageUrlCloud}">
+                  <img loading="lazy"
+                       src="${discount.imageUrlCloud}?f_auto,q_auto,w_60"
+                       alt="${discount.imageUrl}"
+                       width="60">
+                </c:when>
+                <c:otherwise>
+                  <img loading="lazy"
+                       src="${pageContext.request.contextPath}/${discount.imageUrl}"
+                       alt="${discount.imageUrl}"
+                       width="60">
+                </c:otherwise>
+              </c:choose>
+            </td>
 
             <td>${discount.discountName != null ? discount.discountName : 'Không xác định'}</td>
             <td>

@@ -28,12 +28,19 @@ public class CheckoutService {
 
     }
 
-    public void processCheckout(Cart cart, int userId, int paymentMethodId, String recipientName, String recipientPhone, String deliveryAddress, double shippingFee) throws Exception {
+    public void processCheckout(Cart cart, int userId, int paymentMethodId, String recipientName, String recipientPhone, String deliveryAddress, double shippingFee, String appliedVoucherIds, Double shippingFeeAfterVoucher) throws Exception {
+        double originalPrice = cart.getTotalPrice();
+        double discountPrice = cart.getFinalPrice();
+        if(discountPrice == 0) {
+            discountPrice = originalPrice;
+        }
+        double shippingFeeFinal = (shippingFeeAfterVoucher != null) ? shippingFeeAfterVoucher : shippingFee;
+        double priceAfterShipping = discountPrice + shippingFeeFinal;
 
         Order order = new Order();
         order.setUserId(userId);
-        order.setTotalAmount(cart.getFinalPrice());
-        order.setPriceAfterShipping(shippingFee + cart.getFinalPrice());
+        order.setTotalAmount(originalPrice);
+        order.setPriceAfterShipping(priceAfterShipping);
         order.setPaymentStatus("chưa thanh toán");
         order.setDeliveryStatus("chờ");
         order.setDeliveryAddress(deliveryAddress);
@@ -41,6 +48,7 @@ public class CheckoutService {
         order.setPaymentMethod("COD");
         order.setRecipientPhone(recipientPhone);
         order.setShippingFee(shippingFee);
+        order.setAppliedVoucherIds(appliedVoucherIds);
         int orderId = orderDao.createOrder(order);
 
         for (CartPainting item : cart.getItems()) {
@@ -65,14 +73,20 @@ public class CheckoutService {
 
     public int processCheckout2(Cart cart, int userId, int paymentMethodId,
                                 String recipientName, String recipientPhone,
-                                String deliveryAddress, String vnpTxnRef, double shippingFee) throws Exception {
-
+                                String deliveryAddress, String vnpTxnRef, double shippingFee, String appliedVoucherIds, Double shippingFeeAfterVoucher) throws Exception {
+        double originalPrice = cart.getTotalPrice();
+        double discountPrice = cart.getFinalPrice();
+        if(discountPrice == 0) {
+            discountPrice = originalPrice;
+        }
+        double shippingFeeFinal = (shippingFeeAfterVoucher != null) ? shippingFeeAfterVoucher : shippingFee;
+        double priceAfterShipping = discountPrice + shippingFeeFinal;
 
         // Tạo đơn hàng mới
         Order order = new Order();
         order.setUserId(userId);
-        order.setTotalAmount(cart.getFinalPrice());
-        order.setPriceAfterShipping(shippingFee + cart.getFinalPrice());
+        order.setTotalAmount(originalPrice);
+        order.setPriceAfterShipping(priceAfterShipping);
         order.setPaymentStatus("đã thanh toán");
         order.setDeliveryStatus("chờ");
         order.setDeliveryAddress(deliveryAddress);
@@ -80,6 +94,7 @@ public class CheckoutService {
         order.setVnpTxnRef(vnpTxnRef);
         order.setPaymentMethod("VNPay");
         order.setRecipientPhone(recipientPhone);
+        order.setAppliedVoucherIds(appliedVoucherIds);
 
         order.setShippingFee(shippingFee);
 

@@ -20,6 +20,7 @@ public class Order  implements Serializable {
     private double priceAfterShipping;
     private String paymentMethod;
     private String vnpTxnRef;
+    private String appliedVoucherIds;
 
 
     public double getPriceAfterShipping() {
@@ -52,6 +53,14 @@ public class Order  implements Serializable {
 
     public void setRecipientPhone(String recipientPhone) {
         this.recipientPhone = recipientPhone;
+    }
+
+    public String getAppliedVoucherIds() {
+        return appliedVoucherIds;
+    }
+
+    public void setAppliedVoucherIds(String appliedVoucherIds) {
+        this.appliedVoucherIds = appliedVoucherIds;
     }
 
     public int getId() {

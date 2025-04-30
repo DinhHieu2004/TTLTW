@@ -54,10 +54,12 @@ $(document).on('click', '.remove-item', function (e) {
         itemArray.forEach(item => {
             const finalPrice = item.discountPrice ? item.discountPrice.toLocaleString() : item.totalPrice.toLocaleString();
             const discountBadge = item.discountPercent > 0 ? `<span class="badge bg-success ms-2">-${item.discountPercent}%</span>` : '';
-
+            const fullImgUrl = item.imageUrlCloud && item.imageUrlCloud.trim() !== ""
+                ? `${item.imageUrlCloud}?f_auto,q_auto,w_80`
+                : `${window.location.origin}${contextPath}/${item.imageUrl}`;
             miniCartHtml += `
             <div class="cart-item" id="mini-cart-item-${item.productId}-${item.sizeId}">
-                <img src="${item.imageUrl}" alt="${item.productName}" class="cart-item-image" />
+                <img src="${fullImgUrl}" alt="${item.productName}" class="cart-item-image" />
                 <div class="cart-item-details">
                     <div class="cart-item-name-price">
                         <span class="cart-item-name">${item.productName}</span>

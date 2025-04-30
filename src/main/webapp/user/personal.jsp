@@ -276,6 +276,7 @@
                             <thead>
                             <tr>
                                 <th>Tên voucher</th>
+                                <th>Mã</th>
                                 <th>Giảm (%)</th>
                                 <th>Hiệu lực</th>
                                 <th>Hết hạn</th>
@@ -286,6 +287,7 @@
                             <c:forEach var="v" items="${userVouchers}">
                                 <tr>
                                     <td>${v.voucher.name}</td>
+                                    <td>${v.voucher.code}</td>
                                     <td>${v.voucher.discount}</td>
                                     <td>${v.voucher.startDate}</td>
                                     <td>${v.voucher.endDate}</td>

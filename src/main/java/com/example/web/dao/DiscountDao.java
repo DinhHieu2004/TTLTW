@@ -36,6 +36,7 @@ public class DiscountDao {
             Discount discount = new Discount(
                     rs.getInt("id"),
                     rs.getString("imageUrl"),
+                    rs.getString("imageUrlCloud"),
                     rs.getString("discountName"),
                     rs.getBigDecimal("discountPercentage"),
                     rs.getDate("startDate").toLocalDate(),
@@ -60,6 +61,7 @@ public class DiscountDao {
             p.title AS paintingTitle,
             p.price,
             p.imageUrl,
+            p.imageUrlCloud,
             a.name AS artistName,
             t.themeName AS theme,
             IFNULL(d.discountPercentage, 0) AS discount,
@@ -125,6 +127,7 @@ public class DiscountDao {
                     painting.setId(rs.getInt("paintingId"));
                     painting.setTitle(rs.getString("paintingTitle"));
                     painting.setImageUrl(rs.getString("imageUrl"));
+                    painting.setImageUrlCloud(rs.getString("imageUrlCloud"));
                     painting.setArtistName(rs.getString("artistName"));
                     painting.setThemeName(rs.getString("theme"));
                     painting.setDiscountPercentage(rs.getDouble("discount"));
@@ -332,6 +335,7 @@ public class DiscountDao {
                     // Lấy thông tin từ ResultSet
                     int id = rs.getInt("id");
                     String imageUrl = rs.getString("imageUrl");
+                    String imageUrlCloud = rs.getString("imageUrlCloud");
                     String discountName = rs.getString("discountName");
                     BigDecimal discountPercentage = rs.getBigDecimal("discountPercentage");
                     LocalDate localStartDate = rs.getDate("startDate").toLocalDate();
@@ -342,7 +346,7 @@ public class DiscountDao {
                     LocalDateTime localCreatedAt = (createdAt != null) ? createdAt.toLocalDateTime() : null;
 
                     // Tạo đối tượng Discount từ kết quả truy vấn
-                    discount = new Discount(id, imageUrl, discountName, discountPercentage, localStartDate, localEndDate, localCreatedAt);
+                    discount = new Discount(id, imageUrl, imageUrlCloud, discountName, discountPercentage, localStartDate, localEndDate, localCreatedAt);
                 }
             }
         } catch (SQLException e) {
