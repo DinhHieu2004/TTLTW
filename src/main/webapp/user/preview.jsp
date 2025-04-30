@@ -25,7 +25,20 @@
     <div class="col-md-6">
       <div class="card">
 
-        <img src="${p.imageUrl}" alt="${p.title}" class="card-img-top img-fluid">
+        <c:choose>
+          <c:when test="${not empty p.imageUrlCloud}">
+            <img loading="lazy"
+                 src="${p.imageUrlCloud}?f_auto,q_auto,w_400"
+                 alt="${p.title}"
+                 class="card-img-top img-fluid">
+          </c:when>
+          <c:otherwise>
+            <img loading="lazy"
+                 src="${pageContext.request.contextPath}/${p.imageUrl}"
+                 alt="${p.title}"
+                 class="card-img-top img-fluid">
+          </c:otherwise>
+        </c:choose>
       </div>
     </div>
 

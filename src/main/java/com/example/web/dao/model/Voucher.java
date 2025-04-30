@@ -11,10 +11,11 @@ public class Voucher implements java.io.Serializable {
     private Date startDate;
     private Date endDate;
     private String imageUrl;
+    private String imageUrlCloud;
     private String code;
     private String type;
 
-    public Voucher(int id, String name, double discount, boolean isActive, Date createAt, Date startDate, Date endDate, String imageUrl, String code, String type) {
+    public Voucher(int id, String name, double discount, boolean isActive, Date createAt, Date startDate, Date endDate, String imageUrl,String imageUrlCloud, String code, String type) {
         this.id = id;
         this.name = name;
         this.discount = discount;
@@ -23,6 +24,7 @@ public class Voucher implements java.io.Serializable {
         this.startDate = startDate;
         this.endDate = endDate;
         this.imageUrl = imageUrl;
+        this.imageUrlCloud = imageUrlCloud;
         this.code = code;
         this.type = type;
     }
@@ -54,6 +56,14 @@ public class Voucher implements java.io.Serializable {
 
     public Date getEndDate() {
         return endDate;
+    }
+
+    public String getImageUrlCloud() {
+        return imageUrlCloud;
+    }
+
+    public void setImageUrlCloud(String imageUrlCloud) {
+        this.imageUrlCloud = imageUrlCloud;
     }
 
     public void setEndDate(Date endDate) {

@@ -70,7 +70,7 @@
                         <div class="cart-items" id="mini-cart-items">
                         <c:forEach  items="${sessionScope.cart.items}" var="cp">
                             <div class="cart-item">
-                                <img src="${cp.imageUrl}" alt="${cp.productName}" class="cart-item-image" />
+                                <img src="${cp.imageUrlCloud}" alt="${cp.productName}" class="cart-item-image" />
                                 <div class="cart-item-details">
                                     <div class="cart-item-name-price">
                                         <span class="cart-item-name">${cp.productName}</span>

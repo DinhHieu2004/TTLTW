@@ -144,7 +144,16 @@
                                         <c:forEach items="${requestScope.orderItems}" var="item" varStatus="status">
                                             <tr>
                                                 <td>${status.index + 1}</td>
-                                                <td><img src="${item.img}" alt="${item.name}" width="50"></td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${not empty item.imageUrlCloud}">
+                                                            <img src="${item.imageUrlCloud}?f_auto,q_auto,w_50" alt="${item.name}" width="50">
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <img src="${pageContext.request.contextPath}/${item.imageUrl}" alt="${item.name}" width="50">
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
                                                 <td>${item.name}</td>
                                                 <td>${item.sizeDescription}</td>
                                                 <td>${item.quantity}</td>
