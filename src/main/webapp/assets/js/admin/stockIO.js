@@ -158,7 +158,7 @@ $(document).ready(function() {
             }
         });
     });
-    $(".deleteStockOutButton").click(function() {
+    $(".deleteStockOButton").click(function() {
         var stockOutId = $(this).data("id");
 
         Swal.fire({
@@ -278,7 +278,7 @@ function submitStockIn() {
     const productData = JSON.stringify(products);
 
     $.ajax({
-        url: 'inventoryTrans/addStock',
+        url: 'inventoryTrans/addStockIn',
         type: 'POST',
         data: {
             createdId: createdId,
@@ -361,11 +361,18 @@ function submitStockOut() {
 
     $('#productBodySO tr').each(function (index) {
         const row = $(this);
-        const productId = row.find('select').eq(0).val();
-        const sizeId = row.find('select').eq(1).val();
-        const quantity = row.find('input[name="productQuantity"]').val();
-        const price = row.find('input[name="productPrice"]').val();
-        const note = row.find('input[name="productNote"]').val();
+        const isDeliveryProduct = reason === "Giao hàng"
+        let productId, sizeId, quantity, price, note;
+        if (isDeliveryProduct) {
+            productId = row.find('.product-id').val();
+            sizeId = row.find('.size-id').val();
+        } else {
+            productId = row.find('select').eq(0).val();
+            sizeId = row.find('select').eq(1).val();
+        }
+        quantity = row.find('input[name="productQuantity"]').val();
+        price = row.find('input[name="productPrice"]').val();
+        note = row.find('input[name="productNote"]').val();
 
         if (productId && sizeId >0 && quantity > 0 && price >= 0) {
             products.push({
@@ -424,7 +431,7 @@ function submitStockOut() {
                 response.stockOut.reason,
                 response.stockOut.totalPrice.toLocaleString() + ' VND',
                 response.stockOut.note ?? '',
-                '<button class="btn btn-sm btn-info viewDetailSOButton" data-stockout-id="'+ response.stockOut.id +'"  data-bs-toggle="modal" data-bs-target="#detailModal">Chi tiết</button>'+
+                '<button class="btn btn-sm btn-info viewDetailSOButton" data-stockout-id="'+ response.stockOut.id +'"  data-bs-toggle="modal" data-bs-target="#detailModalSo">Chi tiết</button>'+
                 '<button class="btn btn-sm btn-danger">Xoá</button>'
             ]).draw();
             resetFormOut();
@@ -458,6 +465,7 @@ function onReasonChange(select) {
     const reason = select.value;
     const otherReasonWrapper = document.getElementById("otherReasonWrapper");
     const orderSelectWrapper = document.getElementById("orderSelectWrapper");
+    clearProductTable();
 
     if (reason === "Khác") {
         otherReasonWrapper.style.display = "block";
@@ -474,4 +482,47 @@ function onReasonChange(select) {
         orderSelectWrapper.style.display = "none";
         document.getElementById("orderSelect").value = "";
     }
+}
+
+function onOrderChange(select) {
+    const orderId = $(select).val();
+    clearProductTable();
+
+    if (!orderId) return;
+
+    $.ajax({
+        url: '../order/order-items',
+        method: 'GET',
+        data: { orderId: orderId },
+        dataType: 'json',
+        success: function(data) {
+            const tbody = $("#productBodySO");
+            data.forEach(function(product) {
+                const row = `
+         <tr>
+            <td>
+                <input type="text" class="form-control" value="${product.paintingId} - ${product.name}" readonly>
+                <input type="hidden" class="product-id" value="${product.paintingId}">
+            </td>
+            <td>
+                <input type="text" class="form-control" value="${product.sizeDescription}" readonly>
+                <input type="hidden" class="size-id" value="${product.sizeId}">
+            </td>
+            <td><input type="number" class="form-control" name="productQuantity" value="${product.quantity}" readonly></td>
+            <td><input type="number" class="form-control" name="productPrice" value="${product.price}" readonly></td>
+            <td><input type="text" class="form-control" name="productNote" value="${product.note || ''}" readonly></td>
+            <td></td>
+        </tr>
+        `;
+                tbody.append(row);
+            });
+        },
+        error: function(err) {
+            console.error("Lỗi lấy sản phẩm từ đơn hàng:", err);
+        }
+    });
+}
+
+function clearProductTable() {
+    $("#productBodySO").empty();
 }

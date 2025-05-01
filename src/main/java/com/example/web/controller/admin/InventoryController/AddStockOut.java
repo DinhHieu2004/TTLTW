@@ -41,6 +41,8 @@ public class AddStockOut extends HttpServlet {
         String orderId = req.getParameter("orderId");
         String createdDate = req.getParameter("createdDate");
         String productsJson = req.getParameter("products");
+        System.out.println(productsJson);
+        System.out.println(reason);
         List<StockOutItem> products = null;
 
         if (createdId == null || createdId.isEmpty()) {
@@ -58,6 +60,8 @@ public class AddStockOut extends HttpServlet {
                     if (!orderService.isPendingOrder(Integer.parseInt(orderId))) {
                         responseMap.put("status", "error");
                         responseMap.put("message", "Đơn hàng không hợp lệ hoặc không ở trạng thái chờ!");
+                    } else {
+                        products = processProducts(productsJson, responseMap);
                     }
                 } catch (SQLException e) {
                     responseMap.put("status", "error");
@@ -69,29 +73,7 @@ public class AddStockOut extends HttpServlet {
             responseMap.put("status", "error");
             responseMap.put("message", "Vui lòng chọn ngày nhập!");
         } else {
-            Type productListType = new TypeToken<List<StockOutItem>>(){}.getType();
-            products = gson.fromJson(productsJson, productListType);
-
-            if (products == null || products.isEmpty()) {
-                responseMap.put("status", "error");
-                responseMap.put("message", "Danh sách sản phẩm không được rỗng.");
-            } else {
-                for (StockOutItem product : products) {
-                    if (product.getQuantity() <= 0) {
-                        responseMap.put("status", "error");
-                        responseMap.put("message", "Số lượng phải lớn hơn 0!");
-                        break;
-                    } else if (product.getSizeId() <= 0) {
-                        responseMap.put("status", "error");
-                        responseMap.put("message", "Vui lòng chọn kích thước!");
-                        break;
-                    } else if (product.getPrice() <= 0) {
-                        responseMap.put("status", "error");
-                        responseMap.put("message", "Giá phải lớn hơn 0");
-                        break;
-                    }
-                }
-            }
+            products = processProducts(productsJson, responseMap);
         }
 
         if (!responseMap.isEmpty()) {
@@ -130,5 +112,31 @@ public class AddStockOut extends HttpServlet {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.write(gson.toJson(responseMap));
         }
+    }
+    private List<StockOutItem> processProducts(String productsJson, Map<String, Object> responseMap) {
+        Type productListType = new TypeToken<List<StockOutItem>>(){}.getType();
+        List<StockOutItem> products = gson.fromJson(productsJson, productListType);
+
+        if (products == null || products.isEmpty()) {
+            responseMap.put("status", "error");
+            responseMap.put("message", "Danh sách sản phẩm không được rỗng.");
+        } else {
+            for (StockOutItem product : products) {
+                if (product.getQuantity() <= 0) {
+                    responseMap.put("status", "error");
+                    responseMap.put("message", "Số lượng phải lớn hơn 0!");
+                    break;
+                } else if (product.getSizeId() <= 0) {
+                    responseMap.put("status", "error");
+                    responseMap.put("message", "Vui lòng chọn kích thước!");
+                    break;
+                } else if (product.getPrice() <= 0) {
+                    responseMap.put("status", "error");
+                    responseMap.put("message", "Giá phải lớn hơn 0");
+                    break;
+                }
+            }
+        }
+        return products;
     }
 }
