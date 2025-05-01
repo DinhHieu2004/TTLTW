@@ -65,7 +65,8 @@ $(document).ready(function() {
                 });
             },
             error: function(xhr, status, error) {
-                console.error('Có lỗi xảy ra: ' + error);
+                const response = JSON.parse(xhr.responseText);
+                console.error('Lỗi từ server:', response.error);
             }
         });
     });
@@ -81,6 +82,7 @@ $(document).ready(function() {
                 $('#exportDate').text(response.transactionDate);
                 $('#createBySo').text(response.createdName);
                 $('#reasonSO').text(response.reason ?? '');
+                $('#orderIdSO').text(response.orderId);
                 $('#noteSo').text(response.note);
                 $('#totalPriceSo').text(response.totalPrice.toLocaleString());
 
@@ -102,7 +104,8 @@ $(document).ready(function() {
                 $('#detailModalSo').modal('show');
             },
             error: function(xhr, status, error) {
-                console.error('Có lỗi xảy ra: ' + error);
+                const response = JSON.parse(xhr.responseText);
+                console.error('Lỗi từ server:', response.error);
             }
         });
     });
@@ -181,7 +184,7 @@ $(document).ready(function() {
                     },
                     success: function(response) {
                         if (response.success) {
-                            var $row = $('[data-si-id="' + stockOutId + '"]').closest('tr');
+                            var $row = $('[data-so-id="' + stockOutId + '"]').closest('tr');
                             exportTable.row($row).remove().draw();
 
                             Swal.fire(

@@ -261,7 +261,7 @@ public class StockIODao {
     public StockOut getStockOutDetail(int id) throws SQLException {
         StockOut stockOut = null;
 
-        String sql = "SELECT so.*, u.fullName FROM stock_out so JOIN users u ON si.createdId = u.id WHERE so.id = ?";
+        String sql = "SELECT so.*, u.fullName FROM stock_out so JOIN users u ON so.createdId = u.id WHERE so.id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
@@ -272,6 +272,7 @@ public class StockIODao {
                 stockOut.setCreatedId(rs.getInt("createdId"));
                 stockOut.setCreatedName(rs.getString("fullName"));
                 stockOut.setReason(rs.getString("reason"));
+                stockOut.setOrderId(rs.getInt("orderId"));
                 stockOut.setNote(rs.getString("note"));
                 stockOut.setTransactionDate(rs.getDate("exportDate"));
                 stockOut.setTotalPrice(rs.getDouble("totalPrice"));
@@ -287,7 +288,7 @@ public class StockIODao {
 
         String sql = "SELECT soi.*, p.title AS productName, s.sizeDescription " +
                 "FROM stock_out_items soi " +
-                "JOIN paintings p ON sii.paintingId = p.id " +
+                "JOIN paintings p ON soi.paintingId = p.id " +
                 "JOIN sizes s ON soi.sizeId = s.id " +
                 "WHERE soi.stockOutId = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {

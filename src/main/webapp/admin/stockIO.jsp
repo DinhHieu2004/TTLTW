@@ -122,7 +122,7 @@
           </thead>
           <tbody>
               <c:forEach var="so" items="${stockOut}">
-                <tr data-si-id="${so.id}">
+                <tr data-so-id="${so.id}">
                   <td>${so.id}</td>
                   <td>${so.transactionDate}</td>
                   <td>${so.createdName}</td>
@@ -130,7 +130,7 @@
                   <td><f:formatNumber value="${so.totalPrice}" type="currency" pattern="#,##0"/> VND</td>
                   <td>${so.note}</td>
                   <td>
-                    <button class="btn btn-sm btn-info viewDetailSOButton" data-stockO-id="${so.id}" data-bs-toggle="modal" data-bs-target="#detailModalSo">Chi tiết</button>
+                    <button class="btn btn-sm btn-info viewDetailSOButton" data-stockout-id="${so.id}" data-bs-toggle="modal" data-bs-target="#detailModalSo">Chi tiết</button>
                     <button class="btn btn-sm btn-danger deleteStockOButton" data-id="${so.id}">Xoá</button>
                   </td>
                 </tr>
@@ -191,8 +191,9 @@
       <div class="modal-body">
         <p><strong>Mã phiếu:</strong> <span id="soId"></span></p>
         <p><strong>Người lập:</strong> <span id="createBySo"></span></p>
-        <p><strong>Loại:</strong>Xuất kho</p>
+        <p><strong>Loại:</strong> Xuất kho</p>
         <p><strong>Lý do:</strong> <span id="reasonSO"></span></p>
+        <p><strong>Mã đơn hàng (giao hàng):</strong> <span id="orderIdSO"></span></p>
         <p><strong>Ngày tạo:</strong> <span id="exportDate"></span></p>
         <p><strong>Ghi chú:</strong> <span id="noteSo"></span></p>
 
