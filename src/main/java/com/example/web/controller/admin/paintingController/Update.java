@@ -40,7 +40,7 @@ public class Update extends HttpServlet {
         PrintWriter out = resp.getWriter();
 
         User user = (User) req.getSession().getAttribute("user");
-        if (user == null || !user.hasPermission("UPDATE_PRODUCT")) {
+        if (user == null || !user.hasPermission("UPDATE_PRODUCTS")) {
             jsonResponse.addProperty("success", false);
             jsonResponse.addProperty("message", "Bạn không có quyền chỉnh sửa sản phẩm!");
             out.print(new Gson().toJson(jsonResponse));

@@ -75,10 +75,17 @@ function loadProductDetails(data, fullPhotoUrl, modal) {
             modal.find('.size-quantity-pair').each(function() {
                 const sizeId = $(this).find('input[name="sizeId[]"]').val();
                 const sizeData = data.sizes.find(s => s.idSize.toString() === sizeId);
+                console.log(sizeData);
                 if (sizeData) {
-                    $(this).find('input[name="quantity[]"]').val(sizeData.quantity);
+                    $(this).find('input[name="quantity[]"]').val(sizeData.displayQuantity);
+                    $(this).find('.total-quantity').text(sizeData.totalQuantity);
+                    $(this).find('.reserved-quantity').text(sizeData.reservedQuantity);
+                    $(this).find('input[name="quantity[]"]').attr('max', sizeData.totalQuantity - sizeData.reservedQuantity);
                 } else {
                     $(this).find('input[name="quantity[]"]').val(0);
+                    $(this).find('.total-quantity').text(0);
+                    $(this).find('.reserved-quantity').text(0);
+                    $(this).find('input[name="quantity[]"]').attr('max', 0);
                 }
             });
         }
