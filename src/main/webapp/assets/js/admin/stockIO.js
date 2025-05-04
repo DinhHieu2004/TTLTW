@@ -70,6 +70,47 @@ $(document).ready(function() {
             }
         });
     });
+    document.getElementById('applyBtn').addEventListener('click', function() {
+        Swal.fire({
+            title: 'Bạn có chắc chắn muốn áp dụng?',
+            text: "Phiếu nhập kho sẽ được áp dụng và số lượng sẽ được cập nhật!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Áp dụng',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var stockInId = $('#siId').text();
+                $.ajax({
+                    url: 'inventoryTrans/applied',
+                    type: 'POST',
+                    data: {
+                        id: stockInId,
+                        type: "in"
+                    },
+                    success: function(response) {
+                        Swal.fire(
+                            'Đã áp dụng!',
+                            'Phiếu nhập kho đã được áp dụng và số lượng được cập nhật.',
+                            'success'
+                        );
+                        console.log('Yêu cầu đã được xử lý thành công');
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire(
+                            'Lỗi!',
+                            'Có lỗi xảy ra khi áp dụng phiếu nhập kho. Vui lòng thử lại.',
+                            'error'
+                        );
+                        console.log('Lỗi trong quá trình gửi yêu cầu:', error);
+                    }
+                });
+            } else {
+                console.log('Hủy áp dụng!');
+            }
+        });
+    });
+
     $(document).on('click', '.viewDetailSOButton', function () {
         const stockOutId = $(this).data('stockout-id');
         $.ajax({

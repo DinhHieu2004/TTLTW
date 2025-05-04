@@ -174,6 +174,7 @@
         </div>
         <div class="modal-footer">
           <strong class="me-auto"> Tổng tiền: <span id="totalPrice"></span></strong>
+          <button type="button" class="btn btn-success" id="applyBtn">Áp dụng</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
         </div>
       </div>

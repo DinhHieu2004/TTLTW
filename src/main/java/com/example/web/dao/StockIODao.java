@@ -84,8 +84,9 @@ public class StockIODao {
             String note = rs.getString("note");
             double totalPrice = rs.getDouble("totalPrice");
             Date transactionDate = rs.getDate("importDate");
+            String status = rs.getString("status");
 
-            StockIn stockIn = new StockIn(id, createdId, createdName,  supplier, note, totalPrice, transactionDate);
+            StockIn stockIn = new StockIn(id, createdId, createdName,  supplier, note, totalPrice, transactionDate, status);
             stockInList.add(stockIn);
         }
         return stockInList;
@@ -141,7 +142,7 @@ public class StockIODao {
         return stockIn;
     }
 
-    private List<StockInItem> findItemsByStockInId(int stockInId) throws SQLException {
+    public List<StockInItem> findItemsByStockInId(int stockInId) throws SQLException {
         List<StockInItem> items = new ArrayList<>();
 
         String sql = "SELECT sii.*, p.title AS productName, s.sizeDescription " +
@@ -230,8 +231,9 @@ public class StockIODao {
             String note = rs.getString("note");
             double totalPrice = rs.getDouble("totalPrice");
             Date transactionDate = rs.getDate("importDate");
+            String status = rs.getString("status");
 
-            stockIn = new StockIn(id, createdId, createdName,  supplier, note, totalPrice, transactionDate);
+            stockIn = new StockIn(id, createdId, createdName,  supplier, note, totalPrice, transactionDate, status);
         }
         return stockIn;
     }
@@ -283,7 +285,7 @@ public class StockIODao {
         return stockOut;
     }
 
-    private List<StockOutItem> findItemsByStockOutId(int id) throws SQLException {
+    public List<StockOutItem> findItemsByStockOutId(int id) throws SQLException {
         List<StockOutItem> items = new ArrayList<>();
 
         String sql = "SELECT soi.*, p.title AS productName, s.sizeDescription " +
@@ -464,6 +466,18 @@ public class StockIODao {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void updateStatusSI(int id) {
+        String sql = "UPDATE stock_in SET status = ? WHERE id = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "Đã áp dụng");
+            ps.setInt(2, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }
