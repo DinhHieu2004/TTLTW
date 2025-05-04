@@ -1,5 +1,6 @@
 package com.example.web.service;
 
+import com.example.web.controller.util.PaintingCacheManager;
 import com.example.web.dao.PaintingDao;
 import com.example.web.dao.model.Order;
 import com.example.web.dao.model.OrderItem;
@@ -12,9 +13,28 @@ import java.util.List;
 public class PaintingService {
     private PaintingDao paintingDao = new PaintingDao();
 
-    public List<Painting> getPaintingList(String searchKeyword, Double minPrice, Double maxPrice, String[] themes, String[] artists,String startDate,String endDate, boolean isSortByRating,boolean Snew, int currentPage, int recordsPerPage) throws SQLException {
-        return paintingDao.getPaintingList( searchKeyword, minPrice, maxPrice, themes, artists,startDate,endDate,isSortByRating,Snew, currentPage, recordsPerPage);
+    public List<Painting> getPaintingList(String searchKeyword, Double minPrice, Double maxPrice, String[] themes, String[] artists, String startDate, String endDate, boolean isSortByRating, boolean snew, int currentPage, int recordsPerPage) throws SQLException {
+        String cacheKey = generateKey(searchKeyword, minPrice, maxPrice, themes, artists, startDate, endDate, isSortByRating, snew, currentPage, recordsPerPage);
+
+        List<Painting> cachedResult = PaintingCacheManager.getCached(cacheKey);
+        if (cachedResult != null) {
+            return cachedResult;
+        }
+
+        List<Painting> paintingList = paintingDao.getPaintingList(searchKeyword, minPrice, maxPrice, themes, artists, startDate, endDate, isSortByRating, snew, currentPage, recordsPerPage);
+
+        PaintingCacheManager.put(cacheKey, paintingList);
+        return paintingList;
     }
+
+    private String generateKey(String kw, Double min, Double max, String[] themes, String[] artists, String start, String end, boolean rating, boolean snew, int page, int perPage) {
+        return String.format("kw:%s|min:%s|max:%s|themes:%s|artists:%s|start:%s|end:%s|rating:%s|snew:%s|page:%d|perPage:%d",
+                kw, min, max,
+                themes != null ? String.join(",", themes) : "",
+                artists != null ? String.join(",", artists) : "",
+                start, end, rating, snew, page, perPage);
+    }
+
     public int countPaintings(String keyword,Double minPrice, Double maxPrice, String[] themes, String[] artists,String startDate,String endDate) throws SQLException {
         return paintingDao.countPaintings(keyword, minPrice, maxPrice, themes, artists, startDate,endDate);
     }
@@ -43,6 +63,7 @@ public class PaintingService {
 
 
     public boolean updatePainting(int id, String title, int themeId, double price, int artistId, String description, String imageUrl, boolean isSold, boolean isFeatured) throws SQLException {
+
         return paintingDao.updatePainting( id, title, themeId,isSold, price, artistId, description, imageUrl, isFeatured);
 
     }

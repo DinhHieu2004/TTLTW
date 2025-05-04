@@ -1,5 +1,6 @@
 package com.example.web.dao;
 
+import com.example.web.controller.util.PaintingCacheManager;
 import com.example.web.dao.cart.CartPainting;
 import com.example.web.dao.db.DbConnect;
 import com.example.web.dao.model.Painting;
@@ -37,6 +38,9 @@ public class PaintingDao {
         String sql = "DELETE FROM paintings WHERE id = ?";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setInt(1, id);
+
+        PaintingCacheManager.clearAll();
+
         return ps.executeUpdate() > 0;
 
 
@@ -60,6 +64,9 @@ public class PaintingDao {
                 }
             }
         }
+
+        PaintingCacheManager.clearAll();
+
         return -1;
     }
 
@@ -81,6 +88,8 @@ public class PaintingDao {
                 return false;
             }
         }
+        PaintingCacheManager.clearAll();
+
         return true;
 
     }
@@ -100,6 +109,12 @@ public class PaintingDao {
             ps.setBoolean(8, isFeatured);
             ps.setInt(9, paintingId);
             int rowsUpdated = ps.executeUpdate();
+
+            PaintingCacheManager.clearAll();
+
+
+            PaintingCacheManager.clearAll();
+
             return rowsUpdated > 0;
         }
     }
@@ -127,6 +142,9 @@ public class PaintingDao {
                 }
             }
         }
+
+        PaintingCacheManager.clearAll();
+
         return true;
     }
 
@@ -555,6 +573,9 @@ public class PaintingDao {
                 stmt.setInt(3, sizeId);
                 stmt.executeUpdate();
             }
+
+            PaintingCacheManager.clearAll();
+
             con.commit();
         } catch (Exception e) {
             con.rollback();
