@@ -115,6 +115,7 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
     `);
             },
             error: function (xhr) {
+                let errorText = xhr.responseText
                 if (xhr.status === 401) {
                     alert("Bạn cần đăng nhập để thực hiện thanh toán!");
                     $("#loginModal").modal("show");
@@ -126,6 +127,7 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
                         alert(msg);
                     }
                 } else {
+                    console.error("Lỗi từ server: " + errorText);
                     alert("Đã xảy ra lỗi trong quá trình thanh toán. Vui lòng thử lại!");
                 }
             }

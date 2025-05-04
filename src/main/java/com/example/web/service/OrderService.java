@@ -1,13 +1,19 @@
 package com.example.web.service;
 
 import com.example.web.dao.OrderDao;
+import com.example.web.dao.OrderItemDao;
+import com.example.web.dao.PaintingDao;
 import com.example.web.dao.model.Order;
+import com.example.web.dao.model.OrderItem;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderService {
     private OrderDao orderDao = new OrderDao();
+    private PaintingDao paintingDao = new PaintingDao();
+    private OrderItemDao orderItemDao = new OrderItemDao();
 
     public List<Order> getCurrentOrdersForUser(int userId) throws Exception {
         return orderDao.getCurrentOrdersForUser(userId);
@@ -26,7 +32,16 @@ public class OrderService {
         return orderDao.getListAllOrdersHistoryAdmin();
     }
     public boolean updateOrderStatus(int orderId, String status, String recipientName, String recipientPhone, String deliveryAddress) throws Exception {
-        return orderDao.updateOrderStatus(orderId, status,recipientName,recipientPhone, deliveryAddress);
+        boolean success = false;
+        List<OrderItem> orderItems = new ArrayList<>();
+
+        if ("đã hủy giao hàng".equalsIgnoreCase(status)) {
+            orderItems = orderItemDao.getListOrderItem(orderId);
+            paintingDao.returnQuantity(orderItems);
+        }
+        success = orderDao.updateOrderStatus(orderId, status, recipientName, recipientPhone, deliveryAddress);
+
+        return success;
     }
 
     public boolean updatePaymentStatus(int orderId, String paymentStatus) {

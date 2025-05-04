@@ -5,18 +5,11 @@ import java.io.Serializable;
 public class PaintingSize  implements Serializable {
     private int idSize;
     private String sizeDescriptions;
-    private int quantity;
     private int totalQuantity;
     private int reservedQuantity;
     private Integer displayQuantity;
     private Double weight;
 
-//    public PaintingSize(int idSize,String sizeDescriptions, int quantity, Double weight) {
-//        this.idSize = idSize;
-//        this.sizeDescriptions = sizeDescriptions;
-//        this.quantity = quantity;
-//        this.weight = weight;
-//    }
 
     public PaintingSize(int idSize, String sizeDescriptions, int displayQuantity, Double weight) {
         this.idSize = idSize;
@@ -65,14 +58,6 @@ public class PaintingSize  implements Serializable {
         this.sizeDescriptions = sizeDescriptions;
     }
 
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
     public int getTotalQuantity() {
         return totalQuantity;
     }
@@ -102,7 +87,7 @@ public class PaintingSize  implements Serializable {
         return "PaintingSize{" +
                 "idSize=" + idSize +
                 ", sizeDescriptions='" + sizeDescriptions + '\'' +
-                ", quantity=" + quantity +
+                ", quantity=" + displayQuantity +
                 ", weight=" + weight +
                 '}';
     }

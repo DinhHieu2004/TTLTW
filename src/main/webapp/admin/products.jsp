@@ -447,8 +447,8 @@
               <div class="row fw-bold border-bottom pb-2 mb-2 text-center">
                 <div class="col-md-3" style="font-size: 0.85rem;">Kích thước</div>
                 <div class="col-md-2" style="font-size: 0.85rem;">Tổng</div>
-                <div class="col-md-2" style="font-size: 0.85rem;">Đặt</div>
-                <div class="col-md-3" style="font-size: 0.85rem;">Bán</div>
+                <div class="col-md-2" style="font-size: 0.85rem;">Đã Đặt</div>
+                <div class="col-md-3" style="font-size: 0.85rem;">Có Sẵn</div>
               </div>
               <c:forEach var="size" items="${sizes}">
                 <div class="size-quantity-pair">

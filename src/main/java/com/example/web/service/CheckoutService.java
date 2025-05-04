@@ -145,7 +145,7 @@ public class CheckoutService {
 
         for(PaintingSize ps : painting.getSizes()){
 
-            if(sizeId == ps.getIdSize() && ps.getQuantity() >= quantity){
+            if(sizeId == ps.getIdSize() && ps.getDisplayQuantity() >= quantity){
                 return true;
             }
         }

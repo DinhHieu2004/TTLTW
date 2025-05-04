@@ -2,6 +2,7 @@ package com.example.web.dao;
 
 import com.example.web.dao.cart.CartPainting;
 import com.example.web.dao.db.DbConnect;
+import com.example.web.dao.model.OrderItem;
 import com.example.web.dao.model.Painting;
 import com.example.web.dao.model.Theme;
 
@@ -546,11 +547,12 @@ public class PaintingDao {
     public void updateQuanity(int paintingId, int sizeId, int quantity) throws SQLException {
         con.setAutoCommit(false);
         try {
-            String sql = "UPDATE painting_sizes SET quantity = quantity - ? WHERE paintingId = ? AND sizeId = ?";
+            String sql = "UPDATE painting_sizes SET displayQuantity = displayQuantity - ?,  reservedQuantity = IFNULL(reservedQuantity, 0) + ? WHERE paintingId = ? AND sizeId = ?";
             try (PreparedStatement stmt = con.prepareStatement(sql)) {
                 stmt.setInt(1, quantity);
-                stmt.setInt(2, paintingId);
-                stmt.setInt(3, sizeId);
+                stmt.setInt(2, quantity);
+                stmt.setInt(3, paintingId);
+                stmt.setInt(4, sizeId);
                 stmt.executeUpdate();
             }
             con.commit();
@@ -558,6 +560,27 @@ public class PaintingDao {
             con.rollback();
             e.printStackTrace();
             throw new SQLException("Error updating quantity with transaction", e);
+        } finally {
+            con.setAutoCommit(true);
+        }
+    }
+    public void returnQuantity(List<OrderItem> orderItems) throws SQLException {
+        String sql = "UPDATE painting_sizes SET displayQuantity = displayQuantity + ?, reservedQuantity = reservedQuantity - ? WHERE paintingId = ? AND sizeId = ?";
+        con.setAutoCommit(false);
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            for (OrderItem item : orderItems) {
+                ps.setInt(1, item.getQuantity());
+                ps.setInt(2, item.getQuantity());
+                ps.setInt(3, item.getPaintingId());
+                ps.setInt(4, item.getSizeId());
+                ps.addBatch();
+            }
+            ps.executeBatch();
+            con.commit();
+        } catch (SQLException e) {
+            con.rollback();
+            throw new SQLException("Lỗi khi hoàn trả số lượng vào kho: " + e.getMessage(), e);
         } finally {
             con.setAutoCommit(true);
         }
@@ -865,7 +888,7 @@ public class PaintingDao {
                         s.sizeDescription,
                         s.weight,
                         s.id AS idSize,
-                        ps.displayQuantity,
+                        ps.displayQuantity 
                     FROM paintings p
                     LEFT JOIN painting_sizes ps ON p.id = ps.paintingId
                     LEFT JOIN sizes s ON ps.sizeId = s.id
