@@ -87,8 +87,16 @@ public class LoginFaceController extends HttpServlet {
             session.setAttribute("user", user);
 
 
-            session.setAttribute("uid", String.valueOf(user.getId()));
-            SessionManager.userSessions.put(user.getId()+"", session);
+            HttpSession oldSession = SessionManager.userSessions.get(user.getId() + "");
+            if (oldSession != null && oldSession != session) {
+                try {
+                    oldSession.invalidate();
+                } catch (IllegalStateException e) {
+                }
+            }
+
+            session.setAttribute("uid", user.getId());
+            SessionManager.userSessions.put(user.getId() + "", session);
 
 
 
