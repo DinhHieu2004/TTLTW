@@ -90,11 +90,11 @@
                                             <input class="form-check-input" type="radio" name="size"
                                                    id="size_${size.sizeDescriptions}"
                                                    value="${size.idSize}"
-                                                   data-quantity="${size.quantity}"
-                                                ${size.quantity <= 0 ? 'disabled' : ''}>
-                                            <input type="hidden" name="quantity_${size.idSize}" value="${size.quantity}">
+                                                   data-quantity="${size.displayQuantity}"
+                                                ${size.displayQuantity <= 0 ? 'disabled' : ''}>
+                                            <input type="hidden" name="quantity_${size.idSize}" value="${size.displayQuantity}">
                                             <label class="form-check-label" for="size_${size.sizeDescriptions}">
-                                                    ${size.sizeDescriptions} <small class="text-muted">(Còn ${size.quantity})</small>
+                                                    ${size.sizeDescriptions} <small class="text-muted">(Còn ${size.displayQuantity})</small>
 
 
                                             </label>

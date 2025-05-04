@@ -60,6 +60,7 @@ public class OrderService {
         return orders;
     }
 
+
     public List<Order> getOrderHistoryAdmin() throws Exception {
         List<Order> cached = cacheManager.getAdminHistoryOrders();
         if (cached != null) {
@@ -69,6 +70,15 @@ public class OrderService {
         List<Order> orders = orderDao.getListAllOrdersHistoryAdmin();
         cacheManager.putAdminHistoryOrders(orders);
         return orders;
+    }
+
+
+    public List<Order> getOrderByDelStatus(String status) throws Exception {
+        return orderDao.getOrderByDelStatus(status);
+    }
+
+    public boolean isPendingOrder(int id) throws SQLException {
+        return orderDao.isPendingOrder(id);
     }
 
 }
