@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 public class Discount {
     private int id;
     private String imageUrl;
+    private String imageUrlCloud;
     private String discountName;
     private BigDecimal discountPercentage;
     private LocalDate startDate;
@@ -15,10 +16,11 @@ public class Discount {
 
     public Discount() {}
 
-    public Discount(int id, String imageUrl, String discountName, BigDecimal discountPercentage, LocalDate startDate,
+    public Discount(int id, String imageUrl, String imageUrlCloud, String discountName, BigDecimal discountPercentage, LocalDate startDate,
                     LocalDate endDate, LocalDateTime createdAt) {
         this.id = id;
         this.imageUrl = imageUrl;
+        this.imageUrlCloud = imageUrlCloud;
         this.discountName = discountName;
         this.discountPercentage = discountPercentage;
         this.startDate = startDate;
@@ -41,6 +43,14 @@ public class Discount {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getImageUrlCloud() {
+        return imageUrlCloud;
+    }
+
+    public void setImageUrlCloud(String imageUrlCloud) {
+        this.imageUrlCloud = imageUrlCloud;
     }
 
     public String getDiscountName() {
@@ -92,6 +102,7 @@ public class Discount {
         return "Discount{" +
                 "id=" + id +
                 ", imageUrl='" + imageUrl + '\'' +
+                ", imageUrlCloud='" + imageUrlCloud + '\'' +
                 ", discountName='" + discountName + '\'' +
                 ", discountPercentage=" + discountPercentage +
                 ", startDate=" + startDate +

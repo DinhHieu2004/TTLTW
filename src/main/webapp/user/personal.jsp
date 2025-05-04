@@ -276,6 +276,7 @@
                             <thead>
                             <tr>
                                 <th>Tên voucher</th>
+                                <th>Mã</th>
                                 <th>Giảm (%)</th>
                                 <th>Hiệu lực</th>
                                 <th>Hết hạn</th>
@@ -286,6 +287,7 @@
                             <c:forEach var="v" items="${userVouchers}">
                                 <tr>
                                     <td>${v.voucher.name}</td>
+                                    <td>${v.voucher.code}</td>
                                     <td>${v.voucher.discount}</td>
                                     <td>${v.voucher.startDate}</td>
                                     <td>${v.voucher.endDate}</td>
@@ -369,6 +371,7 @@
 <script src="${pageContext.request.contextPath}/assets/js/personal.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/header.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/authModal.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="${pageContext.request.contextPath}/assets/js/checkSession.js"></script>
 </body>
 </html>

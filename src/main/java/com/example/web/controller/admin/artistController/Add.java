@@ -1,14 +1,13 @@
 package com.example.web.controller.admin.artistController;
 
+import com.example.web.controller.util.CheckPermission;
+import com.example.web.dao.model.User;
 import com.example.web.service.ArtistService;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
+import jakarta.servlet.http.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,9 +22,19 @@ public class Add extends HttpServlet {
     private ArtistService artistService = new ArtistService();
   //  private static final String UPLOAD_DIR = "assets/images";
     private static final String UPLOAD_DIR = "N:/web//web//src//main//webapp//assets//images//artists";
+    private final String permission ="ADD_ARTISTS";
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User userC = (User) session.getAttribute("user");
+
+        boolean hasPermission = CheckPermission.checkPermission(userC, permission, "ADMIN");
+        if (!hasPermission) {
+            response.sendRedirect(request.getContextPath() + "/NoPermission.jsp");
+            return;
+        }
         String name = request.getParameter("name");
         String bio = request.getParameter("bio");
         String birthDate = request.getParameter("birthDate");

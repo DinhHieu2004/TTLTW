@@ -17,7 +17,7 @@ public class UserVoucherDao {
     public List<UserVoucher> getUserVoucherById(int userId) throws SQLException {
         List<UserVoucher> list = new ArrayList<>();
         String sql = "SELECT uv.id AS uv_id, uv.user_id, uv.voucher_id, uv.is_used, uv.assigned_at," +
-                "       v.id AS v_id, v.name, v.discount, v.startDate, v.endDate, v.imageUrl, v.code" +
+                "       v.id AS v_id, v.name, v.discount, v.startDate, v.endDate, v.imageUrl,v.imageUrlCloud, v.code, v.type" +
                 " FROM user_vouchers uv" +
                 " JOIN vouchers v ON uv.voucher_id = v.id" +
                 " WHERE uv.user_id = ?";
@@ -40,7 +40,9 @@ public class UserVoucherDao {
             v.setStartDate(rs.getTimestamp("startDate"));
             v.setEndDate(rs.getTimestamp("endDate"));
             v.setImageUrl(rs.getString("imageUrl"));
+            v.setImageUrlCloud(rs.getString("imageUrlCloud"));
             v.setCode(rs.getString("code"));
+            v.setType(rs.getString("type"));
 
             uv.setVoucher(v);
             list.add(uv);
@@ -92,7 +94,7 @@ public class UserVoucherDao {
     // lấy các voucher chưa dùng
     public List<UserVoucher> getUnusedVouchersByUser(int userId) throws SQLException {
         List<UserVoucher> list = new ArrayList<>();
-        String sql = "SELECT uv.*, v.name, v.discount, v.startDate, v.endDate " +
+        String sql = "SELECT uv.*, v.name, v.discount, v.startDate, v.endDate, v.code " +
                 "FROM user_vouchers uv " +
                 "JOIN vouchers v ON uv.voucher_id = v.id " +
                 "WHERE uv.user_id = ? AND uv.is_used = false AND v.endDate >= CURRENT_DATE";
@@ -115,6 +117,7 @@ public class UserVoucherDao {
                     voucher.setDiscount(rs.getInt("discount"));
                     voucher.setStartDate(rs.getDate("startDate"));
                     voucher.setEndDate(rs.getDate("endDate"));
+                    voucher.setCode(rs.getString("code"));
 
                     uv.setVoucher(voucher);
                     list.add(uv);

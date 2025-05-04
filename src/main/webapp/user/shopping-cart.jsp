@@ -43,7 +43,16 @@
                         <c:forEach items="${sessionScope.cart.items}" var="cp" varStatus="status">
                             <tr id="cart-item-${cp.productId}-${cp.sizeId}">
                                 <td>${status.index + 1}</td>
-                                <td><img src="${cp.imageUrl}" alt="${cp.productName}" width="50"></td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${not empty cp.imageUrlCloud}">
+                                            <img src="${cp.imageUrlCloud}?f_auto,q_auto,w_50" alt="${cp.productName}" width="50">
+                                        </c:when>
+                                        <c:otherwise>
+                                            <img src="${pageContext.request.contextPath}/${cp.imageUrl}" alt="${cp.productName}" width="50">
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
                                 <td>${cp.productName}</td>
                                 <td>${cp.sizeDescriptions}</td>
                                 <td>
@@ -137,7 +146,16 @@
                             <c:forEach items="${sessionScope.cart.items}" var="cp" varStatus="status">
                                 <tr id="cart-itemp-${cp.productId}-${cp.sizeId}">
                                     <td>${status.index + 1}</td>
-                                    <td><img src="${cp.imageUrl}" alt="${cp.productName}" width="50"></td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${not empty cp.imageUrlCloud}">
+                                                <img src="${cp.imageUrlCloud}?f_auto,q_auto,w_50" alt="${cp.productName}" width="50">
+                                            </c:when>
+                                            <c:otherwise>
+                                                <img src="${pageContext.request.contextPath}/${cp.imageUrl}" alt="${cp.productName}" width="50">
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
                                     <td>${cp.productName}</td>
                                     <td><span class="mx-2 quantity">${cp.quantity}</span></td>
                                     <td><f:formatNumber value="${cp.totalPrice}" type="currency" currencySymbol="VNĐ"/></td>
@@ -186,4 +204,5 @@
 
     });</script>
 </body>
+
 </html>

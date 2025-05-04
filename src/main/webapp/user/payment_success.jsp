@@ -11,6 +11,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .success-icon {
             font-size: 5rem;
@@ -42,7 +44,48 @@
         </div>
     </div>
 </header>
-
+<c:if test="${voucherGift}">
+    <script>
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'info',
+            iconHtml: '🎁',
+            title: ' Đặt hàng thành công, nhận voucher quà tặng?',
+            showCancelButton: true,
+            confirmButtonText: 'Nhận',
+            cancelButtonText: 'Đóng',
+            timer: 8000,
+            timerProgressBar: true,
+            customClass: {
+                popup: 'custom-swal-popup',
+                confirmButton: 'btn btn-sm btn-danger me-2',
+                cancelButton: 'btn btn-sm btn-secondary'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '${pageContext.request.contextPath}/collect-voucher',
+                    type: 'POST',
+                    success: function () {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'success',
+                            title: '🎁 Voucher đã được lưu vào tài khoản của bạn!',
+                            showConfirmButton: false,
+                            timer: 3500
+                        });
+                    },
+                    error: function () {
+                        alert("Có lỗi xảy ra khi lưu voucher.");
+                    }
+                });
+            }
+        });
+    </script>
+</c:if>
 <div class="container mb-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -101,7 +144,16 @@
                                         <c:forEach items="${requestScope.orderItems}" var="item" varStatus="status">
                                             <tr>
                                                 <td>${status.index + 1}</td>
-                                                <td><img src="${item.img}" alt="${item.name}" width="50"></td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${not empty item.imageUrlCloud}">
+                                                            <img src="${item.imageUrlCloud}?f_auto,q_auto,w_50" alt="${item.name}" width="50">
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <img src="${pageContext.request.contextPath}/${item.imageUrl}" alt="${item.name}" width="50">
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
                                                 <td>${item.name}</td>
                                                 <td>${item.sizeDescription}</td>
                                                 <td>${item.quantity}</td>
@@ -117,6 +169,17 @@
                                         <tr>
                                             <th colspan="4" class="text-end">Phí giao hàng:</th>
                                             <th colspan="2"><fmt:formatNumber value="${requestScope.order.shippingFee}" type="currency" pattern="#,##0"/> ₫</th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="4" class="text-end">Voucher đã áp dụng:</th>
+                                            <th colspan="2">
+                                                <c:choose>
+                                                    <c:when test="${not empty appliedVoucherCodes}">
+                                                        ${appliedVoucherCodes}
+                                                    </c:when>
+                                                    <c:otherwise>Không có</c:otherwise>
+                                                </c:choose>
+                                            </th>
                                         </tr>
                                         <tr>
                                             <th colspan="4" class="text-end">Tổng cộng:</th>
@@ -285,4 +348,7 @@
 
 
 </body>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="${pageContext.request.contextPath}/assets/js/checkSession.js"></script>
 </html>

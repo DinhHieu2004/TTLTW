@@ -7,6 +7,7 @@ public class OrderItem  implements java.io.Serializable {
     private int orderId;
     private int paintingId;
     private String img;
+    private String imageUrlCloud;
     private int sizeId;
     private double price;
     private int quantity;
@@ -32,6 +33,14 @@ public class OrderItem  implements java.io.Serializable {
 
     public void setSizeDescription(String sizeDescription) {
         this.sizeDescription = sizeDescription;
+    }
+
+    public String getImageUrlCloud() {
+        return imageUrlCloud;
+    }
+
+    public void setImageUrlCloud(String imageUrlCloud) {
+        this.imageUrlCloud = imageUrlCloud;
     }
 
     public String getName() {
@@ -83,6 +92,7 @@ public class OrderItem  implements java.io.Serializable {
                 ", orderId=" + orderId +
                 ", paintingId=" + paintingId +
                 ", img='" + img + '\'' +
+                ", imageUrlCloud='" + imageUrlCloud + '\'' +
                 ", sizeId=" + sizeId +
                 ", price=" + price +
                 ", quantity=" + quantity +

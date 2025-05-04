@@ -84,8 +84,22 @@
         <c:forEach var="u" items="${artists}">
           <tr>
             <td>${u.id}</td>
-            <td><img src="${pageContext.request.contextPath}/${u.photoUrl}" alt="${u.name}" width="60"></td>
-
+            <td>
+              <c:choose>
+                <c:when test="${not empty u.imageUrlCloud}">
+                  <img loading="lazy"
+                       src="${u.imageUrlCloud}?f_auto,q_auto,w_60"
+                       alt="${u.name}"
+                       width="60">
+                </c:when>
+                <c:otherwise>
+                  <img loading="lazy"
+                       src="${pageContext.request.contextPath}/${u.photoUrl}"
+                       alt="${u.name}"
+                       width="60">
+                </c:otherwise>
+              </c:choose>
+            </td>
             <td>${u.name}</td>
             <td>${u.birthDate}</td>
             <td>${u.nationality}</td>
@@ -231,6 +245,8 @@
     });
   });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="${pageContext.request.contextPath}/assets/js/checkSession.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/admin/artists.js"></script>
 </body>
 </html>

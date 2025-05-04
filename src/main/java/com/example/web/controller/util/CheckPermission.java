@@ -9,6 +9,8 @@ public class CheckPermission {
         boolean result = false;
         String allPermission = user.getAllRolePermission();
 
+        role = "ROLE_" + role;
+
         String p[] = allPermission.split(" ");
          for(String p1 : p) {
              if(p1.equals(permissions) ||  p1.equals(role)) {

@@ -74,7 +74,7 @@
       <c:forEach var="order" items="${currentOrder}">
         <tr>
           <td>${order.id}</td>
-          <td>${order.totalAmount}</td>
+          <td>${order.priceAfterShipping}</td>
           <td>${order.orderDate}</td>
           <td>${order.paymentStatus}</td>
           <td>${order.deliveryStatus}</td>
@@ -113,7 +113,7 @@
       <c:forEach var="order" items="${historyOrder}">
         <tr>
           <td>${order.id}</td>
-          <td>${order.totalAmount}</td>
+          <td>${order.priceAfterShipping}</td>
           <td>${order.orderDate}</td>
           <td>${order.deliveryDate}</td>
           <td>${order.paymentStatus}</td>
@@ -273,6 +273,8 @@
     });
   });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="${pageContext.request.contextPath}/assets/js/checkSession.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/admin/order.js"></script>
 </body>
 </html>

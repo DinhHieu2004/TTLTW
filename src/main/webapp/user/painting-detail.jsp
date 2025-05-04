@@ -31,7 +31,7 @@
     <div class="row">
         <div class="col-md-6">
             <div class="card">
-                <img src="${p.imageUrl}" alt="${p.title}" class="card-img-top img-fluid">
+                <img loading="lazy" src="${p.imageUrlCloud}?f_auto,q_auto,w_600" alt="${p.title}" class="card-img-top img-fluid">
             </div>
         </div>
 
@@ -329,5 +329,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/header.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/painting-detail.js"></script>
+
 </body>
 </html>

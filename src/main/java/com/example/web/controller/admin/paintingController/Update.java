@@ -1,5 +1,6 @@
 package com.example.web.controller.admin.paintingController;
 
+import com.example.web.controller.util.CheckPermission;
 import com.example.web.dao.model.Painting;
 import com.example.web.dao.model.User;
 import com.example.web.service.PaintingService;
@@ -8,10 +9,7 @@ import com.google.gson.JsonObject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
+import jakarta.servlet.http.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,17 +28,25 @@ public class Update extends HttpServlet {
     private static final String UPLOAD_DIR = "D://web/web/src/main/webapp/assets/images/artists";
 
     private final PaintingService paintingService = new PaintingService();
+    private final String permission ="UPDATE_PRODUCTS";
+
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        User user = (User) session.getAttribute("user");
+
+        boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
+
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
 
         JsonObject jsonResponse = new JsonObject();
         PrintWriter out = resp.getWriter();
 
-        User user = (User) req.getSession().getAttribute("user");
-        if (user == null || !user.hasPermission("UPDATE_PRODUCTS")) {
+
+     //   User user = (User) req.getSession().getAttribute("user");
+        if (user == null || hasPermission) {
             jsonResponse.addProperty("success", false);
             jsonResponse.addProperty("message", "Bạn không có quyền chỉnh sửa sản phẩm!");
             out.print(new Gson().toJson(jsonResponse));

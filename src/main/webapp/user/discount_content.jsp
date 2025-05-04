@@ -164,7 +164,7 @@
         <div class="col-6 col-md-3">
           <div class="card artwork-card h-100" style="height: 380px !important;">
             <a href="painting-detail?pid=${p.id}" class="card-link"></a>
-            <img src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+            <img loading="lazy" src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
             <div class="card-body">
               <h5 class="card-title">${p.title}</h5>
               <p class="card-text">
@@ -282,4 +282,5 @@
   });
 </script>
 <script src="${pageContext.request.contextPath}/assets/js/header.js"></script>
+
 </html>

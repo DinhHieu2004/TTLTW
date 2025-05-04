@@ -69,6 +69,7 @@ public class VoucherDao {
             voucher.setEndDate(rs.getDate("endDate"));
             voucher.setImageUrl(rs.getString("imageUrl"));
             voucher.setCode(rs.getString("code"));
+            voucher.setType(rs.getString("type"));
             return voucher;
         }
         return null;
@@ -131,14 +132,62 @@ public class VoucherDao {
             voucher.setEndDate(rs.getDate("endDate"));
             voucher.setCode(rs.getString("code"));
             voucher.setImageUrl(rs.getString("imageUrl"));
+            voucher.setType(rs.getString("type"));
             return voucher;
         }
         return null;
     }
 
-    public static void main(String[] args) throws SQLException {
-        VoucherDao dao = new VoucherDao();
-        System.out.println(dao.getAllAdmin());
+    public Voucher getRandomAvailableVoucher() throws SQLException {
+        String sql = "SELECT * FROM vouchers WHERE is_active = true AND startDate <= CURRENT_DATE AND endDate >= CURRENT_DATE ORDER BY RAND() LIMIT 1";
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return extractVoucher(rs);
+            }
+        }
+        return null;
     }
 
+    public List<Voucher> getAllAvailableVouchers() throws SQLException {
+        List<Voucher> vouchers = new ArrayList<>();
+        String sql = "SELECT * FROM vouchers WHERE is_active = 1 AND startDate <= NOW() AND endDate >= NOW()";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                vouchers.add(extractVoucher(rs));
+            }
+        }
+
+        return vouchers;
+    }
+
+
+    private Voucher extractVoucher(ResultSet rs) throws SQLException {
+        Voucher voucher = new Voucher();
+        voucher.setId(rs.getInt("id"));
+        voucher.setCode(rs.getString("code"));
+        voucher.setName(rs.getString("name"));
+        voucher.setType(rs.getString("type"));
+        voucher.setDiscount(rs.getDouble("discount"));
+        voucher.setActive(rs.getBoolean("is_active"));
+        voucher.setStartDate(rs.getDate("startDate"));
+        voucher.setEndDate(rs.getDate("endDate"));
+        voucher.setImageUrl(rs.getString("imageUrl"));
+        return voucher;
+    }
+
+    public String getCodeById(int id) throws SQLException {
+        String sql = "SELECT code FROM vouchers WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getString("code");
+            }
+        }
+        return null;
+    }
 }

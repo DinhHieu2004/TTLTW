@@ -2,6 +2,7 @@ package com.example.web.controller;
 
 import com.example.web.dao.model.User;
 import com.example.web.service.AuthService;
+import com.example.web.utils.SessionManager;
 import com.google.gson.Gson;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -108,6 +109,12 @@ public class LoginController extends HttpServlet {
                  //   System.out.println(user);
 
                     responseMap.put("loginSuccess", "True");
+
+
+                    session.setAttribute("uid", String.valueOf(user.getId()));
+                    SessionManager.userSessions.put(user.getId()+"", session);
+
+
                     response.setStatus(HttpServletResponse.SC_OK);
                 }
             } else {

@@ -41,8 +41,15 @@
     <div id="discount_list">
         <c:forEach var="discount" items="${list}">
             <a href="${pageContext.request.contextPath}/discount_content?id=${discount.id}" class="discount_item">
-            <img src="${discount.imageUrl}" alt="${discount.discountName}">
-            <p class="content" style="color: #e7621b"><strong>${discount.discountName}</strong></p>
+                <c:choose>
+                    <c:when test="${not empty discount.imageUrlCloud}">
+                        <img src="${discount.imageUrlCloud}?f_auto,q_auto,w_300" alt="${discount.discountName}">
+                    </c:when>
+                    <c:otherwise>
+                        <img src="${pageContext.request.contextPath}/${discount.imageUrl}" alt="${discount.discountName}">
+                    </c:otherwise>
+                </c:choose>
+                <p class="content" style="color: #e7621b"><strong>${discount.discountName}</strong></p>
             <p class="content">(Áp dụng từ ngày ${discount.startDate} đến ${discount.endDate})</p>
         </a>
         </c:forEach>
@@ -55,6 +62,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/discount.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/header.js"></script>
+
 
 
 </html>

@@ -155,8 +155,22 @@
         <c:forEach var="p" items="${products}">
           <tr>
             <td>${p.id}</td>
-            <td><img src="${pageContext.request.contextPath}/${p.imageUrl}" alt="${p.imageUrl}" width="60"></td>
-
+            <td>
+              <c:choose>
+                <c:when test="${not empty p.imageUrlCloud}">
+                  <img loading="lazy"
+                       src="${p.imageUrlCloud}?f_auto,q_auto,w_60"
+                       alt="${p.imageUrl}"
+                       width="60">
+                </c:when>
+                <c:otherwise>
+                  <img loading="lazy"
+                       src="${pageContext.request.contextPath}/${p.imageUrl}"
+                       alt="${p.imageUrl}"
+                       width="60">
+                </c:otherwise>
+              </c:choose>
+            </td>
             <td>${p.title}</td>
             <td>${p.available ? 'Không hoạt động' : 'Hoạt động'}</td>
             <td>${p.price}</td>
@@ -1032,5 +1046,7 @@ $("#editPaintingForm").submit(function (event) {
 <script src="${pageContext.request.contextPath}/assets/js/admin/product.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/admin/theme.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/admin/sizes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="${pageContext.request.contextPath}/assets/js/checkSession.js"></script>
 </body>
 </html>

@@ -42,8 +42,77 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
                 voucherCodes: allVoucherCodes
             },
             success: function (response) {
-                alert(response);
-                location.reload();
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'info',
+                    iconHtml: '🎁',
+                    title: ' Đặt hàng thành công, nhận voucher quà tặng?',
+                    showCancelButton: true,
+                    confirmButtonText: 'Nhận',
+                    cancelButtonText: 'Đóng',
+                    timer: 8000,
+                    timerProgressBar: true,
+                    customClass: {
+                        popup: 'custom-swal-popup',
+                        confirmButton: 'btn btn-sm btn-danger me-2',
+                        cancelButton: 'btn btn-sm btn-secondary'
+                    },
+                    buttonsStyling: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: 'collect-voucher',
+                            type: 'POST',
+                            success: function () {
+                                Swal.fire({
+                                    toast: true,
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: '🎁 Voucher đã được lưu vào tài khoản của bạn!',
+                                    showConfirmButton: false,
+                                    timer: 3500
+                                });
+                            },
+                            error: function () {
+                                alert("Có lỗi xảy ra khi lưu voucher.");
+                            }
+                        });
+                    }
+                });
+                $(".order-summary").append(`
+        <div class="alert alert-info text-center mt-3" role="alert">
+            Giỏ hàng của bạn đang trống.
+        </div>
+        <div class="text-center mt-3">
+                <a href="${contextPath}/artwork" class="btn btn-primary">Tiếp tục mua hàng</a>
+        </div>
+    `);
+                $(".order-summary table").remove();
+                $("#voucherCount").hide().text("");
+                $("#shippingFee").text("Chưa tính");
+
+                $("#finalPrice").text("0 ₫");
+
+                $("#voucherModal").remove();
+
+                $("#cart-item-count").text("0");
+
+                $("#mini-cart-items").html(`
+        <div class="alert alert-info text-center" role="alert">
+            Giỏ hàng của bạn đang trống.
+        </div>
+    `);
+
+                $(".cart-footer").html(`
+        <div class="total-price">
+            Tổng tiền: <span id="total-price">0 ₫</span>
+        </div>
+        <button class="btn btn-primary" onclick="window.location.href='show-cart'"
+                style="background: #e7621b !important;">
+            Xem Giỏ Hàng
+        </button>
+    `);
             },
             error: function (xhr) {
                 if (xhr.status === 401) {

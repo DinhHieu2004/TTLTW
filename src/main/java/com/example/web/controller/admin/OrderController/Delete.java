@@ -28,7 +28,7 @@ public class Delete extends HttpServlet {
         boolean hasDeletePermission = user.hasPermission("DELETE_ORDER");
 
         if (!hasDeletePermission) {
-            response.sendRedirect(request.getContextPath() + "/no_permission.jsp");
+            out.write("{\"success\": true, \"message\": \"Bạn không có quyền.\"}");
             return;
         }
 

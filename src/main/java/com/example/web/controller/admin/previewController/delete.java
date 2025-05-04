@@ -1,5 +1,6 @@
 package com.example.web.controller.admin.previewController;
 
+import com.example.web.controller.util.CheckPermission;
 import com.example.web.dao.model.Level;
 import com.example.web.dao.model.ProductReview;
 import com.example.web.dao.model.User;
@@ -18,13 +19,22 @@ import java.io.IOException;
 public class delete extends HttpServlet {
     private final PrivewService privewService = new PrivewService();
     private final LogService logService = new LogService();
+    private final String permission = "DELETE_REVIEWS";
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+
+        boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
+        if (!hasPermission) {
+            response.getWriter().write("{\"status\": \"error\", \"message\": \"Bạn không có quyền xóa đánh giá!\"}");
+            return;
+        }
+
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        HttpSession session = request.getSession();
         Integer userId = (Integer) session.getAttribute("userId");
 
         if (userId == null) {
@@ -44,7 +54,7 @@ public class delete extends HttpServlet {
                 return;
             }
             boolean isDeleted = privewService.deleteReviewById(reviewId);
-            User user = (User) request.getSession().getAttribute("user");
+           // User user = (User) request.getSession().getAttribute("user");
 
             if (user != null) {
                 logService.addLog(String.valueOf(Level.WARNING), request, null, null);

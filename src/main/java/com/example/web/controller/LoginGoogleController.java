@@ -2,6 +2,7 @@ package com.example.web.controller;
 
 import com.example.web.dao.model.User;
 import com.example.web.service.AuthService;
+import com.example.web.utils.SessionManager;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -96,6 +97,12 @@ public class LoginGoogleController extends HttpServlet {
                 session.setAttribute("user", user);
 
                 response.setStatus(HttpServletResponse.SC_OK);
+
+
+                session.setAttribute("uid", String.valueOf(user.getId()));
+                SessionManager.userSessions.put(user.getId()+"", session);
+
+
                 response.getWriter().write("{\"success\": true}");
             } else {
                 response.getWriter().write("{\"success\": false, \"message\": \"Xác thực ID Token thất bại.\"}");
