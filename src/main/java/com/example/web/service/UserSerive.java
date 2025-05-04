@@ -1,5 +1,6 @@
 package com.example.web.service;
 
+import com.example.web.controller.util.UserCacheManager;
 import com.example.web.dao.UserDao;
 import com.example.web.dao.model.User;
 
@@ -11,18 +12,40 @@ import java.util.Set;
 
 public class UserSerive {
     private UserDao userDao =  new UserDao();
+    private final UserCacheManager cacheManager = new UserCacheManager();
+
+
     public boolean registerUser(String fullName, String username, String password, String email, String phone, String role) throws SQLException {
         return userDao.registerUser(fullName, username, hashPassword(password), email, phone, role);
     }
-    public  boolean deleteUser(int i) {
-        return userDao.deleteUser(i);
-    }
     public boolean updateUser(User user, Set<Integer> roleIds) throws SQLException {
-        return  userDao.updateUser(user, roleIds);
+        boolean result = userDao.updateUser(user, roleIds);
+        if (result) {
+            cacheManager.invalidateUser(user.getId());
+            cacheManager.invalidateAllUsersList();
+        }
+        return result;
     }
 
+
+    public boolean deleteUser(int id) {
+        boolean result = userDao.deleteUser(id);
+        if (result) {
+            cacheManager.invalidateUser(id);
+        }
+        return result;
+    }
+
+
     public List<User> getListUser() throws SQLException {
-        return userDao.getListUser();
+        List<User> cachedList = cacheManager.getAllUsers();
+        if (cachedList != null) {
+            return cachedList;
+        }
+
+        List<User> userList = userDao.getListUser();
+        cacheManager.putAllUsers(userList);
+        return userList;
     }
     public User getUser(int i) throws SQLException {
         return userDao.getUser(i);
@@ -33,9 +56,20 @@ public class UserSerive {
     public User findByUsername(String username) throws SQLException {
         return userDao.findByUsername(username);
     }
+
     public User findById(int id) throws SQLException {
-        return userDao.getUser(id);
+        User cachedUser = cacheManager.getUserById(id);
+        if (cachedUser != null) {
+            return cachedUser;
+        }
+
+        User user = userDao.getUser(id);
+        if (user != null) {
+            cacheManager.putUser(user);
+        }
+        return user;
     }
+
     public User findByEmail(String email) throws  SQLException {
         return userDao.findByEmail(email);
     }
@@ -60,12 +94,21 @@ public class UserSerive {
     }
 
     public boolean updateUserInfo(User currentUser) throws SQLException {
-        return userDao.updateUserInfo(currentUser);
+        boolean updated = userDao.updateUserInfo(currentUser);
+        if (updated) {
+            cacheManager.invalidateUser(currentUser.getId());
+        }
+        return updated;
     }
 
     public boolean addUser(String fullName, String username, String password, String email, String phone, String role, String address) throws SQLException {
-        return userDao.addUser(fullName, username, hashPassword(password), email, phone, role, address);
+        boolean result = userDao.addUser(fullName, username, hashPassword(password), email, phone, role, address);
+        if (result) {
+            cacheManager.invalidateAllUsersList();
+        }
+        return result;
     }
+
 
     public static void main(String[] args) throws SQLException {
         UserSerive userSerive = new UserSerive();
