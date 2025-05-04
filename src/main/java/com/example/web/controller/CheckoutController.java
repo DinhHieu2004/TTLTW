@@ -75,9 +75,14 @@ public class CheckoutController extends HttpServlet {
             String shippingFee = request.getParameter("shippingFee");
             shippingFee = shippingFee.replace(".", "");
             String[] voucherIds  = request.getParameterValues("voucherCodes");
+            double shippingFeeDouble = Double.parseDouble(shippingFee);
+            double shippingFeeFinal = session.getAttribute("shippingFeeAfterVoucher") != null
+                    ? (Double) session.getAttribute("shippingFeeAfterVoucher")
+                    : shippingFeeDouble;
+
+            String appliedVoucherIds = (voucherIds != null) ? String.join(",", voucherIds) : null;
 
             int paymentMethodInt = Integer.parseInt(paymentMethod);
-            double shippingFeeDouble = Double.parseDouble(shippingFee);
 
 
             try {
@@ -108,7 +113,7 @@ public class CheckoutController extends HttpServlet {
                     response.getWriter().write(outOfStockNames.toString());
                     return;
                 }
-                checkoutService.processCheckout(cart, userId,paymentMethodInt,recipientName, recipientPhone, deliveryAddress, shippingFeeDouble);
+                checkoutService.processCheckout(cart, userId,paymentMethodInt,recipientName, recipientPhone, deliveryAddress, shippingFeeDouble, appliedVoucherIds, shippingFeeFinal);
                 if (voucherIds != null) {
                     for (String vidStr : voucherIds) {
                         int voucherId = Integer.parseInt(vidStr);

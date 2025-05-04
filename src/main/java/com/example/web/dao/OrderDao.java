@@ -10,7 +10,7 @@ import java.util.List;
 public class OrderDao {
     private Connection conn = DbConnect.getConnection();
     public int createOrder(Order order) throws Exception {
-        String sql = "INSERT INTO orders (userId, totalAmount, paymentStatus, deliveryStatus, deliveryDate, recipientName, deliveryAddress, recipientPhone, paymentMethod, shippingFee, totalPrice) VALUES (?, ?, ?, ?, ?, ?,?,?, ?, ?, ?)";
+        String sql = "INSERT INTO orders (userId, totalAmount, paymentStatus, deliveryStatus, deliveryDate, recipientName, deliveryAddress, recipientPhone, paymentMethod, shippingFee, appliedVoucherIds, totalPrice) VALUES (?, ?, ?, ?, ?, ?,?,?, ?, ?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         ps.setInt(1, order.getUserId());
         ps.setDouble(2, order.getTotalAmount());
@@ -22,7 +22,8 @@ public class OrderDao {
         ps.setString(8, order.getRecipientPhone());
         ps.setString(9, order.getPaymentMethod());
         ps.setDouble(10, order.getShippingFee());
-        ps.setDouble(11, order.getPriceAfterShipping());
+        ps.setString(11, order.getAppliedVoucherIds());
+        ps.setDouble(12, order.getPriceAfterShipping());
 
         ps.executeUpdate();
         try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -35,7 +36,7 @@ public class OrderDao {
 
     public int createOrder2(Order order) throws Exception {
 
-        String sql = "INSERT INTO orders (userId, totalAmount, paymentStatus, deliveryStatus, deliveryDate, recipientName, deliveryAddress, recipientPhone, paymentMethod, vnpTxnRef, shippingFee, totalPrice) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?, ?, ?)";
+        String sql = "INSERT INTO orders (userId, totalAmount, paymentStatus, deliveryStatus, deliveryDate, recipientName, deliveryAddress, recipientPhone, paymentMethod, vnpTxnRef, shippingFee, appliedVoucherIds, totalPrice) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?, ?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         ps.setInt(1, order.getUserId());
         ps.setDouble(2, order.getTotalAmount());
@@ -48,7 +49,8 @@ public class OrderDao {
         ps.setString(9, order.getPaymentMethod());
         ps.setString(10, order.getVnpTxnRef());
         ps.setDouble(11, order.getShippingFee());
-        ps.setDouble(12, order.getPriceAfterShipping());
+        ps.setString(12, order.getAppliedVoucherIds());
+        ps.setDouble(13, order.getPriceAfterShipping());
 
         ps.executeUpdate();
         try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -117,6 +119,7 @@ public class OrderDao {
         order.setDeliveryDate(rs.getDate("deliveryDate") != null ? rs.getDate("deliveryDate") : null);
         order.setShippingFee(rs.getDouble("shippingFee"));
         order.setPriceAfterShipping(rs.getDouble("totalPrice"));
+        order.setAppliedVoucherIds(rs.getString("appliedVoucherIds"));
         order.setPaymentMethod(rs.getString("paymentMethod"));
         return order;
     }

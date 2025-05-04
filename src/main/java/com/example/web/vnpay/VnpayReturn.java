@@ -21,10 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @WebServlet("/vnpay_return")
 public class VnpayReturn extends HttpServlet {
@@ -33,6 +30,7 @@ public class VnpayReturn extends HttpServlet {
     private final UserSerive userSerive = new UserSerive();
     private final CheckoutService checkoutService = new CheckoutService();
     private final UserVoucherService userVoucherService = new UserVoucherService();
+    private final VoucherService voucherService = new VoucherService();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -47,9 +45,12 @@ public class VnpayReturn extends HttpServlet {
         String recipientPhone = (String) session.getAttribute("recipientPhone");
         String shippingFeeStr = (String) session.getAttribute("shippingFee");
         String[] voucherIds = (String[]) session.getAttribute("voucherIds");
-
+        String appliedVoucherIds = (voucherIds != null) ? String.join(",", voucherIds) : null;
         shippingFeeStr = shippingFeeStr.replace(".", "");
         double shippingFee = Double.parseDouble(shippingFeeStr);
+        double shippingFeeFinal = session.getAttribute("shippingFeeAfterVoucher") != null
+                ? (Double) session.getAttribute("shippingFeeAfterVoucher")
+                : shippingFee;
 
         response.setContentType("text/html;charset=UTF-8");
 
@@ -115,7 +116,7 @@ public class VnpayReturn extends HttpServlet {
                             return;
                         }
 
-                        orderId = checkoutService.processCheckout2(cart, userId, 2, recipientName, recipientPhone, deliveryAddress, vnpTxnRef, shippingFee);
+                        orderId = checkoutService.processCheckout2(cart, userId, 2, recipientName, recipientPhone, deliveryAddress, vnpTxnRef, shippingFee, appliedVoucherIds, shippingFeeFinal);
                         orderService.updatePaymentStatus(orderId, "đã thanh toán");
                         if (voucherIds != null) {
                             for (String vidStr : voucherIds) {
@@ -147,6 +148,16 @@ public class VnpayReturn extends HttpServlet {
                 }
 
                 if (transSuccess) {
+                    if (voucherIds != null && voucherIds.length > 0) {
+                        List<String> codes = new ArrayList<>();
+                        for (String vid : voucherIds) {
+                            int id = Integer.parseInt(vid);
+                            String code = voucherService.getVoucherCodeById(id);
+                            if (code != null) codes.add(code);
+                        }
+                        request.setAttribute("appliedVoucherCodes", String.join(", ", codes));
+                    }
+                    request.setAttribute("voucherGift", true);
                     request.getRequestDispatcher("user/payment_success.jsp").forward(request, response);
                 } else {
                     request.setAttribute("transResult", transSuccess);
