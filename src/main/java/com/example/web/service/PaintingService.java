@@ -1,9 +1,7 @@
 package com.example.web.service;
 
 import com.example.web.dao.PaintingDao;
-import com.example.web.dao.model.Order;
-import com.example.web.dao.model.OrderItem;
-import com.example.web.dao.model.Painting;
+import com.example.web.dao.model.*;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -91,6 +89,11 @@ public class PaintingService {
 
 
     }
+    public boolean applySI(List<StockInItem> items) throws SQLException {
+        return paintingDao.applySI(items);
+    }
 
-
+    public boolean applySO(List<StockOutItem> items) throws SQLException {
+        return paintingDao.applySO(items);
+    }
 }

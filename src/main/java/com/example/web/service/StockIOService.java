@@ -4,12 +4,15 @@ import com.example.web.dao.StockIODao;
 import com.example.web.dao.model.StockIn;
 import com.example.web.dao.model.StockInItem;
 import com.example.web.dao.model.StockOut;
+import com.example.web.dao.model.StockOutItem;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class StockIOService {
     private final StockIODao stockIODao = new StockIODao();
+    private final PaintingService paintingService = new PaintingService();
     public List<StockIn> getAll() throws SQLException {
         return stockIODao.getAll();
     }
@@ -47,5 +50,22 @@ public class StockIOService {
 
     public boolean deleteStockOutById(String id) {
         return stockIODao.deleteStockOutById(Integer.parseInt(id));
+    }
+
+    public boolean applyStockOutById(String id) throws SQLException {
+        List<StockOutItem> items = stockIODao.findItemsByStockOutId(Integer.parseInt(id));
+        if(paintingService.applySO(items)){
+            stockIODao.updateStatusSI(Integer.parseInt(id));
+            return true;
+        }
+        return false;
+    }
+    public boolean applyStockInById(String id) throws SQLException {
+        List<StockInItem> items = stockIODao.findItemsByStockInId(Integer.parseInt(id));
+        if(paintingService.applySI(items)){
+            stockIODao.updateStatusSI(Integer.parseInt(id));
+            return true;
+        }
+        return false;
     }
 }

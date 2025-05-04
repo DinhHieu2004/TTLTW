@@ -2,9 +2,7 @@ package com.example.web.dao;
 
 import com.example.web.dao.cart.CartPainting;
 import com.example.web.dao.db.DbConnect;
-import com.example.web.dao.model.OrderItem;
-import com.example.web.dao.model.Painting;
-import com.example.web.dao.model.Theme;
+import com.example.web.dao.model.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -951,5 +949,64 @@ public class PaintingDao {
         cartPainting.setQuantity(2);
 
         System.out.println(paintingDao.getInventory(cartPainting));
+    }
+
+    public boolean applySI(List<StockInItem> items) throws SQLException {
+        String updateSql = "UPDATE painting_sizes SET displayQuantity = IFNULL(displayQuantity, 0) + ?, totalQuantity = IFNULL(totalQuantity, 0) + ? WHERE paintingId = ? AND sizeId = ?";
+        String insertSql = "INSERT INTO painting_sizes (displayQuantity, totalQuantity, paintingId, sizeId) VALUES (?, ?, ?, ?)";
+
+        boolean originalAutoCommit = con.getAutoCommit();
+        con.setAutoCommit(false);
+
+        try (PreparedStatement updateStmt = con.prepareStatement(updateSql);
+             PreparedStatement insertStmt = con.prepareStatement(insertSql)) {
+
+            for (StockInItem item : items) {
+                updateStmt.setInt(1, item.getQuantity());
+                updateStmt.setInt(2, item.getQuantity());
+                updateStmt.setInt(3, item.getProductId());
+                updateStmt.setInt(4, item.getSizeId());
+                int updated = updateStmt.executeUpdate();
+
+                if (updated == 0) {
+                    insertStmt.setInt(1, item.getQuantity());
+                    insertStmt.setInt(2, item.getQuantity());
+                    insertStmt.setInt(3, item.getProductId());
+                    insertStmt.setInt(4, item.getSizeId());
+                    insertStmt.executeUpdate();
+                }
+            }
+            con.commit();
+            return true;
+        } catch (SQLException e) {
+            con.rollback();
+            throw new SQLException("Lỗi khi áp dụng phiếu nhập kho: " + e.getMessage(), e);
+        } finally {
+            con.setAutoCommit(originalAutoCommit);
+        }
+    }
+
+    public boolean applySO(List<StockOutItem> items) throws SQLException {
+        String sql = "UPDATE painting_sizes SET totalQuantity = IFNULL(totalQuantity, 0) - ? WHERE paintingId = ? AND sizeId = ?";
+        boolean originalAutoCommit = con.getAutoCommit();
+        con.setAutoCommit(false);
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            for (StockOutItem item : items) {
+                ps.setInt(1, item.getQuantity());
+                ps.setInt(2, item.getQuantity());
+                ps.setInt(3, item.getProductId());
+                ps.setInt(4, item.getSizeId());
+                ps.addBatch();
+            }
+            ps.executeBatch();
+            con.commit();
+            return true;
+        } catch (SQLException e) {
+            con.rollback();
+            throw new SQLException("Lỗi : " + e.getMessage(), e);
+        } finally {
+            con.setAutoCommit(originalAutoCommit);
+        }
     }
 }
