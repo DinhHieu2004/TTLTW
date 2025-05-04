@@ -92,7 +92,7 @@ public class AddStockIn extends HttpServlet {
             int stockInId = stockIOService.saveStockInWithItems(stockIn);
 
             if (stockInId > 0) {
-                stockIn.setId(stockInId);
+                stockIn = stockIOService.getSIById(stockInId);
                 responseMap.put("status", "success");
                 responseMap.put("stockIn", stockIn);
                 resp.setStatus(HttpServletResponse.SC_OK);

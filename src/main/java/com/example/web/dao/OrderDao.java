@@ -189,15 +189,6 @@ public class OrderDao {
             return false;
         }
     }
-
-    public static void main(String[] args) throws Exception {
-        OrderDao orderDao = new OrderDao();
-        //for(Order o : orderDao.getCurrentOrdersForUser(2)){
-       //     System.out.println(o);
-       // }
-        System.out.println(orderDao.getOrder(36));
-    }
-
     public boolean deleteOrder(int i) throws SQLException {
         String query = "DELETE FROM orders WHERE id = ?";
         try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
@@ -205,5 +196,34 @@ public class OrderDao {
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         }
+    }
+    public List<Order> getOrderByDelStatus(String status) throws Exception {
+        List<Order> orders = new ArrayList<>();
+        String query = "SELECT * FROM orders where deliveryStatus = ? ORDER BY orderDate ASC";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setString(1, status);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Order order = extractOrderFromResultSet(rs);
+                orders.add(order);
+            }
+        }
+        return orders;
+    }
+
+    public boolean isPendingOrder(int id) throws SQLException {
+        String query = "SELECT COUNT(*) FROM orders WHERE id = ? AND deliveryStatus = 'chờ'";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, id);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
     }
 }

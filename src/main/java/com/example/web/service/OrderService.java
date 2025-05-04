@@ -41,4 +41,12 @@ public class OrderService {
         OrderService orderService = new OrderService();
         System.out.println(orderService.getCurrentOrdersForUser(4));
     }
+
+    public List<Order> getOrderByDelStatus(String status) throws Exception {
+        return orderDao.getOrderByDelStatus(status);
+    }
+
+    public boolean isPendingOrder(int id) throws SQLException {
+        return orderDao.isPendingOrder(id);
+    }
 }

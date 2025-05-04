@@ -28,8 +28,9 @@ public class Delete extends HttpServlet {
             return;
         }
         try {
+            boolean isDeleted;
             if ("in".equalsIgnoreCase(type)) {
-                boolean isDeleted = stockIOService.deleteStockInById(id);
+                isDeleted = stockIOService.deleteStockInById(id);
                 if (isDeleted) {
                     resp.setStatus(HttpServletResponse.SC_OK);
                     resp.getWriter().write("{\"success\": \"Phiếu nhập kho đã được xóa.\"}");
@@ -38,6 +39,14 @@ public class Delete extends HttpServlet {
                     resp.getWriter().write("{\"error\": \"Không tìm thấy phiếu nhập kho để xóa.\"}");
                 }
             } else if ("out".equalsIgnoreCase(type)) {
+                isDeleted = stockIOService.deleteStockOutById(id);
+                if (isDeleted) {
+                    resp.setStatus(HttpServletResponse.SC_OK);
+                    resp.getWriter().write("{\"success\": \"Phiếu xuất kho đã được xóa.\"}");
+                } else {
+                    resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    resp.getWriter().write("{\"error\": \"Không tìm thấy phiếu xuất kho để xóa.\"}");
+                }
 
             } else {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
