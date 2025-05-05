@@ -42,6 +42,11 @@ $(document).ready(function() {
             data: { id: stockInId, type: "in" },
             success: function(response) {
                 console.log(response);
+                if (response.status === 'Chưa áp dụng') {
+                    $('#applyBtn').show();
+                } else {
+                    $('#applyBtn').hide();
+                }
                 $('#siId').text(response.id);
                 $('#importDate').text(response.transactionDate);
                 $('#createBy').text(response.createdName);
@@ -94,15 +99,69 @@ $(document).ready(function() {
                             'Phiếu nhập kho đã được áp dụng và số lượng được cập nhật.',
                             'success'
                         );
-                        console.log('Yêu cầu đã được xử lý thành công');
+                        $(`.deleteStockInButton[data-id="${stockInId}"]`).remove();
                     },
                     error: function(xhr, status, error) {
+                        let errorMessage = 'Có lỗi xảy ra khi áp dụng phiếu. Vui lòng thử lại.';
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            if (response.error) {
+                                errorMessage = response.error;
+                            }
+                        } catch (e) {
+                        }
                         Swal.fire(
                             'Lỗi!',
-                            'Có lỗi xảy ra khi áp dụng phiếu nhập kho. Vui lòng thử lại.',
+                            errorMessage,
                             'error'
                         );
-                        console.log('Lỗi trong quá trình gửi yêu cầu:', error);
+                    }
+                });
+            } else {
+                console.log('Hủy áp dụng!');
+            }
+        });
+    });
+    document.getElementById('applySOBtn').addEventListener('click', function() {
+        Swal.fire({
+            title: 'Bạn có chắc chắn muốn áp dụng?',
+            text: "Phiếu xuất kho sẽ được áp dụng và số lượng sẽ được cập nhật!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Áp dụng',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var stockOId = $('#soId').text();
+                $.ajax({
+                    url: 'inventoryTrans/applied',
+                    type: 'POST',
+                    data: {
+                        id: stockOId,
+                        type: "out"
+                    },
+                    success: function(response) {
+                        Swal.fire(
+                            'Đã áp dụng!',
+                            'Phiếu xuất kho đã được áp dụng và số lượng được cập nhật.',
+                            'success'
+                        );
+                        $(`.deleteStockOButton[data-id="${stockOId}"]`).remove();
+                    },
+                    error: function(xhr, status, error) {
+                        let errorMessage = 'Có lỗi xảy ra khi áp dụng phiếu. Vui lòng thử lại.';
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            if (response.error) {
+                                errorMessage = response.error;
+                            }
+                        } catch (e) {
+                        }
+                        Swal.fire(
+                            'Lỗi!',
+                            errorMessage,
+                            'error'
+                        );
                     }
                 });
             } else {
@@ -119,6 +178,11 @@ $(document).ready(function() {
             data: { id: stockOutId, type: "out" },
             success: function(response) {
                 console.log(response);
+                if (response.status === 'Chưa áp dụng') {
+                    $('#applySOBtn').show();
+                } else {
+                    $('#applySOBtn').hide();
+                }
                 $('#soId').text(response.id);
                 $('#exportDate').text(response.transactionDate);
                 $('#createBySo').text(response.createdName);
@@ -152,7 +216,7 @@ $(document).ready(function() {
     });
 
 
-    $(".deleteStockInButton").click(function() {
+    $(document).on('click', '.deleteStockInButton', function() {
         var stockInId = $(this).data("id");
 
         Swal.fire({
@@ -202,7 +266,7 @@ $(document).ready(function() {
             }
         });
     });
-    $(".deleteStockOButton").click(function() {
+    $(document).on('click', '.deleteStockOButton', function() {
         var stockOutId = $(this).data("id");
 
         Swal.fire({
@@ -347,7 +411,7 @@ function submitStockIn() {
                 response.stockIn.totalPrice.toLocaleString() + ' VND',
                 response.stockIn.note ?? '',
                 '<button class="btn btn-sm btn-info viewDetailSIButton" data-stockin-id="'+ response.stockIn.id +'"  data-bs-toggle="modal" data-bs-target="#detailModal">Chi tiết</button>'+
-                '<button class="btn btn-sm btn-danger">Xoá</button>'
+                '<button class="btn btn-sm btn-danger deleteStockInButton" data-id="'+ response.stockIn.id +'">Xoá</button>'
             ]).draw();
             resetForm();
         },
@@ -476,7 +540,7 @@ function submitStockOut() {
                 response.stockOut.totalPrice.toLocaleString() + ' VND',
                 response.stockOut.note ?? '',
                 '<button class="btn btn-sm btn-info viewDetailSOButton" data-stockout-id="'+ response.stockOut.id +'"  data-bs-toggle="modal" data-bs-target="#detailModalSo">Chi tiết</button>'+
-                '<button class="btn btn-sm btn-danger">Xoá</button>'
+                '<button class="btn btn-sm btn-danger deleteStockOButton" data-id="'+ response.stockOut.id +'">Xoá</button>'
             ]).draw();
             resetFormOut();
         },

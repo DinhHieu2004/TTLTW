@@ -3,6 +3,7 @@ package com.example.web.service;
 import com.example.web.dao.PaintingDao;
 import com.example.web.dao.model.*;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +94,11 @@ public class PaintingService {
         return paintingDao.applySI(items);
     }
 
-    public boolean applySO(List<StockOutItem> items) throws SQLException {
-        return paintingDao.applySO(items);
+    public boolean applySO(List<StockOutItem> items, boolean isDelivery) throws SQLException {
+        return paintingDao.applySO(items, isDelivery);
+    }
+
+    public int getQuantity(int productId, int sizeId) {
+        return paintingDao.getQuantity(productId, sizeId);
     }
 }

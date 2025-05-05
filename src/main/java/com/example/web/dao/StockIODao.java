@@ -49,13 +49,14 @@ public class StockIODao {
         }
     }
     public int addStockInTrans(StockIn stockIn) throws SQLException{
-        String stockInSql = "INSERT INTO stock_in (createdId, supplier, note, totalPrice, importDate) VALUES (?, ?, ?, ?, ?)";
+        String stockInSql = "INSERT INTO stock_in (createdId, supplier, note, totalPrice, importDate, status) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(stockInSql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, stockIn.getCreatedId());
             ps.setString(2, stockIn.getSupplier());
             ps.setString(3, stockIn.getNote());
             ps.setDouble(4, stockIn.getTotalPrice());
             ps.setDate(5, new java.sql.Date(stockIn.getTransactionDate().getTime()));
+            ps.setString(6, stockIn.getStatus());
 
             ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -135,6 +136,7 @@ public class StockIODao {
                 stockIn.setNote(rs.getString("note"));
                 stockIn.setTransactionDate(rs.getDate("importDate"));
                 stockIn.setTotalPrice(rs.getDouble("totalPrice"));
+                stockIn.setStatus(rs.getString("status"));
                 stockIn.setListPro(findItemsByStockInId(id));
             }
         }
@@ -253,8 +255,9 @@ public class StockIODao {
             int orderId = rs.getInt("orderId");
             double totalPrice = rs.getDouble("totalPrice");
             Date transactionDate = rs.getDate("exportDate");
+            String status = rs.getString("status");
 
-            StockOut stockOut = new StockOut(id, createdId, createdName, reason, orderId, note, transactionDate, totalPrice);
+            StockOut stockOut = new StockOut(id, createdId, createdName, reason, orderId, note, transactionDate, totalPrice, status);
             stockOutList.add(stockOut);
         }
         return stockOutList;
@@ -278,6 +281,7 @@ public class StockIODao {
                 stockOut.setNote(rs.getString("note"));
                 stockOut.setTransactionDate(rs.getDate("exportDate"));
                 stockOut.setTotalPrice(rs.getDouble("totalPrice"));
+                stockOut.setStatus(rs.getString("status"));
                 stockOut.setListPro(findItemsByStockOutId(id));
             }
         }
@@ -378,7 +382,7 @@ public class StockIODao {
     }
 
     private int addStockOutTrans(StockOut stockOut) throws SQLException{
-        String stockOutSql = "INSERT INTO stock_out (createdId, reason, orderId, note, totalPrice, exportDate) VALUES (?, ?, ?, ?, ?, ?)";
+        String stockOutSql = "INSERT INTO stock_out (createdId, reason, orderId, note, totalPrice, exportDate, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(stockOutSql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, stockOut.getCreatedId());
             ps.setString(2, stockOut.getReason());
@@ -390,6 +394,7 @@ public class StockIODao {
             ps.setString(4, stockOut.getNote());
             ps.setDouble(5, stockOut.getTotalPrice());
             ps.setDate(6, new java.sql.Date(stockOut.getTransactionDate().getTime()));
+            ps.setString(7, stockOut.getStatus());
 
             ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -415,13 +420,18 @@ public class StockIODao {
         while (rs.next()) {
             int id = rs.getInt("id");
             int createdId = rs.getInt("createdId");
+            Integer orderId = (Integer) rs.getObject("orderId");
             String createdName = rs.getString("createdName");
             String reason = rs.getString("reason");
             String note = rs.getString("note");
             double totalPrice = rs.getDouble("totalPrice");
             Date transactionDate = rs.getDate("exportDate");
+            String status = rs.getString("status");
+            if (orderId == null) {
+                orderId = -1;
+            }
 
-            stockOut = new StockOut(id, createdId, createdName,  reason, note, transactionDate, totalPrice);
+            stockOut = new StockOut(id, createdId, createdName,  reason, orderId, note, transactionDate, totalPrice, status);
         }
         return stockOut;
     }
@@ -469,8 +479,8 @@ public class StockIODao {
         }
     }
 
-    public void updateStatusSI(int id) {
-        String sql = "UPDATE stock_in SET status = ? WHERE id = ?";
+    public void updateStatus(String table, int id) {
+        String sql = "UPDATE " + table + " SET status = ? WHERE id = ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, "Đã áp dụng");
@@ -480,4 +490,5 @@ public class StockIODao {
             e.printStackTrace();
         }
     }
+
 }

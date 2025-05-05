@@ -986,27 +986,82 @@ public class PaintingDao {
         }
     }
 
-    public boolean applySO(List<StockOutItem> items) throws SQLException {
-        String sql = "UPDATE painting_sizes SET totalQuantity = IFNULL(totalQuantity, 0) - ? WHERE paintingId = ? AND sizeId = ?";
-        boolean originalAutoCommit = con.getAutoCommit();
+    public boolean applySO(List<StockOutItem> items, boolean isDelivery) throws SQLException {
         con.setAutoCommit(false);
-
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try {
             for (StockOutItem item : items) {
-                ps.setInt(1, item.getQuantity());
-                ps.setInt(2, item.getQuantity());
-                ps.setInt(3, item.getProductId());
-                ps.setInt(4, item.getSizeId());
-                ps.addBatch();
+                String selectSql = "SELECT displayQuantity, reservedQuantity, totalQuantity FROM painting_sizes WHERE paintingId = ? AND sizeId = ?";
+                int display = 0, reserved = 0, total = 0;
+
+                try (PreparedStatement stmt = con.prepareStatement(selectSql)) {
+                    stmt.setInt(1, item.getProductId());
+                    stmt.setInt(2, item.getSizeId());
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        if (rs.next()) {
+                            display = rs.getInt("displayQuantity");
+                            reserved = rs.getInt("reservedQuantity");
+                            total = rs.getInt("totalQuantity");
+                        } else {
+                            throw new SQLException("Không tìm thấy bản ghi cho paintingId " + item.getProductId());
+                        }
+                    }
+                }
+
+                String updateSql = isDelivery
+                        ? "UPDATE painting_sizes SET totalQuantity = totalQuantity - ?, reservedQuantity = reservedQuantity - ? WHERE paintingId = ? AND sizeId = ?"
+                        : "UPDATE painting_sizes SET totalQuantity = totalQuantity - ? WHERE paintingId = ? AND sizeId = ?";
+
+                try (PreparedStatement stmt = con.prepareStatement(updateSql)) {
+                    stmt.setInt(1, item.getQuantity());
+                    if (isDelivery) {
+                        stmt.setInt(2, item.getQuantity());
+                    }
+                    stmt.setInt(isDelivery ? 3 : 2, item.getProductId());
+                    stmt.setInt(isDelivery ? 4 : 3, item.getSizeId());
+                    stmt.executeUpdate();
+                }
+
+                if (!isDelivery) {
+                    int remainingTotal = total - item.getQuantity();
+                    if (display > remainingTotal) {
+                        display = remainingTotal;
+                    }
+
+                    String adjustSql = "UPDATE painting_sizes SET displayQuantity = ? WHERE paintingId = ? AND sizeId = ?";
+                    try (PreparedStatement stmt = con.prepareStatement(adjustSql)) {
+                        stmt.setInt(1, display);
+                        stmt.setInt(2, item.getProductId());
+                        stmt.setInt(3, item.getSizeId());
+                        stmt.executeUpdate();
+                    }
+                }
             }
-            ps.executeBatch();
+
             con.commit();
             return true;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             con.rollback();
-            throw new SQLException("Lỗi : " + e.getMessage(), e);
+            e.printStackTrace();
+            throw new SQLException("Lỗi khi áp dụng xuất kho", e);
         } finally {
-            con.setAutoCommit(originalAutoCommit);
+            con.setAutoCommit(true);
         }
+    }
+
+
+
+    public int getQuantity(int productId, int sizeId) {
+        String sql = "SELECT totalQuantity FROM painting_sizes WHERE paintingId = ? AND sizeId = ?";
+        try (PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, productId);
+            stmt.setInt(2, sizeId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("totalQuantity");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }

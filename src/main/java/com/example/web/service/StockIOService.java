@@ -13,6 +13,7 @@ import java.util.List;
 public class StockIOService {
     private final StockIODao stockIODao = new StockIODao();
     private final PaintingService paintingService = new PaintingService();
+    private final OrderService orderService = new OrderService();
     public List<StockIn> getAll() throws SQLException {
         return stockIODao.getAll();
     }
@@ -54,8 +55,13 @@ public class StockIOService {
 
     public boolean applyStockOutById(String id) throws SQLException {
         List<StockOutItem> items = stockIODao.findItemsByStockOutId(Integer.parseInt(id));
-        if(paintingService.applySO(items)){
-            stockIODao.updateStatusSI(Integer.parseInt(id));
+        boolean isDelivery = stockIODao.getSOById(Integer.parseInt(id)).getReason().equals("Giao hàng");
+        if(paintingService.applySO(items, isDelivery)){
+            stockIODao.updateStatus("stock_out", Integer.parseInt(id));
+            if(isDelivery){
+                int orderId = stockIODao.getSOById(Integer.parseInt(id)).getOrderId();
+                orderService.updateDeliveryStatus(orderId,"đang giao");
+            }
             return true;
         }
         return false;
@@ -63,9 +69,25 @@ public class StockIOService {
     public boolean applyStockInById(String id) throws SQLException {
         List<StockInItem> items = stockIODao.findItemsByStockInId(Integer.parseInt(id));
         if(paintingService.applySI(items)){
-            stockIODao.updateStatusSI(Integer.parseInt(id));
+            stockIODao.updateStatus("stock_in", Integer.parseInt(id));
             return true;
         }
         return false;
+    }
+
+    public List<String> getInsufficientStockItems(String id) throws SQLException {
+        List<StockOutItem> items = stockIODao.findItemsByStockOutId(Integer.parseInt(id));
+        List<String> insufficientItems = new ArrayList<>();
+
+        for (StockOutItem item : items) {
+            int currentStock = paintingService.getQuantity(item.getProductId(), item.getSizeId());
+            if (currentStock < item.getQuantity()) {
+                String productName = paintingService.getPainting(item.getProductId()).getTitle();
+                insufficientItems.add(String.format("%s (Size: %s, Tồn: %d, Cần: %d)",
+                        productName, item.getSizeId(), currentStock, item.getQuantity()));
+            }
+        }
+
+        return insufficientItems;
     }
 }

@@ -64,4 +64,8 @@ public class OrderService {
     public boolean isPendingOrder(int id) throws SQLException {
         return orderDao.isPendingOrder(id);
     }
+
+    public void updateDeliveryStatus(int id, String status) throws SQLException {
+        orderDao.updateDeliveryStatus(id, status);
+    }
 }
