@@ -88,7 +88,7 @@ public class AddStockOut extends HttpServlet {
             double totalPrice = products.stream().mapToDouble(StockOutItem::getTotalPrice).sum();
             int orderIdParsed = (orderId != null && !orderId.isEmpty()) ? Integer.parseInt(orderId) : 0;
 
-            StockOut stockOut = new StockOut(0, creatorId, reason, orderIdParsed, note, date, totalPrice);
+            StockOut stockOut = new StockOut(0, creatorId, reason, orderIdParsed, note, date, totalPrice, "Chưa áp dụng");
             stockOut.setListPro(products);
 
             int stockOutId = stockIOService.saveStockOutWithItems(stockOut);

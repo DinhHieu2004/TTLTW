@@ -226,4 +226,15 @@ public class OrderDao {
         }
         return false;
     }
+
+    public void updateDeliveryStatus(int id, String status) throws SQLException {
+        String sql = "UPDATE orders SET deliveryStatus = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, status);
+            stmt.setInt(2, id);
+
+            stmt.executeUpdate();
+        }
+    }
 }

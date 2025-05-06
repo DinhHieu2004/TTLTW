@@ -2,13 +2,20 @@ package com.example.web.service;
 
 import com.example.web.controller.util.OrderCacheManager;
 import com.example.web.dao.OrderDao;
+import com.example.web.dao.OrderItemDao;
+import com.example.web.dao.PaintingDao;
 import com.example.web.dao.model.Order;
+import com.example.web.dao.model.OrderItem;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderService {
     private OrderDao orderDao = new OrderDao();
+    private PaintingDao paintingDao = new PaintingDao();
+    private OrderItemDao orderItemDao = new OrderItemDao();
+
     private OrderCacheManager cacheManager = new OrderCacheManager();
 
 
@@ -38,7 +45,16 @@ public class OrderService {
     }
 
     public boolean updateOrderStatus(int orderId, String status, String recipientName, String recipientPhone, String deliveryAddress) throws Exception {
-        return orderDao.updateOrderStatus(orderId, status,recipientName,recipientPhone, deliveryAddress);
+        boolean success = false;
+        List<OrderItem> orderItems = new ArrayList<>();
+
+        if ("đã hủy giao hàng".equalsIgnoreCase(status)) {
+            orderItems = orderItemDao.getListOrderItem(orderId);
+            paintingDao.returnQuantity(orderItems);
+        }
+        success = orderDao.updateOrderStatus(orderId, status, recipientName, recipientPhone, deliveryAddress);
+
+        return success;
     }
 
     public boolean updatePaymentStatus(int orderId, String paymentStatus) {
@@ -60,7 +76,6 @@ public class OrderService {
         return orders;
     }
 
-
     public List<Order> getOrderHistoryAdmin() throws Exception {
         List<Order> cached = cacheManager.getAdminHistoryOrders();
         if (cached != null) {
@@ -71,8 +86,6 @@ public class OrderService {
         cacheManager.putAdminHistoryOrders(orders);
         return orders;
     }
-
-
     public List<Order> getOrderByDelStatus(String status) throws Exception {
         return orderDao.getOrderByDelStatus(status);
     }
@@ -80,5 +93,7 @@ public class OrderService {
     public boolean isPendingOrder(int id) throws SQLException {
         return orderDao.isPendingOrder(id);
     }
-
+    public void updateDeliveryStatus(int id, String status) throws SQLException {
+        orderDao.updateDeliveryStatus(id, status);
+    }
 }

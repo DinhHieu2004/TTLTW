@@ -13,9 +13,10 @@ public class StockOut {
     private String note;
     private Date transactionDate;
     private double totalPrice;
+    private String status;
     private List<StockOutItem> listPro = new ArrayList<>();
 
-    public StockOut(int id, int createdId, String reason, Integer orderId, String note, Date transactionDate, double totalPrice) {
+    public StockOut(int id, int createdId, String reason, Integer orderId, String note, Date transactionDate, double totalPrice, String status) {
         this.id = id;
         this.createdId = createdId;
         this.reason = reason;
@@ -23,9 +24,10 @@ public class StockOut {
         this.note = note;
         this.transactionDate = transactionDate;
         this.totalPrice = totalPrice;
+        this.status = status;
     }
 
-    public StockOut(int id, int createdId, String createdName, String reason, String note, Date transactionDate, double totalPrice) {
+    public StockOut(int id, int createdId, String createdName, String reason, String note, Date transactionDate, double totalPrice, String status) {
         this.id = id;
         this.createdId = createdId;
         this.createdName = createdName;
@@ -33,9 +35,10 @@ public class StockOut {
         this.note = note;
         this.transactionDate = transactionDate;
         this.totalPrice = totalPrice;
+        this.status = status;
     }
 
-    public StockOut(int id, int createdId, String createdName, String reason, Integer orderId, String note, Date transactionDate, double totalPrice) {
+    public StockOut(int id, int createdId, String createdName, String reason, Integer orderId, String note, Date transactionDate, double totalPrice, String status) {
         this.id = id;
         this.createdId = createdId;
         this.createdName = createdName;
@@ -44,6 +47,7 @@ public class StockOut {
         this.note = note;
         this.transactionDate = transactionDate;
         this.totalPrice = totalPrice;
+        this.status = status;
     }
 
     public StockOut() {
@@ -119,5 +123,13 @@ public class StockOut {
 
     public void setListPro(List<StockOutItem> listPro) {
         this.listPro = listPro;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

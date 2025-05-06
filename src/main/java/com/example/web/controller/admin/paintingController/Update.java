@@ -46,7 +46,7 @@ public class Update extends HttpServlet {
 
 
      //   User user = (User) req.getSession().getAttribute("user");
-        if (user == null || hasPermission) {
+        if (user == null || !hasPermission) {
             jsonResponse.addProperty("success", false);
             jsonResponse.addProperty("message", "Bạn không có quyền chỉnh sửa sản phẩm!");
             out.print(new Gson().toJson(jsonResponse));

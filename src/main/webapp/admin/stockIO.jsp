@@ -96,7 +96,9 @@
               <td>${si.note}</td>
               <td>
                 <button class="btn btn-sm btn-info viewDetailSIButton" data-stockin-id="${si.id}" data-bs-toggle="modal" data-bs-target="#detailModal">Chi tiết</button>
-                <button class="btn btn-sm btn-danger deleteStockInButton" data-id="${si.id}">Xoá</button>
+                <c:if test="${si.status == 'Chưa áp dụng'}">
+                  <button class="btn btn-sm btn-danger deleteStockInButton" data-id="${si.id}">Xoá</button>
+                </c:if>
               </td>
             </tr>
           </c:forEach>
@@ -131,7 +133,9 @@
                   <td>${so.note}</td>
                   <td>
                     <button class="btn btn-sm btn-info viewDetailSOButton" data-stockout-id="${so.id}" data-bs-toggle="modal" data-bs-target="#detailModalSo">Chi tiết</button>
-                    <button class="btn btn-sm btn-danger deleteStockOButton" data-id="${so.id}">Xoá</button>
+                    <c:if test="${so.status == 'Chưa áp dụng'}">
+                      <button class="btn btn-sm btn-danger deleteStockOButton" data-id="${so.id}">Xoá</button>
+                    </c:if>
                   </td>
                 </tr>
               </c:forEach>
@@ -174,6 +178,7 @@
         </div>
         <div class="modal-footer">
           <strong class="me-auto"> Tổng tiền: <span id="totalPrice"></span></strong>
+          <button type="button" class="btn btn-success" id="applyBtn">Áp dụng</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
         </div>
       </div>
@@ -215,6 +220,7 @@
       </div>
       <div class="modal-footer">
         <strong class="me-auto"> Tổng tiền: <span id="totalPriceSo"></span></strong>
+        <button type="button" class="btn btn-success" id="applySOBtn">Áp dụng</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
       </div>
     </div>
