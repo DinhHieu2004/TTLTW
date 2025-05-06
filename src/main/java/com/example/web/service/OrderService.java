@@ -12,7 +12,9 @@ public class OrderService {
     public List<Order> getCurrentOrdersForUser(int userId) throws Exception {
         return orderDao.getCurrentOrdersForUser(userId);
     }
-
+    public Order getLastOrderOfUser(int userId) throws SQLException {
+        return orderDao.getLastOrderOfUser(userId);
+    }
     public List<Order> getHistoryOrder(int userId) throws Exception {
         return orderDao.getHistoryOrder(userId);
     }

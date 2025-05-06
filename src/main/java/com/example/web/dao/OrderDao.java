@@ -206,4 +206,34 @@ public class OrderDao {
             return rowsAffected > 0;
         }
     }
+
+    public Order getLastOrderOfUser(int userId) throws SQLException {
+        String sql = "SELECT * FROM orders WHERE userId = ? ORDER BY id DESC LIMIT 1";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Order order = new Order();
+                    order.setId(rs.getInt("id"));
+                    order.setUserId(rs.getInt("userId"));
+                    order.setPaymentStatus(rs.getString("paymentStatus"));
+                    order.setDeliveryStatus(rs.getString("deliveryStatus"));
+                    order.setTotalAmount(rs.getDouble("totalAmount"));
+                    order.setOrderDate(rs.getTimestamp("orderDate"));
+                    order.setDeliveryDate(rs.getTimestamp("deliveryDate"));
+                    order.setRecipientName(rs.getString("recipientName"));
+                    order.setDeliveryAddress(rs.getString("deliveryAddress"));
+                    order.setRecipientPhone(rs.getString("recipientPhone"));
+                    order.setShippingFee(rs.getDouble("shippingFee"));
+                    order.setPriceAfterShipping(rs.getDouble("totalPrice"));
+                    order.setPaymentMethod(rs.getString("paymentMethod"));
+                    order.setVnpTxnRef(rs.getString("vnpTxnRef"));
+                    order.setAppliedVoucherIds(rs.getString("appliedVoucherIds"));
+                    return order;
+                }
+            }
+        }
+        return null;
+    }
 }

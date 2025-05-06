@@ -1,17 +1,17 @@
 package com.example.web.controller;
 
+import com.example.web.controller.util.EmailConfirmService;
 import com.example.web.dao.cart.Cart;
 import com.example.web.dao.cart.CartPainting;
 import com.example.web.dao.model.*;
-import com.example.web.service.CheckoutService;
-import com.example.web.service.UserVoucherService;
-import com.example.web.service.VoucherService;
+import com.example.web.service.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.eclipse.tags.shaded.org.apache.xpath.operations.Or;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -24,6 +24,8 @@ public class CheckoutController extends HttpServlet {
     private final CheckoutService checkoutService = new CheckoutService();
     private final VoucherService voucherService = new VoucherService();
     private final UserVoucherService userVoucherService = new UserVoucherService();
+    private final OrderService orderService = new OrderService();
+    private final OrderItemService orderItemService = new OrderItemService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -114,12 +116,23 @@ public class CheckoutController extends HttpServlet {
                     return;
                 }
                 checkoutService.processCheckout(cart, userId,paymentMethodInt,recipientName, recipientPhone, deliveryAddress, shippingFeeDouble, appliedVoucherIds, shippingFeeFinal);
-                if (voucherIds != null) {
-                    for (String vidStr : voucherIds) {
-                        int voucherId = Integer.parseInt(vidStr);
-                        userVoucherService.markAsUsed(voucherId, userId);
+                // Gửi email xác nhận đơn hàng (COD)
+                Order order = orderService.getLastOrderOfUser(userId);
+                List<OrderItem> orderItems = orderItemService.getOrderItems(order.getId());
+                String appliedVoucherCodes = "";
+
+                if (voucherIds != null && voucherIds.length > 0) {
+                    List<String> codes = new ArrayList<>();
+                    for (String vid : voucherIds) {
+                        int id = Integer.parseInt(vid);
+                        String code = voucherService.getVoucherCodeById(id);
+                        if (code != null) codes.add(code);
                     }
+                    appliedVoucherCodes = String.join(", ", codes);
                 }
+
+                EmailConfirmService.sendOrderConfirmation(user.getEmail(), order, orderItems, appliedVoucherCodes);
+
                 session.removeAttribute("cart");
                 response.setStatus(HttpServletResponse.SC_OK);
                 response.getWriter().write("Đặt hàng thành công!");
