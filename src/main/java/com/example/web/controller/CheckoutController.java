@@ -119,7 +119,7 @@ public class CheckoutController extends HttpServlet {
                 // Gửi email xác nhận đơn hàng (COD)
                 Order order = orderService.getLastOrderOfUser(userId);
                 List<OrderItem> orderItems = orderItemService.getOrderItems(order.getId());
-                String appliedVoucherCodes = "";
+                String appliedVoucherCodes;
 
                 if (voucherIds != null && voucherIds.length > 0) {
                     List<String> codes = new ArrayList<>();
@@ -129,9 +129,17 @@ public class CheckoutController extends HttpServlet {
                         if (code != null) codes.add(code);
                     }
                     appliedVoucherCodes = String.join(", ", codes);
+                } else {
+                    appliedVoucherCodes = "";
                 }
 
-                EmailConfirmService.sendOrderConfirmation(user.getEmail(), order, orderItems, appliedVoucherCodes);
+                new Thread(() -> {
+                    try {
+                        EmailConfirmService.sendOrderConfirmation(user.getEmail(), order, orderItems, appliedVoucherCodes);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }).start();
 
                 session.removeAttribute("cart");
                 response.setStatus(HttpServletResponse.SC_OK);

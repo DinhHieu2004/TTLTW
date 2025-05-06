@@ -38,9 +38,9 @@ public class EmailConfirmService {
                 itemsHtml.append("<tr>")
                         .append("<td>").append(item.getName()).append("</td>")
                         .append("<td><img src='").append(item.getImageUrlCloud()).append("' width='80'/></td>")
+                        .append("<td>").append(String.format("%,.0f ₫", item.getPrice() / item.getQuantity())).append("</td>")
                         .append("<td>").append(item.getQuantity()).append("</td>")
-                        .append("<td>").append(String.format("%,.0f ₫", item.getPrice())).append("</td>")
-                        .append("<td>").append(String.format("%,.0f ₫", item.getPrice() * item.getQuantity())).append("</td>")
+                        .append("<td>").append(String.format("%,.0f ₫", item.getPrice())).append("</td>")   // db đã x sl
                         .append("</tr>");
             }
 
@@ -53,7 +53,7 @@ public class EmailConfirmService {
                     "<h3>Thông tin đơn hàng:</h3>" +
                     "<table cellpadding=\"8\" cellspacing=\"0\" border=\"1\" style=\"border-collapse: collapse; width: 100%;\">" +
                     "<tr style=\"background-color: #f2f2f2;\">" +
-                    "<th>Sản phẩm</th><th>Ảnh</th><th>Số lượng</th><th>Đơn giá</th><th>Thành tiền</th>" +
+                    "<th>Sản phẩm</th><th>Ảnh</th><th>Đơn giá</th><th>Số lượng</th><th>Thành tiền</th>" +
                     "</tr>" +
                     itemsHtml +
                     "</table>" +

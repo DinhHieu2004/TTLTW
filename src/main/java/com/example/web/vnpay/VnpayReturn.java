@@ -152,7 +152,7 @@ public class VnpayReturn extends HttpServlet {
                 }
 
                 if (transSuccess) {
-                    String appliedVoucherCodes = "";
+                    String appliedVoucherCodes;
 
                     if (voucherIds != null && voucherIds.length > 0) {
                         List<String> codes = new ArrayList<>();
@@ -163,9 +163,20 @@ public class VnpayReturn extends HttpServlet {
                         }
                         appliedVoucherCodes = String.join(", ", codes);
                         request.setAttribute("appliedVoucherCodes", appliedVoucherCodes);
+                    } else {
+                        appliedVoucherCodes = "";
                     }
                     // gửi email xác nhận đơn
-                    EmailConfirmService.sendOrderConfirmation(user.getEmail(), order, orderItems, appliedVoucherCodes);
+                    Order finalOrder = order;
+                    List<OrderItem> finalOrderItems = orderItems;
+                    User finalUser = user;
+                    new Thread(() -> {
+                        try {
+                            EmailConfirmService.sendOrderConfirmation(finalUser.getEmail(), finalOrder, finalOrderItems, appliedVoucherCodes);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }).start();
 
                     request.setAttribute("voucherGift", true);
                     request.getRequestDispatcher("user/payment_success.jsp").forward(request, response);
