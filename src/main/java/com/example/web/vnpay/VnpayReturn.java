@@ -5,11 +5,14 @@
 
 package com.example.web.vnpay;
 
+import com.example.web.controller.util.EmailInvoce;
+import com.example.web.controller.util.InvoicePdfGenerator;
 import com.example.web.dao.cart.Cart;
 import com.example.web.dao.cart.CartPainting;
 import com.example.web.dao.model.*;
 import com.example.web.service.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -140,7 +143,15 @@ public class VnpayReturn extends HttpServlet {
                         }
                         transSuccess = true;
                         session.removeAttribute("cart");
-
+                        InvoicePdfGenerator.generate(order, orderItems);
+                        // Gửi mail
+                        File pdfFile = new File("invoice_" + order.getVnpTxnRef() + ".pdf");
+                        EmailInvoce.sendInvoice(
+                                user.getEmail(),
+                                "Hóa đơn đơn hàng #" + order.getVnpTxnRef(),
+                                "Cảm ơn bạn đã đặt hàng. Hóa đơn của bạn được đính kèm.",
+                                pdfFile
+                        );
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
