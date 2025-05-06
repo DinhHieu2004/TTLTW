@@ -28,7 +28,7 @@ import java.util.*;
 public class VnpayReturn extends HttpServlet {
     private final OrderService orderService = new OrderService();
     private final OrderItemService orderItemService = new OrderItemService();
-    private final UserSerive userSerive = new UserSerive();
+    private final UserService userService = new UserService();
     private final CheckoutService checkoutService = new CheckoutService();
     private final UserVoucherService userVoucherService = new UserVoucherService();
     private final VoucherService voucherService = new VoucherService();
@@ -134,7 +134,9 @@ public class VnpayReturn extends HttpServlet {
                         order = orderService.getOrder(orderId);
                         orderItems = orderItemService.getOrderItems(orderId);
                         // Lấy email nhận đơn hàng
-                        user = userSerive.getUser(order.getUserId());
+
+                        user = userService.getUser(order.getUserId());
+
                         request.setAttribute("userEmail", user.getEmail());
 
                         // Lưu thông tin vào để chuyển đến trang thanh toán thành công

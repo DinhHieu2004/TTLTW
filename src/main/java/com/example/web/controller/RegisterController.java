@@ -1,8 +1,7 @@
 package com.example.web.controller;
 
-import com.example.web.dao.UserDao;
 import com.example.web.service.AuthService;
-import com.example.web.service.UserSerive;
+import com.example.web.service.UserService;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -19,7 +18,7 @@ import java.util.Map;
 @WebServlet(name = "RegisterController", value = "/register")
 public class RegisterController extends HttpServlet {
     AuthService auth = new AuthService();
-    UserSerive userSerive = new UserSerive();
+    UserService userService = new UserService();
     Gson gson = new Gson();
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -39,7 +38,7 @@ public class RegisterController extends HttpServlet {
 
             if (username.isEmpty()) {
                 responseMap.put("errorUser", "Tên đăng nhập không được để trống!");
-            } else if (userSerive.findByUsername(username) != null) {
+            } else if (userService.findByUsername(username) != null) {
                 responseMap.put("errorUser", "Tên đăng nhập đã tồn tại!");
             }
 
@@ -49,7 +48,7 @@ public class RegisterController extends HttpServlet {
             } else if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
                 responseMap.put("errorEmail", "Email không hợp lệ!");
             }
-            else if (userSerive.findByEmail(email) != null) {
+            else if (userService.findByEmail(email) != null) {
                 responseMap.put("errorEmail", "Email đã tồn tại!");
             }
 

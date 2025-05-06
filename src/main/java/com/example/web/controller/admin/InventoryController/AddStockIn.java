@@ -86,13 +86,13 @@ public class AddStockIn extends HttpServlet {
             Date date = Date.valueOf(createdDate);
             double totalPrice = products.stream().mapToDouble(StockInItem::getTotalPrice).sum();
 
-            StockIn stockIn = new StockIn(0, creatorId, supplier, note, totalPrice, date);
+            StockIn stockIn = new StockIn(0, creatorId, supplier, note, totalPrice, date, "Chưa áp dụng");
             stockIn.setListPro(products);
 
             int stockInId = stockIOService.saveStockInWithItems(stockIn);
 
             if (stockInId > 0) {
-                stockIn.setId(stockInId);
+                stockIn = stockIOService.getSIById(stockInId);
                 responseMap.put("status", "success");
                 responseMap.put("stockIn", stockIn);
                 resp.setStatus(HttpServletResponse.SC_OK);

@@ -2,7 +2,7 @@ package com.example.web.controller.admin.UserController;
 
 import com.example.web.controller.util.GsonProvider;
 import com.example.web.dao.model.User;
-import com.example.web.service.UserSerive;
+import com.example.web.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -16,14 +16,14 @@ import java.sql.SQLException;
 @WebServlet("/admin/users/detail")
 
 public class GetDetail extends HttpServlet {
-    private UserSerive userSerive = new UserSerive();
+    private UserService userService = new UserService();
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         int userId = Integer.parseInt(req.getParameter("userId"));
         try {
            // System.out.println(userId);
 
-            User user = userSerive.getUser(userId);
+            User user = userService.getUser(userId);
             user.setPassword(null);
          //   System.out.println(user);
 

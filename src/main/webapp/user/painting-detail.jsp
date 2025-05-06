@@ -90,11 +90,11 @@
                                             <input class="form-check-input" type="radio" name="size"
                                                    id="size_${size.sizeDescriptions}"
                                                    value="${size.idSize}"
-                                                   data-quantity="${size.quantity}"
-                                                ${size.quantity <= 0 ? 'disabled' : ''}>
-                                            <input type="hidden" name="quantity_${size.idSize}" value="${size.quantity}">
+                                                   data-quantity="${size.displayQuantity}"
+                                                ${size.displayQuantity <= 0 ? 'disabled' : ''}>
+                                            <input type="hidden" name="quantity_${size.idSize}" value="${size.displayQuantity}">
                                             <label class="form-check-label" for="size_${size.sizeDescriptions}">
-                                                    ${size.sizeDescriptions} <small class="text-muted">(Còn ${size.quantity})</small>
+                                                    ${size.sizeDescriptions} <small class="text-muted">(Còn ${size.displayQuantity})</small>
 
 
                                             </label>
@@ -329,5 +329,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/header.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/painting-detail.js"></script>
+
 </body>
 </html>

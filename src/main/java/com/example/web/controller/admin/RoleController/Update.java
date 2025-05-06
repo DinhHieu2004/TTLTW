@@ -1,11 +1,14 @@
 package com.example.web.controller.admin.RoleController;
 
+import com.example.web.controller.util.CheckPermission;
+import com.example.web.dao.model.User;
 import com.example.web.service.RoleService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -15,8 +18,22 @@ import java.util.Set;
 public class Update extends HttpServlet {
     private RoleService roleService = new RoleService();
 
+    private final String permission ="UPDATE_ROLES";
+
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        User user = (User) session.getAttribute("user");
+
+        boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
+        if (!hasPermission) {
+            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            resp.setContentType("application/json");
+            resp.setCharacterEncoding("UTF-8");
+            resp.getWriter().write("{\"message\": \"Bạn không có quyền!\"}");
+            return;
+        }
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
 

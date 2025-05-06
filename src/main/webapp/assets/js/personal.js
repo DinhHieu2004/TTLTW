@@ -84,7 +84,6 @@ $(document).ready(function () {
                     
                     
                 `)}
-                        debugger
                         $('#cancelOrderButton').off('click').on('click', function () {
                             const recipientName = $('#recipientName').val();
                             const recipientPhone = $('#recipientPhone').val();

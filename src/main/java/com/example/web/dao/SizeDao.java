@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SizeDao {
-    static Connection conn = DbConnect.getConnection();
+    Connection conn = DbConnect.getConnection();
 
     public SizeDao() {}
 

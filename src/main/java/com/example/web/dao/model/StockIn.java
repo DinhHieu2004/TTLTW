@@ -13,14 +13,26 @@ public class StockIn {
     private Date transactionDate;
     private double totalPrice;
     private List<StockInItem> listPro = new ArrayList<>();
+    private String status;
 
-    public StockIn(int id, int createdId, String supplier, String note, double totalPrice, Date transactionDate) {
+    public StockIn(int id, int createdId, String supplier, String note, double totalPrice, Date transactionDate, String status) {
         this.id = id;
         this.createdId = createdId;
         this.supplier = supplier;
         this.note = note;
         this.totalPrice = totalPrice;
         this.transactionDate = transactionDate;
+        this.status = status;
+    }
+    public StockIn(int id, int createdId, String createdName, String supplier, String note, double totalPrice, Date transactionDate, String status) {
+        this.id = id;
+        this.createdId = createdId;
+        this.createdName = createdName;
+        this.supplier = supplier;
+        this.note = note;
+        this.totalPrice = totalPrice;
+        this.transactionDate = transactionDate;
+        this.status = status;
     }
     public StockIn() {
     }
@@ -87,5 +99,13 @@ public class StockIn {
 
     public void setCreatedName(String createdName) {
         this.createdName = createdName;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

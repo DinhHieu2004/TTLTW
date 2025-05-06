@@ -23,10 +23,12 @@ public class UploadImageBatchToCloudinary {
 
         Cloudinary cloudinary = ConfigCloudinary.getInstance();
 
+
+        String webappPath = new File("src/main/webapp").getAbsolutePath();
         for (File file : files) {
-            if (file.isFile()) {
+             if (file.isFile()) {
                 try {
-                    String webappPath = new File("src/main/webapp").getAbsolutePath();
+
                     String imagePath = file.getAbsolutePath();
                     String relativePath = imagePath.replace(webappPath + File.separator, "");
                     String cloudinaryFolder = relativePath

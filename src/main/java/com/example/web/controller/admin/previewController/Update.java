@@ -1,4 +1,5 @@
 package com.example.web.controller.admin.previewController;
+import com.example.web.controller.util.CheckPermission;
 import com.example.web.dao.model.Level;
 import com.example.web.dao.model.ProductReview;
 import com.example.web.dao.model.User;
@@ -18,8 +19,21 @@ import java.sql.SQLException;
 public class Update extends HttpServlet {
     private final PrivewService privewService = new PrivewService();
     private final LogService logService = new LogService();
+    private final String permission ="UPDATE_REVIEWS";
+
+
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+
+        boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
+        if (!hasPermission) {
+            response.getWriter().print("{\"status\": \"error\", \"message\": \"Bạn không có quyền chỉnh sửa đánh giá!\"}");
+
+            return;
+        }
+
         Integer userId = (Integer) session.getAttribute("userId");
 
         if (userId == null) {
@@ -41,7 +55,7 @@ public class Update extends HttpServlet {
                 return;
             }
             success = privewService.updateReview(reviewId,newRating ,newComment);
-            User user = (User) request.getSession().getAttribute("user");
+          //  User user = (User) request.getSession().getAttribute("user");
 
             if (user != null) {
                 logService.addLog(String.valueOf(Level.WARNING), request, null, null);

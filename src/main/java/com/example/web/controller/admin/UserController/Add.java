@@ -1,13 +1,15 @@
 package com.example.web.controller.admin.UserController;
 
+import com.example.web.controller.util.CheckPermission;
 import com.example.web.dao.model.User;
-import com.example.web.service.UserSerive;
+import com.example.web.service.UserService;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,11 +18,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 @WebServlet("/admin/users/add")
-public class Add  extends HttpServlet {
+public class Add extends HttpServlet {
     private Gson gson = new Gson();
-    private UserSerive userSerive = new UserSerive();
+    private UserService userService = new UserService();
+    private final String permission = "ADD_USERS";
+
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User userC = (User) session.getAttribute("user");
+        Map<String, Object> responseMap = new HashMap<>();
+
+        boolean hasPermission = CheckPermission.checkPermission(userC, permission, "ADMIN");
+        if (!hasPermission) {
+            responseMap.put("errorPermission", "bạn khong có quyền!");
+
+            //   response.sendRedirect(request.getContextPath() + "/NoPermission.jsp");
+            return;
+        }
         String fullName = request.getParameter("fullName");
         String username = request.getParameter("username");
         String password = request.getParameter("password");
@@ -30,7 +46,6 @@ public class Add  extends HttpServlet {
         String phone = request.getParameter("phone");
 
 
-        Map<String, Object> responseMap = new HashMap<>();
 
         try {
             if (fullName.isEmpty()) {
@@ -38,7 +53,7 @@ public class Add  extends HttpServlet {
             }
             if (username.isEmpty()) {
                 responseMap.put("errorUser", "Tên đăng nhập không được để trống!");
-            } else if (userSerive.findByUsername(username) != null) {
+            } else if (userService.findByUsername(username) != null) {
                 responseMap.put("errorUser", "Tên đăng nhập đã tồn tại!");
             }
 
@@ -46,19 +61,17 @@ public class Add  extends HttpServlet {
                 responseMap.put("errorEmail", "Email không được để trống!");
             } else if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
                 responseMap.put("errorEmail", "Email không hợp lệ!");
-            }
-            else if (userSerive.findByEmail(email) != null) {
+            } else if (userService.findByEmail(email) != null) {
                 responseMap.put("errorEmail", "Email đã tồn tại!");
             }
 
             if (password.isEmpty()) {
                 responseMap.put("errorPassword", "Mật khẩu không được để trống!");
-            }
-            else if (!password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")) {
+            } else if (!password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")) {
                 responseMap.put("errorPassword", "Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt!");
             }
 
-            if ( phone != null && !phone.isEmpty() && !phone.matches("\\d{10}")) {
+            if (phone != null && !phone.isEmpty() && !phone.matches("\\d{10}")) {
                 responseMap.put("errorPhone", "Số điện thoại không hợp lệ!");
             }
 
@@ -68,10 +81,10 @@ public class Add  extends HttpServlet {
                 System.out.println("dddd");
                 return;
             }
-            boolean isRegistered = userSerive.addUser(fullName, username, password, email, phone, "user", address);
+            boolean isRegistered = userService.addUser(fullName, username, password, email, phone, "user", address);
 
             if (isRegistered) {
-                User user = userSerive.findByUsername(username);
+                User user = userService.findByUsername(username);
                 responseMap.put("success", "Đăng ký thành công!");
                 responseMap.put("user", user);
                 System.out.println("bbb");
@@ -79,21 +92,22 @@ public class Add  extends HttpServlet {
                 responseMap.put("errorMessage", "Đăng ký không thành công. Vui lòng thử lại.");
                 System.out.println("phone");
             }
-            } catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             responseMap.put("errorDatabase", "Lỗi hệ thống, vui lòng thử lại sau.");
 
-    }
-    sendJsonResponse(response, responseMap);
-}
-        private void sendJsonResponse(HttpServletResponse response, Map<String, Object> responseMap) throws IOException {
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            try (PrintWriter out = response.getWriter()) {
-                out.write(gson.toJson(responseMap));
-                out.flush();
-            }
         }
+        sendJsonResponse(response, responseMap);
+    }
+
+    private void sendJsonResponse(HttpServletResponse response, Map<String, Object> responseMap) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            out.write(gson.toJson(responseMap));
+            out.flush();
+        }
+    }
 
 }
