@@ -113,8 +113,6 @@ public class PaintingDao {
             PaintingCacheManager.clearAll();
 
 
-            PaintingCacheManager.clearAll();
-
             return rowsUpdated > 0;
         }
     }

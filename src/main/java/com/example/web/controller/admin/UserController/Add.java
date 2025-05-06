@@ -2,7 +2,7 @@ package com.example.web.controller.admin.UserController;
 
 import com.example.web.controller.util.CheckPermission;
 import com.example.web.dao.model.User;
-import com.example.web.service.UserSerive;
+import com.example.web.service.UserService;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -20,7 +20,7 @@ import java.util.Map;
 @WebServlet("/admin/users/add")
 public class Add extends HttpServlet {
     private Gson gson = new Gson();
-    private UserSerive userSerive = new UserSerive();
+    private UserService userService = new UserService();
     private final String permission = "ADD_USERS";
 
 
@@ -53,7 +53,7 @@ public class Add extends HttpServlet {
             }
             if (username.isEmpty()) {
                 responseMap.put("errorUser", "Tên đăng nhập không được để trống!");
-            } else if (userSerive.findByUsername(username) != null) {
+            } else if (userService.findByUsername(username) != null) {
                 responseMap.put("errorUser", "Tên đăng nhập đã tồn tại!");
             }
 
@@ -61,7 +61,7 @@ public class Add extends HttpServlet {
                 responseMap.put("errorEmail", "Email không được để trống!");
             } else if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
                 responseMap.put("errorEmail", "Email không hợp lệ!");
-            } else if (userSerive.findByEmail(email) != null) {
+            } else if (userService.findByEmail(email) != null) {
                 responseMap.put("errorEmail", "Email đã tồn tại!");
             }
 
@@ -81,10 +81,10 @@ public class Add extends HttpServlet {
                 System.out.println("dddd");
                 return;
             }
-            boolean isRegistered = userSerive.addUser(fullName, username, password, email, phone, "user", address);
+            boolean isRegistered = userService.addUser(fullName, username, password, email, phone, "user", address);
 
             if (isRegistered) {
-                User user = userSerive.findByUsername(username);
+                User user = userService.findByUsername(username);
                 responseMap.put("success", "Đăng ký thành công!");
                 responseMap.put("user", user);
                 System.out.println("bbb");

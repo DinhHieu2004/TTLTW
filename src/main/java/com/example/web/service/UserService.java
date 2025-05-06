@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
-public class UserSerive {
+public class UserService {
     private UserDao userDao =  new UserDao();
     private final UserCacheManager cacheManager = new UserCacheManager();
 
@@ -111,8 +111,8 @@ public class UserSerive {
 
 
     public static void main(String[] args) throws SQLException {
-        UserSerive userSerive = new UserSerive();
-        User user = userSerive.findById(4);
+        UserService userService = new UserService();
+        User user = userService.findById(4);
         System.out.println(user.getAllRolePermission());
     }
 }

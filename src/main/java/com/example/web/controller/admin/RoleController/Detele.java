@@ -3,7 +3,6 @@ package com.example.web.controller.admin.RoleController;
 import com.example.web.controller.util.CheckPermission;
 import com.example.web.dao.model.User;
 import com.example.web.service.RoleService;
-import com.example.web.service.UserSerive;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

@@ -4,7 +4,6 @@ package com.example.web.controller.admin.paintingController;
 import com.example.web.controller.util.CheckPermission;
 import com.example.web.dao.model.User;
 import com.example.web.service.PaintingService;
-import com.example.web.service.UserSerive;
 import com.google.gson.JsonObject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
