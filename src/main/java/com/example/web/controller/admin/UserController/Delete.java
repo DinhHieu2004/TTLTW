@@ -1,8 +1,7 @@
 package com.example.web.controller.admin.UserController;
 import com.example.web.controller.util.CheckPermission;
 import com.example.web.dao.model.User;
-import com.example.web.service.ArtistService;
-import com.example.web.service.UserSerive;
+import com.example.web.service.UserService;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -18,7 +17,7 @@ import java.util.Map;
 
 @WebServlet("/admin/users/delete")
 public class Delete extends HttpServlet {
-    private UserSerive userSerive = new UserSerive();
+    private UserService userService = new UserService();
     private final String permission= "DELETE_USERS";
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -47,7 +46,7 @@ public class Delete extends HttpServlet {
         System.out.println(id);
 
         try {
-            boolean isDeleted = userSerive.deleteUser(Integer.parseInt(id));
+            boolean isDeleted = userService.deleteUser(Integer.parseInt(id));
             if (isDeleted) {
                 jsonResponse.put("status", "success");
                 jsonResponse.put("message", "Xóa người dùng thành công!");

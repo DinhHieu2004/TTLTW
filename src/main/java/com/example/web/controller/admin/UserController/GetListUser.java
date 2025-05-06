@@ -1,13 +1,12 @@
 package com.example.web.controller.admin.UserController;
 
-import com.example.web.controller.InitServlet;
 import com.example.web.controller.util.CheckPermission;
 import com.example.web.dao.model.Permission;
 import com.example.web.dao.model.Role;
 import com.example.web.dao.model.User;
 import com.example.web.service.PermissionService;
 import com.example.web.service.RoleService;
-import com.example.web.service.UserSerive;
+import com.example.web.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -21,7 +20,7 @@ import java.util.List;
 
 @WebServlet("/admin/users")
 public class GetListUser extends HttpServlet {
-    private UserSerive userSerive = new UserSerive();
+    private UserService userService = new UserService();
     private RoleService roleService = new RoleService();
     private PermissionService permissionService= new PermissionService();
 
@@ -41,7 +40,7 @@ public class GetListUser extends HttpServlet {
         }
         try {
 
-            List<User> users = userSerive.getListUser();
+            List<User> users = userService.getListUser();
             List<Role> roles = roleService.getAllRoles();
             List<Permission> permissions = permissionService.getAll();
             req.setAttribute("users", users);

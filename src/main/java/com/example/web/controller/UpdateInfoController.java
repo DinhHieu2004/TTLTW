@@ -1,8 +1,7 @@
 package com.example.web.controller;
 
-import com.example.web.dao.UserDao;
 import com.example.web.dao.model.User;
-import com.example.web.service.UserSerive;
+import com.example.web.service.UserService;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -19,7 +18,7 @@ import java.util.Map;
 
 @WebServlet(name = "updateInfo", value = "/update-personal-info")
 public class UpdateInfoController extends HttpServlet {
-    private UserSerive userSerive = new UserSerive();
+    private UserService userService = new UserService();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -62,7 +61,7 @@ public class UpdateInfoController extends HttpServlet {
             errors.put("errorEmail", "Email không hợp lệ!");
         } else {
             try {
-                User existingUser = userSerive.findByEmail(email);
+                User existingUser = userService.findByEmail(email);
                 if (existingUser != null && existingUser.getId() != (currentUser.getId())) {
                     errors.put("errorEmail", "Email đã tồn tại!");
                 }
@@ -93,7 +92,7 @@ public class UpdateInfoController extends HttpServlet {
             currentUser.setEmail(email);
             currentUser.setAddress(address);
 
-            boolean isUpdated = userSerive.updateUserInfo(currentUser);
+            boolean isUpdated = userService.updateUserInfo(currentUser);
             if (isUpdated) {
                 session.setAttribute("user", currentUser);
                 response.setStatus(200);

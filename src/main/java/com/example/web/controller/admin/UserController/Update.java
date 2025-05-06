@@ -2,7 +2,7 @@ package com.example.web.controller.admin.UserController;
 
 import com.example.web.controller.util.CheckPermission;
 import com.example.web.dao.model.User;
-import com.example.web.service.UserSerive;
+import com.example.web.service.UserService;
 import com.example.web.utils.SessionManager;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
@@ -23,7 +23,7 @@ import java.util.Set;
 
 @WebServlet("/admin/users/update")
 public class Update extends HttpServlet {
-    private UserSerive userSerive = new UserSerive();
+    private UserService userService = new UserService();
 
     private final String permission ="UPDATE_USERS";
 
@@ -88,7 +88,7 @@ public class Update extends HttpServlet {
                 }
                 if (username == null || username.isEmpty()) {
                     errors.put("changUsernameError", "Tên đăng nhập không được để trống!");
-                } else if (userSerive.findByUsername(username) != null && !username.equals(getCurrentUsername(id))) {
+                } else if (userService.findByUsername(username) != null && !username.equals(getCurrentUsername(id))) {
                     errors.put("changUsernameError", "Tên đăng nhập đã tồn tại!");
                 }
 
@@ -96,7 +96,7 @@ public class Update extends HttpServlet {
                     errors.put("changeEmailError", "Email không được để trống!");
                 } else if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
                     errors.put("changeEmailError", "Email không hợp lệ!");
-                } else if (userSerive.findByEmail(email) != null && !email.equals(getCurrentEmail(id))) {
+                } else if (userService.findByEmail(email) != null && !email.equals(getCurrentEmail(id))) {
                     errors.put("changeEmailError", "Email đã tồn tại!");
                 }
 
@@ -118,10 +118,10 @@ public class Update extends HttpServlet {
 
                 User user = new User(id, fullName, username, address, email, phone, null);
 
-                boolean isUpdated = userSerive.updateUser(user, roleIds);
+                boolean isUpdated = userService.updateUser(user, roleIds);
 
                 if (isUpdated) {
-                    User up = userSerive.getUser(user.getId());
+                    User up = userService.getUser(user.getId());
 
                     //khi thay đổi bất kì thong tin nào thì cũng nên buộc đăng xuất
                     HttpSession userSession = SessionManager.userSessions.get(up.getId()+"");
@@ -155,12 +155,12 @@ public class Update extends HttpServlet {
         }
 
         private String getCurrentUsername(int id) throws SQLException {
-            User currentUser = userSerive.findById(id);
+            User currentUser = userService.findById(id);
             return currentUser != null ? currentUser.getUsername() : "";
         }
 
         private String getCurrentEmail(int id) throws SQLException {
-            User currentUser = userSerive.findById(id);
+            User currentUser = userService.findById(id);
             return currentUser != null ? currentUser.getEmail() : "";
         }
 
