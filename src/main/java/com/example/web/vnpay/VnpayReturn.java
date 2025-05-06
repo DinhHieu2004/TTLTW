@@ -5,14 +5,12 @@
 
 package com.example.web.vnpay;
 
-import com.example.web.controller.util.EmailInvoce;
-import com.example.web.controller.util.InvoicePdfGenerator;
+import com.example.web.controller.util.EmailConfirmService;
 import com.example.web.dao.cart.Cart;
 import com.example.web.dao.cart.CartPainting;
 import com.example.web.dao.model.*;
 import com.example.web.service.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -88,6 +86,9 @@ public class VnpayReturn extends HttpServlet {
                 String responseCode = request.getParameter("vnp_ResponseCode");
 
                 int orderId = 0;
+                Order order = null;
+                List<OrderItem> orderItems = null;
+                User user = null;
                 if ("00".equals(transactionStatus)) {
                     //update order status
                     try {
@@ -130,10 +131,10 @@ public class VnpayReturn extends HttpServlet {
 
 
                         // Lấy thông tin từ db
-                        Order order = orderService.getOrder(orderId);
-                        List<OrderItem> orderItems = orderItemService.getOrderItems(orderId);
+                        order = orderService.getOrder(orderId);
+                        orderItems = orderItemService.getOrderItems(orderId);
                         // Lấy email nhận đơn hàng
-                        User user = userSerive.getUser(order.getUserId());
+                        user = userSerive.getUser(order.getUserId());
                         request.setAttribute("userEmail", user.getEmail());
 
                         // Lưu thông tin vào để chuyển đến trang thanh toán thành công
@@ -143,15 +144,7 @@ public class VnpayReturn extends HttpServlet {
                         }
                         transSuccess = true;
                         session.removeAttribute("cart");
-                        InvoicePdfGenerator.generate(order, orderItems);
-                        // Gửi mail
-                        File pdfFile = new File("invoice_" + order.getVnpTxnRef() + ".pdf");
-                        EmailInvoce.sendInvoice(
-                                user.getEmail(),
-                                "Hóa đơn đơn hàng #" + order.getVnpTxnRef(),
-                                "Cảm ơn bạn đã đặt hàng. Hóa đơn của bạn được đính kèm.",
-                                pdfFile
-                        );
+
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -159,6 +152,8 @@ public class VnpayReturn extends HttpServlet {
                 }
 
                 if (transSuccess) {
+                    String appliedVoucherCodes = "";
+
                     if (voucherIds != null && voucherIds.length > 0) {
                         List<String> codes = new ArrayList<>();
                         for (String vid : voucherIds) {
@@ -166,8 +161,12 @@ public class VnpayReturn extends HttpServlet {
                             String code = voucherService.getVoucherCodeById(id);
                             if (code != null) codes.add(code);
                         }
-                        request.setAttribute("appliedVoucherCodes", String.join(", ", codes));
+                        appliedVoucherCodes = String.join(", ", codes);
+                        request.setAttribute("appliedVoucherCodes", appliedVoucherCodes);
                     }
+                    // gửi email xác nhận đơn
+                    EmailConfirmService.sendOrderConfirmation(user.getEmail(), order, orderItems, appliedVoucherCodes);
+
                     request.setAttribute("voucherGift", true);
                     request.getRequestDispatcher("user/payment_success.jsp").forward(request, response);
                 } else {
