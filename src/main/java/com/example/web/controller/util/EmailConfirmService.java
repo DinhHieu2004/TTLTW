@@ -13,8 +13,8 @@ public class EmailConfirmService {
 
     public static void sendOrderConfirmation(String recipientEmail, Order order, List<OrderItem> orderItems, String appliedVoucherCodes) {
         try {
-            final String senderEmail = "t75339223@gmail.com";
-            final String appPassword = "vqru uohb qgdf hifa";
+            final String senderEmail = ConfigUtil.get("email.sender");
+            final String appPassword = ConfigUtil.get("email.password");
 
             Properties props = new Properties();
             props.put("mail.smtp.host", "smtp.gmail.com");
