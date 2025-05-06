@@ -44,6 +44,7 @@ public class Update extends HttpServlet {
         JsonObject jsonResponse = new JsonObject();
         PrintWriter out = resp.getWriter();
 
+
      //   User user = (User) req.getSession().getAttribute("user");
         if (user == null || hasPermission) {
             jsonResponse.addProperty("success", false);

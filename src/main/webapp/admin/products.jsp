@@ -334,21 +334,30 @@
             </div>
           </div>
 
+<%--          <div class="size-quantities">--%>
+<%--            <label class="form-label">Kích thước và Số lượng</label>--%>
+<%--              <c:forEach var="size" items="${s}">--%>
+<%--                <div class="size-quantity-pair">--%>
+<%--                  <div class="row g-2">--%>
+<%--                    <div class="col-7">--%>
+<%--                      <input type="hidden" name="sizeId[]" value="${size.idSize}">--%>
+<%--                      <input type="text" class="form-control form-control-sm" name="size" value="${size.sizeDescriptions}" readonly>--%>
+<%--                    </div>--%>
+<%--                    <div class="col-5">--%>
+<%--                      <input type="number" class="form-control form-control-sm" name="quantity[]" value="0" min="0">--%>
+<%--                    </div>--%>
+<%--                  </div>--%>
+<%--                </div>--%>
+<%--              </c:forEach>--%>
+<%--          </div>--%>
           <div class="size-quantities">
-            <label class="form-label">Kích thước và Số lượng</label>
-              <c:forEach var="size" items="${s}">
-                <div class="size-quantity-pair">
-                  <div class="row g-2">
-                    <div class="col-7">
-                      <input type="hidden" name="sizeId[]" value="${size.idSize}">
-                      <input type="text" class="form-control form-control-sm" name="size" value="${size.sizeDescriptions}" readonly>
-                    </div>
-                    <div class="col-5">
-                      <input type="number" class="form-control form-control-sm" name="quantity[]" value="0" min="0">
-                    </div>
-                  </div>
-                </div>
-              </c:forEach>
+            <label class="form-label">Kích thước</label>
+            <c:forEach var="size" items="${s}">
+              <div class="mb-2">
+                <input type="hidden" name="sizeId[]" value="${size.idSize}">
+                <input type="text" class="form-control form-control-sm" name="size" value="${size.sizeDescriptions}" readonly>
+              </div>
+            </c:forEach>
           </div>
         </div>
         <div class="modal-footer">
@@ -434,20 +443,36 @@
 
             <div class="size-quantities">
               <label class="form-label">Kích thước và Số lượng</label>
-              <c:forEach var="size" items="${s}">
+
+              <div class="row fw-bold border-bottom pb-2 mb-2 text-center">
+                <div class="col-md-3" style="font-size: 0.85rem;">Kích thước</div>
+                <div class="col-md-2" style="font-size: 0.85rem;">Tổng</div>
+                <div class="col-md-2" style="font-size: 0.85rem;">Đặt</div>
+                <div class="col-md-3" style="font-size: 0.85rem;">Bán</div>
+              </div>
+              <c:forEach var="size" items="${sizes}">
                 <div class="size-quantity-pair">
                   <div class="row g-2">
-                    <div class="col-7">
+                    <div class="col-md-4">
                       <input type="hidden" name="sizeId[]" value="${size.idSize}">
                       <input type="text" class="form-control form-control-sm" name="size" value="${size.sizeDescriptions}" readonly>
                     </div>
-                    <div class="col-5">
-                      <input type="number" class="form-control form-control-sm" name="quantity[]" value="0" min="0">
+                    <div class="col-md-2">
+                      <p class="total-quantity"></p>
+                    </div>
+                    <div class="col-md-2">
+                      <p class="reserved-quantity"></p>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="number" class="form-control form-control-sm" name="quantity[]" min="0"
+                             max=""
+                             title="Số lượng còn lại (Tổng - Đặt trước)">
                     </div>
                   </div>
                 </div>
               </c:forEach>
             </div>
+
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Đóng</button>
@@ -902,7 +927,7 @@
               response.painting.price.toFixed(1),
               response.painting.createDate,
               response.painting.artistName,
-              '<button class="btn btn-info btn-sm edit-painting" data-product-id="' + response.painting.id + '">Xem Chi Tiết</button> ' +
+              '<button class="btn btn-info btn-sm edit-painting" data-bs-toggle="modal" data-bs-target="#viewAndEditModal" data-product-id="' + response.painting.id + '">Xem Chi Tiết</button> ' +
               '<button class="btn btn-danger btn-sm delete-painting" data-product-id="' + response.painting.id + '">Xóa</button>'
             ]).draw();
 

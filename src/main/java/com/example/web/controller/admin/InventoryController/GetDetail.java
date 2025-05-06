@@ -30,19 +30,16 @@ public class GetDetail extends HttpServlet {
         }
 
         try {
-            StockIn detail = null;
-
+            Object detail = null;
             if ("in".equalsIgnoreCase(type)) {
                 detail = stockIOService.getStockInDetail(id);
             } else if ("out".equalsIgnoreCase(type)) {
-                resp.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
-                resp.getWriter().write("{\"error\": \"...\"}");
+                detail = stockIOService.getStockOutDetail(id);
             } else {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 resp.getWriter().write("{\"error\": \"Wrong.\"}");
                 return;
             }
-
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.getWriter().write(GsonProvider.getGson().toJson(detail));
         } catch (Exception e) {

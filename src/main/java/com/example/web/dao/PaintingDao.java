@@ -118,22 +118,15 @@ public class PaintingDao {
     }
 
     public boolean updatePaintingSizes(int paintingId, List<Integer> sizeIds, List<Integer> quantities) throws SQLException {
-        String deleteSql = "DELETE FROM painting_sizes WHERE paintingId = ?";
-        try (PreparedStatement psDelete = con.prepareStatement(deleteSql)) {
-            psDelete.setInt(1, paintingId);
-            psDelete.executeUpdate();
-        }
-
-        // Thêm các kích thước mới
-        String insertSql = "INSERT INTO painting_sizes (paintingId, sizeId, quantity) VALUES (?, ?, ?)";
-        try (PreparedStatement psInsert = con.prepareStatement(insertSql)) {
+        String updateSql = "UPDATE painting_sizes SET displayQuantity = ? WHERE paintingId = ? AND sizeId = ?";
+        try (PreparedStatement psUpdate = con.prepareStatement(updateSql)) {
             for (int i = 0; i < sizeIds.size(); i++) {
-                psInsert.setInt(1, paintingId);
-                psInsert.setInt(2, sizeIds.get(i));
-                psInsert.setInt(3, quantities.get(i));
-                psInsert.addBatch();
+                psUpdate.setInt(1, quantities.get(i));
+                psUpdate.setInt(2, paintingId);
+                psUpdate.setInt(3, sizeIds.get(i));
+                psUpdate.addBatch();
             }
-            int[] updateCounts = psInsert.executeBatch();
+            int[] updateCounts = psUpdate.executeBatch();
             for (int count : updateCounts) {
                 if (count != 1) {
                     return false;
@@ -145,6 +138,7 @@ public class PaintingDao {
 
         return true;
     }
+
 
     public List<Painting> getAll() throws SQLException {
         String sql = """ 
@@ -214,7 +208,9 @@ public class PaintingDao {
                     s.sizeDescription,
                     s.weight,
                     s.id AS idSize,
-                    ps.quantity AS sizeQuantity,
+                    ps.totalQuantity,
+                    ps.reservedQuantity,
+                    ps.displayQuantity,
                     dp.discountId
                 FROM paintings p
                 LEFT JOIN artists a ON p.artistId = a.id
@@ -250,8 +246,10 @@ public class PaintingDao {
                     int idSize = rs.getInt("idSize");
                     double weight = rs.getDouble("weight");
                     String sizeDescription = rs.getString("sizeDescription");
-                    int sizeQuantity = rs.getInt("sizeQuantity");
-                    paintingDetail.addSize(idSize, sizeDescription, sizeQuantity, weight);
+                    int totalQuantity = rs.getInt("totalQuantity");
+                    int reservedQuantity = rs.getInt("reservedQuantity");
+                    int displayQuantity = rs.getInt("displayQuantity");
+                    paintingDetail.addSize(idSize, sizeDescription, totalQuantity, reservedQuantity, displayQuantity, weight);
 
                     double discountPercentage = rs.getDouble("discountPercentage");
                     if (discountPercentage > 0) {
@@ -753,7 +751,7 @@ public class PaintingDao {
                         s.sizeDescription,
                         s.id AS idSize,
                         s.weight,       
-                        ps.quantity AS sizeQuantity,
+                        ps.displayQuantity,
                         dp.discountId
                 
                     FROM paintings p
@@ -778,10 +776,10 @@ public class PaintingDao {
 
                         // Add size and quantity to the painting detail
                         int idSize = rs.getInt("idSize");
-                        String sizeDescription = rs.getString("sizeDescription");
-                        int sizeQuantity = rs.getInt("sizeQuantity");
                         double weight = rs.getDouble("weight");
-                        paintingDetail.addSize(idSize, sizeDescription, sizeQuantity,weight);
+                        String sizeDescription = rs.getString("sizeDescription");
+                        int displayQuantity = rs.getInt("displayQuantity");
+                        paintingDetail.addSize(idSize, sizeDescription, displayQuantity, weight);
 
                         // Add discount information if exists
                         if (rs.getString("discountName") != null) {
@@ -886,7 +884,7 @@ public class PaintingDao {
                         s.sizeDescription,
                         s.weight,
                         s.id AS idSize,
-                        ps.quantity AS sizeQuantity
+                        ps.displayQuantity,
                     FROM paintings p
                     LEFT JOIN painting_sizes ps ON p.id = ps.paintingId
                     LEFT JOIN sizes s ON ps.sizeId = s.id
@@ -903,8 +901,8 @@ public class PaintingDao {
                     int idSize = rs.getInt("idSize");
                     double weight = rs.getDouble("weight");
                     String sizeDescription = rs.getString("sizeDescription");
-                    int sizeQuantity = rs.getInt("sizeQuantity");
-                    paintingDetail.addSize(idSize, sizeDescription, sizeQuantity, weight);
+                    int displayQuantity = rs.getInt("displayQuantity");
+                    paintingDetail.addSize(idSize, sizeDescription, displayQuantity, weight);
 
                 }
             }

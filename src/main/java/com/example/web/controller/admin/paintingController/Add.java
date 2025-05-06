@@ -44,6 +44,7 @@ public class Add extends HttpServlet {
         PrintWriter out = resp.getWriter();
 
         User user = (User) req.getSession().getAttribute("user");
+
         if (user == null || !hasPermission) {
             jsonResponse.addProperty("success", false);
             jsonResponse.addProperty("message", "Bạn không có quyền thêm sản phẩm!");
@@ -67,33 +68,43 @@ public class Add extends HttpServlet {
         boolean isFeatured = isFeaturedStr != null;
 
         String[] sizeIds = req.getParameterValues("sizeId[]");
-        String[] quantities = req.getParameterValues("quantity[]");
+//        String[] quantities = req.getParameterValues("quantity[]");
 
         List<Integer> sizeList = new ArrayList<>();
         List<Integer> quantityList = new ArrayList<>();
 
-        for (String q : quantities) {
-            try {
-                int number = Integer.parseInt(q);
-                quantityList.add(number);
-            } catch (NumberFormatException e) {
-            }
-        }
-        for (String numberStr : sizeIds) {
-            try {
-                int number = Integer.parseInt(numberStr);
-                sizeList.add(number);
-            } catch (NumberFormatException e) {
-            }
-        }
-
-        if (sizeIds != null && quantities != null) {
-            for (int i = 0; i < sizeIds.length; i++) {
-                int sizeId = Integer.parseInt(sizeIds[i]);
-                int quantity = Integer.parseInt(quantities[i]);
-
-                System.out.println("Size ID: " + sizeId + ", Quantity: " + quantity);
-
+//        for (String q : quantities) {
+//            try {
+//                int number = Integer.parseInt(q);
+//                quantityList.add(number);
+//            } catch (NumberFormatException e) {
+//            }
+//        }
+//        for (String numberStr : sizeIds) {
+//            try {
+//                int number = Integer.parseInt(numberStr);
+//                sizeList.add(number);
+//            } catch (NumberFormatException e) {
+//            }
+//        }
+//
+//        if (sizeIds != null && quantities != null) {
+//            for (int i = 0; i < sizeIds.length; i++) {
+//                int sizeId = Integer.parseInt(sizeIds[i]);
+//                int quantity = Integer.parseInt(quantities[i]);
+//
+//                System.out.println("Size ID: " + sizeId + ", Quantity: " + quantity);
+//
+//            }
+//        }
+        if (sizeIds != null) {
+            for (String numberStr : sizeIds) {
+                try {
+                    int sizeId = Integer.parseInt(numberStr);
+                    sizeList.add(sizeId);
+                    quantityList.add(0);
+                } catch (NumberFormatException e) {
+                }
             }
         }
 
@@ -114,7 +125,7 @@ public class Add extends HttpServlet {
             int paintingId = paintingService.addPainting(title, themeId, price, artistId, description, photoUrl, isFeatured);
 
             if (paintingId != -1) {
-                paintingService.addPaintingSizes(paintingId, sizeList, quantityList);
+//                paintingService.addPaintingSizes(paintingId, sizeList, quantityList);
                 Painting newPainting = paintingService.getPainting(paintingId);
                 JsonObject paintingJson = new JsonObject();
                 paintingJson.addProperty("id", newPainting.getId());
