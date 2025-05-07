@@ -29,7 +29,9 @@ public class OrderService {
         cacheManager.putCurrentOrders(userId, orders);
         return orders;
     }
-
+    public Order getLastOrderOfUser(int userId) throws SQLException {
+        return orderDao.getLastOrderOfUser(userId);
+    }
     public List<Order> getHistoryOrder(int userId) throws Exception {
         List<Order> cached = cacheManager.getHistoryOrders(userId);
         if (cached != null) {

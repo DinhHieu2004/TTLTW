@@ -5,6 +5,7 @@
 
 package com.example.web.vnpay;
 
+import com.example.web.controller.util.EmailConfirmService;
 import com.example.web.dao.cart.Cart;
 import com.example.web.dao.cart.CartPainting;
 import com.example.web.dao.model.*;
@@ -85,6 +86,9 @@ public class VnpayReturn extends HttpServlet {
                 String responseCode = request.getParameter("vnp_ResponseCode");
 
                 int orderId = 0;
+                Order order = null;
+                List<OrderItem> orderItems = null;
+                User user = null;
                 if ("00".equals(transactionStatus)) {
                     //update order status
                     try {
@@ -127,10 +131,12 @@ public class VnpayReturn extends HttpServlet {
 
 
                         // Lấy thông tin từ db
-                        Order order = orderService.getOrder(orderId);
-                        List<OrderItem> orderItems = orderItemService.getOrderItems(orderId);
+                        order = orderService.getOrder(orderId);
+                        orderItems = orderItemService.getOrderItems(orderId);
                         // Lấy email nhận đơn hàng
-                        User user = userService.getUser(order.getUserId());
+
+                        user = userService.getUser(order.getUserId());
+
                         request.setAttribute("userEmail", user.getEmail());
 
                         // Lưu thông tin vào để chuyển đến trang thanh toán thành công
@@ -148,6 +154,8 @@ public class VnpayReturn extends HttpServlet {
                 }
 
                 if (transSuccess) {
+                    String appliedVoucherCodes;
+
                     if (voucherIds != null && voucherIds.length > 0) {
                         List<String> codes = new ArrayList<>();
                         for (String vid : voucherIds) {
@@ -155,8 +163,23 @@ public class VnpayReturn extends HttpServlet {
                             String code = voucherService.getVoucherCodeById(id);
                             if (code != null) codes.add(code);
                         }
-                        request.setAttribute("appliedVoucherCodes", String.join(", ", codes));
+                        appliedVoucherCodes = String.join(", ", codes);
+                        request.setAttribute("appliedVoucherCodes", appliedVoucherCodes);
+                    } else {
+                        appliedVoucherCodes = "";
                     }
+                    // gửi email xác nhận đơn
+                    Order finalOrder = order;
+                    List<OrderItem> finalOrderItems = orderItems;
+                    User finalUser = user;
+                    new Thread(() -> {
+                        try {
+                            EmailConfirmService.sendOrderConfirmation(finalUser.getEmail(), finalOrder, finalOrderItems, appliedVoucherCodes);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }).start();
+
                     request.setAttribute("voucherGift", true);
                     request.getRequestDispatcher("user/payment_success.jsp").forward(request, response);
                 } else {

@@ -47,42 +47,56 @@
 <c:if test="${voucherGift}">
     <script>
         Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'info',
-            iconHtml: '🎁',
-            title: ' Đặt hàng thành công, nhận voucher quà tặng?',
-            showCancelButton: true,
-            confirmButtonText: 'Nhận',
-            cancelButtonText: 'Đóng',
-            timer: 8000,
-            timerProgressBar: true,
+            icon: 'success',
+            iconHtml: '📧',
+            title: 'Đặt hàng thành công!',
+            html: 'Vui lòng kiểm tra email của bạn để xem chi tiết đơn hàng.',
+            showConfirmButton: true,
+            confirmButtonText: 'OK',
             customClass: {
                 popup: 'custom-swal-popup',
-                confirmButton: 'btn btn-sm btn-danger me-2',
-                cancelButton: 'btn btn-sm btn-secondary'
+                confirmButton: 'btn btn-primary'
             },
             buttonsStyling: false
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '${pageContext.request.contextPath}/collect-voucher',
-                    type: 'POST',
-                    success: function () {
-                        Swal.fire({
-                            toast: true,
-                            position: 'top-end',
-                            icon: 'success',
-                            title: '🎁 Voucher đã được lưu vào tài khoản của bạn!',
-                            showConfirmButton: false,
-                            timer: 3500
-                        });
-                    },
-                    error: function () {
-                        alert("Có lỗi xảy ra khi lưu voucher.");
-                    }
-                });
-            }
+        }).then(() => {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'info',
+                iconHtml: '🎁',
+                title: 'Bạn có muốn nhận voucher quà tặng?',
+                showCancelButton: true,
+                confirmButtonText: 'Nhận',
+                cancelButtonText: 'Đóng',
+                timer: 8000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'custom-swal-popup',
+                    confirmButton: 'btn btn-sm btn-danger me-2',
+                    cancelButton: 'btn btn-sm btn-secondary'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '${pageContext.request.contextPath}/collect-voucher',
+                        type: 'POST',
+                        success: function () {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: '🎁 Voucher đã được lưu vào tài khoản của bạn!',
+                                showConfirmButton: false,
+                                timer: 3500
+                            });
+                        },
+                        error: function () {
+                            alert("Có lỗi xảy ra khi lưu voucher.");
+                        }
+                    });
+                }
+            });
         });
     </script>
 </c:if>
@@ -98,7 +112,7 @@
                     <p class="card-text mb-4">Cảm ơn bạn đã mua hàng. Đơn hàng của bạn đã được xác nhận và sẽ được xử lý ngay.</p>
                     <div class="d-flex justify-content-center gap-3">
                         <a href="${pageContext.request.contextPath}/personal" class="btn btn-outline-secondary">
-                            <i class="fas fa-receipt me-2"></i>Xem đơn hàng
+                            <i class="fas fa-receipt me-2"></i>Xem đơn đã mua
                         </a>
                         <a href="${pageContext.request.contextPath}/artwork" class="btn btn-primary">
                             <i class="fas fa-shopping-bag me-2"></i>Tiếp tục mua sắm
@@ -117,8 +131,8 @@
                         <div class="card-body">
                             <div class="row mb-4">
                                 <div class="col-md-6">
-                                    <p class="fw-bold mb-1">Mã đơn hàng:</p>
-                                    <p>#${requestScope.order.id}</p>
+                                    <p class="fw-bold mb-1">Mã tra cứu:</p>
+                                    <p>${requestScope.order.vnpTxnRef}</p>
                                 </div>
                                 <div class="col-md-6 text-md-end">
                                     <p class="fw-bold mb-1">Ngày đặt hàng:</p>
@@ -202,7 +216,7 @@
                                 <h6 class="mb-3">Thông tin thanh toán</h6>
                                 <p class="mb-1"><span class="fw-bold">Phương thức:</span> Thanh toán bằng VNPay</p>
                                 <p class="mb-1"><span class="fw-bold">Chủ thẻ:</span>${requestScope.order.recipientName}</p>
-                                <p class="mb-1"><span class="fw-bold">Số thẻ:</span> **** **** **** 1234</p>
+                                <p class="mb-1"><span class="fw-bold">Số thẻ:</span> 9704198526191432198</p>
                                 <p class="mb-0"><span class="fw-bold">Ngân hàng:</span> NCB</p>
                             </div>
                         </div>
@@ -213,77 +227,6 @@
                                 <p class="mb-1"><span class="fw-bold">Số điện thoại:</span> ${requestScope.order.recipientPhone}</p>
                                 <p class="mb-1"><span class="fw-bold">Email:</span> ${requestScope.userEmail}</p>
                                 <p class="mb-0"><span class="fw-bold">Địa chỉ:</span> ${requestScope.order.deliveryAddress}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Thông tin vận chuyển -->
-            <div class="card border-0 shadow mt-4">
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0">Trạng thái vận chuyển</h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex flex-nowrap overflow-auto pb-3">
-                        <div class="text-center me-4 position-relative">
-                            <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
-                                <i class="fas fa-check"></i>
-                            </div>
-                            <div class="position-absolute" style="top: 20px; left: 40px; height: 2px; width: 80px; background-color: #28a745;"></div>
-                            <div class="mt-2" style="min-width: 100px;">
-                                <small class="text-muted d-block">02/04/2025</small>
-                                <span class="small">Đặt hàng</span>
-                            </div>
-                        </div>
-                        <div class="text-center me-4 position-relative">
-                            <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
-                                <i class="fas fa-check"></i>
-                            </div>
-                            <div class="position-absolute" style="top: 20px; left: 40px; height: 2px; width: 80px; background-color: #28a745;"></div>
-                            <div class="mt-2" style="min-width: 100px;">
-                                <small class="text-muted d-block">02/04/2025</small>
-                                <span class="small">Xác nhận</span>
-                            </div>
-                        </div>
-                        <div class="text-center me-4 position-relative">
-                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
-                                <i class="fas fa-box"></i>
-                            </div>
-                            <div class="position-absolute" style="top: 20px; left: 40px; height: 2px; width: 80px; background-color: #dee2e6;"></div>
-                            <div class="mt-2" style="min-width: 100px;">
-                                <small class="text-muted d-block">03/04/2025</small>
-                                <span class="small">Đóng gói</span>
-                            </div>
-                        </div>
-                        <div class="text-center me-4 position-relative">
-                            <div class="rounded-circle bg-light text-dark d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
-                                <i class="fas fa-truck"></i>
-                            </div>
-                            <div class="position-absolute" style="top: 20px; left: 40px; height: 2px; width: 80px; background-color: #dee2e6;"></div>
-                            <div class="mt-2" style="min-width: 100px;">
-                                <small class="text-muted d-block">04/04/2025</small>
-                                <span class="small">Vận chuyển</span>
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <div class="rounded-circle bg-light text-dark d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 40px; height: 40px;">
-                                <i class="fas fa-home"></i>
-                            </div>
-                            <div class="mt-2" style="min-width: 100px;">
-                                <small class="text-muted d-block">05/04/2025</small>
-                                <span class="small">Giao hàng</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="alert alert-info mt-3 mb-0">
-                        <div class="d-flex">
-                            <div class="me-3">
-                                <i class="fas fa-info-circle fs-4"></i>
-                            </div>
-                            <div>
-                                <h6 class="mb-1">Đơn hàng đang được đóng gói</h6>
-                                <p class="mb-0">Dự kiến giao hàng trong 2-3 ngày tới. Bạn sẽ nhận được tin nhắn và email thông báo khi đơn hàng được gửi đi.</p>
                             </div>
                         </div>
                     </div>

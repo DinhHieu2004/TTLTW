@@ -43,42 +43,56 @@ document.querySelector("#submitPayment").addEventListener("click", function () {
             },
             success: function (response) {
                 Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'info',
-                    iconHtml: '🎁',
-                    title: ' Đặt hàng thành công, nhận voucher quà tặng?',
-                    showCancelButton: true,
-                    confirmButtonText: 'Nhận',
-                    cancelButtonText: 'Đóng',
-                    timer: 8000,
-                    timerProgressBar: true,
+                    icon: 'success',
+                    iconHtml: '📧',
+                    title: 'Đặt hàng thành công!',
+                    html: 'Vui lòng kiểm tra email của bạn để xem chi tiết đơn hàng.',
+                    showConfirmButton: true,
+                    confirmButtonText: 'OK',
                     customClass: {
                         popup: 'custom-swal-popup',
-                        confirmButton: 'btn btn-sm btn-danger me-2',
-                        cancelButton: 'btn btn-sm btn-secondary'
+                        confirmButton: 'btn btn-primary'
                     },
                     buttonsStyling: false
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: 'collect-voucher',
-                            type: 'POST',
-                            success: function () {
-                                Swal.fire({
-                                    toast: true,
-                                    position: 'top-end',
-                                    icon: 'success',
-                                    title: '🎁 Voucher đã được lưu vào tài khoản của bạn!',
-                                    showConfirmButton: false,
-                                    timer: 3500
-                                });
-                            },
-                            error: function () {
-                                alert("Có lỗi xảy ra khi lưu voucher.");
-                            }
-                        });
-                    }
+                }).then(() => {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'info',
+                        iconHtml: '🎁',
+                        title: 'Bạn có muốn nhận voucher quà tặng?',
+                        showCancelButton: true,
+                        confirmButtonText: 'Nhận',
+                        cancelButtonText: 'Đóng',
+                        timer: 8000,
+                        timerProgressBar: true,
+                        customClass: {
+                            popup: 'custom-swal-popup',
+                            confirmButton: 'btn btn-sm btn-danger me-2',
+                            cancelButton: 'btn btn-sm btn-secondary'
+                        },
+                        buttonsStyling: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: 'collect-voucher',
+                                type: 'POST',
+                                success: function () {
+                                    Swal.fire({
+                                        toast: true,
+                                        position: 'top-end',
+                                        icon: 'success',
+                                        title: '🎁 Voucher đã được lưu vào tài khoản của bạn!',
+                                        showConfirmButton: false,
+                                        timer: 3500
+                                    });
+                                },
+                                error: function () {
+                                    alert("Có lỗi xảy ra khi lưu voucher.");
+                                }
+                            });
+                        }
+                    });
                 });
                 $(".order-summary").append(`
         <div class="alert alert-info text-center mt-3" role="alert">
