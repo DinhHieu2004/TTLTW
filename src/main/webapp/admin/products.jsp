@@ -248,6 +248,7 @@
             <tr>
               <th>ID</th>
               <th>Tên Kích thước</th>
+              <th>Trọng lượng</th>
               <th>Hành Động</th>
             </tr>
             </thead>
@@ -255,6 +256,7 @@
             <c:forEach var="s" items="${s}">
               <tr>
                 <td>${s.idSize}</td>
+                <td>${s.weight}</td>
                 <td>${s.sizeDescriptions}</td>
                 <td>
                   <button class="btn btn-info btn-sm edit-size"
@@ -593,6 +595,10 @@
             <label for="sizeName" class="form-label">Tên Kích Thước</label>
             <input type="text" class="form-control" id="sizeName" name="description" required>
           </div>
+          <div class="mb-3">
+            <label for="sizeWeight" class="form-label">Trọng lượng(g)</label>
+            <input type="text" class="form-control" id="sizeWeight" name="gram" required>
+          </div>
           <button type="submit" class="btn btn-primary">Thêm Kích Thước</button>
         </form>
       </div>
@@ -803,11 +809,13 @@
     $("#addSizeForm").submit(function (event) {
       event.preventDefault();
       var sizeDescription = $("#sizeName").val();
+      var sizeWeight = $("#sizeWeight").val();
+
 
       $.ajax({
         type: "POST",
         url: "sizes/add",
-        data: { description: sizeDescription },
+        data: { description: sizeDescription , sizeWeight:sizeWeight},
         dataType: "json",
         success: function (response) {
           if (response.success) {
@@ -815,6 +823,7 @@
             table.row.add([
               response.id,
               sizeDescription,
+              sizeWeight,
               '<button class="btn btn-info btn-sm edit-size" data-size-id="' + response.id + '">Chi tiết</button> ' +
               '<button class="btn btn-danger btn-sm delete-size" data-size-id="' + response.id + '">Xóa</button>'
             ]).draw();
@@ -877,16 +886,21 @@
       event.preventDefault();
       var sizeId = $("#editSizeId").val();
       var sizeDescription = $("#editDescription").val();
+      var sizeWeight = $("#sizeWeight").val();
+
 
       $.ajax({
         type: "POST",
         url: "sizes/update",
-        data: { sizeId: sizeId, description: sizeDescription },
+        data: { sizeId: sizeId, description: sizeDescription, sizeWeight: sizeWeight},
         dataType: "json",
         success: function (response) {
           if (response.success) {
             var $row = $('button[data-size-id="' + sizeId + '"]').closest('tr');
             table.cell($row, 1).data(sizeDescription).draw();
+
+            table.cell(rowIndex, 2).data(sizeWeight).draw();
+
             $('#editSizeModal').modal('hide');
           } else {
             alert(response.message);
