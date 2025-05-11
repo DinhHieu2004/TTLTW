@@ -247,7 +247,7 @@
             <thead>
             <tr>
               <th>ID</th>
-              <th>Tên Kích thước</th>
+              <th>Tên Kích thước</th>git
               <th>Trọng lượng(g)</th>
               <th>Hành Động</th>
             </tr>
