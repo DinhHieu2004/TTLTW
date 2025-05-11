@@ -15,6 +15,7 @@ $(document).ready(function () {
                     $('#editSizeId').val(data.idSize);
                     $('#idSize').text(data.idSize);
                     $('#editDescription').val(data.sizeDescriptions);
+                    $('#editSizeWeight').val(data.weight);
 
                 } else {
                     alert(response.error || 'không tìm thấy chủ đề.');

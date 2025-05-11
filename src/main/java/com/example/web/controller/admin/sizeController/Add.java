@@ -25,6 +25,7 @@ public class Add extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String description = req.getParameter("description");
+        String sizeWeight = req.getParameter("sizeWeight");
 
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
@@ -43,7 +44,7 @@ public class Add extends HttpServlet {
 
 
         try {
-            boolean isAdd = sizeService.addSize(description);
+            boolean isAdd = sizeService.addSize(description, sizeWeight);
             if (isAdd) {
                 int newSizeId = sizeService.getLastInsertedId();
                 resp.getWriter().write("{\"success\": true, \"id\": " + newSizeId + ", \"message\": \"Thêm thành công!\"}");

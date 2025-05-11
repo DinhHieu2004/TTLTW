@@ -248,7 +248,7 @@
             <tr>
               <th>ID</th>
               <th>Tên Kích thước</th>
-              <th>Trọng lượng</th>
+              <th>Trọng lượng(g)</th>
               <th>Hành Động</th>
             </tr>
             </thead>
@@ -256,8 +256,8 @@
             <c:forEach var="s" items="${s}">
               <tr>
                 <td>${s.idSize}</td>
-                <td>${s.weight}</td>
                 <td>${s.sizeDescriptions}</td>
+                <td>${s.weight}</td>
                 <td>
                   <button class="btn btn-info btn-sm edit-size"
                           data-bs-toggle="modal"
@@ -610,7 +610,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="editSizeModalLabel">Thông tin chủ đề</h5>
+        <h5 class="modal-title" id="editSizeModalLabel">Thông tin size</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -624,6 +624,10 @@
           <div class="mb-3">
             <label for="editDescription" class="form-label">Mô tả kích thươc</label>
             <input type="text" class="form-control" id="editDescription" name="description" required>
+          </div>
+          <div class="mb-3">
+            <label for="editSizeWeight" class="form-label">Trọng lượng(g)</label>
+            <input type="text" class="form-control" id="editSizeWeight" name="editSizeWeight" required>
           </div>
           <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
         </form>
@@ -886,7 +890,7 @@
       event.preventDefault();
       var sizeId = $("#editSizeId").val();
       var sizeDescription = $("#editDescription").val();
-      var sizeWeight = $("#sizeWeight").val();
+      var sizeWeight = $("#editSizeWeight").val();
 
 
       $.ajax({
