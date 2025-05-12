@@ -186,6 +186,7 @@
                         </span>
                             <span class="ms-1">${p.averageRating}</span>
                         </p>
+
                         <div class="price-section">
                             <c:choose>
                                 <c:when test="${p.discountPercentage > 0}">
@@ -210,6 +211,24 @@
                                 </c:otherwise>
                             </c:choose>
                         </div>
+                        <div class="mb-2">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="size" id="size-1" value="S" checked>
+                                <label class="form-check-label" for="size-1">S</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="size" id="size-2" value="M">
+                                <label class="form-check-label" for="size-2">M</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="size" id="size-3" value="L">
+                                <label class="form-check-label" for="size-3">L</label>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-sm btn-primary">
+                            <i class="fas fa-cart-plus"></i> Thêm vào giỏ
+                        </button>
                     </div>
                 </div>
             </div>

@@ -288,7 +288,7 @@ header{
 .modal-content {
     z-index: 1050 !important;
 }
-.login-btn{
+.login-btn, .register-btn{
     margin-bottom: 5px;
 }
 #search-bar.active {
