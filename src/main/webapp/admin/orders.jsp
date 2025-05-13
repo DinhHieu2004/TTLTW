@@ -167,7 +167,7 @@
         <table class="table table-striped">
           <thead>
           <tr>
-            <th>Max sản phẩm</th>
+            <th>Mã sản phẩm</th>
             <th>Tên Sản Phẩm</th>
             <th>Ảnh</th>
             <th>Kích Thước</th>

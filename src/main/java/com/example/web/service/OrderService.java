@@ -98,4 +98,8 @@ public class OrderService {
     public void updateDeliveryStatus(int id, String status) throws SQLException {
         orderDao.updateDeliveryStatus(id, status);
     }
+
+    public List<String> getVoucherNamesByIds(String[] voucherIdArray) throws SQLException {
+        return orderDao.getVoucherNamesByIds(voucherIdArray);
+    }
 }
