@@ -50,15 +50,17 @@ $(document).ready(function() {
                 ? `${p.imageUrlCloud}?f_auto,q_auto,w_400`
                 : `${window.location.origin}${contextPath}/${p.imageUrl}`;
 
-            debugger
+            const firstAvailableSize = p.sizes.find(s => s.displayQuantity > 0)?.idSize;
             let cardHtml = `
             <div class="col-6 col-md-3">
-                <div class="card artwork-card h-100" style="height: 380px !important;">
-                    <a href="painting-detail?pid=${p.id}" class="card-link"></a>
-                    
-                    <img loading="lazy" src="${fullPhotoUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                <div class="card artwork-card h-100" style="height: 422px !important;">
+                    <a href="painting-detail?pid=${p.id}">
+                        <img loading="lazy" src="${fullPhotoUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important; object-fit: cover;">
+                    </a>
                     <div class="card-body">
-                        <h5 class="card-title">${p.title}</h5>
+                        <a href="painting-detail?pid=${p.id}" class="text-decoration-none text-dark">
+                            <h5 class="card-title">${p.title}</h5>
+                        </a>
                         <p class="card-text">
                             <strong>Họa Sĩ:</strong> ${p.artistName}<br>
                             <strong>Chủ đề:</strong> ${p.themeName}<br>
@@ -69,15 +71,39 @@ $(document).ready(function() {
                             </span>
                             <span class="ms-1">${p.averageRating}</span>
                         </p>
-                        ${p.discountPercentage > 0 ? `
-                            <div class="d-flex align-items-center gap-2">
-                                <del class="text-muted" style="font-size: 0.8rem;">${price}₫</del>
-                                <span class="badge bg-success" style="font-size: 0.75rem;">-${p.discountPercentage}%</span>
+                        <div class="d-flex flex-column" style="flex-grow: 1;">
+                            ${p.discountPercentage > 0 ? `
+                               <div class="d-flex align-items-center gap-2">
+                                    <del class="text-muted" style="font-size: 0.8rem;">${price}₫</del>
+                                    <span class="badge bg-success" style="font-size: 0.75rem;">-${p.discountPercentage}%</span>
+                                </div>
+                                <div class="text-danger fw-bold" style="font-size: 0.925rem;">${discountPrice}₫</div>
+                            ` : `
+                                <div class="fw-bold" style="font-size: 0.925rem;">${price}₫</div>
+                            `}
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between mb-2 mt-2">
+                        ${p.sizes && p.sizes.length > 0 ? `
+                        <div class="d-flex flex-wrap gap-2 mb-2">
+                            ${p.sizes.map((s, index) => `
+                            <div class="form-check form-check-inline m-0" style="font-size: 0.95rem;">
+                                <input class="form-check-input" type="radio"
+                                    name="size_${p.id}"
+                                    id="size_${p.id}_${index}"
+                                    value="${s.idSize}"
+                                    ${s.displayQuantity <= 0 ? 'disabled' : ''}
+                                     ${s.idSize === firstAvailableSize ? 'checked' : ''}>
+                                <label class="form-check-label" for="size_${p.id}_${index}">
+                                    ${s.sizeDescriptions.split(' ')[0]}
+                                </label>
                             </div>
-                            <div class="text-danger fw-bold" style="font-size: 0.925rem;">${discountPrice}₫</div>
-                        ` : `
-                            <div class="fw-bold" style="font-size: 0.925rem;">${price}₫</div>
-                        `}
+                        `).join('')}
+                        </div>
+                    ` : ''}
+                         <button type="button" class="btn btn-sm btn-primary add-to-cart-btn" data-product-id="${p.id}">
+                            + <i class="fas fa-cart-plus"></i>
+                        </button>
+                        </div>
                     </div>
                 </div>
             </div>

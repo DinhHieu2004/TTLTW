@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html lang="vi">
 
 <head>
@@ -162,7 +163,7 @@
 
       <c:forEach var="p" items="${data}">
         <div class="col-6 col-md-3">
-          <div class="card artwork-card h-100" style="height: 380px !important;">
+          <div class="card artwork-card h-100" style="height: 422px !important;">
             <a href="painting-detail?pid=${p.id}" class="card-link"></a>
             <img loading="lazy" src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
             <div class="card-body">
@@ -196,6 +197,30 @@
                   </div>
                 </c:otherwise>
               </c:choose>
+            </div>
+            <div class="d-flex align-items-center justify-content-between mb-2 mt-2">
+              <div class="mb-2 d-flex">
+                <c:forEach var="size" items="${p.sizes}" varStatus="status">
+                  <div class="col-auto">
+                    <div class="form-check me-2">
+                      <input class="form-check-input" type="radio" name="size_${p.id}
+                                    id="size_${size.sizeDescriptions}"
+                                value="${size.idSize}"
+                      data-quantity="${size.displayQuantity}"
+                        ${size.displayQuantity <= 0 ? 'disabled' : ''}
+                        ${status.index == 0 && size.displayQuantity > 0 ? 'checked' :
+                                (status.index > 0 && p.sizes[status.index-1].displayQuantity <= 0 && size.displayQuantity > 0 ? 'checked' : '')}>
+                      <label class="form-check-label" for="size_${size.sizeDescriptions}">
+                          ${fn:substringBefore(size.sizeDescriptions, ' ')}
+                      </label>
+                    </div>
+                  </div>
+                </c:forEach>
+              </div>
+
+              <button type="button" class="btn btn-sm btn-primary">
+                + <i class="fas fa-cart-plus"></i>
+              </button>
             </div>
           </div>
         </div>
