@@ -32,13 +32,12 @@ $(document).ready(function () {
                     orderStatus = order.deliveryStatus;
 
                     let orderDate = '';
-                    if (order.orderDate ) {
+                    if (order.orderDate) {
                         try {
-                            orderDate = new Date(order.orderDate).toISOString().split('T')[0];
+                            orderDate = new Date(order.orderDate).toLocaleDateString('vi-VN');
                         } catch (e) {
                             console.error('Error formatting date:', e);
                             orderDate = order.orderDate;
-
                         }
                     }
 
@@ -48,10 +47,12 @@ $(document).ready(function () {
 
                     <label for="recipientPhone"><strong>Số điện thoại:</strong></label>
                     <input type="text" id="recipientPhone" name="recipientPhone" value="${order.recipientPhone || ''}" class="form-control mb-2">
-
+                    
+                    <label for="orderDate"><strong>Ngày đặt hàng:</strong></label>
+                    <input type="text" id="orderDate" name="orderDate" value="${orderDate || ''}" class="form-control mb-2">
+                    
                     <label for="deliveryAddress"><strong>Địa chỉ nhận hàng:</strong></label>
                     <input type="text" id="deliveryAddress" name="deliveryAddress" value="${order.deliveryAddress || ''}" class="form-control mb-2">
-                    <p><strong>Ngày đặt hàng:</strong> ${orderDate}</p>
                     <p><strong>Ngày nhận hàng:</strong> ${formatDate(order.deliveryDate)}</p>
 
 
@@ -62,6 +63,7 @@ $(document).ready(function () {
                             <p><strong>Phí vận chuyển:</strong> ${formatCurrency(order.shippingFee)}</p>
                             <p><strong>Voucher áp dụng:</strong> ${voucherText}</p>
                             <p><strong>Tổng trả:</strong> ${formatCurrency(order.priceAfterShipping || 0)}</p>
+                            <p><strong>Phương thức TT:</strong> ${order.paymentMethod}</p>
                     `)
                     deliveryStatus.text(order.deliveryStatus || '');
                     if (statusSelect.length) {

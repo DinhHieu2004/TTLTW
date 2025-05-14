@@ -11,9 +11,10 @@ $(document).ready(function () {
                 const row = `
                     <tr>
                         <td>${order.id}</td>
-                        <td>${order.priceAfterShipping} VND</td>
-                        <td>${order.orderDate}</td>
+                        <td>${formatCurrency(order.priceAfterShipping)}</td>
+                        <td>${formatDate(order.orderDate)}</td>
                         <td>${order.paymentStatus}</td>
+                        <td>${order.paymentMethod}</td>
                         <td>${order.deliveryStatus}</td>
                         <td><button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#orderDetailsModal" data-order-id="${order.id}">Xem Chi Tiết</button></td>
                     </tr>`;
@@ -26,10 +27,11 @@ $(document).ready(function () {
                 const row = `
                     <tr>
                         <td>${order.id}</td>
-                        <td>${order.priceAfterShipping} VND</td>
-                        <td>${order.orderDate}</td>
-                        <td>${order.deliveryDate}</td>
+                        <td>${formatCurrency(order.priceAfterShipping)}</td>
+                        <td>${formatDate(order.orderDate)}</td>
+                        <td>${formatDate(order.deliveryDate)}</td>
                         <td>${order.paymentStatus}</td>
+                        <td>${order.paymentMethod}</td>
                         <td>${order.deliveryStatus}</td>
                         <td><button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#orderDetailsModal" data-order-id="${order.id}">Xem Chi Tiết</button></td>
                     </tr>`;
@@ -42,10 +44,14 @@ $(document).ready(function () {
     });
 
     let currentOrderId = null;
+    let isHistoryOrder = false;
 
     $('#orderDetailsModal').on('show.bs.modal', function (event) {
         const button = $(event.relatedTarget);
         const orderId = button.data('order-id');
+
+        // Kiểm tra modal được mở la lịch sử đơn hàng
+        isHistoryOrder = button.closest('table').attr('id') === 'orderHistory';
 
         if (currentOrderId !== orderId) {
             currentOrderId = orderId;
@@ -55,27 +61,37 @@ $(document).ready(function () {
             modalInfo.empty();
             modalBody.empty();
 
+            // ẩn hiện chức năng đánh giá
+            if (isHistoryOrder) {
+                $('.review-column').show();
+            } else {
+                $('.review-column').hide();
+            }
+
             $.ajax({
                 url: `order-detail?orderId=${orderId}`,
                 method: 'GET',
                 dataType: 'json',
                 success: function (response) {
                     if (response) {
-                        const order = response;
-                        debugger
+                        const order = response.order;
+                        const appliedVouchers = response.appliedVouchers || [];
                         modalInfo.html(`
                         <p id="recipientName"><strong>Tên người nhận:</strong> ${order.recipientName}</p>
                         <p id="recipientPhone"><strong>Số điện thoại:</strong> ${order.recipientPhone}</p>
                         <p id="deliveryAddress"><strong>Địa chỉ nhận hàng:</strong> ${order.deliveryAddress}</p>
+                        <p id="orderDate"><strong>Ngày đặt:</strong> ${formatDate(order.orderDate)}</p>
                         <p ><strong id="statusOrder">Trạng thái thanh toán:</strong>${order.paymentStatus}</p>
                     `);
                         debugger
 
+                        const voucherText = appliedVouchers.length > 0 ? appliedVouchers.join(', ') : "Không có";
                         modelPrice.html(`
-                        <p><strong>Phí giao hàng:</strong> ${order.shippingFee}</p>
-                        <p><strong>Tiền hàng:</strong> ${order.totalAmount}</p>
-                        <p><strong>Voucher áp dụng:</strong> ${order.appliedVoucherIds}</p>
+                        <p><strong>Phí giao hàng:</strong> ${formatCurrency(order.shippingFee)}</p>
+                        <p><strong>Voucher áp dụng:</strong> ${voucherText}</p>
+                        <p><strong>Phuương thức TT:</strong> ${order.paymentMethod}</p>
                         <p><strong>Tổng trả:</strong> ${order.priceAfterShipping}</p>
+                        <p><strong>Trạng thái:</strong> ${order.deliveryStatus}</p>
 `);                     debugger
                         if (order.deliveryStatus.trim().toLowerCase()  === 'chờ' ||
                             order.deliveryStatus.trim().toLowerCase()  === 'đang giao') {
@@ -127,6 +143,7 @@ $(document).ready(function () {
                                     <tr>
                                         <td>${product.id}</td>
                                         <td>${product.name}</td>
+                                        <td><img src="${product.imageUrlCloud}" alt="${product.name}" width="60"></td>
                                         <td>${product.sizeDescription}</td>
                                         <td>${product.quantity}</td>
                                         <td>${product.price}₫</td>
@@ -160,6 +177,18 @@ $(document).ready(function () {
         currentOrderId = null;
     });
 });
+function formatDate(dateString) {
+    if (!dateString) return "-";
+
+    if (dateString.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+        return dateString;
+    }
+
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString;
+    return date.toLocaleDateString('vi-VN');
+}
+
 
 $(document).ready(function(){
     $("#editPersonalInfoForm").submit(function (e){
@@ -219,6 +248,9 @@ $(document).ready(function(){
         });
     });
 });
+function formatCurrency(value) {
+    return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', '₫');
+}
 
 function showErrorschange(errors){
     $('.text-danger').text('');
