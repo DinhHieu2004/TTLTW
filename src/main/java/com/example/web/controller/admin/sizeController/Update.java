@@ -42,8 +42,9 @@ public class Update extends HttpServlet {
         try {
             int id = Integer.parseInt(req.getParameter("sizeId"));
             String description = req.getParameter("description");
+            String sizeWeight = req.getParameter("sizeWeight");
 
-            boolean isUpdated = sizeService.updateSize(id, description);
+            boolean isUpdated = sizeService.updateSize(id, description, sizeWeight);
 
             if (isUpdated) {
                 out.write("{\"success\": true, \"message\": \"Cập nhật thành công!\"}");

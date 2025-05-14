@@ -27,6 +27,7 @@ public class ShippingFeeServlet extends HttpServlet {
         String province = request.getParameter("province");
         String district = request.getParameter("district");
         String address = request.getParameter("address");
+
       //  String weight = request.getParameter("weight") != null ? request.getParameter("weight") : "1000";
       //  String value = request.getParameter("value") != null ? request.getParameter("value") : "3000000";
 

@@ -24,7 +24,9 @@ public class SizeDao {
         while (rs.next()) {
             int id = rs.getInt("id");
             String size = rs.getString("sizeDescription");
-            PaintingSize siz = new PaintingSize(id, size);
+            double weight = rs.getDouble("weight");
+
+            PaintingSize siz = new PaintingSize(id, size, weight);
             sizes.add(siz);
         }
         return sizes;
@@ -49,10 +51,14 @@ public class SizeDao {
         }
         return size;
     }
-    public boolean addSize(String description) throws SQLException {
-        String sql = "INSERT INTO sizes (sizeDescription) VALUES (?)";
+    public boolean addSize(String description, String sizeWeight) throws SQLException {
+
+
+        String sql = "INSERT INTO sizes (sizeDescription, weight) VALUES (?, ?)";
         PreparedStatement statement = conn.prepareStatement(sql);
         statement.setString(1, description);
+        statement.setDouble(2, Double.parseDouble(sizeWeight));
+
         int rowsInserted = statement.executeUpdate();
         return rowsInserted > 0;
 
@@ -71,11 +77,13 @@ public class SizeDao {
         return -1;
     }
 
-    public boolean updateSize(int id, String  sizeDescription) throws SQLException {
-        String updateQuery = "UPDATE sizes SET sizeDescription = ? WHERE id = ?";
+    public boolean updateSize(int id, String  sizeDescription, String weight) throws SQLException {
+        String updateQuery = "UPDATE sizes SET sizeDescription = ?,  weight = ? WHERE id = ?";
         PreparedStatement statement = conn.prepareStatement(updateQuery);
         statement.setString(1,sizeDescription);
-        statement.setInt(2, id);
+        statement.setDouble(2,Double.parseDouble(weight));
+
+        statement.setInt(3, id);
 
         int rowsAffected = statement.executeUpdate();
 
