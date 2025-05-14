@@ -36,8 +36,9 @@ async function calculateShippingFee(province, district, address) {
         const encodedDistrict = encodeURIComponent(district);
         const encodedAddress = encodeURIComponent(address);
 
-        const contextPath = window.location.origin;
-        const baseUrl = contextPath + "/web_war/api/shipping-fee";
+        const pathname = window.location.pathname;
+        const contextPath = pathname.substring(0, pathname.indexOf("/", 1));
+        const baseUrl = contextPath + "/api/shipping-fee";
         const url = `${baseUrl}?province=${encodedProvince}&district=${encodedDistrict}&address=${encodedAddress}`;
 
         const response = await fetch(url);

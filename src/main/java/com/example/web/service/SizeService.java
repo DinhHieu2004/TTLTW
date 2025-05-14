@@ -19,11 +19,11 @@ public class SizeService {
     public PaintingSize getSizeById(int id) throws SQLException {
         return sizeDao.getSizeById(id);
     }
-    public boolean updateSize(int id, String description) throws SQLException {
-        return sizeDao.updateSize(id, description);
+    public boolean updateSize(int id, String description, String sizeWeight) throws SQLException {
+        return sizeDao.updateSize(id, description, sizeWeight);
     }
-    public boolean addSize( String description) throws SQLException {
-        return sizeDao.addSize( description);
+    public boolean addSize( String description, String sizeWeight) throws SQLException {
+        return sizeDao.addSize( description, sizeWeight);
     }
     public boolean deleteSize(int id) throws SQLException {
         return sizeDao.deleteSize(id);

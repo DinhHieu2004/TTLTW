@@ -18,9 +18,10 @@ public class PaintingSize  implements Serializable {
         this.weight = weight;
     }
 
-    public PaintingSize(int idSize, String sizeDescriptions) {
+    public PaintingSize(int idSize, String sizeDescriptions, double weight) {
         this.idSize = idSize;
         this.sizeDescriptions = sizeDescriptions;
+        this.weight = weight;
     }
 
     public PaintingSize(int idSize, String sizeDescriptions, int totalQuantity, int reservedQuantity, Integer displayQuantity, Double weight) {
