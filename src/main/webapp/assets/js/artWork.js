@@ -82,7 +82,8 @@ $(document).ready(function() {
                                 <div class="fw-bold" style="font-size: 0.925rem;">${price}₫</div>
                             `}
                         </div>
-                        <div class="d-flex align-items-center justify-content-between mb-2 mt-2">
+                       <form id="addToCartForm_${p.id}" class="d-flex align-items-center justify-content-between mb-2 mt-2">
+                         <input type="hidden" name="productId" value="${p.id}" />
                         ${p.sizes && p.sizes.length > 0 ? `
                         <div class="d-flex flex-wrap gap-2 mb-2">
                             ${p.sizes.map((s, index) => `
@@ -93,17 +94,18 @@ $(document).ready(function() {
                                     value="${s.idSize}"
                                     ${s.displayQuantity <= 0 ? 'disabled' : ''}
                                      ${s.idSize === firstAvailableSize ? 'checked' : ''}>
+                                <input type="hidden" name="quantity_${s.idSize}" value="${s.displayQuantity}">
                                 <label class="form-check-label" for="size_${p.id}_${index}">
                                     ${s.sizeDescriptions.split(' ')[0]}
                                 </label>
                             </div>
                         `).join('')}
-                        </div>
+                    </div>
                     ` : ''}
                          <button type="button" class="btn btn-sm btn-primary add-to-cart-btn" data-product-id="${p.id}">
                             + <i class="fas fa-cart-plus"></i>
                         </button>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>

@@ -218,18 +218,20 @@
                                 </c:otherwise>
                             </c:choose>
                         </div>
-                        <div class="d-flex align-items-center justify-content-between mb-2 mt-2">
+                        <form id="addToCartForm_${p.id}" class="d-flex align-items-center justify-content-between mb-2 mt-2">
+                            <input type="hidden" name="productId" value="${p.id}" />
                             <div class="mb-2 d-flex">
                                 <c:forEach var="size" items="${p.sizes}" varStatus="status">
                                     <div class="col-auto">
                                         <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="size_${p.id}
-                                               id="size_${size.sizeDescriptions}"
+                                            <input class="form-check-input" type="radio" name="size_${p.id}"
+                                               id="size_${p.id}_${size.idSize}"
                                             value="${size.idSize}"
                                             data-quantity="${size.displayQuantity}"
                                                 ${size.displayQuantity <= 0 ? 'disabled' : ''}
                                                 ${status.index == 0 && size.displayQuantity > 0 ? 'checked' :
                                                         (status.index > 0 && p.sizes[status.index-1].displayQuantity <= 0 && size.displayQuantity > 0 ? 'checked' : '')}>
+                                            <input type="hidden" name="quantity_${size.idSize}" value="${size.displayQuantity}">
                                             <label class="form-check-label" for="size_${size.sizeDescriptions}">
                                                     ${fn:substringBefore(size.sizeDescriptions, ' ')}
                                             </label>
@@ -238,10 +240,10 @@
                                 </c:forEach>
                             </div>
 
-                            <button type="button" class="btn btn-sm btn-primary">
+                            <button type="button" class="btn btn-sm btn-primary add-to-cart-btn" data-product-id="${p.id}">
                                 + <i class="fas fa-cart-plus"></i>
                             </button>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -327,18 +329,20 @@
                                     </c:otherwise>
                                 </c:choose>
                             </div>
-                            <div class="d-flex align-items-center justify-content-between mb-2 mt-2">
+                            <form id="addToCartForm_${p.id}" class="d-flex align-items-center justify-content-between mb-2 mt-2">
+                                <input type="hidden" name="productId" value="${p.id}" />
                                 <div class="mb-2 d-flex">
                                     <c:forEach var="size" items="${p.sizes}" varStatus="status">
                                         <div class="col-auto">
                                             <div class="form-check me-3">
-                                                <input class="form-check-input" type="radio" name="size_${p.id}
-                                               id="size_${size.sizeDescriptions}"
+                                                <input class="form-check-input" type="radio" name="size_${p.id}"
+                                               id="size_${p.id}_${size.idSize}"
                                                 value="${size.idSize}"
                                                 data-quantity="${size.displayQuantity}"
                                                     ${size.displayQuantity <= 0 ? 'disabled' : ''}
                                                     ${status.index == 0 && size.displayQuantity > 0 ? 'checked' :
                                                             (status.index > 0 && p.sizes[status.index-1].displayQuantity <= 0 && size.displayQuantity > 0 ? 'checked' : '')}>
+                                                <input type="hidden" name="quantity_${size.idSize}" value="${size.displayQuantity}">
                                                 <label class="form-check-label" for="size_${size.sizeDescriptions}">
                                                         ${fn:substringBefore(size.sizeDescriptions, ' ')}
                                                 </label>
@@ -347,10 +351,10 @@
                                     </c:forEach>
                                 </div>
 
-                                <button type="button" class="btn btn-sm btn-primary">
+                                <button type="button" class="btn btn-sm btn-primary add-to-cart-btn" data-product-id="${p.id}">
                                     + <i class="fas fa-cart-plus"></i>
                                 </button>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -416,18 +420,20 @@
                                 </c:otherwise>
                             </c:choose>
                         </div>
-                        <div class="d-flex align-items-center justify-content-between mb-2 mt-2">
+                        <form id="addToCartForm_${p.id}" class="d-flex align-items-center justify-content-between mb-2 mt-2">
+                            <input type="hidden" name="productId" value="${p.id}" />
                         <div class="mb-2 d-flex">
                             <c:forEach var="size" items="${p.sizes}" varStatus="status">
                                 <div class="col-auto">
                                     <div class="form-check me-3">
-                                        <input class="form-check-input" type="radio" name="size_${p.id}
-                                               id="size_${size.sizeDescriptions}"
-                                               value="${size.idSize}"
-                                               data-quantity="${size.displayQuantity}"
+                                        <input class="form-check-input" type="radio" name="size_${p.id}"
+                                            id="size_${p.id}_${size.idSize}"
+                                            value="${size.idSize}"
+                                            data-quantity="${size.displayQuantity}"
                                             ${size.displayQuantity <= 0 ? 'disabled' : ''}
                                             ${status.index == 0 && size.displayQuantity > 0 ? 'checked' :
                                                     (status.index > 0 && p.sizes[status.index-1].displayQuantity <= 0 && size.displayQuantity > 0 ? 'checked' : '')}>
+                                        <input type="hidden" name="quantity_${size.idSize}" value="${size.displayQuantity}">
                                         <label class="form-check-label" for="size_${size.sizeDescriptions}">
                                                 ${fn:substringBefore(size.sizeDescriptions, ' ')}
                                         </label>
@@ -436,10 +442,10 @@
                             </c:forEach>
                         </div>
 
-                        <button type="button" class="btn btn-sm btn-primary">
+                        <button type="button" class="btn btn-sm btn-primary add-to-cart-btn" data-product-id="${p.id}">
                             + <i class="fas fa-cart-plus"></i>
                         </button>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -523,28 +529,32 @@
                                 </c:otherwise>
                             </c:choose>
                         </div>
-                        <div class="mb-2">
-                            <c:forEach var="size" items="${p.sizes}">
-                                <div class="col-auto">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="size"
-                                               id="size_${size.sizeDescriptions}"
-                                               value="${size.idSize}"
-                                               data-quantity="${size.displayQuantity}"
-                                            ${size.displayQuantity <= 0 ? 'disabled' : ''}>
-                                        <label class="form-check-label" for="size_${size.sizeDescriptions}">
-                                                ${size.sizeDescriptions}
-
-
-                                        </label>
+                        <form id="addToCartForm_${p.id}" class="d-flex align-items-center justify-content-between mb-2 mt-2">
+                            <input type="hidden" name="productId" value="${p.id}" />
+                            <div class="mb-2 d-flex">
+                                <c:forEach var="size" items="${p.sizes}" varStatus="status">
+                                    <div class="col-auto">
+                                        <div class="form-check me-3">
+                                            <input class="form-check-input" type="radio" name="size_${p.id}"
+                                               id="size_${p.id}_${size.idSize}"
+                                            value="${size.idSize}"
+                                            data-quantity="${size.displayQuantity}"
+                                                ${size.displayQuantity <= 0 ? 'disabled' : ''}
+                                                ${status.index == 0 && size.displayQuantity > 0 ? 'checked' :
+                                                        (status.index > 0 && p.sizes[status.index-1].displayQuantity <= 0 && size.displayQuantity > 0 ? 'checked' : '')}>
+                                            <input type="hidden" name="quantity_${size.idSize}" value="${size.displayQuantity}">
+                                            <label class="form-check-label" for="size_${size.sizeDescriptions}">
+                                                    ${fn:substringBefore(size.sizeDescriptions, ' ')}
+                                            </label>
+                                        </div>
                                     </div>
-                                </div>
-                            </c:forEach>
-                        </div>
+                                </c:forEach>
+                            </div>
 
-                        <button type="button" class="btn btn-sm btn-primary">
-                            <i class="fas fa-cart-plus"></i> Thêm vào giỏ
-                        </button>
+                            <button type="button" class="btn btn-sm btn-primary add-to-cart-btn" data-product-id="${p.id}">
+                                + <i class="fas fa-cart-plus"></i>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -639,7 +649,7 @@
 <%@ include file="/partials/authModal.jsp" %>
 </body>
 
-<script src="assets/js/index.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/index.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/header.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/header/search.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/location.js"></script>

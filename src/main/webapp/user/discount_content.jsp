@@ -217,8 +217,7 @@
                   </div>
                 </c:forEach>
               </div>
-
-              <button type="button" class="btn btn-sm btn-primary">
+              <button type="button" class="btn btn-sm btn-primary add-to-cart-btn" data-product-id="${p.id}">
                 + <i class="fas fa-cart-plus"></i>
               </button>
             </div>

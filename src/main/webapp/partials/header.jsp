@@ -176,6 +176,8 @@
     </form>
 
 </header>
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer" style="z-index: 9999;"></div>
+
 
 <script src="https://kit.fontawesome.com/a076d05399.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/header/search.js"></script>
