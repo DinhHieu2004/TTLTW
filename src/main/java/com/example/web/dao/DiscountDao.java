@@ -3,6 +3,7 @@ package com.example.web.dao;
 import com.example.web.dao.db.DbConnect;
 import com.example.web.dao.model.Discount;
 import com.example.web.dao.model.Painting;
+import com.example.web.dao.model.PaintingSize;
 import com.example.web.service.DiscountService;
 
 import java.math.BigDecimal;
@@ -48,7 +49,25 @@ public class DiscountDao {
 
         return list;
     }
-
+    private List<PaintingSize> getPaintingSizes(int paintingId) throws SQLException {
+        List<PaintingSize> sizes = new ArrayList<>();
+        String sql = "SELECT ps.displayQuantity, s.weight, s.id, s.sizeDescription " +
+                "FROM painting_sizes ps JOIN sizes s ON ps.sizeId = s.id WHERE ps.paintingId = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, paintingId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String size = rs.getString("sizeDescription");
+                    int displayQuantity = rs.getInt("displayQuantity");
+                    double weight = rs.getDouble("weight");
+                    PaintingSize siz = new PaintingSize(id, size, displayQuantity, weight);
+                    sizes.add(siz);
+                }
+            }
+        }
+        return sizes;
+    }
     public List<Painting> getPaintingsByDiscountId(
             int discountId, String searchKeyword, Double minPrice, Double maxPrice,
             String[] themes, String[] artists, String startDate, String endDate,
@@ -133,6 +152,7 @@ public class DiscountDao {
                     painting.setDiscountPercentage(rs.getDouble("discount"));
                     painting.setPrice(rs.getDouble("price"));
                     painting.setAverageRating(rs.getDouble("averageRating"));
+                    painting.setSizes(getPaintingSizes(rs.getInt("paintingId")));
                     paintingList.add(painting);
                 }
             }
@@ -232,7 +252,7 @@ public class DiscountDao {
                     painting.setArtistName(rs.getString("artistName"));
                     painting.setThemeName(rs.getString("theme"));
                     painting.setDiscountPercentage(rs.getDouble("discountPercentage"));
-
+                    painting.setSizes(getPaintingSizes(rs.getInt("paintingId")));
                     paintingList.add(painting);
                 }
             }
@@ -281,6 +301,7 @@ public class DiscountDao {
             Date createdAt = rs.getDate("createdAt");
             String artistName = rs.getString("artistName");
 
+
             // Gán dữ liệu vào đối tượng Painting
             painting.setId(paintingId);
             painting.setTitle(title);
@@ -288,6 +309,7 @@ public class DiscountDao {
             painting.setThemeName(theme);
             painting.setArtistName(artistName);
             painting.setCrateDate(createdAt);
+            painting.setSizes(getPaintingSizes(paintingId));
 
             // Thêm Painting vào danh sách
             productDcByNullDcId.add(painting);

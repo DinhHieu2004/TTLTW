@@ -45,7 +45,7 @@ $(document).on('click', '.remove-item', function (e) {
                 Giỏ hàng của bạn đang trống.
             </div>
         `);
-            $('#mini-cart-count').text(0);
+            $('#cart-item-count').text(0);
             return;
         }
 
@@ -72,8 +72,8 @@ $(document).on('click', '.remove-item', function (e) {
                 </div>
                 
                 <button class="remove-item"
-                                            data-product-id="${cp.productId}"
-                                            data-size-id="${cp.sizeId}"
+                                            data-product-id="${item.productId}"
+                                            data-size-id="${item.sizeId}"
                                             style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none; cursor: pointer; font-size: 16px; color: #ff0000;">
                                         X
                                     </button>
@@ -82,7 +82,7 @@ $(document).on('click', '.remove-item', function (e) {
         });
 
         $('#mini-cart-items').html(miniCartHtml);
-        $('#mini-cart-count').text(itemArray.length);
+        $('#cart-item-count').text(itemArray.length);
     }
 
 

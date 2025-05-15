@@ -91,8 +91,8 @@ $(document).on('click', '.increase-quantity, .decrease-quantity', function (e) {
                    </div>
                    
                    <button class="remove-item"
-                                            data-product-id="${cp.productId}"
-                                            data-size-id="${cp.sizeId}"
+                                            data-product-id="${item.productId}"
+                                            data-size-id="${item.sizeId}"
                                             style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none; cursor: pointer; font-size: 16px; color: #ff0000;">
                                         X
                                     </button>

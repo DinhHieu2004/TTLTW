@@ -8,7 +8,7 @@ import java.util.Properties;
 public class EmailService {
     public boolean sendEmail(String toEmail, String subject, String body) {
         final String fromEmail = "sandsandnlu22@gmail.com";
-        final String password = "rlfx buyg zmtj etgl";
+        final String password = "haxk keqp euwg qucw";
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");

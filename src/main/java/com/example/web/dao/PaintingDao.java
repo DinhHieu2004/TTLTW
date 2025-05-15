@@ -175,18 +175,35 @@ public class PaintingDao {
             painting.setImageUrl(imageUrl);
             painting.setImageUrlCloud(imageUrlCloud);
             painting.setThemeName(theme);
-            painting.setThemeName(theme);
             painting.setArtistName(artistName);
             painting.setCreateDate(createdAt);
             painting.setAvailable(available);
             painting.setDescription(rs.getString("description"));
+            painting.setSizes(getPaintingSizes(paintingId));
             paintingList.add(painting);
         }
         return paintingList;
     }
 
-
-
+    private List<PaintingSize> getPaintingSizes(int paintingId) throws SQLException {
+        List<PaintingSize> sizes = new ArrayList<>();
+        String sql = "SELECT ps.displayQuantity, s.weight, s.id, s.sizeDescription " +
+                "FROM painting_sizes ps JOIN sizes s ON ps.sizeId = s.id WHERE ps.paintingId = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, paintingId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String size = rs.getString("sizeDescription");
+                    int displayQuantity = rs.getInt("displayQuantity");
+                    double weight = rs.getDouble("weight");
+                    PaintingSize siz = new PaintingSize(id, size, displayQuantity, weight);
+                    sizes.add(siz);
+                }
+            }
+        }
+        return sizes;
+    }
     public Painting getPaintingDetail(int paintingId) throws SQLException {
         Painting paintingDetail = null;
         String sql = """
@@ -304,8 +321,7 @@ public class PaintingDao {
                     painting.setDiscountPercentage(rs.getDouble("discount"));
                     painting.setPrice(rs.getDouble("price"));
                     painting.setAverageRating(rs.getDouble("avgRating"));
-                    painting.setSizes(new ArrayList<>());
-
+                    painting.setSizes(getPaintingSizes(id));
                     paintingList.add(painting);
                 }
             }
@@ -403,7 +419,7 @@ public class PaintingDao {
                     painting.setDiscountPercentage(rs.getDouble("discountPercentage"));
                     painting.setPrice(rs.getDouble("price"));
                     painting.setAverageRating(getPaintingRating(painting.getId()));
-                    painting.setSizes(new ArrayList<>());
+                    painting.setSizes(getPaintingSizes(rs.getInt("paintingId")));
 
                     paintingList.add(painting);
                 }
@@ -476,7 +492,7 @@ public class PaintingDao {
                         painting.setThemeName(rs.getString("theme"));
                         painting.setDiscountPercentage(rs.getDouble("discount"));
                         painting.setPrice(rs.getDouble("price"));
-
+                        painting.setSizes(getPaintingSizes(rs.getInt("paintingId")));
                         paintingMap.put(paintingId, painting);
                     }
                 }
@@ -545,7 +561,7 @@ public class PaintingDao {
                     painting.setThemeName(rs.getString("theme"));
                     painting.setDiscountPercentage(rs.getDouble("discount"));
                     painting.setPrice(rs.getDouble("price"));
-                    painting.setSizes(new ArrayList<>());
+                    painting.setSizes(getPaintingSizes(paintingId));
                     paintingList.add(painting);
 
                 }
@@ -630,6 +646,7 @@ public class PaintingDao {
                 painting.setPrice(rs.getDouble("price"));
                 painting.setDiscountPercentage(rs.getDouble("discount"));
                 painting.setAverageRating(getPaintingRating(id));
+                painting.setSizes(getPaintingSizes(id));
                 featuredArtworks.add(painting);
             }
         } catch (SQLException e) {
@@ -666,6 +683,7 @@ public class PaintingDao {
                 painting.setPrice(rs.getDouble("price"));
                 painting.setDiscountPercentage(rs.getDouble("discount"));
                 painting.setAverageRating(getPaintingRating(id));
+                painting.setSizes(getPaintingSizes(id));
                 flashSaleArtworks.add(painting);
             }
         } catch (SQLException e) {
@@ -868,7 +886,7 @@ public class PaintingDao {
                     painting.setDiscountPercentage(rs.getDouble("discount"));
                     painting.setPrice(rs.getDouble("price"));
                     painting.setAverageRating(rs.getDouble("averageRating"));
-                    painting.setSizes(new ArrayList<>());
+                    painting.setSizes(getPaintingSizes(rs.getInt("paintingId")));
 
                     paintingList.add(painting);
                 }
