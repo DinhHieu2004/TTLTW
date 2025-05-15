@@ -13,6 +13,7 @@ $(document).ready(function () {
         const recipientPhone = $('#recipientPhone');
         const deliveryAddress = $('#deliveryAddress');
         const updateStatusBtn = $('#updateStatusBtn');
+
         modalInfo.empty();
         modalBody.empty();
         // modalStatus.empty();
@@ -26,17 +27,17 @@ $(document).ready(function () {
 
                 if (response) {
                     console.log(response)
-                    const order = response;
+                    const order = response.order;
+                    const appliedVouchers = response.appliedVouchers || [];
                     orderStatus = order.deliveryStatus;
 
                     let orderDate = '';
-                    if (order.orderDate ) {
+                    if (order.orderDate) {
                         try {
-                            orderDate = new Date(order.orderDate).toISOString().split('T')[0];
+                            orderDate = new Date(order.orderDate).toLocaleDateString('vi-VN');
                         } catch (e) {
                             console.error('Error formatting date:', e);
                             orderDate = order.orderDate;
-
                         }
                     }
 
@@ -46,16 +47,24 @@ $(document).ready(function () {
 
                     <label for="recipientPhone"><strong>Số điện thoại:</strong></label>
                     <input type="text" id="recipientPhone" name="recipientPhone" value="${order.recipientPhone || ''}" class="form-control mb-2">
-
+                    
+                    <label for="orderDate"><strong>Ngày đặt hàng:</strong></label>
+                    <input type="text" id="orderDate" name="orderDate" value="${orderDate || ''}" class="form-control mb-2">
+                    
                     <label for="deliveryAddress"><strong>Địa chỉ nhận hàng:</strong></label>
                     <input type="text" id="deliveryAddress" name="deliveryAddress" value="${order.deliveryAddress || ''}" class="form-control mb-2">
-                    <p><strong>Ngày đặt hàng:</strong> ${orderDate}</p>
                     <p><strong>Ngày nhận hàng:</strong> ${formatDate(order.deliveryDate)}</p>
 
 
                 `);
+                    const voucherText = appliedVouchers.length > 0 ? appliedVouchers.join(', ') : "Không có";
 
-                    modelPrice.html(`<p><strong>Tổng trả:</strong> ${order.priceAfterShipping || 0}</p>`)
+                    modelPrice.html(`
+                            <p><strong>Phí vận chuyển:</strong> ${formatCurrency(order.shippingFee)}</p>
+                            <p><strong>Voucher áp dụng:</strong> ${voucherText}</p>
+                            <p><strong>Tổng trả:</strong> ${formatCurrency(order.priceAfterShipping || 0)}</p>
+                            <p><strong>Phương thức TT:</strong> ${order.paymentMethod}</p>
+                    `)
                     deliveryStatus.text(order.deliveryStatus || '');
                     if (statusSelect.length) {
                         statusSelect.val(deliveryStatus);
@@ -91,7 +100,7 @@ $(document).ready(function () {
                 }
                 details.forEach(product => {
 
-                    const fullPhotoUrl = `${contextPath}/assets/images/artists/${product.img}`;
+                    const fullPhotoUrl = `${product.imageUrlCloud}`;
 
                     const row = `
                             <tr>
@@ -100,7 +109,7 @@ $(document).ready(function () {
                                 <td><img src="${fullPhotoUrl}" alt="${product.name}" width="60"></td>
                                 <td>${product.sizeDescription}</td>
                                 <td>${product.quantity}</td>
-                                <td>${product.price}₫</td>
+                                <td>${formatCurrency(product.price)}</td>
                              
                                  </tr>`;
                     modalBody.append(row);
@@ -152,4 +161,8 @@ $(document).ready(function () {
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
+    function formatCurrency(value) {
+        return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', '₫');
+    }
+
 });

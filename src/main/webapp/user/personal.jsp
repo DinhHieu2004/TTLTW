@@ -167,7 +167,8 @@
                 <th>Mã Đơn Hàng</th>
                 <th>Tổng Tiền</th>
                 <th>Ngày Đặt</th>
-                <th>Trạng Thái</th>
+                <th>Thanh Toán</th>
+                <th>Phương thức TT</th>
                 <th>Vận chuyển</th>
                 <th>Hành Động</th>
             </tr>
@@ -190,7 +191,8 @@
                 <th>Tổng Tiền</th>
                 <th>Ngày Đặt</th>
                 <th>Ngày Giao</th>
-                <th>Trạng Thái</th>
+                <th>Thanh Toán</th>
+                <th>Phương thức TT</th>
                 <th>Vận chuyển</th>
                 <th>Hành Động</th>
             </tr>
@@ -214,10 +216,11 @@
                     <tr>
                         <th>Mã sản phẩm</th>
                         <th>Tên Sản Phẩm</th>
+                        <th>Ảnh</th>
                         <th>Kích Thước</th>
                         <th>Số Lượng</th>
                         <th>Giá</th>
-                        <th>Đánh giá</th>
+                        <th class="review-column">Đánh giá</th>
                     </tr>
                     </thead>
                     <tbody id="orderDetailsBody"></tbody>

@@ -266,4 +266,20 @@ public class OrderDao {
             stmt.executeUpdate();
         }
     }
+
+    public List<String> getVoucherNamesByIds(String[] voucherIdArray) throws SQLException {
+        List<String> voucherNames = new ArrayList<>();
+
+        // Tạo chuỗi id
+        String idList = String.join(",", voucherIdArray);
+        String sql = "SELECT name FROM vouchers WHERE id IN (" + idList + ")";
+
+        try(PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()) {
+                voucherNames.add(rs.getString("name"));
+            }
+        }
+        return voucherNames;
+    }
 }

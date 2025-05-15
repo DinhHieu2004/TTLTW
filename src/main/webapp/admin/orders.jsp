@@ -66,6 +66,7 @@
         <th>Tổng Tiền</th>
         <th>Ngày Đặt</th>
         <th>Thanh Toán</th>
+        <th>Phương Thức TT</th>
         <th>Vận chuyển</th>
         <th>Hành Động</th>
       </tr>
@@ -74,9 +75,10 @@
       <c:forEach var="order" items="${currentOrder}">
         <tr>
           <td>${order.id}</td>
-          <td>${order.priceAfterShipping}</td>
+          <td><f:formatNumber value="${order.priceAfterShipping}" type="number" groupingUsed="true" maxFractionDigits="0" /> ₫</td>
           <td>${order.orderDate}</td>
           <td>${order.paymentStatus}</td>
+          <td>${order.paymentMethod}</td>
           <td>${order.deliveryStatus}</td>
           <td><button class="btn btn-info btn-sm" data-bs-toggle="modal"
                       data-bs-target="#orderDetailsModal"
@@ -105,6 +107,7 @@
         <th>Ngày Đặt</th>
         <th>Ngày Giao</th>
         <th>Thanh Toán</th>
+        <th>Phương Thức TT</th>
         <th>Vận chuyển</th>
         <th>Hành Động</th>
       </tr>
@@ -113,10 +116,11 @@
       <c:forEach var="order" items="${historyOrder}">
         <tr>
           <td>${order.id}</td>
-          <td>${order.priceAfterShipping}</td>
+          <td><f:formatNumber value="${order.priceAfterShipping}" type="number" groupingUsed="true" maxFractionDigits="0" /> ₫</td>
           <td>${order.orderDate}</td>
           <td>${order.deliveryDate}</td>
           <td>${order.paymentStatus}</td>
+          <td>${order.paymentMethod}</td>
           <td>${order.deliveryStatus}</td>
           <td><button class="btn btn-info btn-sm" data-bs-toggle="modal"
                       data-bs-target="#orderDetailsModal"
@@ -167,7 +171,7 @@
         <table class="table table-striped">
           <thead>
           <tr>
-            <th>Max sản phẩm</th>
+            <th>Mã sản phẩm</th>
             <th>Tên Sản Phẩm</th>
             <th>Ảnh</th>
             <th>Kích Thước</th>

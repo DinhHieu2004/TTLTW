@@ -10,6 +10,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @WebServlet("/order-detail")
 public class DetailOrder extends HttpServlet {
@@ -20,7 +24,6 @@ public class DetailOrder extends HttpServlet {
         resp.setCharacterEncoding("UTF-8");
 
         String orderIdParam = req.getParameter("orderId");
-        System.out.println(orderIdParam);
         int orderId = Integer.parseInt(orderIdParam);
 
         try {
@@ -31,7 +34,19 @@ public class DetailOrder extends HttpServlet {
                 resp.getWriter().write("{\"error\": \"No items found for this order\"}");
                 return;
             }
-            resp.getWriter().write(GsonProvider.getGson().toJson(order));
+
+            // Phân tách các id voucher trong order
+            List<String> appliedVoucherNames = new ArrayList<>();
+            if(order.getAppliedVoucherIds() != null && !order.getAppliedVoucherIds().isEmpty()) {
+                String[] voucherIdArray = order.getAppliedVoucherIds().split(",");
+                appliedVoucherNames = orderService.getVoucherNamesByIds(voucherIdArray);
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("order", order);
+            response.put("appliedVouchers", appliedVoucherNames);
+            resp.setContentType("application/json");
+            resp.getWriter().write(GsonProvider.getGson().toJson(response));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
