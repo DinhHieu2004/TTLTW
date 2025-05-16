@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,10 +18,10 @@ public class AdminDao {
 
     public double getTotalRevenue(String startDate, String endDate) throws SQLException {
         double totalRevenue = 0;
-        StringBuilder query = new StringBuilder("SELECT SUM(totalAmount) AS totalRevenue FROM orders WHERE deliveryStatus = 'hoàn thành'");
+        StringBuilder query = new StringBuilder("SELECT SUM(totalAmount) AS totalRevenue FROM orders WHERE status = 'hoàn thành'");
 
         if (startDate != null && endDate != null && !startDate.isEmpty() && !endDate.isEmpty()) {
-            query.append(" AND createdAt BETWEEN ? AND ?");
+            query.append(" AND orderDate BETWEEN ? AND ?");
         }
 
         PreparedStatement statement = conn.prepareStatement(query.toString());
@@ -42,7 +43,7 @@ public class AdminDao {
         StringBuilder query = new StringBuilder("SELECT COUNT(*) AS totalOrders FROM orders");
 
         if (startDate != null && endDate != null && !startDate.isEmpty() && !endDate.isEmpty()) {
-            query.append(" WHERE createdAt BETWEEN ? AND ?");
+            query.append(" WHERE orderDate BETWEEN ? AND ?");
         }
 
         PreparedStatement statement = conn.prepareStatement(query.toString());
@@ -92,7 +93,7 @@ public class AdminDao {
         StringBuilder query = new StringBuilder("SELECT deliveryStatus, COUNT(*) AS count FROM orders");
 
         if (startDate != null && endDate != null && !startDate.isEmpty() && !endDate.isEmpty()) {
-            query.append(" WHERE createdAt BETWEEN ? AND ?");
+            query.append(" WHERE orderDate BETWEEN ? AND ?");
         }
         query.append(" GROUP BY deliveryStatus");
 
@@ -114,26 +115,41 @@ public class AdminDao {
 
     public Map<String, Double> getArtistRevenueMap(String startDate, String endDate) throws SQLException {
         Map<String, Double> revenueMap = new HashMap<>();
-        StringBuilder sql = new StringBuilder("""
-            SELECT 
-                a.name AS artist_name,
-                COALESCE(SUM(oi.price * oi.quantity), 0) AS total_revenue
-            FROM 
-                artists a
-                LEFT JOIN paintings p ON a.id = p.artistId
-                LEFT JOIN order_items oi ON p.id = oi.paintingId
-                LEFT JOIN orders o ON oi.orderId = o.id AND o.deliveryStatus = 'hoàn thành'
-        """);
 
-        if (startDate != null && endDate != null && !startDate.isEmpty() && !endDate.isEmpty()) {
-            sql.append(" WHERE o.createdAt BETWEEN ? AND ?");
+        StringBuilder sql = new StringBuilder("""
+        SELECT 
+            a.name AS artist_name,
+            COALESCE(SUM(oi.price * oi.quantity), 0) AS total_revenue
+        FROM 
+            artists a
+            LEFT JOIN paintings p ON a.id = p.artistId
+            LEFT JOIN order_items oi ON p.id = oi.paintingId
+            LEFT JOIN orders o ON oi.orderId = o.id
+        WHERE o.status = 'hoàn thành'
+    """);
+
+        // Kiểm tra điều kiện ngày
+        boolean hasStartDate = startDate != null && !startDate.isEmpty();
+        boolean hasEndDate = endDate != null && !endDate.isEmpty();
+
+        if (hasStartDate && hasEndDate) {
+            sql.append(" AND o.orderDate BETWEEN ? AND ? ");
+        } else if (hasStartDate) {
+            sql.append(" AND o.orderDate >= ? ");
+        } else if (hasEndDate) {
+            sql.append(" AND o.orderDate <= ? ");
         }
-        sql.append(" GROUP BY a.name ORDER BY total_revenue DESC");
+
+        sql.append("GROUP BY a.name ORDER BY total_revenue DESC");
 
         PreparedStatement stmt = conn.prepareStatement(sql.toString());
-        if (startDate != null && endDate != null && !startDate.isEmpty() && !endDate.isEmpty()) {
-            stmt.setString(1, startDate);
-            stmt.setString(2, endDate);
+
+        int paramIndex = 1;
+        if (hasStartDate) {
+            stmt.setString(paramIndex++, startDate);
+        }
+        if (hasEndDate) {
+            stmt.setString(paramIndex++, endDate);
         }
 
         ResultSet rs = stmt.executeQuery();
@@ -146,42 +162,53 @@ public class AdminDao {
         return revenueMap;
     }
 
+
     public List<Map<String, Object>> getAverageRatings(String startDate, String endDate) throws SQLException {
         List<Map<String, Object>> averageRatings = new ArrayList<>();
+
         StringBuilder query = new StringBuilder("SELECT rating, COUNT(*) as count FROM product_reviews");
 
-        if (startDate != null && endDate != null && !startDate.isEmpty() && !endDate.isEmpty()) {
+        boolean hasValidDates = startDate != null && endDate != null &&
+                !startDate.trim().isEmpty() && !endDate.trim().isEmpty();
+
+        if (hasValidDates) {
             query.append(" WHERE createdAt BETWEEN ? AND ?");
         }
+
         query.append(" GROUP BY rating");
 
-        PreparedStatement stmt = conn.prepareStatement(query.toString());
-        if (startDate != null && endDate != null && !startDate.isEmpty() && !endDate.isEmpty()) {
-            stmt.setString(1, startDate);
-            stmt.setString(2, endDate);
-        }
+        System.out.println("DEBUG - SQL Query: " + query.toString());
 
-        ResultSet rs = stmt.executeQuery();
-        while (rs.next()) {
-            Map<String, Object> ratingData = new HashMap<>();
-            ratingData.put("rating", rs.getInt("rating"));
-            ratingData.put("count", rs.getInt("count"));
-            averageRatings.add(ratingData);
+        try (PreparedStatement stmt = conn.prepareStatement(query.toString())) {
+            if (hasValidDates) {
+                stmt.setString(1, startDate);
+                stmt.setString(2, endDate);
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> ratingData = new HashMap<>();
+                    ratingData.put("rating", rs.getInt("rating"));
+                    ratingData.put("count", rs.getInt("count"));
+                    averageRatings.add(ratingData);
+                }
+            }
         }
 
         return averageRatings;
     }
+
 
     public List<BestSalePaiting> getBestSellingPaintings(String startDate, String endDate) throws SQLException {
         StringBuilder sql = new StringBuilder("""
             SELECT p.title, SUM(oi.quantity) AS totalSold
             FROM order_items oi
             JOIN paintings p ON oi.paintingId = p.id
-            JOIN orders o ON oi.orderId = o.id
+            JOIN orders o ON oi.orderId = o.id AND o.status = 'hoàn thành'
         """);
 
         if (startDate != null && endDate != null && !startDate.isEmpty() && !endDate.isEmpty()) {
-            sql.append(" WHERE o.createdAt BETWEEN ? AND ?");
+            sql.append(" WHERE o.orderDate BETWEEN ? AND ?");
         }
         sql.append(" GROUP BY p.id, p.title ORDER BY totalSold DESC LIMIT 5");
 
@@ -200,5 +227,10 @@ public class AdminDao {
         }
 
         return bestSellingPaintings;
+    }
+
+    public static void main(String[] args) throws SQLException {
+        AdminDao adminDao = new AdminDao();
+        System.out.println(adminDao.getBestSellingPaintings("2025-05-01 05:13:22","2025-05-16 05:13:22"));
     }
 }

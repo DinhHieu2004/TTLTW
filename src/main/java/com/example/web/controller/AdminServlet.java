@@ -13,10 +13,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.cloudinary.json.JSONObject;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -45,51 +43,31 @@ public class AdminServlet extends HttpServlet {
             List<Map<String, Object>> listRating = null;
             List<BestSalePaiting> best = null;
 
-            String startDate = request.getParameter("startDate");
-            String endDate = request.getParameter("endDate");
-
             try {
-                totalRevenue = adminService.getTotalRevenue(startDate, endDate);
-                totalOrders = adminService.getTotalOrders(startDate, endDate);
+                totalRevenue = adminService.getTotalRevenue(null, null);
+                totalOrders = adminService.getTotalOrders(null, null);
                 totalUsers = adminService.getTotalUsers();
                 totalProducts = adminService.getTotalProducts();
-                revenueByArtist = adminService.getRevenueByArtist(startDate, endDate);
-                orderStatusCount = adminService.getOrderStatusCount(startDate, endDate);
-                listRating = adminService.getAverageRatings(startDate, endDate);
-                best = adminService.getBestSalePaiting(startDate, endDate);
+                revenueByArtist = adminService.getRevenueByArtist(null, null);
+                orderStatusCount = adminService.getOrderStatusCount(null, null);
+                listRating = adminService.getAverageRatings(null, null);
+                best = adminService.getBestSalePaiting(null, null);
+
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
 
-            if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-                response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
 
-                JSONObject json = new JSONObject();
-                json.put("totalRevenue", totalRevenue);
-                json.put("totalOrders", totalOrders);
-                json.put("totalUsers", totalUsers);
-                json.put("totalProducts", totalProducts);
-                json.put("revenueByArtist", revenueByArtist);
-                json.put("orderStatusCount", orderStatusCount);
-                json.put("listRating", listRating);
-                json.put("best", best);
+            request.setAttribute("totalRevenue", totalRevenue);
+            request.setAttribute("totalOrders", totalOrders);
+            request.setAttribute("totalUsers", totalUsers);
+            request.setAttribute("totalProducts", totalProducts);
+            request.setAttribute("revenueByArtist", revenueByArtist);
+            request.setAttribute("orderStatusCount", orderStatusCount);
+            request.setAttribute("listRating", listRating);
+            request.setAttribute("best", best);
 
-                PrintWriter out = response.getWriter();
-                out.print(json.toString());
-                out.flush();
-            } else {
-                request.setAttribute("totalRevenue", totalRevenue);
-                request.setAttribute("totalOrders", totalOrders);
-                request.setAttribute("totalUsers", totalUsers);
-                request.setAttribute("totalProducts", totalProducts);
-                request.setAttribute("revenueByArtist", revenueByArtist);
-                request.setAttribute("orderStatusCount", orderStatusCount);
-                request.setAttribute("listRating", listRating);
-                request.setAttribute("best", best);
-
-                request.getRequestDispatcher("admin.jsp").forward(request, response);
-            }
+            request.getRequestDispatcher("admin.jsp").forward(request, response);
         }
     }
 
