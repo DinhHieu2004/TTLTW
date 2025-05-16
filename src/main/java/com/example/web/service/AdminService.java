@@ -8,34 +8,37 @@ import java.util.List;
 import java.util.Map;
 
 public class AdminService {
-    AdminDao adminDao = new AdminDao();
-    public double getTotalRevenue() throws SQLException {
-        return adminDao.getTotalRevenue();
+    private AdminDao adminDao = new AdminDao();
+
+    public double getTotalRevenue(String startDate, String endDate) throws SQLException {
+        return adminDao.getTotalRevenue(startDate, endDate);
     }
 
-    public int getTotalOrders() throws SQLException {
-        return adminDao.getTotalOrders();
-    }
-
-    public int getTotalProducts() throws SQLException {
-        return adminDao.getTotalProducts();
+    public int getTotalOrders(String startDate, String endDate) throws SQLException {
+        return adminDao.getTotalOrders(startDate, endDate);
     }
 
     public int getTotalUsers() throws SQLException {
         return adminDao.getTotalUsers();
     }
 
-    public Map<String, Double> getRevenueByArtist() throws SQLException {
-        return adminDao.getArtistRevenueMap();
+    public int getTotalProducts() throws SQLException {
+        return adminDao.getTotalProducts();
     }
 
-    public Map<String, Integer> getOrderStatusCount() throws SQLException {
-        return adminDao.getOrderStatusCount();
+    public Map<String, Integer> getOrderStatusCount(String startDate, String endDate) throws SQLException {
+        return adminDao.getOrderStatusCount(startDate, endDate);
     }
-    public  List<Map<String, Object>> getAverageRatings() throws SQLException {
-        return adminDao.getAverageRatings();
+
+    public Map<String, Double> getRevenueByArtist(String startDate, String endDate) throws SQLException {
+        return adminDao.getArtistRevenueMap(startDate, endDate);
     }
-    public List<BestSalePaiting> getBestSalePaiting() throws SQLException {
-        return adminDao.getBestSellingPaintings();
+
+    public List<Map<String, Object>> getAverageRatings(String startDate, String endDate) throws SQLException {
+        return adminDao.getAverageRatings(startDate, endDate);
+    }
+
+    public List<BestSalePaiting> getBestSalePaiting(String startDate, String endDate) throws SQLException {
+        return adminDao.getBestSellingPaintings(startDate, endDate);
     }
 }
