@@ -121,7 +121,6 @@ $(document).ready(function () {
             const fullImgUrl = item.imageUrlCloud && item.imageUrlCloud.trim() !== ""
                 ? `${item.imageUrlCloud}?f_auto,q_auto,w_80`
                 : `${window.location.origin}${contextPath}/${item.imageUrl}`;
-            debugger
             miniCartHtml += `
                 <div class="cart-item" id="mini-cart-item-${item.productId}-${item.sizeId}">
                     <img src="${fullImgUrl}" alt="${item.productName}" class="cart-item-image" />
@@ -144,7 +143,6 @@ $(document).ready(function () {
                 </div>
             `;
         });
-        debugger
 
         $('#mini-cart-items').html(miniCartHtml);
         $('#mini-cart-count').text(Object.keys(items).length); // Số loại sản phẩm
