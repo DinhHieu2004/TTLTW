@@ -1,5 +1,17 @@
 $(document).ready(function () {
     initializeErrorClearing()
+    const authModal = document.getElementById('authModal');
+
+    authModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const tabToShow = button.getAttribute('data-tab');
+
+        if (tabToShow === 'register') {
+            new bootstrap.Tab(document.getElementById('register-tab')).show();
+        } else {
+            new bootstrap.Tab(document.getElementById('login-tab')).show();
+        }
+    });
     // Xử lí js phần đăng nhập
     let isBlocked = false;
     let isShowingFastMessage = false;
@@ -144,6 +156,8 @@ $(document).ready(function () {
         let phone = $('#registerPhone').val().trim();
         let password = $('#registerPassword').val().trim();
         let confirmPassword = $('#ConfirmRegisterPassword').val().trim();
+        let fullName = $('#registerName').val().trim();
+        let username = $('#registerUsername').val().trim();
 
         // Kiểm tra email hợp lệ
         let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -186,15 +200,14 @@ $(document).ready(function () {
             url: 'register',
             type: 'POST',
             data: {
-                fullName: $('#registerName').val().trim(),
-                username: $('#registerUsername').val().trim(),
+                fullName: fullName,
+                username: username,
                 password: password,
                 email: email,
                 phone: phone
             },
             datatype: 'json',
             success: function(response){
-                console.log("aa")
                 if (response.success) {
                     $(".loading-spinner").hide();
                     $(".loading-message").hide();
