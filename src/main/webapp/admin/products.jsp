@@ -1,554 +1,1070 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix = "f" uri = "http://java.sun.com/jsp/jstl/fmt" %>
-
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Panel</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f8f9fa; /* Nền sáng */
-    }
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+  <!-- DataTables Buttons CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
 
-    .sidebar {
-      height: 100vh;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 250px;
-      background-color: #343a40; /* Sidebar màu xám đậm */
-      color: white;
-      padding: 20px 10px;
-    }
+  <!-- DataTables Buttons JavaScript -->
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
 
-    .sidebar a {
-      color: white;
-      text-decoration: none;
-      display: block;
-      padding: 10px;
-      margin-bottom: 5px;
-      border-radius: 5px;
-    }
+  <style> .sidebar {
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    background-color: #343a40;
+    color: white;
+    padding: 20px 10px;
+  }
+  .sidebar a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+    margin-bottom: 5px;
+  }
+  .sidebar a:hover {
+    background-color: #495057;
+    border-radius: 5px;
+  }
+  .content {
+    margin-left: 260px; /* Sidebar width + margin */
+    padding: 20px;
+  }
 
-    .sidebar a:hover {
-      background-color: #495057;
-    }
+  .modal-body {
+    padding: 2rem;
+  }
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  .form-control, .form-select {
+    padding: 0.625rem;
+    border-radius: 0.375rem;
+  }
+  #sizeQuantityContainer {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+  }
+  .size-quantity-pair {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.375rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  .modal-footer {
+    padding: 1rem 2rem;
+    border-top: 1px solid #dee2e6;
+  }
+  .btn-primary {
+    padding: 0.5rem 1.5rem;
+  }
+  #addSizeField {
+    margin-top: 1rem;
+    width: auto;
+  }
+  .modal-body {
+    padding: 2rem;
+  }
+  .size-quantity-pair {
+    background-color: #f8f9fa;
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    margin-bottom: 0.5rem;
+  }
+  .form-label {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+  }
+  .form-control-sm {
+    height: 30px;
+    padding: 0.25rem 0.5rem;
+  }
+  .d-flex {
+    display: flex;
+  }
+  .w-50 {
+    width: 50%;
+  }
 
-    .content {
-      margin-left: 260px;
-      padding: 20px;
-    }
-    .container{
-      margin: 0;
-      padding: 0;
-    }
-    .card {
-      border: none;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    .gap-4 {
-      gap: 1.5rem;
-    }
-    .chart-container {
-      height: 300px;
-    }
-    .chart-container {
-      width: 100%;
-      max-width: 500px;
-      height: 300px;
-      margin: auto;
-    }
-    .form-control.input-sm {
-      padding: 0.25rem;
-      font-size: 0.875rem;
-    }
 
-    .btn.btn-sm {
-      font-size: 0.875rem;
-      padding: 0.4rem 0.75rem;
-    }
-
-    .align-items-end {
-      align-items: flex-end !important; /* Canh dưới cùng */
-    }
-
-    /* Spinner for loading indicator */
-    .spinner-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      display: none;
-    }
-
-    .spinner-border {
-      width: 3rem;
-      height: 3rem;
-    }
   </style>
 </head>
 <body>
 <!-- Sidebar -->
 <%@ include file="/admin/sidebar.jsp" %>
-
-<!-- Loading Spinner -->
-<div class="spinner-overlay" id="loadingSpinner">
-  <div class="spinner-border text-light" role="status">
-    <span class="visually-hidden">Loading...</span>
-  </div>
-</div>
-
-<!-- Main Content -->
 <div class="content">
 
-  <div class="row mb-4 align-items-end" style="display: flex !important;">
-    <div class="col-md-4">
-      <label for="startDate" class="form-label"><strong>Từ ngày:</strong></label>
-      <input type="date" id="startDate" class="form-control input-sm">
+  <div style="padding-bottom: 10px">
+    <c:if test="${not empty message}">
+      <div class="alert alert-success">
+          ${message}
+      </div>
+    </c:if>
+  </div>
+  <div class="card mb-4">
+    <div class="card-header bg-success text-white" style="background: #e7621b !important;">
+      <h4>Tranh</h4>
+
+      <%-- Thêm tranh--%>
     </div>
-    <div class="col-md-4">
-      <label for="endDate" class="form-label"><strong>Đến ngày:</strong></label>
-      <input type="date" id="endDate" class="form-control input-sm">
-    </div>
-    <div class="col-md-4 text-end">
-      <button id="filterBtn" class="btn btn-primary btn-sm">Lọc thống kê</button>
+    <div class="card-body">
+      <table id="products" class="table table-bordered display">
+
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPaintingModal">
+          Thêm tranh
+        </button>
+        <thead>
+        <tr>
+          <th>Mã sản phẩm</th>
+          <th>Ảnh</th>
+          <th>Tên </th>
+          <th>Trạng thái</th>
+          <th>giá</th>
+          <th>Ngày tạo</th>
+          <th>tác giả</th>
+          <th>Hành Động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <c:forEach var="p" items="${products}">
+          <tr>
+            <td>${p.id}</td>
+            <td>
+              <c:choose>
+                <c:when test="${not empty p.imageUrlCloud}">
+                  <img loading="lazy"
+                       src="${p.imageUrlCloud}?f_auto,q_auto,w_60"
+                       alt="${p.imageUrl}"
+                       width="60">
+                </c:when>
+                <c:otherwise>
+                  <img loading="lazy"
+                       src="${pageContext.request.contextPath}/${p.imageUrl}"
+                       alt="${p.imageUrl}"
+                       width="60">
+                </c:otherwise>
+              </c:choose>
+            </td>
+            <td>${p.title}</td>
+            <td>${p.available ? 'Không hoạt động' : 'Hoạt động'}</td>
+            <td>${p.price}</td>
+            <td>${p.createDate}</td>
+            <td>${p.artistName}</td>
+            <td><button class="btn btn-info btn-sm edit-painting"
+                        data-bs-toggle="modal"
+                        data-bs-target="#viewAndEditModal"
+                        data-product-id="${p.id}">Xem Chi Tiết</button>
+
+              <button class="btn btn-danger btn-sm delete-painting"
+                      data-bs-toggle="modal"
+                      data-bs-target="#deleteProductModal"
+                      data-product-id="${p.id}">Xóa</button>
+          </tr>
+        </c:forEach>
+        </tbody>
+      </table>
     </div>
   </div>
 
-  <div class="container">
-    <h2 class="mb-4">Tổng quan</h2>
 
-    <div class="row mb-4">
-      <div class="col-md-3">
-        <div class="card text-center">
-          <div class="card-body">
-            <h5 class="card-title">Tổng Doanh Thu</h5>
-            <span class="stat-icon">💰</span>
-            <p class="card-text fs-4 text-success" id="totalRevenue"><f:formatNumber value="${totalRevenue}" type="currency" currencySymbol="VNĐ"/></p>
-          </div>
+  <div class="row">
+    <div class="col-6">
+      <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">
+          <h4>Danh sách Chủ Đề</h4>
         </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card text-center">
-          <div class="card-body">
-            <h5 class="card-title">Tổng Đơn Hàng</h5>
-            <span class="stat-icon">🛍️</span>
-            <p class="card-text fs-4" id="totalOrders">${totalOrders}</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card text-center">
-          <div class="card-body">
-            <h5 class="card-title">Tổng Người Dùng</h5>
-            <span class="stat-icon">👥</span>
-            <p class="card-text fs-4" id="totalUsers">${totalUsers}</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card text-center">
-          <div class="card-body">
-            <h5 class="card-title">Tổng Sản Phẩm</h5>
-            <span class="stat-icon">📦</span>
-            <p class="card-text fs-4" id="totalProducts">${totalProducts}</p>
-          </div>
+        <div class="card-body">
+          <table id="themes" class="table table-bordered display">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addThemeModal">
+              Thêm chủ đề
+            </button>
+            <thead>
+            <tr>
+              <th>ID</th>
+              <th>Tên Chủ Đề</th>
+              <th>Hành Động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <c:forEach var="theme" items="${t}">
+              <tr>
+                <td>${theme.id}</td>
+                <td class="theme-name">${theme.themeName}</td>
+                <td>
+                  <button class="btn btn-info btn-sm edit-theme"
+                          data-bs-toggle="modal"
+                          data-bs-target="#editThemeModal"
+                          data-theme-id="${theme.id}" >Chi tiết</button>
+                  <button class="btn btn-danger btn-sm delete-theme"
+                          data-bs-toggle="modal"
+                          data-bs-target="#deleteThemeModal"
+                          data-theme-id="${theme.id}">Xóa</button>
+                </td>
+              </tr>
+            </c:forEach>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
 
-    <div class="row mb-4">
-      <div class="col-md-6">
-        <h4 class="mb-3">Doanh Thu Theo Nghệ Sĩ</h4>
-        <div class="chart-container">
-          <canvas id="revenueByArtistChart"></canvas>
+    <div class="col-6">
+      <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">
+          <h4>Danh sách Kích Thước</h4>
+        </div>
+        <div class="card-body">
+          <table id="sizes" class="table table-bordered display">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSizeModal">
+              Thêm kích thước
+            </button>
+            <thead>
+            <tr>
+              <th>ID</th>
+              <th>Tên Kích thước</th>
+              <th>Trọng lượng(g)</th>
+              <th>Hành Động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <c:forEach var="s" items="${s}">
+              <tr>
+                <td>${s.idSize}</td>
+                <td>${s.sizeDescriptions}</td>
+                <td>${s.weight}</td>
+                <td>
+                  <button class="btn btn-info btn-sm edit-size"
+                          data-bs-toggle="modal"
+                          data-bs-target="#editSizeModal"
+                          data-size-id="${s.idSize}">Chi tiết</button>
+                  <button class="btn btn-danger btn-sm delete-size"
+                          data-bs-toggle="modal"
+                          data-bs-target="#deleteSizeModal"
+                          data-size-id="${s.idSize}">Xóa</button>
+                </td>
+              </tr>
+            </c:forEach>
+            </tbody>
+          </table>
         </div>
       </div>
+    </div>
+  </div>
 
-      <div class="col-md-6">
-        <h4 class="mb-3">Trạng Thái Đơn Hàng</h4>
-        <div class="chart-container">
-          <canvas id="orderStatusChart" width="200" height="200"></canvas>
-        </div>
-      </div>
+  <!-- Modal thêm tranh -->
+  <div class="modal fade" id="addPaintingModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="addPaintingForm" enctype="multipart/form-data">
+          <div class="modal-header">
+            <h5 class="modal-title">Thêm Tranh</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Tiêu đề</label>
+                <input type="text" class="form-control form-control-sm" name="title" required>
+              </div>
 
-      <div class="col-md-6">
-        <h4 class="mb-3">Trung bình mỗi rating</h4>
-        <div class="chart-container">
-          <canvas id="ratingChart" width="400" height="300"></canvas>
-        </div>
+              <div class="col-md-6">
+                <label class="form-label">Chủ đề</label>
+                <select class="form-select form-select-sm" name="themeId" required>
+                  <c:forEach var="t" items="${t}">
+                    <option value="${t.id}">${t.themeName}</option>
+                  </c:forEach>
+                </select>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Mô tả</label>
+              <textarea class="form-control form-control-sm" name="description" rows="4"
+                        placeholder="Nhập mô tả chi tiết về tranh..."></textarea>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Giá</label>
+                <input type="number" step="0.01" class="form-control form-control-sm" name="price" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Họa sĩ</label>
+                <select class="form-select form-select-sm" name="artistId" required>
+                  <c:forEach var="artist" items="${a}">
+                    <option value="${artist.id}">${artist.name}</option>
+                  </c:forEach>
+
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Ảnh tranh</label>
+              <input type="file" class="form-control form-control-sm" name="image" accept="image/*" required>
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="isFeatured" name="isFeatured">
+                <label class="form-check-label" for="isFeatured">Tranh nổi bật</label>
+              </div>
+            </div>
+
+            <%--          <div class="size-quantities">--%>
+            <%--            <label class="form-label">Kích thước và Số lượng</label>--%>
+            <%--              <c:forEach var="size" items="${s}">--%>
+            <%--                <div class="size-quantity-pair">--%>
+            <%--                  <div class="row g-2">--%>
+            <%--                    <div class="col-7">--%>
+            <%--                      <input type="hidden" name="sizeId[]" value="${size.idSize}">--%>
+            <%--                      <input type="text" class="form-control form-control-sm" name="size" value="${size.sizeDescriptions}" readonly>--%>
+            <%--                    </div>--%>
+            <%--                    <div class="col-5">--%>
+            <%--                      <input type="number" class="form-control form-control-sm" name="quantity[]" value="0" min="0">--%>
+            <%--                    </div>--%>
+            <%--                  </div>--%>
+            <%--                </div>--%>
+            <%--              </c:forEach>--%>
+            <%--          </div>--%>
+            <div class="size-quantities">
+              <label class="form-label">Kích thước</label>
+              <c:forEach var="size" items="${s}">
+                <div class="mb-2">
+                  <input type="hidden" name="sizeId[]" value="${size.idSize}">
+                  <input type="text" class="form-control form-control-sm" name="size" value="${size.sizeDescriptions}" readonly>
+                </div>
+              </c:forEach>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Đóng</button>
+            <button type="submit" class="btn btn-primary btn-sm">Thêm</button>
+          </div>
+        </form>
       </div>
-      <div class="col-md-6">
-        <h4 class="mb-3">Sản phẩm bán chạy </h4>
-        <div class="chart-container">
-          <canvas id="bestSaleChart"></canvas>
+    </div>
+  </div>
+
+  <!-- sửa tranh -->
+  <div class="modal fade" id="viewAndEditModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="editPaintingForm" enctype="multipart/form-data">
+          <input type="hidden" id="editPaintingId" name="pid" value="">
+
+          <div class="modal-header">
+            <h5 class="modal-title">Chi tiết</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Tiêu đề</label>
+                <input type="text" class="form-control form-control-sm" name="title">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Chủ đề</label>
+                <select class="form-select form-select-sm" name="themeId">
+                  <c:forEach var="t" items="${t}">
+                    <option value="${t.id}">${t.themeName}</option>
+                  </c:forEach>
+                </select>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Mô tả</label>
+              <textarea class="form-control form-control-sm" name="description" rows="4"
+                        placeholder="Nhập mô tả chi tiết về tranh..."></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Ngày tạo</label>
+              <input type="date" class="form-control form-control-sm" name="createdDate">
+
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Giá</label>
+                <input type="number" step="0.01" class="form-control form-control-sm" name="price">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Họa sĩ</label>
+                <select class="form-select form-select-sm" name="artistId">
+                  <c:forEach var="artist" items="${a}">
+                    <option value="${artist.id}">${artist.name}</option>
+                  </c:forEach>
+
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Ảnh tranh</label>
+              <input type="file" class="form-control form-control-sm" name="image" accept="image/*">
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="isFeaturedEdit" name="isFeatured">
+                <label class="form-check-label" for="isFeatured">Tranh nổi bật</label>
+              </div>
+            </div>
+            <div class="mb-3">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="isSoldEdit" name="isSold">
+                <label class="form-check-label" for="isSoldEdit">Còn hàng</label>
+              </div>
+            </div>
+
+            <div class="size-quantities">
+              <label class="form-label">Kích thước và Số lượng</label>
+
+              <div class="row fw-bold border-bottom pb-2 mb-2 text-center">
+                <div class="col-md-3" style="font-size: 0.85rem;">Kích thước</div>
+                <div class="col-md-2" style="font-size: 0.85rem;">Tổng</div>
+                <div class="col-md-2" style="font-size: 0.85rem;">Đã Đặt</div>
+                <div class="col-md-3" style="font-size: 0.85rem;">Có Sẵn</div>
+              </div>
+              <c:forEach var="size" items="${sizes}">
+                <div class="size-quantity-pair">
+                  <div class="row g-2">
+                    <div class="col-md-4">
+                      <input type="hidden" name="sizeId[]" value="${size.idSize}">
+                      <input type="text" class="form-control form-control-sm" name="size" value="${size.sizeDescriptions}" readonly>
+                    </div>
+                    <div class="col-md-2">
+                      <p class="total-quantity"></p>
+                    </div>
+                    <div class="col-md-2">
+                      <p class="reserved-quantity"></p>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="number" class="form-control form-control-sm" name="quantity[]" min="0"
+                             max=""
+                             title="Số lượng còn lại (Tổng - Đặt trước)">
+                    </div>
+                  </div>
+                </div>
+              </c:forEach>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Đóng</button>
+            <button type="submit" class="btn btn-primary btn-sm">Lưu thay đổi</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <%--  Xóa tranh --%>
+  <div class="modal fade" id="deleteProductModal" tabindex="-1" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteProductModalLabel">Xác nhận xóa</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <form id="deletePaintingForm">
+          <div class="modal-body">
+            <p>Bạn có chắc chắn muốn xóa sản phẩm này?</p>
+            <input type="hidden" id="pidToDelete" name="pid">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+            <button type="submit" class="btn btn-danger">Xóa</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- Modal thêm Theme -->
+<div class="modal" id="addThemeModal" tabindex="-1" aria-labelledby="addThemeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addThemeModalLabel">Thêm Chủ Đề</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addThemeForm">
+          <div class="mb-3">
+            <label for="themeName" class="form-label">Tên Chủ Đề</label>
+            <input type="text" class="form-control" id="themeName" name="themeName" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Thêm Chủ Đề</button>
+        </form>
       </div>
     </div>
   </div>
 </div>
 
+
+<!-- Modal edit Theme -->
+<div class="modal fade" id="editThemeModal" tabindex="-1" aria-labelledby="editThemeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editThemeModalLabel">Thông tin chủ đề</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editThemeForm">
+          <input type="hidden" id="editThemeId" name="themeId" value="">
+
+          <div class="mb-3">
+            <label for="idTheme" class="form-label">Mã chủ đề: #</label>
+            <strong id="idTheme"></strong>
+          </div>
+          <div class="mb-3">
+            <label for="editThemeName" class="form-label">Tên Chủ Đề</label>
+            <input type="text" class="form-control" id="editThemeName" name="themeName" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal xóa Theme -->
+
+<div class="modal fade" id="deleteThemeModal" tabindex="-1" aria-labelledby="deleteThemeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteThemeModalLabel">Xác nhận xóa</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="deleteThemeForm">
+        <div class="modal-body">
+          <p>Bạn có chắc chắn muốn xóa chủ đề này?</p>
+          <input type="hidden" id="themeIdToDelete" name="themeId">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-danger">Xóa</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<%--Thêm Size--%>
+<div class="modal fade" id="addSizeModal" tabindex="-1" aria-labelledby="addSizeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addSizeModalLabel">Thêm Kích Thước</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addSizeForm">
+          <div class="mb-3">
+            <label for="sizeName" class="form-label">Tên Kích Thước</label>
+            <input type="text" class="form-control" id="sizeName" name="description" required>
+          </div>
+          <div class="mb-3">
+            <label for="sizeWeight" class="form-label">Trọng lượng(g)</label>
+            <input type="text" class="form-control" id="sizeWeight" name="gram" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Thêm Kích Thước</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editSizeModal" tabindex="-1" aria-labelledby="editSizeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editSizeModalLabel">Thông tin size</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editSizeForm">
+          <input type="hidden" id="editSizeId" name="sizeId" value="">
+
+          <div class="mb-3">
+            <label for="idSize" class="form-label">Mã kích thước: #</label>
+            <strong id="idSize"></strong>
+          </div>
+          <div class="mb-3">
+            <label for="editDescription" class="form-label">Mô tả kích thươc</label>
+            <input type="text" class="form-control" id="editDescription" name="description" required>
+          </div>
+          <div class="mb-3">
+            <label for="editSizeWeight" class="form-label">Trọng lượng(g)</label>
+            <input type="text" class="form-control" id="editSizeWeight" name="editSizeWeight" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal xóa Size -->
+
+<div class="modal fade" id="deleteSizeModal" tabindex="-1" aria-labelledby="deleteSizeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteSizeModalLabel">Xác nhận xóa</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="deleteSizeForm">
+        <div class="modal-body">
+          <p>Bạn có chắc chắn muốn xóa kích thước này?</p>
+          <input type="hidden" id="sizeIdToDelete" name="sizeId">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-danger">Xóa</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 <script>
-  // Định nghĩa các biến toàn cục cho biểu đồ
-  let revenueByArtistChart;
-  let orderStatusChart;
-  let ratingChart;
-  let bestSaleChart;
-
-  // Hàm định dạng số thành tiền tệ VND
-  function formatCurrency(amount) {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-      maximumFractionDigits: 0
-    }).format(amount);
-  }
-
-  // Khởi tạo các biểu đồ ban đầu
-  function initCharts() {
-    // Dữ liệu biểu đồ doanh thu theo nghệ sĩ
-    const revenueByArtistData = {
-      labels: [
-        <c:forEach var="entry" items="${revenueByArtist}">
-        "${entry.key}",
-        </c:forEach>
+  $(document).ready(function () {
+    let table = $('#products').DataTable({
+      "order": [[5, "desc"]],
+      "columnDefs": [
+        { "type": "date", "targets": 5 }
       ],
-      datasets: [{
-        label: 'Doanh Thu (Triệu VNĐ)',
-        data: [
-          <c:forEach var="entry" items="${revenueByArtist}">
-          ${entry.value / 1000000},
-          </c:forEach>
-        ],
-        backgroundColor: '#007bff',
-        borderColor: '#0056b3',
-        borderWidth: 1
-      }]
-    };
+      dom: '<"d-flex justify-content-between align-items-center"lfB>rtip',
+      buttons: [
+        { extend: 'copy', title: 'Danh sách sản phẩm' },
+        { extend: 'csv', title: 'Danh sách sản phẩm' },
+        { extend: 'excel', title: 'Danh sách sản phẩm' },
+        { extend: 'pdf', title: 'Danh sách sản phẩm' },
+        { extend: 'print', title: 'Danh sách sản phẩm' }
+      ]
+    });
 
-    // Cấu hình biểu đồ doanh thu theo nghệ sĩ
-    const revenueByArtistConfig = {
-      type: 'bar',
-      data: revenueByArtistData,
-      options: {
-        maintainAspectRatio: false,
-        responsive: true,
-        plugins: {
-          legend: {
-            display: false
-          }
-        },
-        scales: {
-          x: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Nghệ Sĩ'
-            }
-          },
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Doanh Thu (Triệu VNĐ)'
-            }
-          }
-        }
-      }
-    };
+    let table2 = $('#sizes').DataTable({
+    });
 
-    // Dữ liệu biểu đồ trạng thái đơn hàng
-    const orderStatusData = {
-      labels: [
-        <c:forEach var="status" items="${orderStatusCount}">
-        "${status.key}",
-        </c:forEach>
-      ],
-      datasets: [{
-        data: [
-          <c:forEach var="status" items="${orderStatusCount}">
-          ${status.value},
-          </c:forEach>
-        ],
-        backgroundColor: ['#ffc107', '#dc3545', '#17a2b8', '#28a745', '#007bff']
-      }]
-    };
+    let table3 = $('#themes').DataTable({
+    });
+  });
 
-    // Cấu hình biểu đồ trạng thái đơn hàng
-    const orderStatusConfig = {
-      type: 'doughnut',
-      data: orderStatusData,
-      options: {
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'bottom'
-          }
-        }
-      }
-    };
+  document.querySelectorAll('[data-bs-target="#deleteProductModal"]').forEach(button => {
+    button.addEventListener('click', function() {
+      let pid = this.getAttribute('data-product-id');
+      document.getElementById('pidToDelete').value = pid;
+    });
+  });
+  document.querySelectorAll('[data-bs-target="#deleteThemeModal"]').forEach(button => {
+    button.addEventListener('click', function() {
+      let themeId = this.getAttribute('data-theme-id');
+      document.getElementById('themeIdToDelete').value = themeId;
+    });
+  });
+  document.querySelectorAll('[data-bs-target="#deleteSizeModal"]').forEach(button => {
+    button.addEventListener('click', function() {
+      let sizeId = this.getAttribute('data-size-id');
+      document.getElementById('sizeIdToDelete').value = sizeId;
+    });
+  });
+</script>
 
-    // Dữ liệu biểu đồ đánh giá
-    const ratingData = {
-      labels: [
-        <c:forEach var="rating" items="${listRating}">
-        "${rating.rating}",
-        </c:forEach>
-      ],
-      datasets: [{
-        label: 'Số lượt đánh giá',
-        data: [
-          <c:forEach var="rating" items="${listRating}">
-          ${rating.count},
-          </c:forEach>
-        ],
-        backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545'],
-        borderColor: '#0056b3',
-        borderWidth: 1
-      }]
-    };
+<script>
+  // thêm theme
+  $(document).ready(function () {
+    var table = $('#themes').DataTable();
 
-    // Cấu hình biểu đồ đánh giá
-    const ratingConfig = {
-      type: 'line',
-      data: ratingData,
-      options: {
-        maintainAspectRatio: false,
-        responsive: true,
-        plugins: {
-          legend: {
-            display: true
-          }
-        },
-        scales: {
-          x: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Rating'
-            }
-          },
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Số lượt đánh giá'
-            }
-          }
-        }
-      }
-    };
+    $("#addThemeForm").submit(function (event) {
+      event.preventDefault();
+      var themeName = $("#themeName").val();
 
-    // Dữ liệu biểu đồ sản phẩm bán chạy
-    const bestSaleData = {
-      labels: [
-        <c:forEach var="painting" items="${best}">
-        "${painting.title}",
-        </c:forEach>
-      ],
-      datasets: [{
-        label: 'Số lượng bán ra',
-        data: [
-          <c:forEach var="painting" items="${best}">
-          ${painting.totalSold},
-          </c:forEach>
-        ],
-        backgroundColor: [
-          '#007bff', '#28a745', '#ffc107', '#dc3545', '#17a2b8'
-        ],
-        borderColor: '#0056b3',
-        borderWidth: 1
-      }]
-    };
-
-    // Cấu hình biểu đồ sản phẩm bán chạy
-    const bestSaleConfig = {
-      type: 'bar',
-      data: bestSaleData,
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: true
-          }
-        },
-        scales: {
-          x: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Sản phẩm'
-            }
-          },
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Số lượng bán ra'
-            }
-          }
-        }
-      }
-    };
-
-    // Khởi tạo các biểu đồ
-    revenueByArtistChart = new Chart(
-            document.getElementById('revenueByArtistChart').getContext('2d'),
-            revenueByArtistConfig
-    );
-
-    orderStatusChart = new Chart(
-            document.getElementById('orderStatusChart').getContext('2d'),
-            orderStatusConfig
-    );
-
-    ratingChart = new Chart(
-            document.getElementById('ratingChart').getContext('2d'),
-            ratingConfig
-    );
-
-    bestSaleChart = new Chart(
-            document.getElementById('bestSaleChart').getContext('2d'),
-            bestSaleConfig
-    );
-  }
-
-  // Hàm cập nhật biểu đồ doanh thu theo nghệ sĩ
-  function updateRevenueByArtistChart(data) {
-    const labels = Object.keys(data);
-    const values = Object.values(data).map(val => val / 1000000); // Chuyển sang triệu VNĐ
-
-    revenueByArtistChart.data.labels = labels;
-    revenueByArtistChart.data.datasets[0].data = values;
-    revenueByArtistChart.update();
-  }
-
-  // Hàm cập nhật biểu đồ trạng thái đơn hàng
-  function updateOrderStatusChart(data) {
-    const labels = Object.keys(data);
-    const values = Object.values(data);
-
-    orderStatusChart.data.labels = labels;
-    orderStatusChart.data.datasets[0].data = values;
-    orderStatusChart.update();
-  }
-
-  function updateRatingChart(data) {
-    const labels = data.map(item => item.rating);
-    const values = data.map(item => item.count);
-
-    ratingChart.data.labels = labels;
-    ratingChart.data.datasets[0].data = values;
-    ratingChart.update();
-  }
-
-  function updateBestSaleChart(data) {
-    const labels = data.map(item => item.title);
-    const values = data.map(item => item.totalSold);
-
-    bestSaleChart.data.labels = labels;
-    bestSaleChart.data.datasets[0].data = values;
-    bestSaleChart.update();
-  }
-
-  function updateStats(data) {
-    document.getElementById('totalRevenue').textContent = formatCurrency(data.totalRevenue);
-    document.getElementById('totalOrders').textContent = data.totalOrders;
-    document.getElementById('totalUsers').textContent = data.totalUsers;
-    document.getElementById('totalProducts').textContent = data.totalProducts;
-
-    // Cập nhật các biểu đồ
-    updateRevenueByArtistChart(data.revenueByArtist);
-    updateOrderStatusChart(data.orderStatusCount);
-    updateRatingChart(data.listRating);
-    updateBestSaleChart(data.best);
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    initCharts();
-
-    document.getElementById('filterBtn').addEventListener('click', function() {
-      const startDate = document.getElementById('startDate').value;
-      const endDate = document.getElementById('endDate').value;
-
-      if (!startDate || !endDate) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Lỗi',
-          text: 'Vui lòng chọn đầy đủ ngày bắt đầu và kết thúc!',
-        });
-        return;
-      }
-
-      if (new Date(startDate) > new Date(endDate)) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Lỗi',
-          text: 'Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc!',
-        });
-        return;
-      }
-
-      // Hiển thị spinner
-      document.getElementById('loadingSpinner').style.display = 'flex';
-
-      // Gửi yêu cầu Ajax để lấy dữ liệu thống kê
       $.ajax({
-        url: '${pageContext.request.contextPath}/admin/stats-by-date',
-        type: 'GET',
-        data: {
-          startDate: startDate,
-          endDate: endDate
-        },
+        type: "POST",
+        url: "themes/add",
+        data: { themeName: themeName },
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            // Thêm hàng mới
+            table.row.add([
+              response.id,
+              themeName,
+              '<button class="btn btn-info btn-sm edit-theme" data-theme-id="' + response.id + '">Chi tiết</button> ' +
+              '<button class="btn btn-danger btn-sm delete-theme" data-theme-id="' + response.id + '">Xóa</button>'
+            ]).draw();
+            $('#addThemeModal').modal('hide');
+            $("#addThemeForm")[0].reset();
+          }
+        }
+      });
+    });
+  });
+
+  // xóa theme (event deligation)
+  $(document).ready(function () {
+    $(document).on('click', '.delete-theme', function () {
+      $('#themeIdToDelete').val($(this).data('theme-id'));
+      $('#deleteThemeModal').modal('show');
+    });
+
+    $('#deleteThemeForm').on('submit', function (event) {
+      event.preventDefault();
+      var themeId = $('#themeIdToDelete').val();
+
+      $.ajax({
+        type: 'POST',
+        url: 'themes/delete',
+        data: { themeId: themeId },
         dataType: 'json',
-        success: function(response) {
-          updateStats(response);
+        success: function (response) {
+          if (response.success) {
+            var $row = $('[data-theme-id="' + themeId + '"]').closest('tr');
+            $('#themes').DataTable().row($row).remove().draw();
+            $('#deleteThemeModal').modal('hide');
+          }
+        }
+      });
+    });
+  });
+  // sửa theme
+  $(document).ready(function () {
+    var table = $('#themes').DataTable();
 
-          document.getElementById('loadingSpinner').style.display = 'none';
+    // Khi bấm nút "Chi tiết" để mở modal sửa theme
+    $(document).on('click', '.edit-theme', function (event) {
+      event.preventDefault();
+      var themeId = $(this).data('theme-id');
+      var themeName = $(this).closest('tr').find('td:eq(1)').text().trim();
 
-          Swal.fire({
-            icon: 'success',
-            title: 'Thành công',
-            text: 'Dữ liệu thống kê đã được cập nhật!',
-            timer: 1500,
-            showConfirmButton: false
-          });
+      // Gán dữ liệu vào modal chỉnh sửa
+      $('#editThemeId').val(themeId);
+      $('#editThemeName').val(themeName);
+      $('#idTheme').text(themeId);
+      $('#editThemeModal').modal('show');
+    });
+
+    // Xử lý cập nhật theme khi submit form
+    $("#editThemeForm").submit(function (event) {
+      event.preventDefault();
+      var themeId = $("#editThemeId").val();
+      var themeName = $("#editThemeName").val();
+
+      $.ajax({
+        type: "POST",
+        url: "themes/update",
+        data: { themeId: themeId, themeName: themeName },
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            // Cập nhật tên theme trong bảng DataTable
+            var $row = $('button[data-theme-id="' + themeId + '"]').closest('tr');
+            table.cell($row, 1).data(themeName).draw();
+
+            $('#editThemeModal').modal('hide'); // Đóng modal
+          } else {
+            alert(response.message);
+          }
         },
-        error: function(xhr, status, error) {
+        error: function () {
+          alert("Lỗi khi cập nhật theme.");
+        }
+      });
+    });
+  });
+</script>
+<script>
+  $(document).ready(function () {
+    var table = $('#sizes').DataTable();
 
-          document.getElementById('loadingSpinner').style.display = 'none';
+    // thêm size
+    $("#addSizeForm").submit(function (event) {
+      event.preventDefault();
+      var sizeDescription = $("#sizeName").val();
+      var sizeWeight = $("#sizeWeight").val();
 
-          Swal.fire({
-            icon: 'error',
-            title: 'Lỗi',
-            text: 'Đã xảy ra lỗi khi lấy dữ liệu thống kê. Vui lòng thử lại sau!',
-          });
-          console.error('Ajax error:', error);
+
+      $.ajax({
+        type: "POST",
+        url: "sizes/add",
+        data: { description: sizeDescription , sizeWeight:sizeWeight},
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            // Thêm hàng mới
+            table.row.add([
+              response.id,
+              sizeDescription,
+              sizeWeight,
+              '<button class="btn btn-info btn-sm edit-size" data-size-id="' + response.id + '">Chi tiết</button> ' +
+              '<button class="btn btn-danger btn-sm delete-size" data-size-id="' + response.id + '">Xóa</button>'
+            ]).draw();
+
+            $('#addSizeModal').modal('hide');
+            $("#addSizeForm")[0].reset();
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function () {
+          alert("Lỗi khi thêm kích thước.");
+        }
+      });
+    });
+
+    // Xóa size
+    $(document).on('click', '.delete-size', function () {
+      $('#sizeIdToDelete').val($(this).data('size-id'));
+      $('#deleteSizeModal').modal('show');
+    });
+
+    $('#deleteSizeForm').submit(function (event) {
+      event.preventDefault();
+      var sizeId = $('#sizeIdToDelete').val();
+
+      $.ajax({
+        type: 'POST',
+        url: 'sizes/delete',
+        data: { sizeId: sizeId },
+        dataType: 'json',
+        success: function (response) {
+          if (response.success) {
+            var $row = $('[data-size-id="' + sizeId + '"]').closest('tr');
+            table.row($row).remove().draw();
+            $('#deleteSizeModal').modal('hide');
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function () {
+          alert("Lỗi khi xóa kích thước.");
+        }
+      });
+    });
+
+    // edit size
+    $(document).on('click', '.edit-size', function (event) {
+      event.preventDefault();
+      var sizeId = $(this).data('size-id');
+      var sizeDescription = $(this).closest('tr').find('td:eq(1)').text().trim();
+
+      $('#editSizeId').val(sizeId);
+      $('#editDescription').val(sizeDescription);
+      $('#idSize').text(sizeId);
+      $('#editSizeModal').modal('show');
+    });
+
+    $("#editSizeForm").submit(function (event) {
+      event.preventDefault();
+      var sizeId = $("#editSizeId").val();
+      var sizeDescription = $("#editDescription").val();
+      var sizeWeight = $("#editSizeWeight").val();
+
+
+      $.ajax({
+        type: "POST",
+        url: "sizes/update",
+        data: { sizeId: sizeId, description: sizeDescription, sizeWeight: sizeWeight},
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            var $row = $('button[data-size-id="' + sizeId + '"]').closest('tr');
+            table.cell($row, 1).data(sizeDescription).draw();
+
+            table.cell(rowIndex, 2).data(sizeWeight).draw();
+
+            $('#editSizeModal').modal('hide');
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function () {
+          alert("Lỗi khi cập nhật kích thước.");
         }
       });
     });
   });
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // add painting
+  $(document).ready(function () {
+    var table = $('#products').DataTable();
+
+    $("#addPaintingForm").submit(function (event) {
+      event.preventDefault();
+      var formData = new FormData(this);
+
+      $.ajax({
+        type: "POST",
+        url: "paintings/add",
+        data: formData,
+        processData: false,
+        contentType: false,
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            var imageUrl = response.painting.imageUrl;
+            table.row.add([
+              response.painting.id,
+              '<img src="' + imageUrl + '" width="60">',
+              response.painting.title,
+              response.painting.available ? 'Không hoạt động' : 'Hoạt động',
+              response.painting.price.toFixed(1),
+              response.painting.createDate,
+              response.painting.artistName,
+              '<button class="btn btn-info btn-sm edit-painting" data-bs-toggle="modal" data-bs-target="#viewAndEditModal" data-product-id="' + response.painting.id + '">Xem Chi Tiết</button> ' +
+              '<button class="btn btn-danger btn-sm delete-painting" data-product-id="' + response.painting.id + '">Xóa</button>'
+            ]).draw();
+
+            $('#addPaintingModal').modal('hide');
+            $("#addPaintingForm")[0].reset();
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function(xhr) {
+          alert("Lỗi server: " + xhr.responseText);
+        }
+      });
+    });
+  });
+  // delete
+  $(document).ready(function () {
+    var table = $('#products').DataTable();
+
+    $(document).on("click", ".delete-painting", function () {
+      var paintingId = $(this).data("product-id");
+      $("#pidToDelete").val(paintingId);
+      $("#deleteProductModal").modal("show");
+    });
+
+    $("#deletePaintingForm").submit(function (event) {
+      event.preventDefault();
+      var paintingId = $("#pidToDelete").val();
+
+      $.ajax({
+        type: "POST",
+        url: "products/delete",
+        data: { pid: paintingId },
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            var $row = $('[data-product-id="' + paintingId + '"]').closest('tr');
+            table.row($row).remove().draw();
+            $("#deleteProductModal").modal("hide");
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function () {
+          alert("Lỗi khi xóa tranh.");
+        }
+      });
+    });
+  });
+  // update
+  $(document).on('click', '.edit-painting', function (event) {
+    event.preventDefault();
+
+    var $row = $(this).closest('tr');
+    var paintingId = $(this).data('product-id');
+    var imageUrl = $row.find('img').attr('src');
+    var title = $row.find('td:eq(2)').text().trim();
+    var price = parseFloat($row.find('td:eq(4)').text().replace(/[^0-9.]/g, ''));
+    var available = $row.find('td:eq(3)').text().trim() === 'Hoạt động';
+    var artistName = $row.find('td:eq(6)').text().trim();
+
+    // dua du lieu vào modal
+    $('#editPaintingId').val(paintingId);
+    $('#editTitle').val(title);
+    $('#editPrice').val(price.toFixed(1));
+    $('#editAvailable').prop('checked', available);
+    $('#currentImage').attr('src', imageUrl);
+
+    $('#viewAndEditModal').modal('show');
+  });
+
+  $("#editPaintingForm").submit(function (event) {
+    event.preventDefault();
+
+    var formData = new FormData(this);
+    var paintingId = $('#editPaintingId').val();
+
+    $.ajax({
+      type: "POST",
+      url: "paintings/update",
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: "json",
+      success: function (response) {
+        if (response.success) {
+          // Cập nhật DataTable
+          var $row = $('button[data-product-id="' + paintingId + '"]').closest('tr');
+          var table = $('#products').DataTable();
+
+          // cập nhat du lieu
+          table.cell($row, 2).data(response.painting.title);
+          table.cell($row, 3).data(response.painting.available ? 'Không hoạt động' : 'Hoạt động');
+          table.cell($row, 4).data(parseFloat(response.painting.price).toFixed(1));
+          table.cell($row, 6).data(response.painting.artistName);
+
+          if(response.painting.imageUrl) {
+            table.cell($row, 1).data('<img src="' + response.painting.imageUrl + '" width="60">');
+          }
+
+          table.draw();
+          $('#viewAndEditModal').modal('hide');
+        } else {
+          alert(response.message);
+        }
+      },
+      error: function(xhr) {
+        alert("Lỗi server: " + xhr.responseText);
+      }
+    });
+  });
+</script>
+
+
+
+<script src="${pageContext.request.contextPath}/assets/js/admin/product.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/admin/theme.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/admin/sizes.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="${pageContext.request.contextPath}/assets/js/checkSession.js"></script>
-<script src="${pageContext.request.contextPath}/assets/js/location.js"></script>
-
 </body>
 </html>
