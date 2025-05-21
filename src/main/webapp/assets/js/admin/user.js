@@ -80,9 +80,19 @@ $(document).ready(function () {
                         response.user.phone,
                         Array.from(response.user.roles).map(r => r.name).join(', '),
                         `<button class="btn btn-info btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#viewEditUserModal" data-user-id="${response.user.id}">Xem Chi Tiết</button>
+                                data-bs-target="#viewEditUserModal" data-user-id="${response.user.id}">
+                                <i class="fas fa-eye"></i>
+                        </button>
                          <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#deleteUsersModal" data-user-id="${response.user.id}">Xóa</button>`
+                                data-bs-target="#deleteUsersModal" data-user-id="${response.user.id}">
+                                <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <button class="btn btn-warning btn-sm change-password-btn"
+                                data-bs-toggle="modal" data-bs-target="#changePasswordModal"
+                                data-user-id="${response.user.id}">
+                                <i class="fas fa-key"></i>
+                        </button>`
+
                     ]).draw(false);
                     $('#addUserModal').modal('hide');
 
@@ -156,6 +166,7 @@ $(document).ready(function () {
                     $('#address').val(data.address);
                     $('#password').val(data.password);
                     $('#changePhone').val(data.phone);
+                    $('#status').val(data.status);
 
                     const userRoles = data.roles || [];
 
@@ -210,6 +221,7 @@ $(document).ready(function () {
         let email = $("#changeEmail").val().trim();
         let address = $("#address").val().trim();
         let phone = $("#changePhone").val().trim();
+        let status = $("#status").val();
 
         // Lấy danh sách role IDs đã chọn
         let selectedRoleIds = $('input[name="rolesIds"]:checked')
@@ -248,6 +260,7 @@ $(document).ready(function () {
         formData.append('email', email);
         formData.append('address', address);
         formData.append('phone', phone);
+        formData.append('status', status);
         selectedRoleIds.forEach(function(roleId) {
             formData.append('roleIds', roleId);
         });
@@ -343,6 +356,47 @@ $(document).ready(function () {
                 }
             });
         });
+
+
+        // đổi pass ở admin
+    $('.change-password-btn').on('click', function () {
+        const userId = $(this).data('user-id');
+        $('#changeUserId').val(userId);
+        $('#newPassword').val('');
+        console.log(userId);
+    });
+
+
+    $('#changePasswordForm').on('submit', function (e) {
+        e.preventDefault();
+
+        const userId = $('#changeUserId').val();
+        const newPassword = $('#newPassword').val();
+        console.log(userId);
+        $.ajax({
+            url: 'users/reset_pass',
+            type: 'POST',
+            data: {
+                userId: userId,
+                newPassword: newPassword
+            },
+            success: function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công',
+                    text: 'Mật khẩu đã được thay đổi!'
+                });
+                $('#changePasswordModal').modal('hide');
+            },
+            error: function (xhr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Thất bại',
+                    text: 'Lỗi: ' + xhr.status
+                });
+            }
+        });
+    });
 
 
 });
