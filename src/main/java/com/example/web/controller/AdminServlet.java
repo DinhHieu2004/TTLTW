@@ -44,14 +44,14 @@ public class AdminServlet extends HttpServlet {
             List<BestSalePaiting> best = null;
 
             try {
-                totalRevenue = adminService.getTotalRevenue();
-                totalOrders = adminService.getTotalOrders();
+                totalRevenue = adminService.getTotalRevenue(null, null);
+                totalOrders = adminService.getTotalOrders(null, null);
                 totalUsers = adminService.getTotalUsers();
                 totalProducts = adminService.getTotalProducts();
-                revenueByArtist = adminService.getRevenueByArtist();
-                orderStatusCount = adminService.getOrderStatusCount();
-                listRating = adminService.getAverageRatings();
-                best = adminService.getBestSalePaiting();
+                revenueByArtist = adminService.getRevenueByArtist(null, null);
+                orderStatusCount = adminService.getOrderStatusCount(null, null);
+                listRating = adminService.getAverageRatings(null, null);
+                best = adminService.getBestSalePaiting(null, null);
 
             } catch (SQLException e) {
                 throw new RuntimeException(e);

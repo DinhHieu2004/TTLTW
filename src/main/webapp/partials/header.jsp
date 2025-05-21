@@ -142,18 +142,23 @@
                     </div>
 
                 </div>
+
                 <c:choose>
-                <c:when test="${empty sessionScope.user}">
-                <button class="btn login-btn" data-bs-toggle="modal" data-bs-target="#authModal"
-                        style="background: #e7621b !important;">Đăng nhập
-                </button>
+                   <c:when test="${empty sessionScope.user}">
+                    <button class="btn login-btn" data-bs-toggle="modal" data-bs-target="#authModal"
+                        style="background: #e7621b !important; margin-right: 10px;">Đăng nhập
+                    </button>
+                    <button class="btn register-btn" data-bs-toggle="modal" data-bs-target="#authModal"
+                        data-tab="register" style="background: #e7621b !important;">Đăng ký
+                    </button>
+                    </c:when>
+                    <c:when test="${not empty sessionScope.user}">
+                    <button class="btn logout-btn" onclick="logout()" style="background: #e7621b !important;">
+                        <i class="fa fa-sign-out-alt"></i> Đăng xuất
+                    </button>
                 </c:when>
-                <c:when test="${not empty sessionScope.user}">
-                <button class="btn logout-btn" onclick="logout()" style="background: #e7621b !important;">
-                    <i class="fa fa-sign-out-alt"></i> Đăng xuất
-                </button>
-                </c:when>
-                </c:choose>
+             </c:choose>
+
         </nav>
     </div>
     <form action="artwork" method="GET">
@@ -171,6 +176,8 @@
     </form>
 
 </header>
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer" style="z-index: 9999;"></div>
+
 
 <script src="https://kit.fontawesome.com/a076d05399.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/header/search.js"></script>

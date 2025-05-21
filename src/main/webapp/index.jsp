@@ -1,6 +1,7 @@
 <%@ page import="com.example.web.dao.model.User" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%
     User currentUser = (session != null) ? (User) session.getAttribute("currentUser") : null;
 %>
@@ -165,15 +166,21 @@
         <c:forEach var="p" items="${flashSaleArtworks}">
             <div class="col-6 col-md-3">
                 <div class="card artwork-card">
-                    <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="card-link"></a>
+<%--                    <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="card-link"></a>--%>
+                    <div class="artwork-image-wrapper">
                     <c:choose>
                         <c:when test="${not empty p.imageUrlCloud}">
-                            <img loading="lazy" src="${p.imageUrlCloud}?f_auto,q_auto,w_400" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                            <a href="<c:url value='/painting-detail?pid=${p.id}'/>">
+                                <img loading="lazy" src="${p.imageUrlCloud}?f_auto,q_auto,w_400" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                            </a>
                         </c:when>
                         <c:otherwise>
-                            <img loading="lazy" src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                            <a href="<c:url value='/painting-detail?pid=${p.id}'/>">
+                                <img loading="lazy" src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                            </a>
                         </c:otherwise>
                     </c:choose>
+                    </div>
                     <div class="card-body">
                         <h5 class="card-title">${p.title}</h5>
                         <p class="card-text">
@@ -186,6 +193,7 @@
                         </span>
                             <span class="ms-1">${p.averageRating}</span>
                         </p>
+
                         <div class="price-section">
                             <c:choose>
                                 <c:when test="${p.discountPercentage > 0}">
@@ -210,6 +218,32 @@
                                 </c:otherwise>
                             </c:choose>
                         </div>
+                        <form id="addToCartForm_${p.id}" class="d-flex align-items-center justify-content-between mb-2 mt-2">
+                            <input type="hidden" name="productId" value="${p.id}" />
+                            <div class="mb-2 d-flex">
+                                <c:forEach var="size" items="${p.sizes}" varStatus="status">
+                                    <div class="col-auto">
+                                        <div class="form-check me-3">
+                                            <input class="form-check-input" type="radio" name="size_${p.id}"
+                                               id="size_${p.id}_${size.idSize}"
+                                            value="${size.idSize}"
+                                            data-quantity="${size.displayQuantity}"
+                                                ${size.displayQuantity <= 0 ? 'disabled' : ''}
+                                                ${status.index == 0 && size.displayQuantity > 0 ? 'checked' :
+                                                        (status.index > 0 && p.sizes[status.index-1].displayQuantity <= 0 && size.displayQuantity > 0 ? 'checked' : '')}>
+                                            <input type="hidden" name="quantity_${size.idSize}" value="${size.displayQuantity}">
+                                            <label class="form-check-label" for="size_${size.sizeDescriptions}">
+                                                    ${fn:substringBefore(size.sizeDescriptions, ' ')}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </c:forEach>
+                            </div>
+
+                            <button type="button" class="btn btn-sm btn-primary add-to-cart-btn" data-product-id="${p.id}">
+                                + <i class="fas fa-cart-plus"></i>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -250,7 +284,7 @@
         <c:forEach var="p" items="${featuredArtworks}">
                 <div class="col-6 col-md-3">
                     <div class="card artwork-card">
-                        <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="card-link"></a>
+<%--                        <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="card-link"></a>--%>
                         <c:choose>
                             <c:when test="${not empty p.imageUrlCloud}">
                                 <img loading="lazy" src="${p.imageUrlCloud}?f_auto,q_auto,w_400" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
@@ -295,6 +329,32 @@
                                     </c:otherwise>
                                 </c:choose>
                             </div>
+                            <form id="addToCartForm_${p.id}" class="d-flex align-items-center justify-content-between mb-2 mt-2">
+                                <input type="hidden" name="productId" value="${p.id}" />
+                                <div class="mb-2 d-flex">
+                                    <c:forEach var="size" items="${p.sizes}" varStatus="status">
+                                        <div class="col-auto">
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" name="size_${p.id}"
+                                               id="size_${p.id}_${size.idSize}"
+                                                value="${size.idSize}"
+                                                data-quantity="${size.displayQuantity}"
+                                                    ${size.displayQuantity <= 0 ? 'disabled' : ''}
+                                                    ${status.index == 0 && size.displayQuantity > 0 ? 'checked' :
+                                                            (status.index > 0 && p.sizes[status.index-1].displayQuantity <= 0 && size.displayQuantity > 0 ? 'checked' : '')}>
+                                                <input type="hidden" name="quantity_${size.idSize}" value="${size.displayQuantity}">
+                                                <label class="form-check-label" for="size_${size.sizeDescriptions}">
+                                                        ${fn:substringBefore(size.sizeDescriptions, ' ')}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </c:forEach>
+                                </div>
+
+                                <button type="button" class="btn btn-sm btn-primary add-to-cart-btn" data-product-id="${p.id}">
+                                    + <i class="fas fa-cart-plus"></i>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -360,6 +420,32 @@
                                 </c:otherwise>
                             </c:choose>
                         </div>
+                        <form id="addToCartForm_${p.id}" class="d-flex align-items-center justify-content-between mb-2 mt-2">
+                            <input type="hidden" name="productId" value="${p.id}" />
+                        <div class="mb-2 d-flex">
+                            <c:forEach var="size" items="${p.sizes}" varStatus="status">
+                                <div class="col-auto">
+                                    <div class="form-check me-3">
+                                        <input class="form-check-input" type="radio" name="size_${p.id}"
+                                            id="size_${p.id}_${size.idSize}"
+                                            value="${size.idSize}"
+                                            data-quantity="${size.displayQuantity}"
+                                            ${size.displayQuantity <= 0 ? 'disabled' : ''}
+                                            ${status.index == 0 && size.displayQuantity > 0 ? 'checked' :
+                                                    (status.index > 0 && p.sizes[status.index-1].displayQuantity <= 0 && size.displayQuantity > 0 ? 'checked' : '')}>
+                                        <input type="hidden" name="quantity_${size.idSize}" value="${size.displayQuantity}">
+                                        <label class="form-check-label" for="size_${size.sizeDescriptions}">
+                                                ${fn:substringBefore(size.sizeDescriptions, ' ')}
+                                        </label>
+                                    </div>
+                                </div>
+                            </c:forEach>
+                        </div>
+
+                        <button type="button" class="btn btn-sm btn-primary add-to-cart-btn" data-product-id="${p.id}">
+                            + <i class="fas fa-cart-plus"></i>
+                        </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -443,6 +529,32 @@
                                 </c:otherwise>
                             </c:choose>
                         </div>
+                        <form id="addToCartForm_${p.id}" class="d-flex align-items-center justify-content-between mb-2 mt-2">
+                            <input type="hidden" name="productId" value="${p.id}" />
+                            <div class="mb-2 d-flex">
+                                <c:forEach var="size" items="${p.sizes}" varStatus="status">
+                                    <div class="col-auto">
+                                        <div class="form-check me-3">
+                                            <input class="form-check-input" type="radio" name="size_${p.id}"
+                                               id="size_${p.id}_${size.idSize}"
+                                            value="${size.idSize}"
+                                            data-quantity="${size.displayQuantity}"
+                                                ${size.displayQuantity <= 0 ? 'disabled' : ''}
+                                                ${status.index == 0 && size.displayQuantity > 0 ? 'checked' :
+                                                        (status.index > 0 && p.sizes[status.index-1].displayQuantity <= 0 && size.displayQuantity > 0 ? 'checked' : '')}>
+                                            <input type="hidden" name="quantity_${size.idSize}" value="${size.displayQuantity}">
+                                            <label class="form-check-label" for="size_${size.sizeDescriptions}">
+                                                    ${fn:substringBefore(size.sizeDescriptions, ' ')}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </c:forEach>
+                            </div>
+
+                            <button type="button" class="btn btn-sm btn-primary add-to-cart-btn" data-product-id="${p.id}">
+                                + <i class="fas fa-cart-plus"></i>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -537,7 +649,7 @@
 <%@ include file="/partials/authModal.jsp" %>
 </body>
 
-<script src="assets/js/index.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/index.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/header.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/header/search.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/location.js"></script>

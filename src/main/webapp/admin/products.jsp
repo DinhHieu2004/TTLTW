@@ -49,9 +49,9 @@
     padding: 20px;
   }
 
-   .modal-body {
-     padding: 2rem;
-   }
+  .modal-body {
+    padding: 2rem;
+  }
   .form-group {
     margin-bottom: 1.5rem;
   }
@@ -131,7 +131,7 @@
     <div class="card-header bg-success text-white" style="background: #e7621b !important;">
       <h4>Tranh</h4>
 
-<%-- Thêm tranh--%>
+      <%-- Thêm tranh--%>
     </div>
     <div class="card-body">
       <table id="products" class="table table-bordered display">
@@ -277,101 +277,101 @@
     </div>
   </div>
 
-<!-- Modal thêm tranh -->
-<div class="modal fade" id="addPaintingModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form id="addPaintingForm" enctype="multipart/form-data">
-        <div class="modal-header">
-          <h5 class="modal-title">Thêm Tranh</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <label class="form-label">Tiêu đề</label>
-              <input type="text" class="form-control form-control-sm" name="title" required>
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label">Chủ đề</label>
-              <select class="form-select form-select-sm" name="themeId" required>
-                <c:forEach var="t" items="${t}">
-                  <option value="${t.id}">${t.themeName}</option>
-                </c:forEach>
-              </select>
-            </div>
+  <!-- Modal thêm tranh -->
+  <div class="modal fade" id="addPaintingModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="addPaintingForm" enctype="multipart/form-data">
+          <div class="modal-header">
+            <h5 class="modal-title">Thêm Tranh</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
-            <div class="mb-3">
-            <label class="form-label">Mô tả</label>
-            <textarea class="form-control form-control-sm" name="description" rows="4"
-                      placeholder="Nhập mô tả chi tiết về tranh..."></textarea>
-            </div>
-
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <label class="form-label">Giá</label>
-              <input type="number" step="0.01" class="form-control form-control-sm" name="price" required>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Họa sĩ</label>
-              <select class="form-select form-select-sm" name="artistId" required>
-                <c:forEach var="artist" items="${a}">
-                <option value="${artist.id}">${artist.name}</option>
-                </c:forEach>
-
-              </select>
-            </div>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Ảnh tranh</label>
-            <input type="file" class="form-control form-control-sm" name="image" accept="image/*" required>
-          </div>
-
-          <div class="mb-3">
-            <div class="form-check">
-              <input type="checkbox" class="form-check-input" id="isFeatured" name="isFeatured">
-              <label class="form-check-label" for="isFeatured">Tranh nổi bật</label>
-            </div>
-          </div>
-
-<%--          <div class="size-quantities">--%>
-<%--            <label class="form-label">Kích thước và Số lượng</label>--%>
-<%--              <c:forEach var="size" items="${s}">--%>
-<%--                <div class="size-quantity-pair">--%>
-<%--                  <div class="row g-2">--%>
-<%--                    <div class="col-7">--%>
-<%--                      <input type="hidden" name="sizeId[]" value="${size.idSize}">--%>
-<%--                      <input type="text" class="form-control form-control-sm" name="size" value="${size.sizeDescriptions}" readonly>--%>
-<%--                    </div>--%>
-<%--                    <div class="col-5">--%>
-<%--                      <input type="number" class="form-control form-control-sm" name="quantity[]" value="0" min="0">--%>
-<%--                    </div>--%>
-<%--                  </div>--%>
-<%--                </div>--%>
-<%--              </c:forEach>--%>
-<%--          </div>--%>
-          <div class="size-quantities">
-            <label class="form-label">Kích thước</label>
-            <c:forEach var="size" items="${s}">
-              <div class="mb-2">
-                <input type="hidden" name="sizeId[]" value="${size.idSize}">
-                <input type="text" class="form-control form-control-sm" name="size" value="${size.sizeDescriptions}" readonly>
+          <div class="modal-body">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Tiêu đề</label>
+                <input type="text" class="form-control form-control-sm" name="title" required>
               </div>
-            </c:forEach>
+
+              <div class="col-md-6">
+                <label class="form-label">Chủ đề</label>
+                <select class="form-select form-select-sm" name="themeId" required>
+                  <c:forEach var="t" items="${t}">
+                    <option value="${t.id}">${t.themeName}</option>
+                  </c:forEach>
+                </select>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Mô tả</label>
+              <textarea class="form-control form-control-sm" name="description" rows="4"
+                        placeholder="Nhập mô tả chi tiết về tranh..."></textarea>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Giá</label>
+                <input type="number" step="0.01" class="form-control form-control-sm" name="price" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Họa sĩ</label>
+                <select class="form-select form-select-sm" name="artistId" required>
+                  <c:forEach var="artist" items="${a}">
+                    <option value="${artist.id}">${artist.name}</option>
+                  </c:forEach>
+
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Ảnh tranh</label>
+              <input type="file" class="form-control form-control-sm" name="image" accept="image/*" required>
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="isFeatured" name="isFeatured">
+                <label class="form-check-label" for="isFeatured">Tranh nổi bật</label>
+              </div>
+            </div>
+
+            <%--          <div class="size-quantities">--%>
+            <%--            <label class="form-label">Kích thước và Số lượng</label>--%>
+            <%--              <c:forEach var="size" items="${s}">--%>
+            <%--                <div class="size-quantity-pair">--%>
+            <%--                  <div class="row g-2">--%>
+            <%--                    <div class="col-7">--%>
+            <%--                      <input type="hidden" name="sizeId[]" value="${size.idSize}">--%>
+            <%--                      <input type="text" class="form-control form-control-sm" name="size" value="${size.sizeDescriptions}" readonly>--%>
+            <%--                    </div>--%>
+            <%--                    <div class="col-5">--%>
+            <%--                      <input type="number" class="form-control form-control-sm" name="quantity[]" value="0" min="0">--%>
+            <%--                    </div>--%>
+            <%--                  </div>--%>
+            <%--                </div>--%>
+            <%--              </c:forEach>--%>
+            <%--          </div>--%>
+            <div class="size-quantities">
+              <label class="form-label">Kích thước</label>
+              <c:forEach var="size" items="${s}">
+                <div class="mb-2">
+                  <input type="hidden" name="sizeId[]" value="${size.idSize}">
+                  <input type="text" class="form-control form-control-sm" name="size" value="${size.sizeDescriptions}" readonly>
+                </div>
+              </c:forEach>
+            </div>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Đóng</button>
-          <button type="submit" class="btn btn-primary btn-sm">Thêm</button>
-        </div>
-      </form>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Đóng</button>
+            <button type="submit" class="btn btn-primary btn-sm">Thêm</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- sửa tranh -->
+  <!-- sửa tranh -->
   <div class="modal fade" id="viewAndEditModal" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -485,7 +485,7 @@
     </div>
   </div>
 
-<%--  Xóa tranh --%>
+  <%--  Xóa tranh --%>
   <div class="modal fade" id="deleteProductModal" tabindex="-1" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -961,7 +961,7 @@
       });
     });
   });
-// delete
+  // delete
   $(document).ready(function () {
     var table = $('#products').DataTable();
 
@@ -995,68 +995,68 @@
       });
     });
   });
-// update
-$(document).on('click', '.edit-painting', function (event) {
-  event.preventDefault();
+  // update
+  $(document).on('click', '.edit-painting', function (event) {
+    event.preventDefault();
 
-  var $row = $(this).closest('tr');
-  var paintingId = $(this).data('product-id');
-  var imageUrl = $row.find('img').attr('src');
-  var title = $row.find('td:eq(2)').text().trim();
-  var price = parseFloat($row.find('td:eq(4)').text().replace(/[^0-9.]/g, ''));
-  var available = $row.find('td:eq(3)').text().trim() === 'Hoạt động';
-  var artistName = $row.find('td:eq(6)').text().trim();
+    var $row = $(this).closest('tr');
+    var paintingId = $(this).data('product-id');
+    var imageUrl = $row.find('img').attr('src');
+    var title = $row.find('td:eq(2)').text().trim();
+    var price = parseFloat($row.find('td:eq(4)').text().replace(/[^0-9.]/g, ''));
+    var available = $row.find('td:eq(3)').text().trim() === 'Hoạt động';
+    var artistName = $row.find('td:eq(6)').text().trim();
 
-  // dua du lieu vào modal
-  $('#editPaintingId').val(paintingId);
-  $('#editTitle').val(title);
-  $('#editPrice').val(price.toFixed(1));
-  $('#editAvailable').prop('checked', available);
-  $('#currentImage').attr('src', imageUrl);
+    // dua du lieu vào modal
+    $('#editPaintingId').val(paintingId);
+    $('#editTitle').val(title);
+    $('#editPrice').val(price.toFixed(1));
+    $('#editAvailable').prop('checked', available);
+    $('#currentImage').attr('src', imageUrl);
 
-  $('#viewAndEditModal').modal('show');
-});
-
-$("#editPaintingForm").submit(function (event) {
-  event.preventDefault();
-
-  var formData = new FormData(this);
-  var paintingId = $('#editPaintingId').val();
-
-  $.ajax({
-    type: "POST",
-    url: "paintings/update",
-    data: formData,
-    processData: false,
-    contentType: false,
-    dataType: "json",
-    success: function (response) {
-      if (response.success) {
-        // Cập nhật DataTable
-        var $row = $('button[data-product-id="' + paintingId + '"]').closest('tr');
-        var table = $('#products').DataTable();
-
-        // cập nhat du lieu
-        table.cell($row, 2).data(response.painting.title);
-        table.cell($row, 3).data(response.painting.available ? 'Không hoạt động' : 'Hoạt động');
-        table.cell($row, 4).data(parseFloat(response.painting.price).toFixed(1));
-        table.cell($row, 6).data(response.painting.artistName);
-
-        if(response.painting.imageUrl) {
-          table.cell($row, 1).data('<img src="' + response.painting.imageUrl + '" width="60">');
-        }
-
-        table.draw();
-        $('#viewAndEditModal').modal('hide');
-      } else {
-        alert(response.message);
-      }
-    },
-    error: function(xhr) {
-      alert("Lỗi server: " + xhr.responseText);
-    }
+    $('#viewAndEditModal').modal('show');
   });
-});
+
+  $("#editPaintingForm").submit(function (event) {
+    event.preventDefault();
+
+    var formData = new FormData(this);
+    var paintingId = $('#editPaintingId').val();
+
+    $.ajax({
+      type: "POST",
+      url: "paintings/update",
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: "json",
+      success: function (response) {
+        if (response.success) {
+          // Cập nhật DataTable
+          var $row = $('button[data-product-id="' + paintingId + '"]').closest('tr');
+          var table = $('#products').DataTable();
+
+          // cập nhat du lieu
+          table.cell($row, 2).data(response.painting.title);
+          table.cell($row, 3).data(response.painting.available ? 'Không hoạt động' : 'Hoạt động');
+          table.cell($row, 4).data(parseFloat(response.painting.price).toFixed(1));
+          table.cell($row, 6).data(response.painting.artistName);
+
+          if(response.painting.imageUrl) {
+            table.cell($row, 1).data('<img src="' + response.painting.imageUrl + '" width="60">');
+          }
+
+          table.draw();
+          $('#viewAndEditModal').modal('hide');
+        } else {
+          alert(response.message);
+        }
+      },
+      error: function(xhr) {
+        alert("Lỗi server: " + xhr.responseText);
+      }
+    });
+  });
 </script>
 
 
