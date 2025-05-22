@@ -94,6 +94,10 @@ public class UserService {
         return result;
     }
     public boolean changePassword(int userId, String pass) throws SQLException {
+        User user = userDao.getUser(userId);
+        if(user.getPassword() == null){
+            return false;
+        }
         return userDao.updatePassword(userId, hashPassword(pass));
     }
 

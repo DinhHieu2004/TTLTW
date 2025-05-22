@@ -372,13 +372,23 @@ $(document).ready(function () {
 
         const userId = $('#changeUserId').val();
         const newPassword = $('#newPassword').val();
-        console.log(userId);
+        const confirmPassword = $('#confirmPassword').val();
+
+        if (newPassword !== confirmPassword) {
+            $('#confirmPasswordE').text('Mật khẩu nhập lại không khớp!').addClass('text-danger');
+            $('#confirmPassword').addClass('is-invalid');
+            return;
+        } else {
+            $('#confirmPasswordE').text('');
+            $('#confirmPassword').removeClass('is-invalid');
+        }
         $.ajax({
             url: 'users/reset_pass',
             type: 'POST',
             data: {
                 userId: userId,
-                newPassword: newPassword
+                newPassword: newPassword,
+                confirmPass: confirmPassword
             },
             success: function () {
                 Swal.fire({
@@ -389,14 +399,36 @@ $(document).ready(function () {
                 $('#changePasswordModal').modal('hide');
             },
             error: function (xhr) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Thất bại',
-                    text: 'Lỗi: ' + xhr.status
-                });
+                try {
+                    const res = JSON.parse(xhr.responseText);
+
+                    if (res.status === 'error' && res.errors) {
+                        if (res.errors.confirmError) {
+                            $('#confirmPasswordE').text(res.errors.confirmError);
+                            $('#confirmPassword').addClass('is-invalid');
+                        }
+
+                        if (res.errors.serverError) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Thất bại',
+                                text: res.errors.serverError
+                            });
+                        }
+                    }
+                } catch (e) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Thất bại',
+                        text: 'Lỗi không xác định!'
+                    });
+                }
             }
         });
     });
-
+    $('#changePasswordModal').on('hidden.bs.modal', function () {
+        $(this).find('input').val('').removeClass('is-invalid');
+        $('#confirmPasswordE').text('');
+    });
 
 });

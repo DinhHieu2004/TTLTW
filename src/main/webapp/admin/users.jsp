@@ -238,6 +238,11 @@
                             <label for="newPassword" class="form-label">Mật khẩu mới</label>
                             <input type="password" class="form-control" id="newPassword" name="newPassword" required>
                         </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Nhập lại mật khẩu</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                            <div class="error" id="confirmPasswordE"></div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Xác nhận</button>
