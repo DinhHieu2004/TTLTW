@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -100,10 +101,17 @@
                     </td>
                     <td>
                         <button class="btn btn-info btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#viewEditUserModal" data-user-id="${u.id}">Xem Chi Tiết
+                                data-bs-target="#viewEditUserModal" data-user-id="${u.id}">
+                            <i class="fas fa-eye"></i>
                         </button>
                         <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#deleteUsersModal" data-user-id="${u.id}">Xóa
+                                data-bs-target="#deleteUsersModal" data-user-id="${u.id}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <button class="btn btn-warning btn-sm change-password-btn"
+                                data-bs-toggle="modal" data-bs-target="#changePasswordModal"
+                                data-user-id="${u.id}">
+                            <i class="fas fa-key"></i>
                         </button>
                     </td>
                     </c:forEach>
@@ -199,9 +207,9 @@
                             <div class="col-md-6">
                                 <label for="status" class="form-label">Trạng Thái</label>
                                 <select class="form-control" id="status" name="status">
-                                    <option value="Hoạt động" ${user.status == 'Hoạt động' ? 'selected' : ''}>Hoạt động</option>
-                                    <option value="Chưa kích hoạt" ${user.status == 'Chưa kích hoạt' ? 'selected' : ''}>Chưa kích hoạt</option>
-                                    <option value="Bị khóa" ${user.status == 'Bị khóa' ? 'selected' : ''}>Bị khóa</option>
+                                    <option value="Hoạt động">Hoạt động</option>
+                                    <option value="Chưa kích hoạt">Chưa kích hoạt</option>
+                                    <option value="Bị khóa">Bị khóa</option>
                                 </select>
                             </div>
                         </div>
@@ -215,7 +223,35 @@
         </div>
     </div>
 
-
+    <!-- Modal Đổi Mật Khẩu -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="changePasswordForm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="changePasswordModalLabel">Đổi Mật Khẩu</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="changeUserId" name="userId">
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">Mật khẩu mới</label>
+                            <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Nhập lại mật khẩu</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                            <div class="error" id="confirmPasswordE"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Xác nhận</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
     <!-- add người dùng-->
 
 

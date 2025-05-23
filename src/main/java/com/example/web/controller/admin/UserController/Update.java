@@ -63,6 +63,7 @@ public class Update extends HttpServlet {
                 String phone = req.getParameter("phone");
                 String address = req.getParameter("address");
                 String fullName = req.getParameter("fullName");
+                String status = req.getParameter("status");
 
                 String[] roleIdArray = req.getParameterValues("roleIds");
                 System.out.println("roleid: "+ roleIdArray);
@@ -116,7 +117,7 @@ public class Update extends HttpServlet {
                 }
 
 
-                User user = new User(id, fullName, username, address, email, phone, null);
+                User user = new User(id, fullName, username, address, email, phone, status);
 
                 boolean isUpdated = userService.updateUser(user, roleIds);
 
