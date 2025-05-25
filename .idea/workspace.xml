@@ -9,11 +9,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="09f56b47-22f4-4149-86b8-3420f98e54e1" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/web/controller/admin/RoleController/Update.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/web/controller/admin/RoleController/Update.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/web/dao/UserDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/web/dao/UserDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/web/service/RoleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/web/service/RoleService.java" afterDir="false" />
-    </list>
+    <list default="true" id="09f56b47-22f4-4149-86b8-3420f98e54e1" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -574,7 +570,7 @@
       <workItem from="1747582601073" duration="1068000" />
       <workItem from="1747665290118" duration="15000" />
       <workItem from="1748186190016" duration="1463000" />
-      <workItem from="1748187804008" duration="633000" />
+      <workItem from="1748187804008" duration="939000" />
     </task>
     <servers />
   </component>
