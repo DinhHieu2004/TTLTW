@@ -1,8 +1,10 @@
 package com.example.web.service;
 
 import com.example.web.dao.RoleDao;
+import com.example.web.dao.UserDao;
 import com.example.web.dao.model.Permission;
 import com.example.web.dao.model.Role;
+import com.example.web.dao.model.User;
 import com.google.common.collect.Sets;
 
 import java.sql.SQLException;
@@ -11,7 +13,8 @@ import java.util.List;
 import java.util.Set;
 
 public class RoleService {
-    private RoleDao roleDao = new RoleDao();
+    private final RoleDao roleDao = new RoleDao();
+    private final UserDao userDao = new UserDao();
 
     public List<Role> getAllRoles() throws SQLException {
         return roleDao.getAll();
@@ -60,5 +63,10 @@ public class RoleService {
         RoleService roleService = new RoleService();
         Role role = new Role("ABC");
         System.out.println(roleService.addRoleWithPermissions(role, permissionIds));
+    }
+
+    public List<User> getUsersByRoleId(int roleId) throws SQLException {
+        return userDao.getUsersByRoleId(roleId);
+
     }
 }

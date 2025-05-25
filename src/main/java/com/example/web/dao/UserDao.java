@@ -553,4 +553,29 @@ public class UserDao {
         return null;
     }
 
+    public List<User> getUsersByRoleId(int roleId) throws SQLException {
+        List<User> users = new ArrayList<>();
+        String sql =  """
+                            SELECT u.*
+                            FROM users u
+                            JOIN user_roles ur ON u.id = ur.userId
+                            WHERE ur.roleId = ?
+                        """;
+        PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, roleId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                User user = new User();
+                user.setId(rs.getInt("id"));
+                user.setEmail(rs.getString("email"));
+                user.setUsername(rs.getString("username"));
+                users.add(user);
+            }
+        return users;
+    }
+
+    public static void main(String[] args) throws SQLException {
+        UserDao userDao = new UserDao();
+        System.out.println(userDao.getUsersByRoleId(17));
+    }
 }

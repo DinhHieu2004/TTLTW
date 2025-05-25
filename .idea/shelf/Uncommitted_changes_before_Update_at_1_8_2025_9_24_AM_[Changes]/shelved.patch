@@ -1,0 +1,873 @@
+Index: src/main/webapp/assets/css/admin.css
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>* {\r\n    margin: 0 !important;\r\n    padding: 0  !important;\r\n    box-sizing: border-box;\r\n}\r\n\r\nbody {\r\n    font-family: Arial, sans-serif;\r\n    background-color: #f3f4f6;\r\n    min-height: 100vh;\r\n}\r\n\r\n.container {\r\n    display: flex;\r\n}\r\n\r\n.sidebar {\r\n    width: 256px;\r\n    background-color: white;\r\n    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);\r\n    min-height: 100vh;\r\n    padding: 1rem;\r\n}\r\n\r\n.sidebar h2 {\r\n    font-size: 1.25rem;\r\n    font-weight: bold;\r\n    margin-bottom: 1rem;\r\n}\r\n\r\n.nav-button {\r\n    width: 100%;\r\n    padding: 0.5rem;\r\n    text-align: left;\r\n    border: none;\r\n    border-radius: 0.25rem;\r\n    margin-bottom: 0.5rem;\r\n    cursor: pointer;\r\n}\r\n\r\n.nav-button:hover {\r\n    background-color: #f3f4f6;\r\n}\r\n\r\n.nav-button.active {\r\n    background-color: #ebf5ff;\r\n    color: #2563eb;\r\n}\r\n\r\n.main-content {\r\n    flex: 1;\r\n    padding: 2rem;\r\n}\r\n\r\n.card {\r\n    background-color: white;\r\n    border-radius: 0.5rem;\r\n    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);\r\n    margin-bottom: 1.5rem;\r\n}\r\n\r\n.card-header {\r\n    padding: 1rem;\r\n    border-bottom: 1px solid #e5e7eb;\r\n    display: flex;\r\n    justify-content: space-between;\r\n    align-items: center;\r\n}\r\n\r\n.card-title {\r\n    font-size: 1.25rem;\r\n    font-weight: bold;\r\n}\r\n\r\n.card-content {\r\n    padding: 1rem;\r\n}\r\n\r\n.stats-grid {\r\n    display: grid;\r\n    grid-template-columns: repeat(4, 1fr);\r\n    gap: 1rem;\r\n    margin-bottom: 1.5rem;\r\n}\r\n\r\n.stat-card {\r\n    padding: 1.5rem;\r\n    display: flex;\r\n    align-items: center;\r\n    gap: 1rem;\r\n}\r\n\r\n.stat-icon {\r\n    width: 2rem;\r\n    height: 2rem;\r\n}\r\n\r\n.charts-grid {\r\n    display: grid;\r\n    grid-template-columns: repeat(2, 1fr);\r\n    gap: 1.5rem;\r\n    margin-bottom: 1.5rem;\r\n}\r\n\r\n.table {\r\n    width: 100%;\r\n    border-collapse: collapse;\r\n}\r\n\r\n.table th,\r\n.table td {\r\n    padding: 1rem;\r\n    text-align: left;\r\n    border-bottom: 1px solid #e5e7eb;\r\n}\r\n\r\n.button {\r\n    padding: 0.5rem 1rem;\r\n    border: none;\r\n    border-radius: 0.25rem;\r\n    cursor: pointer;\r\n    display: inline-flex;\r\n    align-items: center;\r\n    gap: 0.5rem;\r\n}\r\n\r\n.button-primary {\r\n    background-color: #22c55e;\r\n    color: white;\r\n}\r\n\r\n.button-primary:hover {\r\n    background-color: #16a34a;\r\n}\r\n\r\n.status-badge {\r\n    padding: 0.25rem 0.5rem;\r\n    border-radius: 9999px;\r\n    font-size: 0.75rem;\r\n}\r\n\r\n.status-available {\r\n    background-color: #dcfce7;\r\n    color: #166534;\r\n}\r\n\r\n.status-sold {\r\n    background-color: #fee2e2;\r\n    color: #991b1b;\r\n}\r\n\r\n@media (max-width: 768px) {\r\n    .stats-grid {\r\n        grid-template-columns: repeat(2, 1fr);\r\n    }\r\n\r\n    .charts-grid {\r\n        grid-template-columns: 1fr;\r\n    }\r\n}\r\n\r\n\r\n.review-card {\r\n    border: 1px solid #e5e7eb;\r\n    padding: 1rem;\r\n    margin-bottom: 1rem;\r\n    border-radius: 0.5rem;\r\n}\r\n\r\n.rating {\r\n    color: #fbbf24;\r\n    font-size: 1.25rem;\r\n    margin-bottom: 0.5rem;\r\n}\r\n\r\n.user-type-badge {\r\n    padding: 0.25rem 0.5rem;\r\n    border-radius: 9999px;\r\n    font-size: 0.75rem;\r\n}\r\n\r\n.user-artist {\r\n    background-color: #dbeafe;\r\n    color: #1e40af;\r\n}\r\n\r\n.user-customer {\r\n    background-color: #dcfce7;\r\n    color: #166534;\r\n}\r\n\r\n.order-status {\r\n    padding: 0.25rem 0.5rem;\r\n    border-radius: 9999px;\r\n    font-size: 0.75rem;\r\n}\r\n\r\n.status-pending {\r\n    background-color: #fef3c7;\r\n    color: #92400e;\r\n}\r\n\r\n.status-completed {\r\n    background-color: #dcfce7;\r\n    color: #166534;\r\n}\r\n\r\n.status-cancelled {\r\n    background-color: #fee2e2;\r\n    color: #991b1b;\r\n}\r\n\r\n.modal {\r\n    display: none;\r\n    position: fixed;\r\n    top: 0;\r\n    left: 0;\r\n    width: 100%;\r\n    height: 100%;\r\n    background-color: rgba(0, 0, 0, 0.5);\r\n    justify-content: center;\r\n    align-items: center;\r\n}\r\n\r\n.modal-content {\r\n    background-color: white;\r\n    padding: 2rem;\r\n    border-radius: 0.5rem;\r\n    width: 90%;\r\n    max-width: 600px;\r\n}\r\n\r\n.form-group {\r\n    margin-bottom: 1rem;\r\n}\r\n\r\n.form-group label {\r\n    display: block;\r\n    margin-bottom: 0.5rem;\r\n}\r\n\r\n.form-group input,\r\n.form-group select,\r\n.form-group textarea {\r\n    width: 100%;\r\n    padding: 0.5rem;\r\n    border: 1px solid #e5e7eb;\r\n    border-radius: 0.25rem;\r\n}\r\n.modal {\r\n    display: none; /* Ẩn modal mặc định */\r\n    position: fixed;\r\n    top: 0;\r\n    left: 0;\r\n    width: 100%;\r\n    height: 100%;\r\n    background-color: rgba(0, 0, 0, 0.5);\r\n}\r\n\r\n.modal-content {\r\n    position: absolute;\r\n    top: 50%;\r\n    left: 50%;\r\n    transform: translate(-50%, -50%);\r\n    background-color: #fff;\r\n    padding: 20px;\r\n    border-radius: 5px;\r\n    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);\r\n}\r\n\r\n.close-button {\r\n    float: right;\r\n    cursor: pointer;\r\n}\r\n.modal {\r\n    display: none;\r\n    position: fixed;\r\n    top: 0;\r\n    left: 0;\r\n    width: 100%;\r\n    height: 100%;\r\n    background-color: rgba(0,0,0,0.5);\r\n    z-index: 1000;\r\n}\r\n\r\n.modal-content {\r\n    background-color: white;\r\n    margin: 15% auto;\r\n    padding: 20px;\r\n    width: 80%;\r\n    max-width: 500px;\r\n    border-radius: 5px;\r\n    position: relative;\r\n}\r\n\r\n.close-button {\r\n    position: absolute;\r\n    right: 10px;\r\n    top: 10px;\r\n    font-size: 24px;\r\n    cursor: pointer;\r\n    border: none;\r\n    background: none;\r\n}\r\n\r\n.form-group {\r\n    margin-bottom: 15px;\r\n}\r\n\r\n.form-group label {\r\n    display: block;\r\n    margin-bottom: 5px;\r\n}\r\n\r\n.form-group input,\r\n.form-group select {\r\n    width: 100%;\r\n    padding: 8px;\r\n    border: 1px solid #ddd;\r\n    border-radius: 4px;\r\n}\r\n\r\n.form-actions {\r\n    margin-top: 20px;\r\n    text-align: right;\r\n}\r\n\r\n.btn {\r\n    padding: 8px 16px;\r\n    border-radius: 4px;\r\n    border: none;\r\n    cursor: pointer;\r\n    margin-left: 10px;\r\n}\r\n\r\n.btn-primary {\r\n    background-color: #007bff;\r\n    color: white;\r\n}\r\n\r\n.btn-secondary {\r\n    background-color: #6c757d;\r\n    color: white;\r\n}\r\n\r\n.btn-danger {\r\n    background-color: #dc3545;\r\n    color: white;\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/webapp/assets/css/admin.css b/src/main/webapp/assets/css/admin.css
+--- a/src/main/webapp/assets/css/admin.css	(revision 59f6c006a438a7916f2ace3dcee6a382097bc243)
++++ b/src/main/webapp/assets/css/admin.css	(date 1736301010156)
+@@ -1,349 +1,599 @@
+-* {
+-    margin: 0 !important;
+-    padding: 0  !important;
+-    box-sizing: border-box;
++:root {
++    --white: #fff;
++    --black: #000;
++    --text-color: #333;
++    --red: #B5292F !important;
++    --shadow-color: rgb(0 0 0 / 10%);
++    --light-gray: rgb(249, 249, 249);
++}
++.modal-backdrop {
++    z-index: 0 !important;
+ }
+-
+-body {
+-    font-family: Arial, sans-serif;
+-    background-color: #f3f4f6;
+-    min-height: 100vh;
++html, body {
++    font-family: Tahoma, sans-serif;
++    margin: 0;
++    padding: 0;
+ }
+-
+-.container {
++button{
++    border: none;
++}
++button:focus{
++    border: none;
++    outline: none;
++}
++.container{
++    max-width: 100%;
+     display: flex;
++    margin: 0;
++    padding: 0;
+ }
+-
+ .sidebar {
+-    width: 256px;
+-    background-color: white;
+-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+-    min-height: 100vh;
+-    padding: 1rem;
++    width: 75px;
++    border-right: 1px solid rgba(0, 0, 0, 0.1);
++    display: flex;
++    flex-direction: column;
++    height: 100vh;
++    padding-top: 5rem;
++    align-items: center;
++    position: sticky;
++    top: 0;
+ }
+ 
+-.sidebar h2 {
+-    font-size: 1.25rem;
+-    font-weight: bold;
+-    margin-bottom: 1rem;
++.sidebar .hidden-sidebar {
++    opacity: 0;
++    width: 0;
++    height: 0;
+ }
+ 
+-.nav-button {
++.sidebar.open .hidden-sidebar {
+     width: 100%;
+-    padding: 0.5rem;
+-    text-align: left;
+-    border: none;
+-    border-radius: 0.25rem;
+-    margin-bottom: 0.5rem;
+-    cursor: pointer;
+-}
+-
+-.nav-button:hover {
+-    background-color: #f3f4f6;
+-}
+-
+-.nav-button.active {
+-    background-color: #ebf5ff;
+-    color: #2563eb;
+-}
+-
+-.main-content {
+-    flex: 1;
+-    padding: 2rem;
+-}
+-
+-.card {
+-    background-color: white;
+-    border-radius: 0.5rem;
+-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+-    margin-bottom: 1.5rem;
++    height: auto;
++    opacity: 1;
+ }
+ 
+-.card-header {
+-    padding: 1rem;
+-    border-bottom: 1px solid #e5e7eb;
++.sidebar .top-sidebar {
+     display: flex;
+-    justify-content: space-between;
++    flex-direction: column;
+     align-items: center;
++    margin-bottom: 0.5rem;
++}
++
++.sidebar .channel-logo {
++    display: block;
++    width: 30px;
++    height: 30px;
++}
++
++.sidebar.open .channel-logo {
++    width: 80%;
++    height: auto;
+ }
+ 
+-.card-title {
+-    font-size: 1.25rem;
+-    font-weight: bold;
++.sidebar .channel-logo>img {
++    width: 100%;
++    height: 100%;
+ }
+ 
+-.card-content {
+-    padding: 1rem;
++.middle-sidebar {
++    overflow-y: auto;
++    overflow-x: hidden;
++    flex-grow: 1;
++    margin: 1rem 0;
+ }
+ 
+-.stats-grid {
+-    display: grid;
+-    grid-template-columns: repeat(4, 1fr);
+-    gap: 1rem;
+-    margin-bottom: 1.5rem;
++.middle-sidebar,
++.bottom-sidebar {
++    width: 100%;
+ }
+ 
+-.stat-card {
+-    padding: 1.5rem;
++.sidebar-list {
++    margin: 0;
++    padding: 0;
+     display: flex;
++    flex-direction: column;
+     align-items: center;
+-    gap: 1rem;
+-}
+-
+-.stat-icon {
+-    width: 2rem;
+-    height: 2rem;
+-}
+-
+-.charts-grid {
+-    display: grid;
+-    grid-template-columns: repeat(2, 1fr);
+-    gap: 1.5rem;
+-    margin-bottom: 1.5rem;
+-}
+-
+-.table {
+     width: 100%;
+-    border-collapse: collapse;
++    list-style: none;
++}
++
++.sidebar.open .sidebar-link {
++    justify-content: flex-start;
++    padding-left: 1rem;
++}
++
++.sidebar-icon {
++    font-size: 24px;
++    flex-shrink: 0;
+ }
+ 
+-.table th,
+-.table td {
+-    padding: 1rem;
+-    text-align: left;
+-    border-bottom: 1px solid #e5e7eb;
++.sidebar-list .hidden-sidebar {
++    margin-left: 1.5rem;
++    white-space: nowrap;
+ }
+ 
+-.button {
+-    padding: 0.5rem 1rem;
+-    border: none;
+-    border-radius: 0.25rem;
+-    cursor: pointer;
+-    display: inline-flex;
++.sidebar-link {
++    display: flex;
++    width: 100%;
++    padding: 0.5rem 0;
++    color: var(--text-color);
++    text-decoration: none;
+     align-items: center;
+-    gap: 0.5rem;
+-}
+-
+-.button-primary {
+-    background-color: #22c55e;
+-    color: white;
+-}
+-
+-.button-primary:hover {
+-    background-color: #16a34a;
+-}
+-
+-.status-badge {
+-    padding: 0.25rem 0.5rem;
+-    border-radius: 9999px;
+-    font-size: 0.75rem;
+-}
+-
+-.status-available {
+-    background-color: #dcfce7;
+-    color: #166534;
+-}
+-
+-.status-sold {
+-    background-color: #fee2e2;
+-    color: #991b1b;
+-}
+-
+-@media (max-width: 768px) {
+-    .stats-grid {
+-        grid-template-columns: repeat(2, 1fr);
+-    }
+-
+-    .charts-grid {
+-        grid-template-columns: 1fr;
+-    }
++    padding-left: 25px;
+ }
+ 
+-
+-.review-card {
+-    border: 1px solid #e5e7eb;
+-    padding: 1rem;
+-    margin-bottom: 1rem;
+-    border-radius: 0.5rem;
++.sidebar-link:hover {
++    color: var(--red);
+ }
+ 
+-.rating {
+-    color: #fbbf24;
+-    font-size: 1.25rem;
+-    margin-bottom: 0.5rem;
++.sidebar-list-item {
++    position: relative;
++    width: 100%;
++    color: var(--light-gray);
+ }
+ 
+-.user-type-badge {
+-    padding: 0.25rem 0.5rem;
+-    border-radius: 9999px;
+-    font-size: 0.75rem;
++.sidebar-list-item.active {
++    color: var(--red) !important;
++    background-color: var(--light-gray);
+ }
+ 
+-.user-artist {
+-    background-color: #dbeafe;
+-    color: #1e40af;
++.sidebar-list-item:hover {
++    background-color: var(--light-gray);
+ }
+ 
+-.user-customer {
+-    background-color: #dcfce7;
+-    color: #166534;
+-}
+-
+-.order-status {
+-    padding: 0.25rem 0.5rem;
+-    border-radius: 9999px;
+-    font-size: 0.75rem;
+-}
+-
+-.status-pending {
+-    background-color: #fef3c7;
+-    color: #92400e;
+-}
+-
+-.status-completed {
+-    background-color: #dcfce7;
+-    color: #166534;
+-}
+-
+-.status-cancelled {
+-    background-color: #fee2e2;
+-    color: #991b1b;
+-}
+-
+-.modal {
+-    display: none;
+-    position: fixed;
++.sidebar-list-item.active::before{
++    content: "";
++    background-color: var(--red);
++    height: 100%;
+     top: 0;
+     left: 0;
++    width: 5px;
++    position: absolute;
++}
++
++.sidebar.open {
++    width: 250px;
++}
++
++.your-channel {
++    color: #000000;
++    font-size: 1rem;
++    font-weight: bold;
++    margin-bottom: 0.15rem;
++    margin-top: 0.5rem;
++}
++.sidebar .top-sidebar {
++    height: 30px;
++}
++
++.sidebar.open .top-sidebar {
++    height: 80px;
++}
++
++.sidebar .top-sidebar .hidden-sidebar {
++    text-align: center;
+     width: 100%;
+-    height: 100%;
+-    background-color: rgba(0, 0, 0, 0.5);
+-    justify-content: center;
+-    align-items: center;
+-}
+-
+-.modal-content {
+-    background-color: white;
+-    padding: 2rem;
+-    border-radius: 0.5rem;
+-    width: 90%;
+-    max-width: 600px;
+ }
+-
+-.form-group {
+-    margin-bottom: 1rem;
+-}
+-
+-.form-group label {
+-    display: block;
+-    margin-bottom: 0.5rem;
+-}
+-
+-.form-group input,
+-.form-group select,
+-.form-group textarea {
++/* Kiểu dáng chính của nội dung */
++.content {
+     width: 100%;
++    padding: 20px;
++    background-color: #f4f6f8;
++}
++
++/* Kiểu tiêu đề trang */
++.page-title {
++    color: var(--light-gray);
++    background-color: var(--red);
++    text-align: center;
++    border-radius: 2rem;
+     padding: 0.5rem;
+-    border: 1px solid #e5e7eb;
+-    border-radius: 0.25rem;
++    text-transform: uppercase;
++}
++.section-title{
++    text-align: center;
++    padding-bottom: 0.5rem;
++    text-transform: uppercase;
++}
++.section {
++    height: 100%;
++    padding: 2rem 2rem 0 1.5rem;
++    display: none !important;
++    background-color: #fff;
++    position: relative;
++}
++
++.section.active {
++    display: block !important;
++}
++/* Bố trí các thẻ card trong một lưới */
++.cards {
++    display: flex;
++    gap: 20px;
++    flex-wrap: wrap;
++    justify-content: space-around;
+ }
+-.modal {
+-    display: none; /* Ẩn modal mặc định */
+-    position: fixed;
+-    top: 0;
+-    left: 0;
++
++/* Kiểu dáng cho từng thẻ card */
++.card-single {
++    flex: 1;
++    min-width: 200px;
++    background-color: #fff;
++    border: 1px solid #e0e0e0;
++    border-radius: 10px;
++    padding: 20px;
++    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
++    transition: transform 0.3s ease, box-shadow 0.3s ease;
++}
++
++/* Hiệu ứng hover */
++.card-single:hover {
++    transform: translateY(-5px);
++    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
++}
++
++/* Bố cục nội dung trong thẻ */
++.box {
++    text-align: center;
++}
++
++/* Đặt kiểu cho số liệu */
++.card-single h2 {
++    font-size: 32px;
++    color: #B5292F;
++    margin: 10px 0;
++}
++
++/* Đặt kiểu cho hình ảnh icon */
++.on-box img {
++    width: 50px;
++    height: 50px;
++    margin-bottom: 10px;
++}
++
++/* Kiểu chữ cho tiêu đề nhỏ */
++.on-box h3 {
++    font-size: 18px;
++    color: #555;
++    margin: 10px 0;
++}
++
++/* Kiểu chữ cho phần mô tả */
++.on-box p {
++    font-size: 14px;
++    color: #777;
++    line-height: 1.4;
++}
++
++/* customer */
++.table {
+     width: 100%;
+-    height: 100%;
+-    background-color: rgba(0, 0, 0, 0.5);
++    overflow: auto;
++    background: #fff;
++    border-radius: 7px;
+ }
+ 
+-.modal-content {
++.setting {
+     position: absolute;
+-    top: 50%;
++    top:-50%;
+     left: 50%;
+-    transform: translate(-50%, -50%);
+-    background-color: #fff;
+-    padding: 20px;
++    transform: translate(-50%, 50%);
++}
++
++table {
++    border-collapse: collapse;
++}
++
++tr {
++    border-bottom: 1px solid var(--light-gray);
++}
++
++thead td {
++    font-size: 16px;
++    text-transform: uppercase;
++    font-weight: 500;
++    background: var(--light-gray);
++    padding: 15px;
++    text-align: center;
++    white-space: nowrap;
++}
++
++tbody tr td {
++    padding: 10px 15px;
++    text-align: center;
++    white-space: nowrap;
++}
++
++.prd-img-tbl {
++    width: 40px;
++    height: 40px;
++    object-fit: cover;
++    border-radius: 99px;
++}
++
++/* Product */
++table {
++    width: 100%;
++    margin-bottom: 40px;
++}
++th {
++    border: 1px solid #ddd;
++    padding: 8px;
++    text-align: left;
++    background-color: #f4f4f4;
++}
++td {
++    border: 1px solid #ddd;
++    padding: 8px;
++    text-align: left;
++}
++#product-table {
++    border: 1px solid #ddd;
++}
++
++#product-table th, #product-table td {
++    padding: 10px;
++    text-align: left;
++    border-bottom: 1px solid #ddd;
++}
++
++#product-table th {
++    background-color: #f4f4f4;
++}
++
++
++#variant-table th, #variant-table td {
++    padding: 10px;
++    text-align: left;
++    border-bottom: 1px solid #ddd;
++}
++
++#variant-table th {
++    background-color: #f4f4f4;
++}
++#variant-section {
++    margin-top: 30px;
++}
++#variant-content{
++    border: 1px solid #ddd;
++}
++
++h2 {
++    font-size: 24px;
++    color: #333;
++    margin-bottom: 15px;
++}
++.admin-control select, .form-search-input {
++    padding: 5px 10px;
++    margin: 5px;
++    border-radius: 4px;
++    border: 1px solid #ddd;
++}
++
++.product-all {
++    padding: 20px 20px;
++}
++
++.btn-control-large{
++    background-color: var(--red);
++    height: 40px;
++    color: #fff;
++    border-radius: 5px;
++    padding: 0 20px;
++    width: auto!important;
++}
++
++.admin-control-right i {
++    margin-right: 5px;
++}
++label a {
++    color: var(--red);
++}
++
++#btn-add-account{
++    background-color: var(--red);
++    height: 30px;
++    color: #fff;
++    border-radius: 5px;
++    padding: 0 20px
++}
++
++
++/* Detail Order */
++.admin-control {
++    display: flex;
++    justify-content: space-between;
++    margin-bottom: 20px;
++    flex-wrap: wrap;
++    align-items: center;
++}
++
++.admin-control-center {
++    flex: 1;
++}
++
++.admin-control-right {
++    display: flex;
++}
++
++.admin-control-right button {
++    width: 40px;
++    margin-left: 10px;
+     border-radius: 5px;
+-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
++}
++
++.admin-control-right button:hover {
++    background-color: var(--red);
++    color:#fff
++}
++
++.form-search {
++    display: flex;
++    justify-content: center;
+ }
+ 
+-.close-button {
+-    float: right;
++.search-btn {
++    border: none;
++    outline: none;
++    font-size: 20px;
++    height: 40px;
++    padding: 0 15px;
++    color: var(--text-color);
++    border-top-left-radius: 5px;
++    border-bottom-left-radius: 5px;
+     cursor: pointer;
++    display: flex;
++    align-items: center;
++    background-color: #f0f0f0;
++}
++
++.form-search-input {
++    height: 40px;
++    outline: none;
++    border: none;
++    background-color: #f0f0f0;
++    padding: 10px 20px;
++    padding-left: 0;
++    border-top-right-radius: 5px;
++    border-bottom-right-radius: 5px;
++    width: 75%;
++}
++
++.fillter-date {
++    display: flex;
++}
++
++.fillter-date>div:first-child {
++    margin-right: 20px;
++}
++
++.fillter-date>div>label {
++    margin-right: 10px;
++    font-size: 15px;
++}
++.order-statistical{
++    display: flex;
++    margin: 30px 0;
++    column-gap: 20px;
++}
++
++.order-statistical-item{
++    box-shadow: 0px 1px 5px 2px #f1f1f1;
++    width: 32.1%;
++    display: flex;
++    padding: 20px 40px;
++    align-items: center;
++    justify-content: space-between;
++}
++
++.order-statistical-item-icon i{
++    font-size: 45px;
++    margin-right: 25px;
++    color: var(--red);
+ }
++
++.order-statistical-item-content-desc{
++    margin-bottom: 6px;
++    font-size: 14px;
++    color:#888
++}
++
++/* Modal */
++/* Style cho modal */
+ .modal {
+     display: none;
+     position: fixed;
+-    top: 0;
++    z-index: 1;
+     left: 0;
++    top: 0;
+     width: 100%;
+     height: 100%;
+-    background-color: rgba(0,0,0,0.5);
+-    z-index: 1000;
+-}
++    overflow: auto;
++    background-color: rgba(0, 0, 0, 0.4);
+ 
+-.modal-content {
+-    background-color: white;
+-    margin: 15% auto;
++}
++.modal-content{
++    border: none;
++}
++.modal-dialog {
+     padding: 20px;
+-    width: 80%;
+-    max-width: 500px;
+-    border-radius: 5px;
+-    position: relative;
++    background-color: #fff;
++    border-radius: 10px;
++    width: 70%;
++
+ }
+-
+-.close-button {
++.modal-header{
++    height: 20px;
++    border: none !important;
++    padding: 0;
++}
++.close {
+     position: absolute;
+     right: 10px;
+-    top: 10px;
+-    font-size: 24px;
++    background: none;
++    border: none;
++    font-size: 30px;
+     cursor: pointer;
++    z-index: 10;
++}
++button.close {
++    outline: none;
+     border: none;
+-    background: none;
++}
++
++.modal-body h2{
++    font-weight: bold;
++    font-size: 26px;
++    margin-bottom: 20px;
++    text-align: center;
+ }
+ 
+ .form-group {
+     margin-bottom: 15px;
+ }
+ 
+-.form-group label {
+-    display: block;
+-    margin-bottom: 5px;
+-}
+-
+-.form-group input,
+-.form-group select {
++.btn-addO, .btn-editO {
+     width: 100%;
+-    padding: 8px;
+-    border: 1px solid #ddd;
+-    border-radius: 4px;
++    background-color: #B5292F ;
++    color: white;
+ }
+-
+-.form-actions {
+-    margin-top: 20px;
+-    text-align: right;
++label{
++    color: #000;
++    font-size: 18px;
++}
++.tabs {
++    display: flex;
++    justify-content: flex-start;
++    align-items: center;
++    list-style: none;
++    padding: 0;
++    margin: 0 0 20px 0;
++    background-color: #f7f7f7;
++    border-bottom: 2px solid #ddd;
++    font-family: Arial, sans-serif;
+ }
+ 
+-.btn {
+-    padding: 8px 16px;
+-    border-radius: 4px;
+-    border: none;
++.tab-item {
++    padding: 12px 20px;
+     cursor: pointer;
+-    margin-left: 10px;
++    border-radius: 10px 10px 0 0;
++    margin-right: 10px;
++    background-color: #e9e9e9;
++    color: #333;
++    transition: background-color 0.3s ease, color 0.3s ease;
++    font-weight: bold;
+ }
+ 
+-.btn-primary {
+-    background-color: #007bff;
+-    color: white;
++.tab-item.active {
++    background-color: #B5292F; /* Màu chính của bạn */
++    color: #fff;
++    border-bottom: 2px solid #B5292F;
+ }
+ 
+-.btn-secondary {
+-    background-color: #6c757d;
+-    color: white;
+-}
++.tab-item:hover {
+ 
+-.btn-danger {
+-    background-color: #dc3545;
+-    color: white;
++    color: #fff;
+ }
++
++.tabs .tab-item:last-child {
++    margin-right: 0;
++}
+\ No newline at end of file
