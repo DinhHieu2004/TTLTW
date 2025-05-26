@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html lang="vi">
 
 <head>
@@ -182,18 +182,21 @@
               <c:choose>
                 <c:when test="${p.discountPercentage > 0}">
                   <div class="d-flex align-items-center gap-2">
+                    <fmt:formatNumber var="originalPrice" value="${p.price}" pattern="#,##0" />
                     <del class="text-muted" style="font-size: 0.8rem;">
-                      <f:formatNumber value="${p.price}" type="currency" currencySymbol="VNĐ"/>
+                        ${fn:replace(originalPrice, ',', '.')} ₫
                     </del>
                     <span class="badge bg-success" style="font-size: 0.75rem;">-${p.discountPercentage}%</span>
                   </div>
+                  <fmt:formatNumber var="discountedPrice" value="${p.price * (1 - p.discountPercentage / 100)}" pattern="#,##0" />
                   <div class="text-danger fw-bold" style="font-size: 0.925rem;">
-                    <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}" type="currency" currencySymbol="VNĐ"/>
+                      ${fn:replace(discountedPrice, ',', '.')} ₫
                   </div>
                 </c:when>
                 <c:otherwise>
+                  <fmt:formatNumber var="normalPrice" value="${p.price}" pattern="#,##0" />
                   <div class="fw-bold" style="font-size: 0.925rem;">
-                    <f:formatNumber value="${p.price}" type="currency" currencySymbol="VNĐ"/>
+                      ${fn:replace(normalPrice, ',', '.')} ₫
                   </div>
                 </c:otherwise>
               </c:choose>
