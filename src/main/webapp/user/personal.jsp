@@ -29,10 +29,10 @@
 
     <style>
         #nameChange, #phoneChange, #emailChange, #addressChange {
-            color: #000 !important; /* Đảm bảo chữ màu đen */
-            opacity: 1 !important; /* Đảm bảo không trong suốt */
-            visibility: visible !important; /* Đảm bảo hiển thị */
-            font-size: 16px !important; /* Đảm bảo chữ đủ lớn */
+            color: #000 !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            font-size: 16px !important;
         }
     </style>
 </head>
@@ -80,6 +80,34 @@
                             </c:if>
                         </c:forEach>
                     </div>
+                    <div class="d-flex justify-content-end mt-4">
+                        <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                            <i class="fas fa-user-times"></i> Xóa tài khoản
+                        </button>
+                    </div>
+
+                    <!-- Modal xác nhận xóa tài khoản -->
+                    <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title" id="deleteAccountLabel">Xác nhận xóa tài khoản</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Bạn có chắc chắn muốn xóa tài khoản không?</p>
+                                    <p><strong>Lưu ý:</strong> Tài khoản của bạn sẽ được đặt trạng thái chờ xóa trong <strong>3 ngày</strong>. Trong thời gian này bạn sẽ không thể đăng nhập.</p>
+                                    <p>Một email sẽ được gửi đến bạn với link để <strong>hủy bỏ xóa tài khoản</strong> nếu bạn thay đổi ý định.</p>
+                                    <p>Sau 3 ngày, tài khoản sẽ bị xóa vĩnh viễn và không thể khôi phục.</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                    <a href="${pageContext.request.contextPath}/delete-cusmoter-account" class="btn btn-danger">Xóa tài khoản</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="modal fade" id="editPersonalInfoModal" tabindex="-1" aria-labelledby="editPersonalInfoModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
