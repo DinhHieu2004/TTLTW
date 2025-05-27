@@ -34,26 +34,27 @@ $(document).on('click', '.increase-quantity, .decrease-quantity', function (e) {
                 let itemKey = productId + "_" + sizeId;
 
                 if (response.items[itemKey]) {
-                    let discountPrice = response.items[itemKey].discountPrice.toLocaleString();
-                    let price = response.items[itemKey].totalPrice.toLocaleString();
+                    let discountPrice = response.items[itemKey].discountPrice.toLocaleString('vi-VN') + ' ₫';
+                    let price = response.items[itemKey].totalPrice.toLocaleString('vi-VN') + ' ₫';
+
                     let discountPercent = response.items[itemKey].discountPercent.toLocaleString();
 
                     $("#cart-item-" + productId + "-" + sizeId + " .item-total-price").html(
                         discountPercent > 0 ?
                             `<div class="price-info">
-                        <del class="text-muted">Giá gốc: ${price} VND</del>
+                        <del class="text-muted">Giá gốc: ${price}  ₫</del>
                         <span class="badge bg-success ms-2">-${discountPercent}%</span>
-                        <div class="text-danger fw-bold">Giá đã giảm: ${discountPrice} VND</div>
+                        <div class="text-danger fw-bold">Giá đã giảm: ${discountPrice}  ₫</div>
                     </div>`
                             :
                             `<div class="price-info">
-                        <span class="fw-bold">Giá: ${price} VND</span>
+                        <span class="fw-bold">Giá: ${price}  ₫</span>
                     </div>`
                     );
                 }
 
-                $("#total-price").text(response.totalPrice.toLocaleString() + " VND");
-                $("#totalAmount").text(response.totalPrice.toLocaleString() + " VND");
+                $("#total-price").text(response.totalPrice.toLocaleString('vi-VN') + " ₫");
+                $("#totalAmount").text(response.totalPrice.toLocaleString('vi-VN') + " ₫");
 
                 updateMiniCartHeader(response.items);
 
@@ -73,7 +74,9 @@ $(document).on('click', '.increase-quantity, .decrease-quantity', function (e) {
         Object.keys(items).forEach(key => {
             let item = items[key]; // Truy xuất sản phẩm dựa vào key
 
-            const finalPrice = item.discountPrice ? item.discountPrice.toLocaleString() : item.totalPrice.toLocaleString();
+            const finalPrice = item.discountPrice
+                ? item.discountPrice.toLocaleString('vi-VN') + ' ₫'
+                : item.totalPrice.toLocaleString('vi-VN') + ' ₫';
             const discountBadge = item.discountPercent > 0 ? `<span class="badge bg-success ms-2">-${item.discountPercent}%</span>` : '';
 
             miniCartHtml += `
@@ -82,7 +85,7 @@ $(document).on('click', '.increase-quantity, .decrease-quantity', function (e) {
             <div class="cart-item-details">
                 <div class="cart-item-name-price">
                     <span class="cart-item-name">${item.productName}</span>
-                    <span class="cart-item-price">${finalPrice} VND ${discountBadge}</span>
+                    <span class="cart-item-price">${finalPrice}  ₫ ${discountBadge}</span>
                 </div>
                <div style="display: flex; align-items: center; gap: 10px; font-size: 14px;">
                     <div class="cart-item-size">size: ${item.sizeDescriptions}</div>
