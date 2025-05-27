@@ -83,7 +83,7 @@ public class UserDao {
         try {
             conn.setAutoCommit(false);
 
-            String updateUserQuery = "UPDATE users SET fullname = ?, username = ?, address = ?, email = ?, phone = ? WHERE id = ?";
+            String updateUserQuery = "UPDATE users SET fullname = ?, username = ?, address = ?, email = ?, phone = ?, status = ? WHERE id = ?";
             statement = conn.prepareStatement(updateUserQuery);
 
             statement.setString(1, user.getFullName());
@@ -92,7 +92,8 @@ public class UserDao {
             statement.setString(4, user.getEmail());
             statement.setString(5, user.getPhone());
             statement.setString(5, user.getPhone());
-            statement.setInt(6, user.getId());
+            statement.setString(6, user.getStatus());
+            statement.setInt(7, user.getId());
 
             int rowsAffected = statement.executeUpdate();
             success = rowsAffected > 0;

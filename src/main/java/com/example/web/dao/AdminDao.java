@@ -18,7 +18,7 @@ public class AdminDao {
 
     public double getTotalRevenue(String startDate, String endDate) throws SQLException {
         double totalRevenue = 0;
-        StringBuilder query = new StringBuilder("SELECT SUM(totalAmount) AS totalRevenue FROM orders WHERE status = 'hoàn thành'");
+        StringBuilder query = new StringBuilder("SELECT SUM(totalAmount) AS totalRevenue FROM orders WHERE deliveryStatus = 'hoàn thành'");
 
         if (startDate != null && endDate != null && !startDate.isEmpty() && !endDate.isEmpty()) {
             query.append(" AND orderDate BETWEEN ? AND ?");
@@ -125,7 +125,7 @@ public class AdminDao {
             LEFT JOIN paintings p ON a.id = p.artistId
             LEFT JOIN order_items oi ON p.id = oi.paintingId
             LEFT JOIN orders o ON oi.orderId = o.id
-        WHERE o.status = 'hoàn thành'
+        WHERE o.deliveryStatus = 'hoàn thành'
     """);
 
         // Kiểm tra điều kiện ngày
@@ -204,7 +204,7 @@ public class AdminDao {
             SELECT p.title, SUM(oi.quantity) AS totalSold
             FROM order_items oi
             JOIN paintings p ON oi.paintingId = p.id
-            JOIN orders o ON oi.orderId = o.id AND o.status = 'hoàn thành'
+            JOIN orders o ON oi.orderId = o.id AND o.deliveryStatus = 'hoàn thành'
         """);
 
         if (startDate != null && endDate != null && !startDate.isEmpty() && !endDate.isEmpty()) {
