@@ -10,6 +10,7 @@ import java.sql.SQLException;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class AuthService {
@@ -85,6 +86,23 @@ public class AuthService {
 
         return emailService.sendEmail(user.getEmail(), subject, body);
     }
+    public void sendUndoDeleteEmail(User user) {
+        String undoToken = UUID.randomUUID().toString();
+        Timestamp expireTimestamp = Timestamp.valueOf(LocalDateTime.now().plusDays(3));
+        Long expireAt = expireTimestamp.getTime();
+
+        udao.saveTokens(user.getId(), undoToken, "undoDelete", expireAt);
+
+        String subject = "Hủy yêu cầu xóa tài khoản";
+        String undoLink = "https://yourdomain.com/undo-delete?token=" + undoToken;
+
+        String content = "<p>Bạn đã yêu cầu xóa tài khoản.</p>"
+                + "<p>Nếu bạn thay đổi ý định, vui lòng bấm vào liên kết bên dưới trong vòng 3 ngày để hủy bỏ yêu cầu:</p>"
+                + "<p><a href=\"" + undoLink + "\">Hủy xóa tài khoản</a></p>"
+                + "<p>Nếu không có hành động nào, tài khoản của bạn sẽ bị xóa vĩnh viễn.</p>";
+
+        emailService.sendEmail(user.getEmail(), subject, content);
+    }
     public boolean createUserByGoogle(String gg_id, String name, String email) throws SQLException {
         return udao.createUserByGoogle(gg_id, name, email, 2);
     }
@@ -147,6 +165,10 @@ public class AuthService {
 
     public static void main(String[] args) throws SQLException {
         AuthService a = new AuthService();
-        System.out.println(a.checkLogin("admin", "462004"));
+        String rawPassword = "462004";
+        String hashed = a.hashPassword(rawPassword);
+
+        System.out.println("Mã hóa: " + hashed);
     }
+
 }

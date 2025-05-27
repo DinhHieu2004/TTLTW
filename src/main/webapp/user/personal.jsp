@@ -102,7 +102,9 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                    <a href="${pageContext.request.contextPath}/delete-cusmoter-account" class="btn btn-danger">Xóa tài khoản</a>
+                                    <button id="confirmDeleteAccountBtn" type="button" class="btn btn-danger">
+                                        Xóa tài khoản
+                                    </button>
                                 </div>
                             </div>
                         </div>

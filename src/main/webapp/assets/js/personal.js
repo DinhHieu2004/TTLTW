@@ -247,6 +247,26 @@ $(document).ready(function(){
             }
         });
     });
+    $('#confirmDeleteAccountBtn').on('click', function() {
+        var $btn = $(this);
+        $btn.prop('disabled', true);
+
+        $.ajax({
+            url: 'delete-customer-account',
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function(response) {
+                $('#deleteAccountModal').modal('hide');
+                logout();
+            },
+            error: function(xhr, status, error) {
+                alert('Xóa tài khoản thất bại: ' + error);
+                $btn.prop('disabled', false);
+            }
+        });
+    });
+
 });
 function formatCurrency(value) {
     return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', '₫');
