@@ -63,6 +63,7 @@ public class AddItemCartController extends HttpServlet {
                 cart = new Cart();
             }
             cart.addToCart(cartPainting);
+            cart.getTotalPrice();
             session.setAttribute("cart", cart);
 
             System.out.println("cart : "+cart);

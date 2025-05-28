@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -74,18 +75,24 @@
                                 <td class="item-total-price">
                                     <c:choose>
                                         <c:when test="${cp.discountPrice != null && cp.discountPercent > 0}">
+                                            <f:formatNumber var="originalPrice" value="${cp.totalPrice}" pattern="#,##0" />
+                                            <f:formatNumber var="discountedPrice" value="${cp.discountPrice}" pattern="#,##0" />
                                             <div class="price-info">
-
-                                                <del class="text-muted">Giá gốc: <f:formatNumber value="${cp.totalPrice}" type="currency" currencySymbol="VNĐ"/></del>
+                                                <del class="text-muted">
+                                                    Giá gốc: ${fn:replace(originalPrice, ',', '.')} ₫
+                                                </del>
                                                 <span class="badge bg-success ms-2">-${cp.discountPercent}%</span>
                                                 <div class="text-danger fw-bold">
-                                                    Giá đã giảm: <f:formatNumber value="${cp.discountPrice} " type="currency" currencySymbol="VNĐ"/>
+                                                    Giá đã giảm: ${fn:replace(discountedPrice, ',', '.')} ₫
                                                 </div>
                                             </div>
                                         </c:when>
                                         <c:otherwise>
+                                            <f:formatNumber var="normalPrice" value="${cp.totalPrice}" pattern="#,##0" />
                                             <div class="price-info">
-                                                <span class="fw-bold">Giá: <f:formatNumber value="${cp.totalPrice}" type="currency" currencySymbol="VNĐ"/></span>
+                                                <span class="fw-bold">
+                                                    Giá: ${fn:replace(normalPrice, ',', '.')} ₫
+                                                </span>
                                             </div>
                                         </c:otherwise>
                                     </c:choose>
@@ -102,9 +109,10 @@
                         </c:forEach>
                         </tbody>
                         <tfoot>
+                        <f:formatNumber var="totalFormatted" value="${sessionScope.cart.totalPrice}" pattern="#,##0" />
                         <tr>
                             <th colspan="4" class="text-end">Tổng tiền</th>
-                            <th id="total-price" colspan="2"><f:formatNumber value="${sessionScope.cart.totalPrice}" type ="currency" currencySymbol="VNĐ"></f:formatNumber></th>
+                            <th id="total-price" colspan="2">${fn:replace(totalFormatted, ',', '.')} ₫</th>
                         </tr>
                         </tfoot>
                     </table>
@@ -158,7 +166,8 @@
                                     </td>
                                     <td>${cp.productName}</td>
                                     <td><span class="mx-2 quantity">${cp.quantity}</span></td>
-                                    <td><f:formatNumber value="${cp.totalPrice}" type="currency" currencySymbol="VNĐ"/></td>
+                                    <f:formatNumber var="priceFormatted" value="${cp.totalPrice}" pattern="#,##0" />
+                                    <td>${fn:replace(priceFormatted, ',', '.')} ₫</td>
                                 </tr>
                             </c:forEach>
                             </tbody>
@@ -167,7 +176,8 @@
 
                     <div class="mb-3">
                         <label for="totalAmount" class="form-label fw-bold">Tổng tiền thanh toán:</label>
-                        <div id="totalAmount">${sessionScope.cart.totalPrice} VND</div>
+                        <f:formatNumber var="totalFormatted" value="${sessionScope.cart.totalPrice}" pattern="#,##0" />
+                        <div id="totalAmount">${fn:replace(totalFormatted, ',', '.')} ₫</div>
                     </div>
 
 

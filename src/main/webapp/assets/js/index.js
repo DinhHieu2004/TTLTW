@@ -23,6 +23,11 @@ $(document).ready(function(){
                     if (response.cart.items instanceof Object) {
                         const itemsArray = Object.values(response.cart.items);
                         updateMiniCartHeader(itemsArray);
+                        if (typeof response.cart.totalPrice === 'number') {
+                            const formattedTotal = response.cart.totalPrice.toLocaleString('vi-VN') + " ₫";
+                            $('#total-price').text(formattedTotal);
+                            $('#totalAmount').text(formattedTotal);
+                        }
                     } else {
                         console.error('Dữ liệu giỏ hàng không đúng định dạng:', response.cart.items);
                     }
