@@ -4,9 +4,8 @@ function updateMiniCart() {
         .then(data => {
             document.querySelector('#mini-cart').innerHTML = `
                 <p>Số lượng: ${data.totalQuantity} sản phẩm</p>
-                <p>Tổng giá: ${data.totalPrice.toLocaleString()} VND</p>
+                <p>Tổng giá: ${data.totalPrice.toLocaleString('vi-VN')} ₫</p>
                 <a href="cart">Xem giỏ hàng</a>
             `;
         });
 }
-

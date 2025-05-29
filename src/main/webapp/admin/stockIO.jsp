@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -92,7 +93,8 @@
               <td>${si.transactionDate}</td>
               <td>${si.createdName}</td>
               <td>${si.supplier}</td>
-              <td><f:formatNumber value="${si.totalPrice}" type="currency" pattern="#,##0"/> VND</td>
+              <f:formatNumber var="formatted" value="${si.totalPrice}" pattern="#,##0" />
+              <td>${fn:replace(formatted, ',', '.')} ₫</td>
               <td>${si.note}</td>
               <td>
                 <button class="btn btn-sm btn-info viewDetailSIButton" data-stockin-id="${si.id}" data-bs-toggle="modal" data-bs-target="#detailModal">Chi tiết</button>
@@ -129,7 +131,8 @@
                   <td>${so.transactionDate}</td>
                   <td>${so.createdName}</td>
                   <td>${so.reason}</td>
-                  <td><f:formatNumber value="${so.totalPrice}" type="currency" pattern="#,##0"/> VND</td>
+                  <f:formatNumber var="formatted" value="${so.totalPrice}" pattern="#,##0" />
+                  <td>${fn:replace(formatted, ',', '.')} ₫</td>
                   <td>${so.note}</td>
                   <td>
                     <button class="btn btn-sm btn-info viewDetailSOButton" data-stockout-id="${so.id}" data-bs-toggle="modal" data-bs-target="#detailModalSo">Chi tiết</button>
@@ -219,7 +222,8 @@
         </table>
       </div>
       <div class="modal-footer">
-        <strong class="me-auto"> Tổng tiền: <span id="totalPriceSo"></span></strong>
+        <f:formatNumber var="formatted" value="${sessionScope.cart.totalPrice}" pattern="#,##0" />
+        <strong class="me-auto"> Tổng tiền: <span id="totalPriceSo">${fn:replace(formatted, ',', '.')} ₫</span></strong>
         <button type="button" class="btn btn-success" id="applySOBtn">Áp dụng</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
       </div>

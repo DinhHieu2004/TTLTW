@@ -17,8 +17,8 @@ $(document).on('click', '.remove-item', function (e) {
             if (response.status === "success") {
                 console.log("Successfully removed item.");
 
-                $("#totalAmount").text(response.cart.totalPrice.toLocaleString() + " VND");
-                $("#total-price").text(response.cart.totalPrice.toLocaleString() + " VND");
+                $("#totalAmount").text(formatCurrencyVND(response.cart.totalPrice));
+                $("#total-price").text(formatCurrencyVND(response.cart.totalPrice));
                 $(`#cart-item-${productId}-${sizeId}`).remove();
                 $(`#mini-cart-item-${productId}-${sizeId}`).remove();
 
@@ -52,7 +52,9 @@ $(document).on('click', '.remove-item', function (e) {
         let itemArray = Object.values(items);
 
         itemArray.forEach(item => {
-            const finalPrice = item.discountPrice ? item.discountPrice.toLocaleString() : item.totalPrice.toLocaleString();
+            const finalPrice = item.discountPrice
+                ? formatCurrencyVND(item.discountPrice)
+                : formatCurrencyVND(item.totalPrice);
             const discountBadge = item.discountPercent > 0 ? `<span class="badge bg-success ms-2">-${item.discountPercent}%</span>` : '';
             const fullImgUrl = item.imageUrlCloud && item.imageUrlCloud.trim() !== ""
                 ? `${item.imageUrlCloud}?f_auto,q_auto,w_80`
@@ -63,7 +65,7 @@ $(document).on('click', '.remove-item', function (e) {
                 <div class="cart-item-details">
                     <div class="cart-item-name-price">
                         <span class="cart-item-name">${item.productName}</span>
-                        <span class="cart-item-price">${finalPrice} VNĐ ${discountBadge}</span>
+                        <span class="cart-item-price">${finalPrice} ${discountBadge}</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 10px; font-size: 14px;">
                         <div class="cart-item-size">Size: ${item.sizeDescriptions}</div>
@@ -84,6 +86,13 @@ $(document).on('click', '.remove-item', function (e) {
         $('#mini-cart-items').html(miniCartHtml);
         $('#cart-item-count').text(itemArray.length);
     }
+
+function formatCurrencyVND(amount) {
+    if (typeof amount !== 'number') amount = parseFloat(amount);
+    if (isNaN(amount)) return '0 ₫';
+    return amount.toLocaleString('vi-VN') + ' ₫';
+}
+
 
 
 

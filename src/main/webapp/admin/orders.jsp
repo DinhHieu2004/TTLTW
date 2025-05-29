@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -75,7 +76,10 @@
       <c:forEach var="order" items="${currentOrder}">
         <tr>
           <td>${order.id}</td>
-          <td><f:formatNumber value="${order.priceAfterShipping}" type="number" groupingUsed="true" maxFractionDigits="0" /> ₫</td>
+          <td>
+            <f:formatNumber var="formattedPrice" value="${order.priceAfterShipping}" pattern="#,##0" />
+              ${fn:replace(formattedPrice, ',', '.')} ₫
+          </td>
           <td>${order.orderDate}</td>
           <td>${order.paymentStatus}</td>
           <td>${order.paymentMethod}</td>
@@ -116,7 +120,10 @@
       <c:forEach var="order" items="${historyOrder}">
         <tr>
           <td>${order.id}</td>
-          <td><f:formatNumber value="${order.priceAfterShipping}" type="number" groupingUsed="true" maxFractionDigits="0" /> ₫</td>
+          <td>
+            <f:formatNumber var="formattedPrice" value="${order.priceAfterShipping}" pattern="#,##0" />
+              ${fn:replace(formattedPrice, ',', '.')} ₫
+          </td>
           <td>${order.orderDate}</td>
           <td>${order.deliveryDate}</td>
           <td>${order.paymentStatus}</td>

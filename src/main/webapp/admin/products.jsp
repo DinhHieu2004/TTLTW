@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -145,9 +146,9 @@
           <th>Ảnh</th>
           <th>Tên </th>
           <th>Trạng thái</th>
-          <th>giá</th>
+          <th>Giá</th>
           <th>Ngày tạo</th>
-          <th>tác giả</th>
+          <th>Tác giả</th>
           <th>Hành Động</th>
         </tr>
         </thead>
@@ -173,7 +174,8 @@
             </td>
             <td>${p.title}</td>
             <td>${p.available ? 'Không hoạt động' : 'Hoạt động'}</td>
-            <td>${p.price}</td>
+            <f:formatNumber var="formattedPrice" value="${p.price}" pattern="#,##0" />
+            <td>${fn:replace(formattedPrice, ',', '.')} ₫</td>
             <td>${p.createDate}</td>
             <td>${p.artistName}</td>
             <td><button class="btn btn-info btn-sm edit-painting"

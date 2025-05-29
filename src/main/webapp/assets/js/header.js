@@ -33,8 +33,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td><img src="${item.image}" alt="${item.title}" class="img-thumbnail" style="max-width: 100px;"></td>
                     <td>${item.title}</td>
                     <td>
-                        <p class="text-muted" style="text-decoration: line-through;">${item.originalPrice.toLocaleString()} VND</p>
-                        <p class="text-danger">${item.discountedPrice.toLocaleString()} VND</p>
+                        <p class="text-muted" style="text-decoration: line-through;">${formatCurrencyVND(item.originalPrice)}</p>
+                        <p class="text-danger">${formatCurrencyVND(item.discountedPrice)}</p>
                     </td>
                     <td>
                         <button class="btn btn-danger btn-sm remove-item" data-index="${index}">Xóa</button>
@@ -45,7 +45,13 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log(totalPrice)
 
         // Cập nhật tổng tiền
-        totalPriceElement.innerText = `${totalPrice.toLocaleString()} VND`;
+        totalPriceElement.innerText = formatCurrencyVND(totalPrice);
+    }
+
+    function formatCurrencyVND(amount) {
+        if (typeof amount !== 'number') amount = parseFloat(amount);
+        if (isNaN(amount)) return '0 ₫';
+        return amount.toLocaleString('vi-VN') + ' ₫';
     }
 
     // Xử lý khi xóa sản phẩm

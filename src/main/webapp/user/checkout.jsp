@@ -372,18 +372,17 @@
                   <span class="mx-2 quantity">${cp.quantity}</span>
                 </td>
                 <td class="item-total-price">
-              <span class="fw-bold">Giá:
-                <f:formatNumber value="${cp.discountPrice}" type="currency" pattern="#,##0"/> ₫
-            </span>
+                <f:formatNumber var="formattedPrice" value="${cp.discountPrice}" pattern="#,##0" />
+                <span class="fw-bold">Giá: ${fn:replace(formattedPrice, ',', '.')} ₫</span>
               </tr>
             </c:forEach>
             </tbody>
             <tfoot>
             <tr>
               <th colspan="4" class="text-end">Tổng tiền</th>
-              <th id="total-price" colspan="2">
-                <f:formatNumber value="${sessionScope.cart.totalPrice}" pattern="#,##0" type="currency"/> ₫
-              </th>            </tr>
+              <f:formatNumber var="formattedTotal" value="${sessionScope.cart.totalPrice}" pattern="#,##0" />
+              <th id="total-price" colspan="2">${fn:replace(formattedTotal, ',', '.')} ₫</th>
+            </tr>
             </tfoot>
           </table>
         </c:when>
@@ -407,11 +406,13 @@
 
       <span id="voucherCount" class="ms-2 text-muted" style="display: none;"></span>
 
+      <f:formatNumber var="formattedFinalPrice" value="${sessionScope.cart.totalPrice}" pattern="#,##0" />
       <div class="price-display">
         Giá phải trả: <span id="finalPrice" data-original-price="${sessionScope.cart.totalPrice}">
-        <f:formatNumber value="${sessionScope.cart.totalPrice}" type="currency" pattern="#,##0"/>₫
-      </span>
+        ${fn:replace(formattedFinalPrice, ',', '.')} ₫
+        </span>
       </div>
+
 
       <div id="voucherModal" class="modal hidden">
         <div class="modal-content">
