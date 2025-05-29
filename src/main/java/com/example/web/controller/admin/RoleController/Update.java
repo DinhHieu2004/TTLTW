@@ -3,6 +3,7 @@ package com.example.web.controller.admin.RoleController;
 import com.example.web.controller.util.CheckPermission;
 import com.example.web.dao.model.User;
 import com.example.web.service.RoleService;
+import com.example.web.utils.SessionManager;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @WebServlet("/admin/roles/update")
@@ -85,6 +87,15 @@ public class Update extends HttpServlet {
 
             // Phản hồi kết quả
             if (updated) {
+                List<User> usersInRole = roleService.getUsersByRoleId(roleId);
+
+                for (User u : usersInRole) {
+                    HttpSession uSession = SessionManager.userSessions.get(u.getId() + "");
+                    if (uSession != null) {
+                        uSession.invalidate();
+                        SessionManager.userSessions.remove(u.getId() + "");
+                    }
+                }
                 resp.setStatus(HttpServletResponse.SC_OK);
                 resp.getWriter().write("{\"message\": \"Cập nhật quyền thành công\"}");
             } else {
