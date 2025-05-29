@@ -35,16 +35,15 @@ public class DeleteAccount extends HttpServlet {
         }
 
         try {
-            boolean hasOrders = false;
+            boolean hasOrders = orderService.getCurrentOrdersForUser(currentUser.getId()) == null;
             if (hasOrders) {
                 resp.setStatus(HttpServletResponse.SC_CONFLICT);
                 out.print("{\"error\": \"Tài khoản có đơn hàng đang xử lý. Không thể xóa.\"}");
                 return;
             }
 
-            boolean marked = false;
+            boolean marked = authService.deleteAndSendUndoMail(currentUser);;
             if (marked) {
-                authService.sendUndoDeleteEmail(currentUser);
                 session.invalidate();
                 out.print("{\"message\": \"Tài khoản sẽ bị xóa sau 3 ngày. Bạn không thể đăng nhập trong thời gian này.\"}");
             } else {

@@ -65,15 +65,25 @@ public class UserDao {
     }
 
     public boolean deleteUser(int i) {
-        String query = "DELETE FROM users WHERE id = ?";
+        String query = "UPDATE users SET status = ? WHERE id = ?";
         try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
-            preparedStatement.setInt(1, i);
+            preparedStatement.setString(1, "Đã xóa");
+            preparedStatement.setInt(2, i);
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
+    }
+    public void deleteAccountCus(Connection conn, int id) {
+        String query = "UPDATE users SET status = ? WHERE id = ?";
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setString(1, "Chờ xóa");
+            preparedStatement.setInt(2, id);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public boolean updateUser(User user, Set<Integer> roleIds) throws SQLException {
@@ -227,10 +237,10 @@ public class UserDao {
         return ps.executeUpdate() > 0;
     }
 
-    public void saveTokens(int userId, String token, String type, long expiryMillis) {
+    public void saveTokens(Connection con,int userId, String token, String type, long expiryMillis) {
         String sql = "INSERT INTO tokens (userId, token, expiredAt, type) VALUES (?, ?, ?, ?)";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setString(2, token);
             ps.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis() + expiryMillis));
@@ -579,4 +589,5 @@ public class UserDao {
         UserDao userDao = new UserDao();
         System.out.println(userDao.getUsersByRoleId(17));
     }
+
 }
