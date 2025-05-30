@@ -80,11 +80,15 @@
                             </c:if>
                         </c:forEach>
                     </div>
-                    <div class="d-flex justify-content-end mt-4">
-                        <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
-                            <i class="fas fa-user-times"></i> Xóa tài khoản
-                        </button>
-                    </div>
+                    <c:forEach var="role" items="${sessionScope.user.roles}">
+                        <c:if test="${role.name != 'ADMIN'}">
+                        <div class="d-flex justify-content-end mt-4">
+                            <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                                <i class="fas fa-user-times"></i> Xóa tài khoản
+                            </button>
+                        </div>
+                        </c:if>
+                    </c:forEach>
 
                     <!-- Modal xác nhận xóa tài khoản -->
                     <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountLabel" aria-hidden="true">
