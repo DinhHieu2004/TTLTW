@@ -19,7 +19,7 @@ import java.util.UUID;
 
 public class AuthService {
     private UserDao udao = new UserDao();
-    private final UserCacheManager cacheManager = new UserCacheManager();
+    private final UserCacheManager cacheManager = UserCacheManager.getInstance();
     Connection conn = DbConnect.getConnection();
     private final EmailService emailService = new EmailService();
 
@@ -114,7 +114,7 @@ public class AuthService {
             long threeDaysMillis = 3L * 24 * 60 * 60 * 1000;
 
             udao.deleteAccountCus(conn, user.getId());
-            cacheManager.invalidateAllUsersList();
+            cacheManager.getAllUsers();
             udao.saveTokens(conn, user.getId(), undoToken, "undoDelete", threeDaysMillis);
 
             String subject = "Email HỦY xóa tài khoản";
@@ -205,11 +205,4 @@ public class AuthService {
         }
     }
 
-    public static void main(String[] args) throws SQLException {
-        AuthService a = new AuthService();
-        String rawPassword = "462004";
-        String hashed = a.hashPassword(rawPassword);
-
-        System.out.println("Mã hóa: " + hashed);
-    }
 }

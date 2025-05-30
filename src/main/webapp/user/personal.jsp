@@ -80,15 +80,16 @@
                             </c:if>
                         </c:forEach>
                     </div>
+                    <c:set var="roleNames" value="" />
                     <c:forEach var="role" items="${sessionScope.user.roles}">
-                        <c:if test="${role.name != 'ADMIN'}">
+                        <c:set var="roleNames" value="${roleNames}${role.name}," />
+                    </c:forEach>
+                    <c:if test="${!fn:contains(roleNames, 'ADMIN')}">
                         <div class="d-flex justify-content-end mt-4">
                             <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
                                 <i class="fas fa-user-times"></i> Xóa tài khoản
                             </button>
                         </div>
-                        </c:if>
-                    </c:forEach>
 
                     <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
@@ -116,6 +117,7 @@
                             </div>
                         </div>
                     </div>
+                        </c:if>
 
                     <div class="modal fade" id="editPersonalInfoModal" tabindex="-1" aria-labelledby="editPersonalInfoModalLabel" aria-hidden="true">
                         <div class="modal-dialog">

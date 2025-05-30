@@ -22,7 +22,7 @@ public class UserDao {
 
     public List<User> getListUser() throws SQLException {
         List<User> users = new ArrayList<>();
-        String sql = "select * from users WHERE status NOT IN ('Đã xóa', 'Chờ xóa')";
+        String sql = "select * from users WHERE status NOT IN ('Đã xóa')";
         PreparedStatement ps = conn.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
 
@@ -520,7 +520,7 @@ public class UserDao {
     }
 
     public User findGoogleUserById(String gg_id) throws SQLException {
-        String sql = "SELECT * FROM users WHERE gg_id = ? AND status NOT IN ('Đã xóa', 'Chờ xóa')";
+        String sql = "SELECT * FROM users WHERE gg_id = ? AND status NOT IN ('Đã xóa')";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, gg_id);
 
@@ -574,7 +574,7 @@ public class UserDao {
         }
     }
     public User findFBUserById(String fbId) throws SQLException {
-        String sql = "SELECT * FROM users WHERE fb_id = ? AND status NOT IN ('Đã xóa', 'Chờ xóa')";
+        String sql = "SELECT * FROM users WHERE fb_id = ? AND status NOT IN ('Đã xóa')";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, fbId);
 
@@ -601,7 +601,7 @@ public class UserDao {
                             SELECT u.*
                             FROM users u
                             JOIN user_roles ur ON u.id = ur.userId
-                            WHERE ur.roleId = ? AND u.status NOT IN ('Đã xóa', 'Chờ xóa')
+                            WHERE ur.roleId = ?
                         """;
         PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, roleId);
@@ -617,7 +617,7 @@ public class UserDao {
     }
     public List<User> getListUserIsDelete() throws SQLException {
         List<User> users = new ArrayList<>();
-        String sql = "select * from users WHERE status IN ('Đã xóa', 'Chờ xóa')";
+        String sql = "select * from users WHERE status IN ('Đã xóa')";
         PreparedStatement ps = conn.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
 
@@ -635,6 +635,18 @@ public class UserDao {
         }
         return users;
 
+    }
+    public void updateStatusDeletedForExpiredTokens() {
+        String sql = "UPDATE users u " +
+                "JOIN tokens t ON u.id = t.userId " +
+                "SET u.status = 'Đã xóa' " +
+                "WHERE t.type = 'undoDelete' AND t.expiredAt <= NOW()";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            int updatedRows = ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) throws SQLException {

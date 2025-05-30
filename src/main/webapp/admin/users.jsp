@@ -210,6 +210,7 @@
                                     <option value="Hoạt động">Hoạt động</option>
                                     <option value="Chưa kích hoạt">Chưa kích hoạt</option>
                                     <option value="Bị khóa">Bị khóa</option>
+                                    <option value="Chờ xóa">Chờ xóa</option>
                                 </select>
                             </div>
                         </div>
@@ -339,11 +340,9 @@
     });
 
 
-    document.addEventListener('click', function (event) {
-        if (event.target.matches('[data-bs-target="#deleteUsersModal"]')) {
-            let userId = event.target.getAttribute('data-user-id');
-            document.getElementById('userIdToDelete').value = userId;
-        }
+    $(document).on('click', '[data-bs-target="#deleteUsersModal"]', function () {
+        let userId = $(this).data('user-id');
+        $('#userIdToDelete').val(userId);
     });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
