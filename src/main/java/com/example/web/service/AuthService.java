@@ -1,5 +1,6 @@
 package com.example.web.service;
 
+import com.example.web.controller.util.UserCacheManager;
 import com.example.web.dao.UserDao;
 import com.example.web.dao.db.DbConnect;
 import com.example.web.dao.model.User;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 public class AuthService {
     private UserDao udao = new UserDao();
+    private final UserCacheManager cacheManager = new UserCacheManager();
     Connection conn = DbConnect.getConnection();
     private final EmailService emailService = new EmailService();
 
@@ -39,7 +41,7 @@ public class AuthService {
         long time = 24 * 60 * 60 * 1000;
         if (user != null) {
             String token = UUID.randomUUID().toString();
-            udao.saveTokens(null, user.getId(), token, "register", time);
+            udao.saveTokens(conn, user.getId(), token, "register", time);
 
             String subject = "Xác nhận email đăng ký";
             String body = "Xin chào " + fullName + ",\n\nCó phải bạn vừa đăng ký tài khoản? " +
@@ -79,13 +81,13 @@ public class AuthService {
 
     public boolean passwordRecovery(String email) throws SQLException {
         User user = udao.findByEmail(email);
-        if (user == null || user.getPassword() == null || user.getPassword().isEmpty()) {
+        if (user == null || user.getPassword() == null || user.getPassword().isEmpty() || !user.getStatus().equals("Đã kích hoạt")) {
             return false;
         }
         long time = 15 * 60 * 1000;
         String token = UUID.randomUUID().toString();
         udao.deleteActiveTokens(user.getId(), "forgotPass");
-        udao.saveTokens(null, user.getId(), token, "forgotPass", time);
+        udao.saveTokens(conn, user.getId(), token, "forgotPass", time);
 
         String resetLink = "http://localhost:8080/TTLTW_war/reset_password?token=" + token;
 
@@ -102,16 +104,17 @@ public class AuthService {
         try {
             conn.setAutoCommit(false);
             String undoToken = UUID.randomUUID().toString();
-            Timestamp expireTimestamp = Timestamp.valueOf(LocalDateTime.now().plusDays(3));
-            Long expireAt = expireTimestamp.getTime();
+            long threeDaysMillis = 3L * 24 * 60 * 60 * 1000;
 
             udao.deleteAccountCus(conn, user.getId());
-            udao.saveTokens(conn, user.getId(), undoToken, "undoDelete", expireAt);
+            cacheManager.invalidateAllUsersList();
+            udao.saveTokens(conn, user.getId(), undoToken, "undoDelete", threeDaysMillis);
 
             String subject = "Xóa tài khoản";
             String undoLink = "http://localhost:8080/TTLTW_war/undo-delete?token=" + undoToken;
 
-            String content = "Bạn đã yêu cầu xóa tài khoản.\n\n"
+            String content = "Chào bạn,\n\n"
+                    + "Bạn đã yêu cầu xóa tài khoản.\n\n"
                     + "Nếu bạn thay đổi ý định, vui lòng bấm vào liên kết bên dưới trong vòng 3 ngày để hủy bỏ yêu cầu:\n"
                     + undoLink + "\n\n"
                     + "Nếu không có hành động nào, tài khoản của bạn sẽ bị xóa vĩnh viễn.";
@@ -128,6 +131,9 @@ public class AuthService {
             if (conn != null) conn.rollback();
             throw e;
         }
+    }
+    public boolean undoDeleteUserByToken(String token, int id) {
+        return udao.undoDeleteUserByToken(token, id);
     }
 
     public boolean createUserByGoogle(String gg_id, String name, String email) throws SQLException {
@@ -185,7 +191,7 @@ public class AuthService {
         boolean updated = udao.updatePassword(user.getId(), hashedNewPassword);
 
         if (updated) {
-            udao.deleteRegisterToken(token, "forgotPass");
+            udao.deleteToken(token, "forgotPass");
             return "success";
         } else {
             return "update_failed";

@@ -258,14 +258,24 @@ $(document).ready(function(){
             dataType: 'json',
             success: function(response) {
                 $('#deleteAccountModal').modal('hide');
-                logout();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công',
+                    confirmButtonText: 'OK'
+                })
             },
             error: function(xhr, status, error) {
-                alert('Xóa tài khoản thất bại: ' + error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Xóa tài khoản thất bại',
+                    text: error,
+                    confirmButtonText: 'Thử lại'
+                });
                 $btn.prop('disabled', false);
             }
         });
     });
+
 
 });
 function formatCurrency(value) {

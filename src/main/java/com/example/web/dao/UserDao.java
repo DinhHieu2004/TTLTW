@@ -81,6 +81,7 @@ public class UserDao {
         try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
             preparedStatement.setString(1, "Chờ xóa");
             preparedStatement.setInt(2, id);
+            int rowsUpdated = preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -143,7 +144,7 @@ public class UserDao {
     }
 
     public User findByUsername(String username) throws SQLException {
-        String sql = "SELECT * FROM users WHERE username = ? AND status NOT IN ('Đã xóa', 'Chờ xóa')";
+        String sql = "SELECT * FROM users WHERE username = ?";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, username);
         try (ResultSet rs = ps.executeQuery()) {
@@ -165,7 +166,7 @@ public class UserDao {
     }
 
     public User findByEmail(String email) throws SQLException {
-        String sql = "SELECT * FROM users WHERE email = ? AND status NOT IN ('Đã xóa', 'Chờ xóa')";
+        String sql = "SELECT * FROM users WHERE email = ? AND status NOT IN ('Đã xóa')";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, email);
         try (ResultSet rs = ps.executeQuery()) {
@@ -284,20 +285,20 @@ public class UserDao {
         return null;
     }
 
-    public boolean updateUserStatusByToken(String token) throws SQLException {
+    public boolean updateUserStatusByToken(String token, String type) throws SQLException {
         String sqlUpdateUser = "UPDATE users SET status = ? WHERE id = " +
                 "(SELECT userId FROM tokens WHERE token = ? AND type = ?)";
 
         try (PreparedStatement psUpdateUser = conn.prepareStatement(sqlUpdateUser)) {
             psUpdateUser.setString(1, "Hoạt động");
             psUpdateUser.setString(2, token);
-            psUpdateUser.setString(3, "register");
+            psUpdateUser.setString(3, type);
             int rowsAffected = psUpdateUser.executeUpdate();
 
             return rowsAffected > 0;
         }
     }
-    public boolean deleteRegisterToken(String token, String type) throws SQLException {
+    public boolean deleteToken(String token, String type) throws SQLException {
         String sqlDeleteToken = "DELETE FROM tokens WHERE token = ? AND type = ?";
 
         try (PreparedStatement psDeleteToken = conn.prepareStatement(sqlDeleteToken)) {
@@ -311,7 +312,7 @@ public class UserDao {
     public boolean activateUserByToken(String token, int userId) {
         try {
             conn.setAutoCommit(false);
-            boolean isUserUpdated = updateUserStatusByToken(token);
+            boolean isUserUpdated = updateUserStatusByToken(token, "register");
             if (!isUserUpdated) {
                 conn.rollback();
                 return false;
@@ -322,12 +323,42 @@ public class UserDao {
                 insertRolePs.setInt(2, 2);
                 insertRolePs.executeUpdate();
             }
-            boolean isTokenDeleted = deleteRegisterToken(token, "register");
+            boolean isTokenDeleted = deleteToken(token, "register");
             if (!isTokenDeleted) {
                 conn.rollback();
                 return false;
             }
-
+            conn.commit();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+    public boolean undoDeleteUserByToken(String token, int id) {
+        try {
+            conn.setAutoCommit(false);
+            boolean isUserUpdated = updateUserStatusByToken(token, "undoDelete");
+            if (!isUserUpdated) {
+                conn.rollback();
+                return false;
+            }
+            boolean isTokenDeleted = deleteToken(token, "undoDelete");
+            if (!isTokenDeleted) {
+                conn.rollback();
+                return false;
+            }
             conn.commit();
             return true;
         } catch (SQLException e) {
@@ -610,5 +641,4 @@ public class UserDao {
         UserDao userDao = new UserDao();
         System.out.println(userDao.getUsersByRoleId(17));
     }
-
 }
