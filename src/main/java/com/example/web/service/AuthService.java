@@ -32,6 +32,13 @@ public class AuthService {
         }
         return null;
     }
+    public boolean checkPassword(int userId, String password) throws SQLException {
+        User u = udao.getUser(userId);
+        if (u == null) return false;
+
+        String hashedPasswordFromDB = u.getPassword();
+        return BCrypt.checkpw(password, hashedPasswordFromDB);
+    }
 
     public boolean registerUser(String fullName, String username, String password, String email, String phone, String role) throws SQLException {
         if (!udao.registerUser(fullName, username, hashPassword(password), email, phone, role)) {
@@ -110,11 +117,11 @@ public class AuthService {
             cacheManager.invalidateAllUsersList();
             udao.saveTokens(conn, user.getId(), undoToken, "undoDelete", threeDaysMillis);
 
-            String subject = "Xóa tài khoản";
+            String subject = "Email HỦY xóa tài khoản";
             String undoLink = "http://localhost:8080/TTLTW_war/undo-delete?token=" + undoToken;
 
             String content = "Chào bạn,\n\n"
-                    + "Bạn đã yêu cầu xóa tài khoản.\n\n"
+                    + "Bạn đã XÓA tài khoản.\n\n"
                     + "Nếu bạn thay đổi ý định, vui lòng bấm vào liên kết bên dưới trong vòng 3 ngày để hủy bỏ yêu cầu:\n"
                     + undoLink + "\n\n"
                     + "Nếu không có hành động nào, tài khoản của bạn sẽ bị xóa vĩnh viễn.";
@@ -205,5 +212,4 @@ public class AuthService {
 
         System.out.println("Mã hóa: " + hashed);
     }
-
 }

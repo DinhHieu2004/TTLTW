@@ -249,32 +249,79 @@ $(document).ready(function(){
     });
     $('#confirmDeleteAccountBtn').on('click', function() {
         var $btn = $(this);
-        $btn.prop('disabled', true);
+        var password = $('#deleteAccountPassword').val();
 
+        $('#passwordError').hide();
+
+        if (!password) {
+            $('#passwordError').text('Vui lòng nhập mật khẩu').addClass("text-danger").show();
+            $('#deleteAccountPassword').addClass('is-invalid');
+            return;
+        }
+
+        $btn.prop('disabled', true);
         $.ajax({
-            url: 'delete-customer-account',
+            url: 'verify-password',
             type: 'POST',
-            contentType: 'application/json',
-            dataType: 'json',
+            data: {password: password} ,
             success: function(response) {
-                $('#deleteAccountModal').modal('hide');
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Thành công',
-                    confirmButtonText: 'OK'
-                })
+                if (response.valid) {
+                    Swal.fire({
+                        title: 'Xác nhận xóa tài khoản',
+                        text: "Bạn có chắc chắn muốn xóa tài khoản không? Hành động này không thể hoàn tác!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Xóa tài khoản',
+                        cancelButtonText: 'Hủy'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: 'delete-customer-account',
+                                type: 'POST',
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                success: function(response) {
+                                    $('#deleteAccountModal').modal('hide');
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Thành công',
+                                        confirmButtonText: 'OK'
+                                    })
+                                },
+                                error: function(xhr, status, error) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Xóa tài khoản thất bại',
+                                        text: error,
+                                        confirmButtonText: 'Thử lại'
+                                    });
+                                    $btn.prop('disabled', false);
+                                }
+                            });
+                        } else {
+                            $btn.prop('disabled', false);
+                        }
+                    });
+                } else {
+                    $('#passwordError').text('Mật khẩu không đúng, vui lòng thử lại.').show();
+                    $btn.prop('disabled', false);
+                }
             },
             error: function(xhr, status, error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Xóa tài khoản thất bại',
-                    text: error,
-                    confirmButtonText: 'Thử lại'
-                });
+                let errorMsg = 'Lỗi kiểm tra mật khẩu, vui lòng thử lại.';
+                if (xhr.responseText) {
+                    errorMsg += '\nChi tiết: ' + xhr.responseText;
+                } else if (error) {
+                    errorMsg += '\nChi tiết: ' + error;
+                }
+                $('#passwordError').text(errorMsg).show();
                 $btn.prop('disabled', false);
             }
         });
     });
+
 
 
 });

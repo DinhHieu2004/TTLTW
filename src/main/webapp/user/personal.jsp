@@ -90,7 +90,6 @@
                         </c:if>
                     </c:forEach>
 
-                    <!-- Modal xác nhận xóa tài khoản -->
                     <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
@@ -103,12 +102,16 @@
                                     <p><strong>Lưu ý:</strong> Tài khoản của bạn sẽ được đặt trạng thái chờ xóa trong <strong>3 ngày</strong>. Trong thời gian này bạn sẽ không thể đăng nhập.</p>
                                     <p>Một email sẽ được gửi đến bạn với link để <strong>hủy bỏ xóa tài khoản</strong> nếu bạn thay đổi ý định.</p>
                                     <p>Sau 3 ngày, tài khoản sẽ bị xóa vĩnh viễn và không thể khôi phục.</p>
+
+                                    <div class="mt-3">
+                                        <label for="deleteAccountPassword" class="form-label">Nhập mật khẩu để xác nhận:</label>
+                                        <input type="password" id="deleteAccountPassword" class="form-control" placeholder="Mật khẩu" />
+                                        <div id="passwordError" class="text-danger mt-1" style="display:none;">Mật khẩu không đúng, vui lòng thử lại.</div>
+                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                    <button id="confirmDeleteAccountBtn" type="button" class="btn btn-danger">
-                                        Xóa tài khoản
-                                    </button>
+                                    <button id="confirmDeleteAccountBtn" type="button" class="btn btn-danger">Xóa tài khoản</button>
                                 </div>
                             </div>
                         </div>
