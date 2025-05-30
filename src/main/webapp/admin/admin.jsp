@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix = "f" uri = "http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -130,7 +131,10 @@
                     <div class="card-body">
                         <h5 class="card-title">Tổng Doanh Thu</h5>
                         <span class="stat-icon">💰</span>
-                        <p id="totalRevenue" class="card-text fs-4 text-success"><f:formatNumber value="${totalRevenue}" type="currency" currencySymbol="VNĐ"/></p>
+                        <f:formatNumber var="formattedRevenue" value="${totalRevenue}" pattern="#,##0" />
+                        <p id="totalRevenue" class="card-text fs-4 text-success">
+                            ${fn:replace(formattedRevenue, ',', '.')} ₫
+                        </p>
                     </div>
                 </div>
             </div>

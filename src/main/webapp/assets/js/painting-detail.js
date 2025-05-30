@@ -21,9 +21,13 @@ $(document).ready(function () {
 
                 if (response.cart && response.cart.items) {
                     if (response.cart.items instanceof Object) {
-                        console.log('Giỏ hàng có dạng đối tượng:', response.cart.items);
                         const itemsArray = Object.values(response.cart.items);
                         updateMiniCartHeader(itemsArray);
+                        if (typeof response.cart.totalPrice === 'number') {
+                            const formattedTotal = response.cart.totalPrice.toLocaleString('vi-VN') + " ₫";
+                            $('#total-price').text(formattedTotal);
+                            $('#totalAmount').text(formattedTotal);
+                        }
                     } else {
                         console.error('Dữ liệu giỏ hàng không đúng định dạng:', response.cart.items);
                     }
@@ -71,7 +75,8 @@ $(document).ready(function () {
             success: function(response) {
                 console.log(response);
                 if (response.status === "success") {
-                    const formattedPrice = response.cart.totalPrice.toLocaleString() + " VND";
+                    const formattedPrice = formatCurrencyVND(response.cart.totalPrice);
+
                     $("#total-price").text(formattedPrice);
                     $("#totalAmount").text(formattedPrice);
 
@@ -116,7 +121,9 @@ $(document).ready(function () {
         Object.values(items).forEach(item => {
             totalQuantity += item.quantity;
 
-            const finalPrice = item.discountPrice ? item.discountPrice.toLocaleString() : item.totalPrice.toLocaleString();
+            const finalPrice = item.discountPrice
+                ? formatCurrencyVND(item.discountPrice)
+                : formatCurrencyVND(item.totalPrice);
             const discountBadge = item.discountPercent > 0 ? `<span class="badge bg-success ms-2">-${item.discountPercent}%</span>` : '';
             const fullImgUrl = item.imageUrlCloud && item.imageUrlCloud.trim() !== ""
                 ? `${item.imageUrlCloud}?f_auto,q_auto,w_80`
@@ -127,7 +134,7 @@ $(document).ready(function () {
                     <div class="cart-item-details">
                         <div class="cart-item-name-price">
                             <span class="cart-item-name">${item.productName}</span>
-                            <span class="cart-item-price">${finalPrice} VNĐ ${discountBadge}</span>
+                            <span class="cart-item-price">${finalPrice} ${discountBadge}</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 10px; font-size: 14px;">
                             <div class="cart-item-size">Size: ${item.sizeDescriptions}</div>
@@ -147,6 +154,14 @@ $(document).ready(function () {
         $('#mini-cart-items').html(miniCartHtml);
         $('#mini-cart-count').text(Object.keys(items).length); // Số loại sản phẩm
         $('#cart-item-count').text(totalQuantity).show();
+    }
+
+    function formatCurrencyVND(amount) {
+        if (typeof amount !== 'number') {
+            amount = parseFloat(amount);
+        }
+        if (isNaN(amount)) return '0 ₫';
+        return amount.toLocaleString('vi-VN') + ' ₫';
     }
 
     window.incrementQuantity = function () {

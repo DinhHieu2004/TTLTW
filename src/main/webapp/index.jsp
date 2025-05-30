@@ -2,6 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%
     User currentUser = (session != null) ? (User) session.getAttribute("currentUser") : null;
 %>
@@ -201,21 +202,24 @@
                                 <c:when test="${p.discountPercentage > 0}">
                                     <div class="price-container">
                                         <div class="original-price-wrapper">
+                                            <fmt:formatNumber var="originalPrice" value="${p.price}" pattern="#,##0"/>
                                     <span class="text-muted original-price">
-                                        <del><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</del>
+                                        <del>${fn:replace(originalPrice, ',', '.')} ₫</del>
                                     </span>
                                             <span class="badge bg-success discount-badge">-${p.discountPercentage}%</span>
                                         </div>
                                         <div class="sale-price-wrapper">
+                                            <fmt:formatNumber var="salePrice" value="${p.price * (1 - p.discountPercentage / 100)}" pattern="#,##0"/>
                                     <span class="text-danger fw-bold sale-price">
-                                        <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}" type="currency" pattern="#,##0"/>₫
+                                        ${fn:replace(salePrice, ',', '.')} ₫
                                     </span>
                                         </div>
                                     </div>
                                 </c:when>
                                 <c:otherwise>
+                                    <fmt:formatNumber var="regularPrice" value="${p.price}" pattern="#,##0"/>
                                     <div class="regular-price">
-                                        <span class="fw-bold"><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</span>
+                                        <span class="fw-bold">${fn:replace(regularPrice, ',', '.')} ₫</span>
                                     </div>
                                 </c:otherwise>
                             </c:choose>
@@ -318,21 +322,24 @@
                                     <c:when test="${p.discountPercentage > 0}">
                                         <div class="price-container">
                                             <div class="original-price-wrapper">
-                                    <span class="text-muted original-price">
-                                        <del><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</del>
+                                                <fmt:formatNumber var="originalPrice" value="${p.price}" pattern="#,##0"/>
+                                                <span class="text-muted original-price">
+                                        <del>${fn:replace(originalPrice, ',', '.')} ₫</del>
                                     </span>
                                                 <span class="badge bg-success discount-badge">-${p.discountPercentage}%</span>
                                             </div>
                                             <div class="sale-price-wrapper">
-                                    <span class="text-danger fw-bold sale-price">
-                                        <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}" type="currency" pattern="#,##0"/>₫
+                                                <fmt:formatNumber var="salePrice" value="${p.price * (1 - p.discountPercentage / 100)}" pattern="#,##0"/>
+                                                <span class="text-danger fw-bold sale-price">
+                                        ${fn:replace(salePrice, ',', '.')} ₫
                                     </span>
                                             </div>
                                         </div>
                                     </c:when>
                                     <c:otherwise>
+                                        <fmt:formatNumber var="regularPrice" value="${p.price}" pattern="#,##0"/>
                                         <div class="regular-price">
-                                            <span class="fw-bold"><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</span>
+                                            <span class="fw-bold">${fn:replace(regularPrice, ',', '.')} ₫</span>
                                         </div>
                                     </c:otherwise>
                                 </c:choose>
@@ -415,21 +422,24 @@
                                 <c:when test="${p.discountPercentage > 0}">
                                     <div class="price-container">
                                         <div class="original-price-wrapper">
-                                    <span class="text-muted original-price">
-                                        <del><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</del>
+                                            <fmt:formatNumber var="originalPrice" value="${p.price}" pattern="#,##0"/>
+                                            <span class="text-muted original-price">
+                                        <del>${fn:replace(originalPrice, ',', '.')} ₫</del>
                                     </span>
                                             <span class="badge bg-success discount-badge">-${p.discountPercentage}%</span>
                                         </div>
                                         <div class="sale-price-wrapper">
-                                    <span class="text-danger fw-bold sale-price">
-                                        <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}" type="currency" pattern="#,##0"/>₫
+                                            <fmt:formatNumber var="salePrice" value="${p.price * (1 - p.discountPercentage / 100)}" pattern="#,##0"/>
+                                            <span class="text-danger fw-bold sale-price">
+                                        ${fn:replace(salePrice, ',', '.')} ₫
                                     </span>
                                         </div>
                                     </div>
                                 </c:when>
                                 <c:otherwise>
+                                    <fmt:formatNumber var="regularPrice" value="${p.price}" pattern="#,##0"/>
                                     <div class="regular-price">
-                                        <span class="fw-bold"><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</span>
+                                        <span class="fw-bold">${fn:replace(regularPrice, ',', '.')} ₫</span>
                                     </div>
                                 </c:otherwise>
                             </c:choose>
@@ -530,21 +540,24 @@
                                 <c:when test="${p.discountPercentage > 0}">
                                     <div class="price-container">
                                         <div class="original-price-wrapper">
-                                    <span class="text-muted original-price">
-                                        <del><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</del>
+                                            <fmt:formatNumber var="originalPrice" value="${p.price}" pattern="#,##0"/>
+                                            <span class="text-muted original-price">
+                                        <del>${fn:replace(originalPrice, ',', '.')} ₫</del>
                                     </span>
                                             <span class="badge bg-success discount-badge">-${p.discountPercentage}%</span>
                                         </div>
                                         <div class="sale-price-wrapper">
-                                    <span class="text-danger fw-bold sale-price">
-                                        <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}" type="currency" pattern="#,##0"/>₫
+                                            <fmt:formatNumber var="salePrice" value="${p.price * (1 - p.discountPercentage / 100)}" pattern="#,##0"/>
+                                            <span class="text-danger fw-bold sale-price">
+                                        ${fn:replace(salePrice, ',', '.')} ₫
                                     </span>
                                         </div>
                                     </div>
                                 </c:when>
                                 <c:otherwise>
+                                    <fmt:formatNumber var="regularPrice" value="${p.price}" pattern="#,##0"/>
                                     <div class="regular-price">
-                                        <span class="fw-bold"><f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫</span>
+                                        <span class="fw-bold">${fn:replace(regularPrice, ',', '.')} ₫</span>
                                     </div>
                                 </c:otherwise>
                             </c:choose>

@@ -90,7 +90,7 @@ $(document).ready(function () {
                         <p><strong>Phí giao hàng:</strong> ${formatCurrency(order.shippingFee)}</p>
                         <p><strong>Voucher áp dụng:</strong> ${voucherText}</p>
                         <p><strong>Phuương thức TT:</strong> ${order.paymentMethod}</p>
-                        <p><strong>Tổng trả:</strong> ${order.priceAfterShipping}</p>
+                        <p><strong>Tổng trả:</strong> ${formatCurrency(order.priceAfterShipping)}</p>
                         <p><strong>Trạng thái:</strong> ${order.deliveryStatus}</p>
 `);                     debugger
                         if (order.deliveryStatus.trim().toLowerCase()  === 'chờ' ||
