@@ -43,8 +43,8 @@ public class ReorderDao {
                 alert.setSizeId(rs.getInt("sizeId"));
                 alert.setSizeDescription(rs.getString("sizeDescription"));
                 alert.setDisplayQuantity(rs.getInt("displayQuantity"));
-                alert.setAvgDailySale(rs.getDouble("avgDailySale"));
-                alert.setReorderThreshold(rs.getDouble("reorderThreshold"));
+                alert.setAvgDailySale(Math.ceil(rs.getDouble("avgDailySale")));
+                alert.setReorderThreshold(Math.ceil(rs.getDouble("reorderThreshold")));
                 alerts.add(alert);
             }
 
