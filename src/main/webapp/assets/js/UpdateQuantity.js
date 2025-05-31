@@ -53,8 +53,8 @@ $(document).on('click', '.increase-quantity, .decrease-quantity', function (e) {
 
                 }
 
-                $("#total-price").text(response.totalPrice.toLocaleString('vi-VN') + " ₫");
-                $("#totalAmount").text(response.totalPrice.toLocaleString('vi-VN') + " ₫");
+                $("#cart-total-price").text(formatCurrencyVND(response.totalPrice));
+                $("#totalAmount").text(formatCurrencyVND(response.totalPrice));
 
                 const modalRowSelector = `#cart-itemp-${productId}-${sizeId}`;
                 const item = response.items[itemKey];
@@ -66,6 +66,13 @@ $(document).on('click', '.increase-quantity, .decrease-quantity', function (e) {
                         : item.totalPrice;
                     $(`${modalRowSelector} td:last-child`).text(formatCurrencyVND(finalPrice));
                 }
+
+                const formattedTotal = formatCurrencyVND(response.totalPrice);
+                document.querySelectorAll("#total-price-value, #totalAmount, #checkout-total-price-value, #cart-total-price-value")
+                    .forEach(el => {
+                        el.textContent = formattedTotal;
+                    });
+
 
                 updateMiniCartHeader(response.items);
 
@@ -92,7 +99,7 @@ $(document).on('click', '.increase-quantity, .decrease-quantity', function (e) {
 
             miniCartHtml += `
         <div class="cart-item" id="mini-cart-item-${item.productId}-${item.sizeId}">
-            <img src="${item.imageUrl}" alt="${item.productName}" class="cart-item-image" />
+            <img src="${item.imageUrlCloud}" alt="${item.productName}" class="cart-item-image" />
             <div class="cart-item-details">
                 <div class="cart-item-name-price">
                     <span class="cart-item-name">${item.productName}</span>

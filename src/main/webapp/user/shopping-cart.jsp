@@ -112,7 +112,7 @@
                         <f:formatNumber var="totalFormatted" value="${sessionScope.cart.totalPrice}" pattern="#,##0" />
                         <tr>
                             <th colspan="4" class="text-end">Tổng tiền</th>
-                            <th id="total-price" colspan="2">${fn:replace(totalFormatted, ',', '.')} ₫</th>
+                            <th id="cart-total-price" colspan="2">${fn:replace(totalFormatted, ',', '.')} ₫</th>
                         </tr>
                         </tfoot>
                     </table>

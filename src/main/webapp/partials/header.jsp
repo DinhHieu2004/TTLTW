@@ -136,10 +136,13 @@
 
                         <div class="cart-footer">
                             <div class="total-price">
-                                Tổng tiền: <span id="total-price">
-                                <f:formatNumber var="totalFormatted" value="${sessionScope.cart.totalPrice != null ? sessionScope.cart.totalPrice : 0}" pattern="#,##0" />
-                                    ${fn:replace(totalFormatted, ',', '.')} ₫
-                                            </span>
+                                Tổng tiền:
+                                <span id="total-price">
+                                    <span id="total-price-value">
+                                        <f:formatNumber var="totalFormatted" value="${sessionScope.cart.totalPrice != null ? sessionScope.cart.totalPrice : 0}" pattern="#,##0" />
+                                        ${fn:replace(totalFormatted, ',', '.')} ₫
+                                    </span>
+                                </span>
                             </div>
 
                             <button class="btn btn-primary" onclick="window.location.href='show-cart'"
