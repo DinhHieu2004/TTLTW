@@ -1,5 +1,6 @@
 package com.example.web.controller;
 
+import com.example.web.dao.model.Order;
 import com.example.web.dao.model.User;
 import com.example.web.service.AuthService;
 import com.example.web.service.OrderService;
@@ -13,6 +14,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 
 @WebServlet("/delete-customer-account")
@@ -35,7 +37,8 @@ public class DeleteAccount extends HttpServlet {
         }
 
         try {
-            boolean hasOrders = orderService.getCurrentOrdersForUser(currentUser.getId()) == null;
+            List<Order> currentOrders = orderService.getCurrentOrdersForUser(currentUser.getId());
+            boolean hasOrders = currentOrders != null && !currentOrders.isEmpty();
             if (hasOrders) {
                 resp.setStatus(HttpServletResponse.SC_CONFLICT);
                 out.print("{\"error\": \"Tài khoản có đơn hàng đang xử lý. Không thể xóa.\"}");
@@ -45,7 +48,6 @@ public class DeleteAccount extends HttpServlet {
             boolean marked = authService.deleteAndSendUndoMail(currentUser);;
             if (marked) {
                 session.invalidate();
-                out.print("{\"message\": \"Tài khoản sẽ bị xóa sau 3 ngày. Bạn không thể đăng nhập trong thời gian này.\"}");
             } else {
                 resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 out.print("{\"error\": \"Không thể xử lý yêu cầu xóa tài khoản.\"}");

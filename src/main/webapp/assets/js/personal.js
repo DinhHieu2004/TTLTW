@@ -250,8 +250,13 @@ $(document).ready(function(){
     $('#confirmDeleteAccountBtn').on('click', function() {
         var $btn = $(this);
         var password = $('#deleteAccountPassword').val();
+        var hasUsername = $('#hasUsername').val() === 'true';
 
         $('#passwordError').hide();
+        if (!hasUsername) {
+            confirmAndDelete($btn);
+            return;
+        }
 
         if (!password) {
             $('#passwordError').text('Vui lòng nhập mật khẩu').addClass("text-danger").show();
@@ -266,44 +271,7 @@ $(document).ready(function(){
             data: {password: password} ,
             success: function(response) {
                 if (response.valid) {
-                    Swal.fire({
-                        title: 'Xác nhận xóa tài khoản',
-                        text: "Bạn có chắc chắn muốn xóa tài khoản không? Hành động này không thể hoàn tác!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#3085d6',
-                        confirmButtonText: 'Xóa tài khoản',
-                        cancelButtonText: 'Hủy'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            $.ajax({
-                                url: 'delete-customer-account',
-                                type: 'POST',
-                                contentType: 'application/json',
-                                dataType: 'json',
-                                success: function(response) {
-                                    $('#deleteAccountModal').modal('hide');
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Thành công',
-                                        confirmButtonText: 'OK'
-                                    })
-                                },
-                                error: function(xhr, status, error) {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Xóa tài khoản thất bại',
-                                        text: error,
-                                        confirmButtonText: 'Thử lại'
-                                    });
-                                    $btn.prop('disabled', false);
-                                }
-                            });
-                        } else {
-                            $btn.prop('disabled', false);
-                        }
-                    });
+                        confirmAndDelete($btn);
                 } else {
                     $('#passwordError').text('Mật khẩu không đúng, vui lòng thử lại.').show();
                     $btn.prop('disabled', false);
@@ -325,6 +293,48 @@ $(document).ready(function(){
 
 
 });
+function confirmAndDelete($btn) {
+    Swal.fire({
+        title: 'Xác nhận xóa tài khoản',
+        text: "Bạn có chắc chắn muốn xóa tài khoản không? Hành động này không thể hoàn tác!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Xóa tài khoản',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: 'delete-customer-account',
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                success: function (response) {
+                    $('#deleteAccountModal').modal('hide');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Tài khoản đã được xóa',
+                        confirmButtonText: 'OK'
+                    })
+                },
+                error: function (xhr, status, error) {
+                    let msg = xhr.responseText ? xhr.responseText.replace(/\s+/g, ' ').trim() : error;
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Xóa tài khoản thất bại',
+                        text: msg,
+                        confirmButtonText: 'Thử lại'
+                    });
+                    $btn.prop('disabled', false);
+                }
+            });
+        } else {
+            $btn.prop('disabled', false);
+        }
+    });
+}
+
 function formatCurrency(value) {
     return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', '₫');
 }

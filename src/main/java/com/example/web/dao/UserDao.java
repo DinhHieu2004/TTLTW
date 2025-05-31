@@ -637,13 +637,22 @@ public class UserDao {
 
     }
     public void updateStatusDeletedForExpiredTokens() {
-        String sql = "UPDATE users u " +
+        String updateSql = "UPDATE users u " +
                 "JOIN tokens t ON u.id = t.userId " +
                 "SET u.status = 'Đã xóa' " +
                 "WHERE t.type = 'undoDelete' AND t.expiredAt <= NOW()";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            int updatedRows = ps.executeUpdate();
+        String deleteSql = "DELETE t FROM tokens t " +
+                "JOIN users u ON t.userId = u.id " +
+                "WHERE t.type = 'undoDelete' AND t.expiredAt <= NOW() AND u.status = 'Đã xóa'";
+
+        try (
+                PreparedStatement updatePs = conn.prepareStatement(updateSql);
+                PreparedStatement deletePs = conn.prepareStatement(deleteSql)
+        ) {
+            int updatedRows = updatePs.executeUpdate();
+            int deletedRows = deletePs.executeUpdate();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
