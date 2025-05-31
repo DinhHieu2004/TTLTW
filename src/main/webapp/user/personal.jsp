@@ -103,9 +103,9 @@
                                     <p><strong>Lưu ý:</strong> Tài khoản của bạn sẽ được đặt trạng thái chờ xóa trong <strong>3 ngày</strong>. Trong thời gian này bạn sẽ không thể đăng nhập.</p>
                                     <p>Một email sẽ được gửi đến bạn với link để <strong>hủy bỏ xóa tài khoản</strong> nếu bạn thay đổi ý định.</p>
                                     <p>Sau 3 ngày, tài khoản sẽ bị xóa vĩnh viễn và không thể khôi phục.</p>
-                                    <input type="hidden" id="hasUsername" name="hasUsername" value="${not empty currentUser.username}" />
+                                    <input type="hidden" id="hasUsername" name="hasUsername" value="${not empty sessionScope.user.username}" />
 
-                                    <c:if test="${not empty currentUser.username}">
+                                    <c:if test="${not empty sessionScope.user.username}">
                                         <div class="mt-3">
                                             <label for="deleteAccountPassword" class="form-label">Nhập mật khẩu để xác nhận:</label>
                                             <input type="password" id="deleteAccountPassword" class="form-control" placeholder="Mật khẩu" />

@@ -1,5 +1,6 @@
 package com.example.web.controller;
 
+import com.example.web.dao.model.User;
 import com.example.web.service.AuthService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -29,15 +30,9 @@ public class VerifyPassword extends HttpServlet {
             resp.getWriter().write("{\"valid\": false, \"error\": \"Password is required\"}");
             return;
         }
-
-        if (session == null || session.getAttribute("userId") == null) {
-            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            resp.getWriter().write("{\"valid\": false, \"error\": \"Not logged in\"}");
-            return;
-        }
-
         try {
-            userId = (int) session.getAttribute("userId");
+            User user = (User) session.getAttribute("user");
+            userId = user.getId();
         } catch (ClassCastException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             resp.getWriter().write("{\"valid\": false, \"error\": \"Invalid session userId\"}");

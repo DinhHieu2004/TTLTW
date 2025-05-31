@@ -270,21 +270,10 @@ $(document).ready(function(){
             type: 'POST',
             data: {password: password} ,
             success: function(response) {
-                if (response.valid) {
-                        confirmAndDelete($btn);
-                } else {
-                    $('#passwordError').text('Mật khẩu không đúng, vui lòng thử lại.').show();
-                    $btn.prop('disabled', false);
-                }
+                confirmAndDelete($btn);
             },
             error: function(xhr, status, error) {
-                let errorMsg = 'Lỗi kiểm tra mật khẩu, vui lòng thử lại.';
-                if (xhr.responseText) {
-                    errorMsg += '\nChi tiết: ' + xhr.responseText;
-                } else if (error) {
-                    errorMsg += '\nChi tiết: ' + error;
-                }
-                $('#passwordError').text(errorMsg).show();
+                $('#passwordError').text('Mật khẩu không đúng, vui lòng thử lại.').show();
                 $btn.prop('disabled', false);
             }
         });

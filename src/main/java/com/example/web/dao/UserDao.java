@@ -102,7 +102,6 @@ public class UserDao {
             statement.setString(3, user.getAddress());
             statement.setString(4, user.getEmail());
             statement.setString(5, user.getPhone());
-            statement.setString(5, user.getPhone());
             statement.setString(6, user.getStatus());
             statement.setInt(7, user.getId());
 
@@ -462,13 +461,15 @@ public class UserDao {
 
 
     public boolean updateUserInfo(User user) throws SQLException {
-        String query = "UPDATE users SET fullName = ?, phone = ?, email = ?, address = ? WHERE id = ?";
+        String query = "UPDATE users SET fullName = ?, phone = ?, email = ?, address = ?, gg_id = ?, fb_id=? WHERE id = ?";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1, user.getFullName());
         ps.setString(2, user.getPhone());
         ps.setString(3, user.getEmail());
         ps.setString(4, user.getAddress());
-        ps.setInt(5, user.getId());
+        ps.setString(5, user.getGg_id());
+        ps.setString(6, user.getFb_id());
+        ps.setInt(7, user.getId());
 
         return ps.executeUpdate() > 0;
 
