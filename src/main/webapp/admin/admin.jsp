@@ -218,6 +218,22 @@
             </div>
         </div>
     </div>
+
+    <h2>Danh sách sản phẩm cần nhập hàng</h2>
+    <table id="reorderTable" class="display">
+        <thead>
+        <tr>
+            <th>ID Tranh</th>
+            <th>Tên Tranh</th>
+            <th>Size</th>
+            <th>Số lượng còn</th>
+            <th>Trung bình bán/ngày</th>
+            <th>Ngưỡng cần nhập</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 </div>
 
 <script>
@@ -759,6 +775,10 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="${pageContext.request.contextPath}/assets/js/checkSession.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/location.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/admin/reorder.js"></script>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 
 </body>
 </html>

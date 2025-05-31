@@ -11,13 +11,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/footer.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/header.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/shopping-cart.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/painting-detail.css">
-    <script src="${pageContext.request.contextPath}/assets/js/header.js"></script>
-    <script src="${pageContext.request.contextPath}/assets/js/painting-detail.js"></script>
 
 </head>
 
@@ -181,6 +178,7 @@
 </div>
 
 <%@ include file="/partials/footer.jsp" %>
+<%@ include file="/partials/authModal.jsp" %>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
