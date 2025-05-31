@@ -70,8 +70,8 @@
                         <i class="fa fa-shopping-cart"></i>
                         <span id="cart-item-count" class="cart-badge">
                             <c:choose>
-                                <c:when test="${not empty sessionScope.cart.totalQuantity and sessionScope.cart.totalQuantity > 0}">
-                                    ${sessionScope.cart.totalQuantity}
+                                <c:when test="${not empty sessionScope.cart and sessionScope.cart.itemCount > 0}">
+                                    ${sessionScope.cart.itemCount}
                                 </c:when>
                                 <c:otherwise>0</c:otherwise>
                             </c:choose>

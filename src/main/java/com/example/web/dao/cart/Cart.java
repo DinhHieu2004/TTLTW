@@ -51,6 +51,10 @@ public class Cart implements Serializable {
                .mapToInt(CartPainting::getQuantity).sum();
     }
 
+    public int getItemCount() {
+        return items.size();
+    }
+
     public void removeFromCart(String productId, String sizeId) {
         String key = productId + "_" + sizeId;
         items.remove(key);

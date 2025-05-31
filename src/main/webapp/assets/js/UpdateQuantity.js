@@ -56,6 +56,17 @@ $(document).on('click', '.increase-quantity, .decrease-quantity', function (e) {
                 $("#total-price").text(response.totalPrice.toLocaleString('vi-VN') + " ₫");
                 $("#totalAmount").text(response.totalPrice.toLocaleString('vi-VN') + " ₫");
 
+                const modalRowSelector = `#cart-itemp-${productId}-${sizeId}`;
+                const item = response.items[itemKey];
+                if ($(modalRowSelector).length && item) {
+                    $(`${modalRowSelector} .quantity`).text(item.quantity);
+
+                    const finalPrice = item.discountPrice !== undefined && item.discountPrice !== null
+                        ? item.discountPrice
+                        : item.totalPrice;
+                    $(`${modalRowSelector} td:last-child`).text(formatCurrencyVND(finalPrice));
+                }
+
                 updateMiniCartHeader(response.items);
 
             } else {

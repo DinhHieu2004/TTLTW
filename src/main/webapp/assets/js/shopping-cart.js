@@ -24,6 +24,7 @@ $(document).on('click', '.remove-item', function (e) {
 
 
                 updateMiniCartHeader(response.cart.items);
+                $(`#cart-itemp-${productId}-${sizeId}`).remove(); // update modal
             } else {
                 alert(response.message || "Đã xảy ra lỗi khi xóa sản phẩm khỏi giỏ hàng.");
             }
