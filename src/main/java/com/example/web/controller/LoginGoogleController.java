@@ -72,7 +72,6 @@ public class LoginGoogleController extends HttpServlet {
                 if (user != null) {
                     if (user.getGg_id() == null) {
                         user.setGg_id(ggId);
-                        user.setEmail(email);
                         boolean isUpdated = service.updateUserInfo(user);
                         if (!isUpdated) {
                             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -92,6 +91,11 @@ public class LoginGoogleController extends HttpServlet {
                 }
                 if (session == null) {
                     session = request.getSession(true);
+                }
+                if(!user.getStatus().equals("Hoạt động")){
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.getWriter().write("Tài khoản của bạn đang bị khóa hoặc chờ xóa.");
+                    return;
                 }
 
                 session.setAttribute("user", user);

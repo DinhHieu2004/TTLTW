@@ -22,7 +22,7 @@ public class UserDao {
 
     public List<User> getListUser() throws SQLException {
         List<User> users = new ArrayList<>();
-        String sql = "select * from users";
+        String sql = "select * from users WHERE status NOT IN ('Đã xóa')";
         PreparedStatement ps = conn.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
 
@@ -65,15 +65,26 @@ public class UserDao {
     }
 
     public boolean deleteUser(int i) {
-        String query = "DELETE FROM users WHERE id = ?";
+        String query = "UPDATE users SET status = ? WHERE id = ?";
         try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
-            preparedStatement.setInt(1, i);
+            preparedStatement.setString(1, "Đã xóa");
+            preparedStatement.setInt(2, i);
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
+    }
+    public void deleteAccountCus(Connection conn, int id) {
+        String query = "UPDATE users SET status = ? WHERE id = ?";
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setString(1, "Chờ xóa");
+            preparedStatement.setInt(2, id);
+            int rowsUpdated = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public boolean updateUser(User user, Set<Integer> roleIds) throws SQLException {
@@ -90,7 +101,6 @@ public class UserDao {
             statement.setString(2, user.getUsername());
             statement.setString(3, user.getAddress());
             statement.setString(4, user.getEmail());
-            statement.setString(5, user.getPhone());
             statement.setString(5, user.getPhone());
             statement.setString(6, user.getStatus());
             statement.setInt(7, user.getId());
@@ -155,7 +165,7 @@ public class UserDao {
     }
 
     public User findByEmail(String email) throws SQLException {
-        String sql = "SELECT * FROM users WHERE email = ?";
+        String sql = "SELECT * FROM users WHERE email = ? AND status NOT IN ('Đã xóa')";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, email);
         try (ResultSet rs = ps.executeQuery()) {
@@ -181,7 +191,7 @@ public class UserDao {
 
     //check login
     public User findUser(String username) throws SQLException {
-        String sql = "SELECT * FROM users WHERE username = ?";
+        String sql = "SELECT * FROM users WHERE username = ? AND status NOT IN ('Đã xóa', 'Chờ xóa')";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, username);
         try (ResultSet rs = ps.executeQuery()) {
@@ -227,10 +237,10 @@ public class UserDao {
         return ps.executeUpdate() > 0;
     }
 
-    public void saveTokens(int userId, String token, String type, long expiryMillis) {
+    public void saveTokens(Connection con,int userId, String token, String type, long expiryMillis) {
         String sql = "INSERT INTO tokens (userId, token, expiredAt, type) VALUES (?, ?, ?, ?)";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setString(2, token);
             ps.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis() + expiryMillis));
@@ -274,20 +284,20 @@ public class UserDao {
         return null;
     }
 
-    public boolean updateUserStatusByToken(String token) throws SQLException {
+    public boolean updateUserStatusByToken(String token, String type) throws SQLException {
         String sqlUpdateUser = "UPDATE users SET status = ? WHERE id = " +
                 "(SELECT userId FROM tokens WHERE token = ? AND type = ?)";
 
         try (PreparedStatement psUpdateUser = conn.prepareStatement(sqlUpdateUser)) {
             psUpdateUser.setString(1, "Hoạt động");
             psUpdateUser.setString(2, token);
-            psUpdateUser.setString(3, "register");
+            psUpdateUser.setString(3, type);
             int rowsAffected = psUpdateUser.executeUpdate();
 
             return rowsAffected > 0;
         }
     }
-    public boolean deleteRegisterToken(String token, String type) throws SQLException {
+    public boolean deleteToken(String token, String type) throws SQLException {
         String sqlDeleteToken = "DELETE FROM tokens WHERE token = ? AND type = ?";
 
         try (PreparedStatement psDeleteToken = conn.prepareStatement(sqlDeleteToken)) {
@@ -301,7 +311,7 @@ public class UserDao {
     public boolean activateUserByToken(String token, int userId) {
         try {
             conn.setAutoCommit(false);
-            boolean isUserUpdated = updateUserStatusByToken(token);
+            boolean isUserUpdated = updateUserStatusByToken(token, "register");
             if (!isUserUpdated) {
                 conn.rollback();
                 return false;
@@ -312,12 +322,42 @@ public class UserDao {
                 insertRolePs.setInt(2, 2);
                 insertRolePs.executeUpdate();
             }
-            boolean isTokenDeleted = deleteRegisterToken(token, "register");
+            boolean isTokenDeleted = deleteToken(token, "register");
             if (!isTokenDeleted) {
                 conn.rollback();
                 return false;
             }
-
+            conn.commit();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+    public boolean undoDeleteUserByToken(String token, int id) {
+        try {
+            conn.setAutoCommit(false);
+            boolean isUserUpdated = updateUserStatusByToken(token, "undoDelete");
+            if (!isUserUpdated) {
+                conn.rollback();
+                return false;
+            }
+            boolean isTokenDeleted = deleteToken(token, "undoDelete");
+            if (!isTokenDeleted) {
+                conn.rollback();
+                return false;
+            }
             conn.commit();
             return true;
         } catch (SQLException e) {
@@ -421,19 +461,21 @@ public class UserDao {
 
 
     public boolean updateUserInfo(User user) throws SQLException {
-        String query = "UPDATE users SET fullName = ?, phone = ?, email = ?, address = ? WHERE id = ?";
+        String query = "UPDATE users SET fullName = ?, phone = ?, email = ?, address = ?, gg_id = ?, fb_id=? WHERE id = ?";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1, user.getFullName());
         ps.setString(2, user.getPhone());
         ps.setString(3, user.getEmail());
         ps.setString(4, user.getAddress());
-        ps.setInt(5, user.getId());
+        ps.setString(5, user.getGg_id());
+        ps.setString(6, user.getFb_id());
+        ps.setInt(7, user.getId());
 
         return ps.executeUpdate() > 0;
 
     }
     public String getPasswordByUsername(String username) throws SQLException {
-        String sql = "SELECT password FROM users WHERE username = ?";
+        String sql = "SELECT password FROM users WHERE username = ? AND status NOT IN ('Đã xóa', 'Chờ xóa')";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, username);
         try (ResultSet rs = ps.executeQuery()) {
@@ -479,7 +521,7 @@ public class UserDao {
     }
 
     public User findGoogleUserById(String gg_id) throws SQLException {
-        String sql = "SELECT * FROM users WHERE gg_id = ?";
+        String sql = "SELECT * FROM users WHERE gg_id = ? AND status NOT IN ('Đã xóa')";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, gg_id);
 
@@ -533,7 +575,7 @@ public class UserDao {
         }
     }
     public User findFBUserById(String fbId) throws SQLException {
-        String sql = "SELECT * FROM users WHERE fb_id = ?";
+        String sql = "SELECT * FROM users WHERE fb_id = ? AND status NOT IN ('Đã xóa')";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, fbId);
 
@@ -573,6 +615,48 @@ public class UserDao {
                 users.add(user);
             }
         return users;
+    }
+    public List<User> getListUserIsDelete() throws SQLException {
+        List<User> users = new ArrayList<>();
+        String sql = "select * from users WHERE status IN ('Đã xóa')";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            User u = new User();
+            u.setId(rs.getInt("id"));
+            u.setUsername(rs.getString("username"));
+            u.setFullName(rs.getString("fullName"));
+            u.setEmail(rs.getString("email"));
+            Set<Role> roles = roleDao.getRolesByUserId(u.getId());
+            u.setRole(roles);
+            u.setAddress(rs.getString("address"));
+            u.setPhone(rs.getString("phone"));
+            users.add(u);
+        }
+        return users;
+
+    }
+    public void updateStatusDeletedForExpiredTokens() {
+        String updateSql = "UPDATE users u " +
+                "JOIN tokens t ON u.id = t.userId " +
+                "SET u.status = 'Đã xóa' " +
+                "WHERE t.type = 'undoDelete' AND t.expiredAt <= NOW()";
+
+        String deleteSql = "DELETE t FROM tokens t " +
+                "JOIN users u ON t.userId = u.id " +
+                "WHERE t.type = 'undoDelete' AND t.expiredAt <= NOW() AND u.status = 'Đã xóa'";
+
+        try (
+                PreparedStatement updatePs = conn.prepareStatement(updateSql);
+                PreparedStatement deletePs = conn.prepareStatement(deleteSql)
+        ) {
+            int updatedRows = updatePs.executeUpdate();
+            int deletedRows = deletePs.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) throws SQLException {

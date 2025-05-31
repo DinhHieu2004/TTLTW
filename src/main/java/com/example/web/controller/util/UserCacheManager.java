@@ -4,23 +4,27 @@ import com.example.web.dao.model.User;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
+import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class UserCacheManager {
+    private static final UserCacheManager instance = new UserCacheManager();
     private final Cache<Integer, User> userByIdCache;
     private final Cache<String, List<User>> allUsersCache;
 
     public UserCacheManager() {
         userByIdCache = Caffeine.newBuilder()
-                .expireAfterWrite(10, TimeUnit.MINUTES)
+                .expireAfterWrite(Duration.ofMinutes(10))
                 .maximumSize(1000)
                 .build();
 
         allUsersCache = Caffeine.newBuilder()
-                .expireAfterWrite(5, TimeUnit.MINUTES)
+                .expireAfterWrite(Duration.ofMinutes(5))
                 .maximumSize(1)
                 .build();
+    }
+    public static UserCacheManager getInstance() {
+        return instance;
     }
 
     // ====== Cache theo ID =======
