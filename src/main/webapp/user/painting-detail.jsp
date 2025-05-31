@@ -1,4 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -58,21 +61,23 @@
                     <div class="mb-4">
                         <c:choose>
                             <c:when test="${p.discountPercentage > 0}">
+                                <fmt:formatNumber var="originalPrice" value="${p.price}" pattern="#,##0" />
+                                <fmt:formatNumber var="salePrice" value="${p.price * (1 - p.discountPercentage / 100)}" pattern="#,##0" />
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="text-muted text-decoration-line-through">
-                                        <f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫
+                                        ${fn:replace(originalPrice, ',', '.')} ₫
                                     </span>
                                     <span class="h4 text-danger mb-0">
-                                        <f:formatNumber value="${p.price * (1 - p.discountPercentage / 100)}"
-                                                        type="currency" pattern="#,##0"/>₫
+                                        ${fn:replace(salePrice, ',', '.')} ₫
                                     </span>
                                     <span class="badge bg-success">-${p.discountPercentage}%</span>
                                 </div>
                             </c:when>
                             <c:otherwise>
-                            <span class="h4">
-                                <f:formatNumber value="${p.price}" type="currency" pattern="#,##0"/>₫
-                            </span>
+                                <fmt:formatNumber var="normalPrice" value="${p.price}" pattern="#,##0" />
+                                <span class="h4">
+                                    ${fn:replace(normalPrice, ',', '.')} ₫
+                                </span>
                             </c:otherwise>
                         </c:choose>
                     </div>

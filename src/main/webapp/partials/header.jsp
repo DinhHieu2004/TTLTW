@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shopping Cart</title>
@@ -99,11 +100,17 @@
                                                     <span class="cart-item-price">
                                     <c:choose>
                                         <c:when test="${cp.discountPercent > 0}">
-                                            <f:formatNumber value="${cp.discountPrice}" type="currency" currencySymbol="VND"/>
+                                            <f:formatNumber var="discounted" value="${cp.discountPrice}" pattern="#,##0" />
+                                            <span>
+                                                ${fn:replace(discounted, ',', '.')} ₫
+                                            </span>
                                             <span class="badge bg-success ms-2">-${cp.discountPercent}%</span>
                                         </c:when>
                                         <c:otherwise>
-                                            <f:formatNumber value="${cp.totalPrice}" type="currency" currencySymbol="VND"/>
+                                            <f:formatNumber var="total" value="${cp.totalPrice}" pattern="#,##0" />
+                                            <span>
+                                                ${fn:replace(total, ',', '.')} ₫
+                                            </span>
                                         </c:otherwise>
                                     </c:choose>
                                 </span>
@@ -130,8 +137,9 @@
                         <div class="cart-footer">
                             <div class="total-price">
                                 Tổng tiền: <span id="total-price">
-                <f:formatNumber value="${sessionScope.cart.totalPrice}" type="currency" currencySymbol="VND"/>
-            </span>
+                                <f:formatNumber var="totalFormatted" value="${sessionScope.cart.totalPrice != null ? sessionScope.cart.totalPrice : 0}" pattern="#,##0" />
+                                    ${fn:replace(totalFormatted, ',', '.')} ₫
+                                            </span>
                             </div>
 
                             <button class="btn btn-primary" onclick="window.location.href='show-cart'"

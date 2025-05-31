@@ -74,12 +74,12 @@ $(document).ready(function() {
                         <div class="d-flex flex-column" style="flex-grow: 1;">
                             ${p.discountPercentage > 0 ? `
                                <div class="d-flex align-items-center gap-2">
-                                    <del class="text-muted" style="font-size: 0.8rem;">${price}₫</del>
+                                    <del class="text-muted" style="font-size: 0.8rem;">${price} ₫</del>
                                     <span class="badge bg-success" style="font-size: 0.75rem;">-${p.discountPercentage}%</span>
                                 </div>
-                                <div class="text-danger fw-bold" style="font-size: 0.925rem;">${discountPrice}₫</div>
+                                <div class="text-danger fw-bold" style="font-size: 0.925rem;">${discountPrice} ₫</div>
                             ` : `
-                                <div class="fw-bold" style="font-size: 0.925rem;">${price}₫</div>
+                                <div class="fw-bold" style="font-size: 0.925rem;">${price} ₫</div>
                             `}
                         </div>
                        <form id="addToCartForm_${p.id}" class="d-flex align-items-center justify-content-between mb-2 mt-2">
