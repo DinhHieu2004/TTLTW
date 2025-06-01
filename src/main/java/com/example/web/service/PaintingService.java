@@ -122,4 +122,12 @@ public class PaintingService {
     public int getQuantity(int productId, int sizeId) {
         return paintingDao.getQuantity(productId, sizeId);
     }
+
+    public List<Painting> getRandomPaintingsByArtist(int artistId) throws SQLException {
+        return paintingDao.getRandomPaintingsByArtist(artistId);
+    }
+
+    public List<Painting> getRandomPaintingsByTheme(int themeId) throws SQLException {
+        return paintingDao.getRandomPaintingsByTheme(themeId);
+    }
 }

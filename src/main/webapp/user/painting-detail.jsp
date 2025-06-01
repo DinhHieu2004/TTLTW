@@ -190,6 +190,150 @@
                 </div>
             </div>
         </div>
+        <div class="mt-4">
+            <h3>Các Tranh cùng tác giả</h3>
+            <div class="container-product mt-4">
+                <div class="row g-4 g-2 col-10" id="artworkSameArtist">
+                    <c:forEach var="p" items="${pT}">
+                        <div class="col-6 col-md-3">
+                            <div class="card artwork-card h-100" style="height: 380px !important;">
+                                <a href="painting-detail?pid=${p.id}" class="card-link"></a>
+                                <c:choose>
+                                    <c:when test="${not empty p.imageUrlCloud}">
+                                        <img loading="lazy"
+                                             src="${p.imageUrlCloud}?f_auto,q_auto,w_400"
+                                             class="card-img-top artwork-image"
+                                             alt="${p.title}"
+                                             style="width: 100%; height:180px !important;">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img loading="lazy"
+                                             src="${pageContext.request.contextPath}/${p.imageUrl}"
+                                             class="card-img-top artwork-image"
+                                             alt="${p.title}"
+                                             style="width: 100%; height:180px !important;">
+                                    </c:otherwise>
+                                </c:choose>
+                                <div class="card-body">
+                                    <h5 class="card-title">${p.title}</h5>
+                                    <p class="card-text">
+                                        <strong>Họa Sĩ:</strong> ${p.artistName}<br>
+                                        <strong>Chủ đề:</strong> ${p.themeName}<br>
+
+                                        <span class="rating-stars">
+                            <c:forEach begin="1" end="5" var="i">
+                                <i class="fas fa-star ${i <= p.averageRating ? 'text-warning' : 'text-gray-200'}"
+                                   style="${i > p.averageRating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>
+                            </c:forEach>
+                        </span>
+                                        <span class="ms-1">${p.averageRating}</span>
+                                    </p>
+                                    <c:choose>
+                                        <c:when test="${p.discountPercentage > 0}">
+                                            <fmt:formatNumber var="originalPrice" value="${p.price}" pattern="#,##0"/>
+                                            <fmt:formatNumber var="salePrice"
+                                                              value="${p.price * (1 - p.discountPercentage / 100)}"
+                                                              pattern="#,##0"/>
+
+                                            <div class="d-flex align-items-center gap-2">
+                                                <del class="text-muted" style="font-size: 0.8rem;">
+                                                        ${fn:replace(originalPrice, ',', '.')} ₫
+                                                </del>
+                                                <span class="badge bg-success"
+                                                      style="font-size: 0.75rem;">-${p.discountPercentage}%</span>
+                                            </div>
+
+                                            <div class="text-danger fw-bold" style="font-size: 0.925rem;">
+                                                    ${fn:replace(salePrice, ',', '.')} ₫
+                                            </div>
+                                        </c:when>
+
+                                        <c:otherwise>
+                                            <fmt:formatNumber var="normalPrice" value="${p.price}" pattern="#,##0"/>
+                                            <div class="fw-bold" style="font-size: 0.925rem;">
+                                                    ${fn:replace(normalPrice, ',', '.')} ₫
+                                            </div>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                            </div>
+                        </div>
+                    </c:forEach>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4">
+            <h3>Các Tranh cùng tác giả</h3>
+            <div class="container-product mt-4">
+                <div class="row g-4 g-2 col-10" id="artworkSameTheme">
+                    <c:forEach var="p" items="${pA}">
+                        <div class="col-6 col-md-3">
+                            <div class="card artwork-card h-100" style="height: 380px !important;">
+                                <a href="painting-detail?pid=${p.id}" class="card-link"></a>
+                                <c:choose>
+                                    <c:when test="${not empty p.imageUrlCloud}">
+                                        <img loading="lazy"
+                                             src="${p.imageUrlCloud}?f_auto,q_auto,w_400"
+                                             class="card-img-top artwork-image"
+                                             alt="${p.title}"
+                                             style="width: 100%; height:180px !important;">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img loading="lazy"
+                                             src="${pageContext.request.contextPath}/${p.imageUrl}"
+                                             class="card-img-top artwork-image"
+                                             alt="${p.title}"
+                                             style="width: 100%; height:180px !important;">
+                                    </c:otherwise>
+                                </c:choose>
+                                <div class="card-body">
+                                    <h5 class="card-title">${p.title}</h5>
+                                    <p class="card-text">
+                                        <strong>Họa Sĩ:</strong> ${p.artistName}<br>
+                                        <strong>Chủ đề:</strong> ${p.themeName}<br>
+
+                                        <span class="rating-stars">
+                            <c:forEach begin="1" end="5" var="i">
+                                <i class="fas fa-star ${i <= p.averageRating ? 'text-warning' : 'text-gray-200'}"
+                                   style="${i > p.averageRating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>
+                            </c:forEach>
+                        </span>
+                                        <span class="ms-1">${p.averageRating}</span>
+                                    </p>
+                                    <c:choose>
+                                        <c:when test="${p.discountPercentage > 0}">
+                                            <fmt:formatNumber var="originalPrice" value="${p.price}" pattern="#,##0"/>
+                                            <fmt:formatNumber var="salePrice"
+                                                              value="${p.price * (1 - p.discountPercentage / 100)}"
+                                                              pattern="#,##0"/>
+
+                                            <div class="d-flex align-items-center gap-2">
+                                                <del class="text-muted" style="font-size: 0.8rem;">
+                                                        ${fn:replace(originalPrice, ',', '.')} ₫
+                                                </del>
+                                                <span class="badge bg-success"
+                                                      style="font-size: 0.75rem;">-${p.discountPercentage}%</span>
+                                            </div>
+
+                                            <div class="text-danger fw-bold" style="font-size: 0.925rem;">
+                                                    ${fn:replace(salePrice, ',', '.')} ₫
+                                            </div>
+                                        </c:when>
+
+                                        <c:otherwise>
+                                            <fmt:formatNumber var="normalPrice" value="${p.price}" pattern="#,##0"/>
+                                            <div class="fw-bold" style="font-size: 0.925rem;">
+                                                    ${fn:replace(normalPrice, ',', '.')} ₫
+                                            </div>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                            </div>
+                        </div>
+                    </c:forEach>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

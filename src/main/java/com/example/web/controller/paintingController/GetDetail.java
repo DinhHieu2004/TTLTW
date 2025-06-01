@@ -29,14 +29,18 @@ public class GetDetail extends HttpServlet {
             List<ProductReview> reviews = privewService.getReviewByPaintingId(id);
             req.setAttribute("reviews", reviews);
             Painting painting = paintingService.getPaintingDetail(id);
-            req.setAttribute("painting", painting);
-            req.setAttribute("p", painting);
+
             if(painting == null){
                //  req.setAttribute("message", "không tìm thấy sản phẩm");
                // req.getRequestDispatcher("user/painting-detail.jsp").forward(req, resp);
                 RequestDispatcher dispatcher = req.getRequestDispatcher("/404.jsp");
                 dispatcher.forward(req, resp);
             }
+            List<Painting> listPaintingSameArtist = paintingService.getRandomPaintingsByArtist(painting.getArtistId());
+            List<Painting> listPaintingSamTheme = paintingService.getRandomPaintingsByTheme(painting.getThemeId());
+            req.setAttribute("pA", listPaintingSameArtist);
+            req.setAttribute("pT", listPaintingSamTheme);
+            req.setAttribute("p", painting);
 
         } catch (SQLException e) {
             req.setAttribute("message", "không tìm thấy sản phẩm");

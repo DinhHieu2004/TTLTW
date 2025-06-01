@@ -83,8 +83,8 @@ public class DiscountDao {
             p.imageUrlCloud,
             a.name AS artistName,
             t.themeName AS theme,
-            t.id AS themeId,
-            a.id AS artistId,
+            p.themeId,
+            p.artistId,
             IFNULL(d.discountPercentage, 0) AS discount,
             IFNULL((SELECT AVG(rating) FROM product_reviews WHERE paintingId = p.id), 0) as averageRating
         FROM paintings p
@@ -234,8 +234,8 @@ public class DiscountDao {
             p.imageUrl,
             a.name AS artistName,
             t.themeName AS theme,
-            t.id AS themeId,
-            a.id AS artistId,
+            p.themeId,
+            p.artistId,
             IFNULL(d.discountPercentage, 0) AS discountPercentage
         FROM paintings p
         LEFT JOIN artists a ON p.artistId = a.id
@@ -281,8 +281,8 @@ public class DiscountDao {
             p.price, 
             a.name AS artistName, 
             t.themeName AS themeName, 
-            t.id AS themeId,
-            a.id AS artistId,
+            p.themeId,
+            p.artistId,
             p.createdAt 
         FROM 
             paintings p
