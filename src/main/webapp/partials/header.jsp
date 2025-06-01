@@ -70,8 +70,8 @@
                         <i class="fa fa-shopping-cart"></i>
                         <span id="cart-item-count" class="cart-badge">
                             <c:choose>
-                                <c:when test="${not empty sessionScope.cart.totalQuantity and sessionScope.cart.totalQuantity > 0}">
-                                    ${sessionScope.cart.totalQuantity}
+                                <c:when test="${not empty sessionScope.cart and sessionScope.cart.itemCount > 0}">
+                                    ${sessionScope.cart.itemCount}
                                 </c:when>
                                 <c:otherwise>0</c:otherwise>
                             </c:choose>
@@ -136,10 +136,13 @@
 
                         <div class="cart-footer">
                             <div class="total-price">
-                                Tổng tiền: <span id="total-price">
-                                <f:formatNumber var="totalFormatted" value="${sessionScope.cart.totalPrice != null ? sessionScope.cart.totalPrice : 0}" pattern="#,##0" />
-                                    ${fn:replace(totalFormatted, ',', '.')} ₫
-                                            </span>
+                                Tổng tiền:
+                                <span id="total-price">
+                                    <span id="total-price-value">
+                                        <f:formatNumber var="totalFormatted" value="${sessionScope.cart.totalPrice != null ? sessionScope.cart.totalPrice : 0}" pattern="#,##0" />
+                                        ${fn:replace(totalFormatted, ',', '.')} ₫
+                                    </span>
+                                </span>
                             </div>
 
                             <button class="btn btn-primary" onclick="window.location.href='show-cart'"
