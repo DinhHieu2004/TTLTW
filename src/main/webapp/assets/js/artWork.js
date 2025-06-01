@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    loadPaintings();
+    loadPaintings($('#filterForm').serialize());
 
     $('#filterForm').submit(function(e) {
         e.preventDefault();
@@ -62,8 +62,10 @@ $(document).ready(function() {
                             <h5 class="card-title">${p.title}</h5>
                         </a>
                         <p class="card-text">
-                            <strong>Họa Sĩ:</strong> ${p.artistName}<br>
-                            <strong>Chủ đề:</strong> ${p.themeName}<br>
+                        <strong>Họa Sĩ:</strong>
+                        <a href="artwork?artist=${p.artistId}" class="link-custom">${p.artistName}</a><br>
+                        <strong>Chủ đề:</strong>
+                        <a href="artwork?theme=${p.themeId}" class="link-custom">${p.themeName}</a><br>
                             <span class="rating-stars">
                                 ${Array(5).fill().map((_, i) => `
                                     <i class="fas fa-star ${i < p.averageRating ? 'text-warning' : 'text-gray-200'}" style="${i >= p.averageRating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>

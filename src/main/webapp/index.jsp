@@ -167,7 +167,6 @@
         <c:forEach var="p" items="${flashSaleArtworks}">
             <div class="col-6 col-md-3">
                 <div class="card artwork-card">
-<%--                    <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="card-link"></a>--%>
                     <div class="artwork-image-wrapper">
                     <c:choose>
                         <c:when test="${not empty p.imageUrlCloud}">
@@ -187,8 +186,10 @@
                             <h5 class="card-title">${p.title}</h5>
                         </a>
                         <p class="card-text">
-                            <strong>Họa Sĩ:</strong> ${p.artistName}<br>
-                            <strong>Chủ đề:</strong> ${p.themeName}<br>
+                            <strong>Họa Sĩ:</strong>
+                            <a href="artwork?artist=${p.artistId}" class="link-custom">${p.artistName}</a><br>
+                            <strong>Chủ đề:</strong>
+                            <a href="artwork?theme=${p.themeId}" class="link-custom">${p.themeName}</a><br>
                             <span class="rating-stars">
                             <c:forEach begin="1" end="5" var="i">
                                 <i class="fas fa-star ${i <= p.averageRating ? 'text-warning' : 'text-gray-200'}" style="${i > p.averageRating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>
@@ -290,7 +291,6 @@
         <c:forEach var="p" items="${featuredArtworks}">
                 <div class="col-6 col-md-3">
                     <div class="card artwork-card">
-<%--                        <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="card-link"></a>--%>
                     <c:choose>
                         <c:when test="${not empty p.imageUrlCloud}">
                             <a href="<c:url value='/painting-detail?pid=${p.id}'/>">
@@ -308,8 +308,10 @@
                                 <h5 class="card-title">${p.title}</h5>
                             </a>
                             <p class="card-text">
-                                <strong>Họa Sĩ:</strong> ${p.artistName}<br>
-                                <strong>Chủ đề:</strong> ${p.themeName}<br>
+                                <strong>Họa Sĩ:</strong>
+                                <a href="artwork?artist=${p.artistId}" class="link-custom">${p.artistName}</a><br>
+                                <strong>Chủ đề:</strong>
+                                <a href="artwork?theme=${p.themeId}" class="link-custom">${p.themeName}</a><br>
                                 <span class="rating-stars">
                             <c:forEach begin="1" end="5" var="i">
                                 <i class="fas fa-star ${i <= p.averageRating ? 'text-warning' : 'text-gray-200'}" style="${i > p.averageRating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>
@@ -390,7 +392,6 @@
         <c:forEach var="p" items="${newP}">
             <div class="col-6 col-md-3">
                 <div class="card artwork-card">
-                    <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="card-link"></a>
                     <c:choose>
                         <c:when test="${not empty p.imageUrlCloud}">
                             <a href="<c:url value='/painting-detail?pid=${p.id}'/>">
@@ -408,8 +409,10 @@
                             <h5 class="card-title">${p.title}</h5>
                         </a>
                         <p class="card-text">
-                            <strong>Họa Sĩ:</strong> ${p.artistName}<br>
-                            <strong>Chủ đề:</strong> ${p.themeName}<br>
+                            <strong>Họa Sĩ:</strong>
+                            <a href="artwork?artist=${p.artistId}" class="link-custom">${p.artistName}</a><br>
+                            <strong>Chủ đề:</strong>
+                            <a href="artwork?theme=${p.themeId}" class="link-custom">${p.themeName}</a><br>
                             <span class="rating-stars">
                             <c:forEach begin="1" end="5" var="i">
                                 <i class="fas fa-star ${i <= p.averageRating ? 'text-warning' : 'text-gray-200'}" style="${i > p.averageRating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>
@@ -508,7 +511,6 @@
         <c:forEach var="p" items="${bp}">
             <div class="col-6 col-md-3">
                 <div class="card artwork-card">
-                    <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="card-link"></a>
                     <c:choose>
                         <c:when test="${not empty p.imageUrlCloud}">
                             <a href="<c:url value='/painting-detail?pid=${p.id}'/>">
@@ -526,8 +528,10 @@
                             <h5 class="card-title">${p.title}</h5>
                         </a>
                         <p class="card-text">
-                            <strong>Họa Sĩ:</strong> ${p.artistName}<br>
-                            <strong>Chủ đề:</strong> ${p.themeName}<br>
+                            <strong>Họa Sĩ:</strong>
+                            <a href="artwork?artist=${p.artistId}" class="link-custom">${p.artistName}</a><br>
+                            <strong>Chủ đề:</strong>
+                            <a href="artwork?theme=${p.themeId}" class="link-custom">${p.themeName}</a><br>
                             <span class="rating-stars">
                             <c:forEach begin="1" end="5" var="i">
                                 <i class="fas fa-star ${i <= p.averageRating ? 'text-warning' : 'text-gray-200'}" style="${i > p.averageRating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>
@@ -611,9 +615,6 @@
         <i class="fas fa-angle-right ms-1"></i>
     </a>
 </div>
-
-
-
 
 <div id="collection_section">
         <div class="title_container">

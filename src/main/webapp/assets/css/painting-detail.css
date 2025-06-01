@@ -14,12 +14,6 @@ body, html {
 #footer-container{
     bottom: 0%;
 }
-.container_content{
-    margin-top: 50px;
-}
-#header-container{
-    height: 100px;
-}
 #paintingImage{
     margin-left: 50px;
     height: 80%;

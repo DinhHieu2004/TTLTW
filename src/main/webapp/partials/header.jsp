@@ -84,7 +84,7 @@
 
                         <div class="cart-items" id="mini-cart-items">
                             <c:choose>
-                                <c:when test="${empty sessionScope.cart.items || sessionScope.cart.items.size() == 0}">
+                                <c:when test="${empty sessionScope.cart.items }">
                                     <div class="alert alert-info text-center" role="alert">
                                         Giỏ hàng của bạn đang trống.
                                     </div>

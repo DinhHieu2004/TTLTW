@@ -11,6 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/footer.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/header.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/shopping-cart.css">
@@ -22,7 +23,7 @@
 
 <div class="container py-4">
     <c:if test="${not empty message}">
-        <div  id="alertMessage"  class="alert alert-success alert-dismissible fade show" role="alert">
+        <div id="alertMessage" class="alert alert-success alert-dismissible fade show" role="alert">
             <h2>${message}</h2>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -30,7 +31,8 @@
     <div class="row">
         <div class="col-md-6">
             <div class="card">
-                <img loading="lazy" src="${p.imageUrlCloud}?f_auto,q_auto,w_600" alt="${p.title}" class="card-img-top img-fluid">
+                <img loading="lazy" src="${p.imageUrlCloud}?f_auto,q_auto,w_600" alt="${p.title}"
+                     class="card-img-top img-fluid">
             </div>
         </div>
 
@@ -41,13 +43,18 @@
                     <p class="text-muted">Mã sản phẩm: #${p.id}</p>
 
                     <div class="mb-3">
-                        <p><strong>Họa sĩ:</strong> ${p.artistName}</p>
-                        <p><strong>Chủ đề:</strong> ${p.themeName}</p>
+                        <p><strong>Họa sĩ:</strong>
+                            <a href="artwork?artist=${p.artistId}" class="link-custom">${p.artistName}</a>
+                        </p>
+                        <p><strong>Chủ đề: </strong>
+                            <a href="artwork?theme=${p.themeId}" class="link-custom">${p.themeName}</a>
+                        </p>
                         <p><strong>Mô tả:</strong> ${p.description}</p>
 
                         <span class="rating-stars">
                             <c:forEach begin="1" end="5" var="i">
-                                <i class="fas fa-star ${i <= p.averageRating ? 'text-warning' : 'text-gray-200'}" style="${i > p.averageRating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>
+                                <i class="fas fa-star ${i <= p.averageRating ? 'text-warning' : 'text-gray-200'}"
+                                   style="${i > p.averageRating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>
                             </c:forEach>
                         </span>
                         <span class="ms-1">${p.averageRating}</span>
@@ -57,8 +64,9 @@
                     <div class="mb-4">
                         <c:choose>
                             <c:when test="${p.discountPercentage > 0}">
-                                <fmt:formatNumber var="originalPrice" value="${p.price}" pattern="#,##0" />
-                                <fmt:formatNumber var="salePrice" value="${p.price * (1 - p.discountPercentage / 100)}" pattern="#,##0" />
+                                <fmt:formatNumber var="originalPrice" value="${p.price}" pattern="#,##0"/>
+                                <fmt:formatNumber var="salePrice" value="${p.price * (1 - p.discountPercentage / 100)}"
+                                                  pattern="#,##0"/>
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="text-muted text-decoration-line-through">
                                         ${fn:replace(originalPrice, ',', '.')} ₫
@@ -70,7 +78,7 @@
                                 </div>
                             </c:when>
                             <c:otherwise>
-                                <fmt:formatNumber var="normalPrice" value="${p.price}" pattern="#,##0" />
+                                <fmt:formatNumber var="normalPrice" value="${p.price}" pattern="#,##0"/>
                                 <span class="h4">
                                     ${fn:replace(normalPrice, ',', '.')} ₫
                                 </span>
@@ -93,9 +101,11 @@
                                                    value="${size.idSize}"
                                                    data-quantity="${size.displayQuantity}"
                                                 ${size.displayQuantity <= 0 ? 'disabled' : ''}>
-                                            <input type="hidden" name="quantity_${size.idSize}" value="${size.displayQuantity}">
+                                            <input type="hidden" name="quantity_${size.idSize}"
+                                                   value="${size.displayQuantity}">
                                             <label class="form-check-label" for="size_${size.sizeDescriptions}">
-                                                    ${size.sizeDescriptions} <small class="text-muted">(Còn ${size.displayQuantity})</small>
+                                                    ${size.sizeDescriptions} <small
+                                                    class="text-muted">(Còn ${size.displayQuantity})</small>
 
 
                                             </label>
@@ -107,14 +117,20 @@
                         <div class="mb-3">
                             <label for="quantity" class="form-label"><strong>Số lượng:</strong></label>
                             <div class="input-group">
-                                <button type="button" class="btn btn-outline-secondary" onclick="decrementQuantity()">-</button>
-                                <input type="number" class="form-control text-center" id="quantity" name="quantity" value="1" min="1" required>
-                                <button type="button" class="btn btn-outline-secondary" onclick="incrementQuantity()">+</button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="decrementQuantity()">
+                                    -
+                                </button>
+                                <input type="number" class="form-control text-center" id="quantity" name="quantity"
+                                       value="1" min="1" required>
+                                <button type="button" class="btn btn-outline-secondary" onclick="incrementQuantity()">
+                                    +
+                                </button>
                             </div>
                         </div>
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary" style="background: #e7621b !important;">
-                                <i class="fas fa-cart-plus me-2" style="background: #e7621b !important;"></i>Thêm vào giỏ hàng
+                                <i class="fas fa-cart-plus me-2" style="background: #e7621b !important;"></i>Thêm vào
+                                giỏ hàng
                             </button>
                         </div>
                     </form>
@@ -149,7 +165,8 @@
                         <button class="btn btn-sm btn-primary edit-review-btn" data-id="${review.id}">Chỉnh sửa</button>
                         <button class="btn btn-sm btn-success save-btn d-none" data-id="${review.id}">Lưu</button>
                         <button class="btn btn-sm btn-danger cancel-btn d-none" data-id="${review.id}">Hủy</button>
-                        <button class="btn btn-sm btn-outline-danger delete-review-btn" data-id="${review.id}">Xóa</button>
+                        <button class="btn btn-sm btn-outline-danger delete-review-btn" data-id="${review.id}">Xóa
+                        </button>
                     </c:if>
                 </div>
             </c:forEach>
@@ -180,13 +197,13 @@
 <%@ include file="/partials/authModal.jsp" %>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('addToCartForm');
         const quantityInput = document.getElementById('quantity');
         const sizeInputs = document.querySelectorAll('input[name="size"]');
 
         sizeInputs.forEach(input => {
-            input.addEventListener('change', function() {
+            input.addEventListener('change', function () {
                 const maxQuantity = parseInt(this.dataset.quantity);
                 quantityInput.max = maxQuantity;
                 quantityInput.value = Math.min(quantityInput.value, maxQuantity);
@@ -194,7 +211,7 @@
         });
 
 
-        form.addEventListener('submit', function(event) {
+        form.addEventListener('submit', function (event) {
             if (!form.checkValidity()) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -266,7 +283,7 @@
             $.ajax({
                 url: 'admin/reviews/update',
                 method: 'POST',
-                data: { reviewId, newComment, newRating },
+                data: {reviewId, newComment, newRating},
                 success: function (response) {
                     if (response.status === "success") {
                         reviewItem.find('.comment-text').text(newComment).removeClass('d-none');
@@ -303,11 +320,11 @@
             $.ajax({
                 url: "admin/reviews/delete",
                 method: "POST",
-                data: { rid: reviewIdToDelete },
+                data: {rid: reviewIdToDelete},
                 dataType: "json",
                 success: function (response) {
                     if (window.reviewElementToDelete && window.reviewElementToDelete.length) {
-                        window.reviewElementToDelete.fadeOut(300, function() {
+                        window.reviewElementToDelete.fadeOut(300, function () {
                             $(this).remove();
                         });
                     } else {

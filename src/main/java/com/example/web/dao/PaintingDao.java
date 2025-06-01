@@ -147,7 +147,9 @@ public class PaintingDao {
                         p.imageUrl,
                         p.imageUrlCloud,
                         a.name AS artistName,
+                        a.id As artistId,
                         t.themeName AS themeName,
+                        t.id AS themeId,
                         p.price,
                         p.createdAt,
                         p.isSold
@@ -166,6 +168,8 @@ public class PaintingDao {
             String imageUrl = rs.getString("imageUrl");
             String imageUrlCloud = rs.getString("imageUrlCloud");
             String theme = rs.getString("themeName");
+            int themeId = rs.getInt("themeId");
+            int artistId = rs.getInt("artistId");
             Date createdAt = rs.getDate("createdAt");
             String artistName = rs.getString("artistName");
             boolean available = rs.getBoolean("isSold");
@@ -176,6 +180,8 @@ public class PaintingDao {
             painting.setImageUrlCloud(imageUrlCloud);
             painting.setThemeName(theme);
             painting.setArtistName(artistName);
+            painting.setThemeId(themeId);
+            painting.setArtistId(artistId);
             painting.setCreateDate(createdAt);
             painting.setAvailable(available);
             painting.setDescription(rs.getString("description"));
@@ -219,6 +225,8 @@ public class PaintingDao {
                     p.imageUrlCloud,
                     a.name AS artistName,
                     t.themeName,
+                    t.id As themeId,
+                    a.id AS artistId,
                     d.discountName,
                     IF (NOW() BETWEEN d.startDate AND d.endDate, d.discountPercentage, 0) AS discountPercentage,
                     s.sizeDescription,
@@ -250,6 +258,8 @@ public class PaintingDao {
                                 rs.getString("description"),
                                 rs.getString("imageUrl"),
                                 rs.getString("imageUrlCloud"),
+                                rs.getInt("artistId"),
+                                rs.getInt("themeId"),
                                 rs.getString("artistName"),
                                 rs.getString("themeName"),
                                 rs.getBoolean("isFeatured"),
@@ -289,6 +299,8 @@ public class PaintingDao {
                             p.imageUrlCloud,
                             a.name AS artistName,
                             t.themeName AS theme,
+                            t.id As themeId,
+                            a.id AS artistId,
                             IF(NOW() BETWEEN d.startDate AND d.endDate, d.discountPercentage, 0) AS discount,
                             COALESCE(AVG(r.rating), 0) as avgRating
                         FROM paintings p
@@ -316,6 +328,8 @@ public class PaintingDao {
                     painting.setTitle(rs.getString("paintingTitle"));
                     painting.setImageUrl(rs.getString("imageUrl"));
                     painting.setImageUrlCloud(rs.getString("imageUrlCloud"));
+                    painting.setArtistId(rs.getInt("artistId"));
+                    painting.setThemeId(rs.getInt("themeId"));
                     painting.setArtistName(rs.getString("artistName"));
                     painting.setThemeName(rs.getString("theme"));
                     painting.setDiscountPercentage(rs.getDouble("discount"));
@@ -342,6 +356,8 @@ public class PaintingDao {
                         p.imageUrlCloud,
                         a.name AS artistName,
                         t.themeName AS theme,
+                        t.id As themeId,
+                        a.id AS artistId,
                         IF (
                             d.startDate IS NOT NULL AND d.endDate IS NOT NULL\s
                             AND NOW() BETWEEN d.startDate AND d.endDate,
@@ -414,6 +430,8 @@ public class PaintingDao {
                     painting.setTitle(rs.getString("paintingTitle"));
                     painting.setImageUrl(rs.getString("imageUrl"));
                     painting.setImageUrlCloud(rs.getString("imageUrlCloud"));
+                    painting.setArtistId(rs.getInt("artistId"));
+                    painting.setThemeId(rs.getInt("themeId"));
                     painting.setArtistName(rs.getString("artistName"));
                     painting.setThemeName(rs.getString("theme"));
                     painting.setDiscountPercentage(rs.getDouble("discountPercentage"));
@@ -465,6 +483,8 @@ public class PaintingDao {
                     p.imageUrlCloud,
                     a.name AS artistName,
                     t.themeName AS theme,
+                    t.id As themeId,
+                    a.id AS artistId,
                     IFNULL(d.discountPercentage, 0) AS discount
                 FROM paintings p
                 LEFT JOIN artists a ON p.artistId = a.id
@@ -485,6 +505,8 @@ public class PaintingDao {
                     if (!paintingMap.containsKey(paintingId)) {
                         Painting painting = new Painting();
                         painting.setId(rs.getInt("paintingId"));
+                        painting.setArtistId(rs.getInt("artistId"));
+                        painting.setThemeId(rs.getInt("themeId"));
                         painting.setArtistName(rs.getString("artistName"));
                         painting.setTitle(rs.getString("paintingTitle"));
                         painting.setImageUrl(rs.getString("imageUrl"));
@@ -517,6 +539,8 @@ public class PaintingDao {
                                         p.imageUrlCloud,
                                         a.name AS artistName,
                                         t.themeName AS theme,
+                                        t.id As themeId,
+                                        a.id AS artistId,
                                         IFNULL(d.discountPercentage, 0) AS discount
                                     FROM paintings p
                                     LEFT JOIN artists a ON p.artistId = a.id
@@ -557,6 +581,8 @@ public class PaintingDao {
                     painting.setTitle(rs.getString("paintingTitle"));
                     painting.setImageUrl(rs.getString("imageUrl"));
                     painting.setImageUrlCloud(rs.getString("imageUrlCloud"));
+                    painting.setArtistId(rs.getInt("artistId"));
+                    painting.setThemeId(rs.getInt("themeId"));
                     painting.setArtistName(rs.getString("artistName"));
                     painting.setThemeName(rs.getString("theme"));
                     painting.setDiscountPercentage(rs.getDouble("discount"));
@@ -620,7 +646,8 @@ public class PaintingDao {
     }
 
     public List<Painting> getFeaturedArtworks() {
-        String sql = "SELECT p.id, p.title, p.imageUrl, p.imageUrlCloud, ar.name AS artist_name, t.themeName, p.price, " +
+        String sql = "SELECT p.id, p.title, p.imageUrl, p.imageUrlCloud, ar.name AS artist_name, t.themeName, t.id As themeId,\n" +
+                "                        ar.id AS artistId, p.price, " +
                 "IF(NOW() BETWEEN d.startDate AND d.endDate, d.discountPercentage, 0) AS discount, " +
                 "(SELECT AVG(r.rating) FROM product_reviews r WHERE r.paintingId = p.id) AS average_rating " +
                 "FROM paintings p " +
@@ -641,6 +668,8 @@ public class PaintingDao {
                 painting.setTitle(rs.getString("title"));
                 painting.setImageUrl(rs.getString("imageUrl"));
                 painting.setImageUrlCloud(rs.getString("imageUrlCloud"));
+                painting.setArtistId(rs.getInt("artistId"));
+                painting.setThemeId(rs.getInt("themeId"));
                 painting.setThemeName(rs.getString("themeName"));
                 painting.setArtistName(rs.getString("artist_name"));
                 painting.setPrice(rs.getDouble("price"));
@@ -657,8 +686,8 @@ public class PaintingDao {
     }
 
     public List<Painting> getFlashSaleArtworks() {
-        String sql = "SELECT p.id, p.title, p.imageUrl, p.imageUrlCloud, ar.name AS artist_name, t.themeName, p.price, " +
-                "IF(NOW() BETWEEN d.startDate AND d.endDate, d.discountPercentage, 0) AS discount, " +
+        String sql = "SELECT p.id, p.title, p.imageUrl, p.imageUrlCloud, ar.name AS artist_name, t.themeName, t.id As themeId, " +
+                "ar.id AS artistId, p.price, IF(NOW() BETWEEN d.startDate AND d.endDate, d.discountPercentage, 0) AS discount, " +
                 "(SELECT AVG(r.rating) FROM product_reviews r WHERE r.paintingId = p.id) AS average_rating " +
                 "FROM paintings p " +
                 "JOIN artists ar ON p.artistId = ar.id " +
@@ -678,6 +707,8 @@ public class PaintingDao {
                 painting.setTitle(rs.getString("title"));
                 painting.setImageUrl(rs.getString("imageUrl"));
                 painting.setImageUrlCloud(rs.getString("imageUrlCloud"));
+                painting.setArtistId(rs.getInt("artistId"));
+                painting.setThemeId(rs.getInt("themeId"));
                 painting.setThemeName(rs.getString("themeName"));
                 painting.setArtistName(rs.getString("artist_name"));
                 painting.setPrice(rs.getDouble("price"));
@@ -785,6 +816,8 @@ public class PaintingDao {
                         p.imageUrlCloud,
                         a.name AS artistName,
                         t.themeName,
+                        t.id AS themeId,
+                        a.id AS artistId,
                         d.discountName,
                         d.discountPercentage,
                         s.sizeDescription,
@@ -810,7 +843,11 @@ public class PaintingDao {
                     while (rs.next()) {
                         if (paintingDetail == null) {
                             // Initialize the PaintingDetail object
-                            paintingDetail = new Painting(rs.getInt("paintingId"), rs.getString("paintingTitle"), rs.getDouble("price"), rs.getString("description"), rs.getString("imageUrl"), rs.getString("imageUrlCloud"), rs.getString("artistName"), rs.getString("themeName"), rs.getBoolean("isFeatured"), rs.getDate("createdAt"), getPaintingRating(rs.getInt("paintingId")));
+                            paintingDetail = new Painting(rs.getInt("paintingId"), rs.getString("paintingTitle"), rs.getDouble("price"), rs.getString("description"),
+                                    rs.getString("imageUrl"), rs.getString("imageUrlCloud"),
+                                    rs.getInt("artistId"), rs.getInt("themeId"), rs.getString("artistName"), rs.getString("themeName"),
+                                    rs.getBoolean("isFeatured"), rs.getDate("createdAt"),
+                                    getPaintingRating(rs.getInt("paintingId")));
                         }
 
                         // Add size and quantity to the painting detail
@@ -859,6 +896,8 @@ public class PaintingDao {
                         p.imageUrlCloud,
                         a.name AS artistName,
                         t.themeName AS theme,
+                        t.id As themeId,
+                        a.id AS artistId,
                         IF(NOW() BETWEEN d.startDate AND d.endDate, d.discountPercentage, 0) AS discount,
                         IFNULL((SELECT AVG(rating) FROM product_reviews WHERE paintingId = p.id), 0) as averageRating
                     FROM paintings p
@@ -881,6 +920,8 @@ public class PaintingDao {
                     painting.setTitle(rs.getString("paintingTitle"));
                     painting.setImageUrl(rs.getString("imageUrl"));
                     painting.setImageUrlCloud(rs.getString("imageUrlCloud"));
+                    painting.setArtistId(rs.getInt("artistId"));
+                    painting.setThemeId(rs.getInt("themeId"));
                     painting.setArtistName(rs.getString("artistName"));
                     painting.setThemeName(rs.getString("theme"));
                     painting.setDiscountPercentage(rs.getDouble("discount"));
