@@ -17,13 +17,19 @@ $(document).on('click', '.remove-item', function (e) {
             if (response.status === "success") {
                 console.log("Successfully removed item.");
 
-                $("#totalAmount").text(formatCurrencyVND(response.cart.totalPrice));
-                $("#total-price").text(formatCurrencyVND(response.cart.totalPrice));
+                $("#totalAmount").text(formatCurrencyVND(response.totalPrice));
+                $("#cart-total-price").text(formatCurrencyVND(response.totalPrice));
                 $(`#cart-item-${productId}-${sizeId}`).remove();
-                $(`#mini-cart-item-${productId}-${sizeId}`).remove();
+
+                const formattedTotal = formatCurrencyVND(response.totalPrice);
+                document.querySelectorAll("#total-price-value, #totalAmount, #checkout-total-price-value, #cart-total-price-value")
+                    .forEach(el => {
+                        el.textContent = formattedTotal;
+                    });
 
 
-                updateMiniCartHeader(response.cart.items);
+                updateMiniCartHeader(response.items);
+                $(`#cart-itemp-${productId}-${sizeId}`).remove();
             } else {
                 alert(response.message || "Đã xảy ra lỗi khi xóa sản phẩm khỏi giỏ hàng.");
             }

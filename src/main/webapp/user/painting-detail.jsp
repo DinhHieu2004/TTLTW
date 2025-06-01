@@ -15,7 +15,6 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/header.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/shopping-cart.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/painting-detail.css">
-
 </head>
 
 <body>

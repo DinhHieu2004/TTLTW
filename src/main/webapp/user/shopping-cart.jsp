@@ -112,7 +112,7 @@
                         <f:formatNumber var="totalFormatted" value="${sessionScope.cart.totalPrice}" pattern="#,##0" />
                         <tr>
                             <th colspan="4" class="text-end">Tổng tiền</th>
-                            <th id="total-price" colspan="2">${fn:replace(totalFormatted, ',', '.')} ₫</th>
+                            <th id="cart-total-price" colspan="2">${fn:replace(totalFormatted, ',', '.')} ₫</th>
                         </tr>
                         </tfoot>
                     </table>
@@ -166,8 +166,16 @@
                                     </td>
                                     <td>${cp.productName}</td>
                                     <td><span class="mx-2 quantity">${cp.quantity}</span></td>
-                                    <f:formatNumber var="priceFormatted" value="${cp.totalPrice}" pattern="#,##0" />
-                                    <td>${fn:replace(priceFormatted, ',', '.')} ₫</td>
+                                    <c:choose>
+                                        <c:when test="${cp.discountPercent > 0 && cp.discountPrice != null}">
+                                            <f:formatNumber var="discountedPrice" value="${cp.discountPrice}" pattern="#,##0" />
+                                            <td>${fn:replace(discountedPrice, ',', '.')} ₫</td>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <f:formatNumber var="priceFormatted" value="${cp.totalPrice}" pattern="#,##0" />
+                                            <td>${fn:replace(priceFormatted, ',', '.')} ₫</td>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </tr>
                             </c:forEach>
                             </tbody>
