@@ -177,14 +177,17 @@
                     <div class="mb-3">
                         <label for="currentPassword" class="form-label">Mật khẩu hiện tại</label>
                         <input type="password" class="form-control" id="currentPassword" name="currentPassword" placeholder="Nhập mật khẩu hiện tại" required>
+                        <div class="text-danger small" id="currentPasswordError"></div>
                     </div>
                     <div class="mb-3">
                         <label for="newPassword" class="form-label">Mật khẩu mới</label>
                         <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Nhập mật khẩu mới" required>
+                        <div class="text-danger small" id="newPasswordError"></div>
                     </div>
                     <div class="mb-3">
                         <label for="confirmPassword" class="form-label">Nhập lại mật khẩu mới</label>
                         <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Nhập lại mật khẩu mới" required>
+                        <div class="text-danger small" id="confirmPasswordError"></div>
                     </div>
                     <button type="submit" class="btn btn-primary" style="background-color: var(--primary-color) !important;">Lưu Thay Đổi</button>
                 </form>
