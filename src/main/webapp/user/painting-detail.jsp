@@ -443,9 +443,6 @@
             input.value = currentValue - 1;
         }
     }
-</script>
-<%-- chỉnh sửa đánh giá--%>
-<script>
     $(document).ready(function () {
         $('.edit-review-btn').click(function () {
             let reviewItem = $(this).closest('.review-item');
@@ -480,32 +477,38 @@
             let newRating = reviewItem.find('.edit-rating').val();
 
             $.ajax({
-                url: 'admin/reviews/update',
-                method: 'POST',
-                data: {reviewId, newComment, newRating},
+                url: 'review/update',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    id: reviewId,
+                    rating: newRating,
+                    comment: newComment
+                }),
                 success: function (response) {
-                    if (response.status === "success") {
-                        reviewItem.find('.comment-text').text(newComment).removeClass('d-none');
-                        reviewItem.find('.edit-comment').addClass('d-none');
+                    reviewItem.find('.comment-text').text(newComment).removeClass('d-none');
+                    reviewItem.find('.edit-comment').addClass('d-none');
 
-                        reviewItem.find('.rating-text').text(newRating).removeClass('d-none');
-                        reviewItem.find('.edit-rating').addClass('d-none');
+                    reviewItem.find('.rating-text').text(newRating).removeClass('d-none');
+                    const ratingStars = reviewItem.find('.rating-stars');
+                    ratingStars.find('i').each(function(index) {
+                        if (index < newRating) {
+                            $(this).removeClass('text-gray-200').addClass('text-warning').css('color', '');
+                        } else {
+                            $(this).removeClass('text-warning').addClass('text-gray-200').css('color', '#e9ecef');
+                        }
+                    });
+                    reviewItem.find('.edit-rating').addClass('d-none');
 
-                        reviewItem.find('.edit-review-btn').removeClass('d-none');
-                        reviewItem.find('.save-btn, .cancel-btn').addClass('d-none');
-                    } else {
-                        alert("Cập nhật thất bại!");
-                    }
+                    reviewItem.find('.edit-review-btn').removeClass('d-none');
+                    reviewItem.find('.save-btn, .cancel-btn').addClass('d-none');
                 },
-                error: function () {
+                error: function (xhr) {
                     alert('Lỗi khi cập nhật đánh giá.');
                 }
             });
         });
     });
-</script>
-<%-- Xóa đánh giá--%>
-<script>
     $(document).ready(function () {
         let reviewIdToDelete = null;
         $(document).on("click", ".delete-review-btn", function () {
@@ -517,7 +520,7 @@
             if (!reviewIdToDelete) return;
 
             $.ajax({
-                url: "admin/reviews/delete",
+                url: "review/delete",
                 method: "POST",
                 data: {rid: reviewIdToDelete},
                 dataType: "json",
@@ -532,7 +535,7 @@
                     $("#deleteConfirmModal").modal("hide");
                 },
                 error: function (xhr, status, error) {
-                    console.error("Lỗi khi xóa:", xhr.responseText);
+                    console.log("Lỗi khi xóa:", xhr);
                     try {
                         const response = JSON.parse(xhr.responseText);
                         alert(response.message || "Lỗi khi xóa đánh giá!");

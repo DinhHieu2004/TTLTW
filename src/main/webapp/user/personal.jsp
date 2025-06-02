@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/footer.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/header.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/personal.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/preview.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -275,6 +276,47 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reviewModalLabel">Đánh giá sản phẩm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex align-items-center mb-3 border p-2 rounded">
+                    <img id="productImage" src="" alt="Ảnh sản phẩm" width="60" height="60" style="object-fit: cover; border-radius: 4px;">
+                    <div class="ms-3 flex-grow-1">
+                        <div id="productName" class="fw-bold"></div>
+                        <div class="d-flex">
+                            <div class="me-3">Kích thước: <span id="productSize"></span></div>
+                            <div>Số lượng: <span id="productQuantity"></span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="reviewForm">
+                    <input type="hidden" id="paintingId" name="paintingId" value="">
+                    <input type="hidden" id="itemId" name="itemId" value="">
+
+                    <div id="starRating" class="mb-2">
+                        <i class="fa fa-star" data-value="1"></i>
+                        <i class="fa fa-star" data-value="2"></i>
+                        <i class="fa fa-star" data-value="3"></i>
+                        <i class="fa fa-star" data-value="4"></i>
+                        <i class="fa fa-star" data-value="5"></i>
+                    </div>
+
+                    <textarea id="comment" class="form-control mb-2" rows="4" placeholder="Viết đánh giá của bạn..."></textarea>
+                    <input type="hidden" id="rating" value="0">
+                    <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- Address Modal -->
 <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
