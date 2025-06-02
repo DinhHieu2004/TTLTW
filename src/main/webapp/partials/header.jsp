@@ -84,7 +84,7 @@
 
                         <div class="cart-items" id="mini-cart-items">
                             <c:choose>
-                                <c:when test="${empty sessionScope.cart.items || sessionScope.cart.items.size() == 0}">
+                                <c:when test="${empty sessionScope.cart.items }">
                                     <div class="alert alert-info text-center" role="alert">
                                         Giỏ hàng của bạn đang trống.
                                     </div>
@@ -160,7 +160,7 @@
                         style="background: #e7621b !important; margin-right: 10px;">Đăng nhập
                     </button>
                     <button class="btn register-btn" data-bs-toggle="modal" data-bs-target="#authModal"
-                        data-tab="register" style="background: #e7621b !important;">Đăng ký
+                        data-tab="register" style="background: #e7621b !important; color: white ">Đăng ký
                     </button>
                     </c:when>
                     <c:when test="${not empty sessionScope.user}">

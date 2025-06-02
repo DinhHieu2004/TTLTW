@@ -83,6 +83,8 @@ public class DiscountDao {
             p.imageUrlCloud,
             a.name AS artistName,
             t.themeName AS theme,
+            p.themeId,
+            p.artistId,
             IFNULL(d.discountPercentage, 0) AS discount,
             IFNULL((SELECT AVG(rating) FROM product_reviews WHERE paintingId = p.id), 0) as averageRating
         FROM paintings p
@@ -149,6 +151,8 @@ public class DiscountDao {
                     painting.setImageUrlCloud(rs.getString("imageUrlCloud"));
                     painting.setArtistName(rs.getString("artistName"));
                     painting.setThemeName(rs.getString("theme"));
+                    painting.setThemeId(rs.getInt("themeId"));
+                    painting.setArtistId(rs.getInt("artistId"));
                     painting.setDiscountPercentage(rs.getDouble("discount"));
                     painting.setPrice(rs.getDouble("price"));
                     painting.setAverageRating(rs.getDouble("averageRating"));
@@ -230,6 +234,8 @@ public class DiscountDao {
             p.imageUrl,
             a.name AS artistName,
             t.themeName AS theme,
+            p.themeId,
+            p.artistId,
             IFNULL(d.discountPercentage, 0) AS discountPercentage
         FROM paintings p
         LEFT JOIN artists a ON p.artistId = a.id
@@ -251,6 +257,8 @@ public class DiscountDao {
                     painting.setImageUrl(rs.getString("imageUrl"));
                     painting.setArtistName(rs.getString("artistName"));
                     painting.setThemeName(rs.getString("theme"));
+                    painting.setThemeId(rs.getInt("themeId"));
+                    painting.setArtistId(rs.getInt("artistId"));
                     painting.setDiscountPercentage(rs.getDouble("discountPercentage"));
                     painting.setSizes(getPaintingSizes(rs.getInt("paintingId")));
                     paintingList.add(painting);
@@ -273,6 +281,8 @@ public class DiscountDao {
             p.price, 
             a.name AS artistName, 
             t.themeName AS themeName, 
+            p.themeId,
+            p.artistId,
             p.createdAt 
         FROM 
             paintings p
@@ -300,6 +310,8 @@ public class DiscountDao {
             String theme = rs.getString("themeName");
             Date createdAt = rs.getDate("createdAt");
             String artistName = rs.getString("artistName");
+            int themeId = rs.getInt("themeId");
+            int artistId = rs.getInt("artistId");
 
 
             // Gán dữ liệu vào đối tượng Painting
@@ -308,6 +320,8 @@ public class DiscountDao {
             painting.setPrice(price);
             painting.setThemeName(theme);
             painting.setArtistName(artistName);
+            painting.setArtistId(artistId);
+            painting.setThemeId(themeId);
             painting.setCrateDate(createdAt);
             painting.setSizes(getPaintingSizes(paintingId));
 

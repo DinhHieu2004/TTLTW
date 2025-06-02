@@ -452,7 +452,7 @@
                 <div class="col-md-3" style="font-size: 0.85rem;">Kích thước</div>
                 <div class="col-md-2" style="font-size: 0.85rem;">Tổng</div>
                 <div class="col-md-2" style="font-size: 0.85rem;">Đã Đặt</div>
-                <div class="col-md-3" style="font-size: 0.85rem;">Có Sẵn</div>
+                <div class="col-md-3" style="font-size: 0.85rem;">Muốn bán</div>
               </div>
               <c:forEach var="size" items="${sizes}">
                 <div class="size-quantity-pair">

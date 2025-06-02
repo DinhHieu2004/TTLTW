@@ -12,9 +12,6 @@ body, html {
     --primary-text-dark : black  !important;
 
   }
-#header-container{
-    height: 110px;
-}
 .title{
     background-color: rgb(255, 255, 255);
     width: 50%;
