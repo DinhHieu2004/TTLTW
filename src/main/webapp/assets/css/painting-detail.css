@@ -16,9 +16,6 @@ body, html {
 }
 .container-product{
     margin: 50px 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 #paintingImage{
     margin-left: 50px;

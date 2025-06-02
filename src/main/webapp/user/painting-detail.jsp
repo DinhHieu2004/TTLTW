@@ -43,14 +43,14 @@
                     <p class="text-muted">Mã sản phẩm: #${p.id}</p>
 
                     <div class="mb-3">
+                        <div class="d-flex flex-wrap align-items-center gap-5">
                         <p><strong>Họa sĩ:</strong>
                             <a href="artwork?artist=${p.artistId}" class="link-custom">${p.artistName}</a>
                         </p>
                         <p><strong>Chủ đề: </strong>
                             <a href="artwork?theme=${p.themeId}" class="link-custom">${p.themeName}</a>
                         </p>
-                        <p><strong>Mô tả:</strong> ${p.description}</p>
-
+                        </div>
                         <span class="rating-stars">
                             <c:forEach begin="1" end="5" var="i">
                                 <i class="fas fa-star ${i <= p.averageRating ? 'text-warning' : 'text-gray-200'}"
@@ -138,38 +138,61 @@
                 </div>
             </div>
         </div>
+        <div class="mt-5 p-4 bg-white border rounded shadow-sm">
+            <h4>Mô tả</h4>
+            <div class="p-3 border rounded">
+                <p class="mb-0 fs-6">${p.description}</p>
+            </div>
+        </div>
+
         <div class="reviews-section mt-4">
-            <h3>Đánh giá sản phẩm</h3>
+            <h4>Đánh giá sản phẩm</h4>
 
-            <c:forEach items="${reviews}" var="review">
-                <div class="review-item mb-3 p-3 border rounded" data-id="${review.id}">
-                    <p><strong>Người dùng:</strong> ${review.userName}</p>
+            <c:choose>
+                <c:when test="${not empty reviews}">
+                    <c:forEach items="${reviews}" var="review">
+                        <div class="review-item mb-3 p-3 border rounded" data-id="${review.id}">
+                            <p><strong>Người dùng:</strong> ${review.userName}</p>
 
-                    <p><strong>Đánh giá:</strong>
-                        <span class="rating-text">${review.rating}</span> / 5
-                        <select class="form-select form-select-sm edit-rating d-none">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                        </select>
-                    </p>
+                            <p><strong>Đánh giá:</strong>
+                                <span class="rating-stars ms-2">
+                            <c:forEach begin="1" end="5" var="i">
+                                <i class="fas fa-star ${i <= review.rating ? 'text-warning' : 'text-gray-200'}"
+                                   style="${i > review.rating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>
+                            </c:forEach>
+                        </span>
 
-                    <p class="comment-text">${review.comment}</p>
-                    <textarea class="form-control d-none edit-comment">${review.comment}</textarea>
+                                <!-- Chọn lại đánh giá -->
+                                <select class="form-select form-select-sm edit-rating d-none">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </p>
 
-                    <p><small>${review.createdAt}</small></p>
+                            <p class="comment-text">${review.comment}</p>
+                            <textarea class="form-control d-none edit-comment">${review.comment}</textarea>
 
-                    <c:if test="${sessionScope.user != null && sessionScope.user.id == review.userId}">
-                        <button class="btn btn-sm btn-primary edit-review-btn" data-id="${review.id}">Chỉnh sửa</button>
-                        <button class="btn btn-sm btn-success save-btn d-none" data-id="${review.id}">Lưu</button>
-                        <button class="btn btn-sm btn-danger cancel-btn d-none" data-id="${review.id}">Hủy</button>
-                        <button class="btn btn-sm btn-outline-danger delete-review-btn" data-id="${review.id}">Xóa
-                        </button>
-                    </c:if>
-                </div>
-            </c:forEach>
+                            <p><small>${review.createdAt}</small></p>
+
+                            <c:if test="${sessionScope.user != null && sessionScope.user.id == review.userId}">
+                                <button class="btn btn-sm btn-primary edit-review-btn" data-id="${review.id}">Chỉnh sửa</button>
+                                <button class="btn btn-sm btn-success save-btn d-none" data-id="${review.id}">Lưu</button>
+                                <button class="btn btn-sm btn-danger cancel-btn d-none" data-id="${review.id}">Hủy</button>
+                                <button class="btn btn-sm btn-outline-danger delete-review-btn" data-id="${review.id}">Xóa</button>
+                            </c:if>
+                        </div>
+                    </c:forEach>
+                </c:when>
+
+                <c:otherwise>
+                    <div class="review-item mb-3 p-3 border rounded">
+                        <p class="fst-italic text-muted">Chưa có đánh giá nào cho sản phẩm này.</p>
+                    </div>
+                </c:otherwise>
+            </c:choose>
 
             <!-- Modal Xác Nhận Xóa -->
             <div id="deleteConfirmModal" class="modal fade" tabindex="-1" aria-hidden="true">
@@ -190,35 +213,35 @@
                 </div>
             </div>
         </div>
-        <div class="mt-4">
-            <h3>Các Tranh cùng tác giả</h3>
+        <hr class="my-5">
+        <div class="mt-2 p-4 bg-white border rounded shadow-sm">
+            <h4>Các Tranh cùng tác giả</h4>
             <div class="container-product mt-4">
-                <div class="row g-4 g-2 col-10" id="artworkSameArtist">
+                <div class="row row-cols-2 row-cols-md-5 g-2" id="artworkSameArtist">
                     <c:forEach var="p" items="${pT}">
-                        <div class="col-6 col-md-3">
+                        <div class="col">
                             <div class="card artwork-card h-100" style="height: 380px !important;">
-                                <a href="painting-detail?pid=${p.id}" class="card-link"></a>
                                 <c:choose>
                                     <c:when test="${not empty p.imageUrlCloud}">
-                                        <img loading="lazy"
-                                             src="${p.imageUrlCloud}?f_auto,q_auto,w_400"
-                                             class="card-img-top artwork-image"
-                                             alt="${p.title}"
-                                             style="width: 100%; height:180px !important;">
+                                        <a href="<c:url value='/painting-detail?pid=${p.id}'/>">
+                                            <img loading="lazy" src="${p.imageUrlCloud}?f_auto,q_auto,w_400" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                                        </a>
                                     </c:when>
                                     <c:otherwise>
-                                        <img loading="lazy"
-                                             src="${pageContext.request.contextPath}/${p.imageUrl}"
-                                             class="card-img-top artwork-image"
-                                             alt="${p.title}"
-                                             style="width: 100%; height:180px !important;">
+                                        <a href="<c:url value='/painting-detail?pid=${p.id}'/>">
+                                            <img loading="lazy" src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                                        </a>
                                     </c:otherwise>
                                 </c:choose>
                                 <div class="card-body">
-                                    <h5 class="card-title">${p.title}</h5>
+                                    <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="text-decoration-none text-dark">
+                                        <h5 class="card-title">${p.title}</h5>
+                                    </a>
                                     <p class="card-text">
-                                        <strong>Họa Sĩ:</strong> ${p.artistName}<br>
-                                        <strong>Chủ đề:</strong> ${p.themeName}<br>
+                                        <strong>Họa Sĩ:</strong>
+                                        <a href="artwork?artist=${p.artistId}" class="link-custom">${p.artistName}</a><br>
+                                        <strong>Chủ đề:</strong>
+                                        <a href="artwork?theme=${p.themeId}" class="link-custom">${p.themeName}</a><br>
 
                                         <span class="rating-stars">
                             <c:forEach begin="1" end="5" var="i">
@@ -261,37 +284,52 @@
                     </c:forEach>
                 </div>
             </div>
+            <div class="view-all-container text-center my-3">
+                <a href="artwork?artist=${p.artistId}" class="btn btn-outline-warning btn-sm view-all-btn" style="
+        padding: 6px 15px;
+        border: 1px solid #f39c12;
+        color: #f39c12;
+        background: transparent;
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    ">
+                    Xem thêm
+                    <i class="fas fa-angle-right ms-1"></i>
+                </a>
+            </div>
         </div>
-        <div class="mt-4">
-            <h3>Các Tranh cùng tác giả</h3>
+        <div class="mt-2 p-4 bg-white border rounded shadow-sm">
+            <h4>Các Tranh cùng chủ đề</h4>
             <div class="container-product mt-4">
-                <div class="row g-4 g-2 col-10" id="artworkSameTheme">
+                <div class="row row-cols-2 row-cols-md-5 g-3" id="artworkSameTheme">
                     <c:forEach var="p" items="${pA}">
-                        <div class="col-6 col-md-3">
+                        <div class="col">
                             <div class="card artwork-card h-100" style="height: 380px !important;">
-                                <a href="painting-detail?pid=${p.id}" class="card-link"></a>
                                 <c:choose>
                                     <c:when test="${not empty p.imageUrlCloud}">
-                                        <img loading="lazy"
-                                             src="${p.imageUrlCloud}?f_auto,q_auto,w_400"
-                                             class="card-img-top artwork-image"
-                                             alt="${p.title}"
-                                             style="width: 100%; height:180px !important;">
+                                        <a href="<c:url value='/painting-detail?pid=${p.id}'/>">
+                                            <img loading="lazy" src="${p.imageUrlCloud}?f_auto,q_auto,w_400" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                                        </a>
                                     </c:when>
                                     <c:otherwise>
-                                        <img loading="lazy"
-                                             src="${pageContext.request.contextPath}/${p.imageUrl}"
-                                             class="card-img-top artwork-image"
-                                             alt="${p.title}"
-                                             style="width: 100%; height:180px !important;">
+                                        <a href="<c:url value='/painting-detail?pid=${p.id}'/>">
+                                            <img loading="lazy" src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                                        </a>
                                     </c:otherwise>
                                 </c:choose>
                                 <div class="card-body">
-                                    <h5 class="card-title">${p.title}</h5>
+                                    <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="text-decoration-none text-dark">
+                                        <h5 class="card-title">${p.title}</h5>
+                                    </a>
                                     <p class="card-text">
-                                        <strong>Họa Sĩ:</strong> ${p.artistName}<br>
-                                        <strong>Chủ đề:</strong> ${p.themeName}<br>
-
+                                        <strong>Họa Sĩ:</strong>
+                                        <a href="artwork?artist=${p.artistId}" class="link-custom">${p.artistName}</a><br>
+                                        <strong>Chủ đề:</strong>
+                                        <a href="artwork?theme=${p.themeId}" class="link-custom">${p.themeName}</a><br>
                                         <span class="rating-stars">
                             <c:forEach begin="1" end="5" var="i">
                                 <i class="fas fa-star ${i <= p.averageRating ? 'text-warning' : 'text-gray-200'}"
@@ -332,6 +370,23 @@
                         </div>
                     </c:forEach>
                 </div>
+            </div>
+            <div class="view-all-container text-center my-3">
+                <a href="artwork?theme=${p.themeId}" class="btn btn-outline-warning btn-sm view-all-btn" style="
+        padding: 6px 15px;
+        border: 1px solid #f39c12;
+        color: #f39c12;
+        background: transparent;
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    ">
+                    Xem thêm
+                    <i class="fas fa-angle-right ms-1"></i>
+                </a>
             </div>
         </div>
     </div>

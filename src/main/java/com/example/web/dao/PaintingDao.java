@@ -540,15 +540,15 @@ public class PaintingDao {
         List<Object> params = Collections.singletonList(artistId);
         return getRandomPaintingsByCondition(where, params, 8);
     }
-    public List<Painting> getRandomPaintingsByTheme(int themeId) throws SQLException {
-        String where = " p.themeId = ?";
-        List<Object> params = Collections.singletonList(themeId);
-        return getRandomPaintingsByCondition(where, params, 4);
+    public List<Painting> getRandomPaintingsByTheme(int themeId, int id) throws SQLException {
+        String where = " p.themeId = ? AND p.id != ?";
+        List<Object> params = Arrays.asList(themeId, id);
+        return getRandomPaintingsByCondition(where, params, 5);
     }
-    public List<Painting> getRandomPaintingsByArtist(int artistId) throws SQLException {
-        String where = " p.artistId = ?";
-        List<Object> params = Collections.singletonList(artistId);
-        return getRandomPaintingsByCondition(where, params, 4);
+    public List<Painting> getRandomPaintingsByArtist(int artistId, int id) throws SQLException {
+        String where = " p.artistId = ? AND p.id != ?";
+        List<Object> params = Arrays.asList(artistId, id);
+        return getRandomPaintingsByCondition(where, params, 5);
     }
 
 

@@ -36,8 +36,8 @@ public class GetDetail extends HttpServlet {
                 RequestDispatcher dispatcher = req.getRequestDispatcher("/404.jsp");
                 dispatcher.forward(req, resp);
             }
-            List<Painting> listPaintingSameArtist = paintingService.getRandomPaintingsByArtist(painting.getArtistId());
-            List<Painting> listPaintingSamTheme = paintingService.getRandomPaintingsByTheme(painting.getThemeId());
+            List<Painting> listPaintingSameArtist = paintingService.getRandomPaintingsByArtist(painting.getArtistId(), painting.getId());
+            List<Painting> listPaintingSamTheme = paintingService.getRandomPaintingsByTheme(painting.getThemeId(), painting.getId());
             req.setAttribute("pA", listPaintingSameArtist);
             req.setAttribute("pT", listPaintingSamTheme);
             req.setAttribute("p", painting);

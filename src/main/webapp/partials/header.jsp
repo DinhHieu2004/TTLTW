@@ -160,7 +160,7 @@
                         style="background: #e7621b !important; margin-right: 10px;">Đăng nhập
                     </button>
                     <button class="btn register-btn" data-bs-toggle="modal" data-bs-target="#authModal"
-                        data-tab="register" style="background: #e7621b !important;">Đăng ký
+                        data-tab="register" style="background: #e7621b !important; color: white ">Đăng ký
                     </button>
                     </c:when>
                     <c:when test="${not empty sessionScope.user}">

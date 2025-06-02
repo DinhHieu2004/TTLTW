@@ -106,49 +106,49 @@
                     </div>
                 </div>
             </div>
-            <div class="container my-5">
-                <div class="row">
+        </div>
+    </div>
+<div class="container my-5">
+    <div class="row">
 
-                    <!-- Cột bên trái: Hình ảnh -->
-                    <div class="col-md-6">
-                        <div class="embed-responsive embed-responsive-16by9">
-                            <img class="embed-responsive-item" src="https://cdn.baogialai.com.vn/images/b6e9e273388cf373c7197a59d2310437352c2851cd5b8e027e0695c8f296f53a0dee8c8a63898b6a340dd461c8ae966c9252f6b5d04211dd131bd7838ad9cb681db38117083bbcd83eda798a95fb1371/tp-tranhcat-11-3402-5493.jpg"
-                                alt="Giới thiệu tranh cát" class="img-fluid"
-                                style="width: 100%; height: 100%;"></iframe>
-                        </div>
-                    </div>
+        <!-- Cột bên trái: Hình ảnh -->
+        <div class="col-md-6">
+            <div class="embed-responsive embed-responsive-16by9">
+                <img class="embed-responsive-item" src="https://cdn.baogialai.com.vn/images/b6e9e273388cf373c7197a59d2310437352c2851cd5b8e027e0695c8f296f53a0dee8c8a63898b6a340dd461c8ae966c9252f6b5d04211dd131bd7838ad9cb681db38117083bbcd83eda798a95fb1371/tp-tranhcat-11-3402-5493.jpg"
+                     alt="Giới thiệu tranh cát" class="img-fluid"
+                     style="width: 100%; height: 100%;"></iframe>
+            </div>
+        </div>
 
-                    <div class="col-md-6 introduce">
-                        <h2 class="intro-title">Giới thiệu</h2>
+        <div class="col-md-6 introduce">
+            <h2 class="intro-title">Giới thiệu</h2>
 
-                        <div class="intro-section my-3">
-                            <h3 class="subtitle">Nội dung độc đáo</h3>
-                            <div class="d-flex align-items-start">
-                                <div class="vertical-line"
-                                    style="width: 4px; background-color: orange; margin-right: 15px;"></div>
-                                <p class="intro-content">Hơn 150 tác phẩm Tranh cát Cao Cấp chỉ có tại NLUER
-                                    Gallery, độc quyền và độc bản. Đa dạng chủ đề tranh, màu sắc, kích thước phù hợp mọi
-                                    không gian nội thất.</p>
-                            </div>
-                        </div>
+            <div class="intro-section my-3">
+                <h3 class="subtitle">Nội dung độc đáo</h3>
+                <div class="d-flex align-items-start">
+                    <div class="vertical-line"
+                         style="width: 4px; background-color: orange; margin-right: 15px;"></div>
+                    <p class="intro-content">Hơn 150 tác phẩm Tranh cát Cao Cấp chỉ có tại NLUER
+                        Gallery, độc quyền và độc bản. Đa dạng chủ đề tranh, màu sắc, kích thước phù hợp mọi
+                        không gian nội thất.</p>
+                </div>
+            </div>
 
-                        <div class="intro-section my-3">
-                            <h3 class="subtitle">Chất lượng hoàn hảo</h3>
-                            <div class="d-flex align-items-start">
-                                <div class="vertical-line"
-                                    style="width: 4px; background-color: orange; margin-right: 15px;"></div>
-                                <p class="intro-content">Tranh cao cấp sử dụng chất liệu nhập khẩu hoàn toàn khác biệt,
-                                    khung gỗ sồi tự nhiên. Được sáng tác bởi đội ngũ họa sĩ trẻ tràn đầy năng lượng,
-                                    không ngừng sáng tạo theo dòng chảy tư duy kết nối với lớp họa sĩ gạo cội giàu cảm
-                                    xúc.</p>
-                            </div>
-                        </div>
-                    </div>
-
+            <div class="intro-section my-3">
+                <h3 class="subtitle">Chất lượng hoàn hảo</h3>
+                <div class="d-flex align-items-start">
+                    <div class="vertical-line"
+                         style="width: 4px; background-color: orange; margin-right: 15px;"></div>
+                    <p class="intro-content">Tranh cao cấp sử dụng chất liệu nhập khẩu hoàn toàn khác biệt,
+                        khung gỗ sồi tự nhiên. Được sáng tác bởi đội ngũ họa sĩ trẻ tràn đầy năng lượng,
+                        không ngừng sáng tạo theo dòng chảy tư duy kết nối với lớp họa sĩ gạo cội giàu cảm
+                        xúc.</p>
                 </div>
             </div>
         </div>
+
     </div>
+</div>
 
 <c:if test="${not empty flashSaleArtworks}">
 <%-- Flash sale--%>
@@ -219,8 +219,13 @@
                                 </c:when>
                                 <c:otherwise>
                                     <fmt:formatNumber var="regularPrice" value="${p.price}" pattern="#,##0"/>
-                                    <div class="regular-price">
-                                        <span class="fw-bold">${fn:replace(regularPrice, ',', '.')} ₫</span>
+                                    <div class="price-container">
+                                        <div class="sale-price-wrapper">
+                                            <span class="fw-bold">${fn:replace(regularPrice, ',', '.')} ₫</span>
+                                        </div>
+                                        <div class="original-price-wrapper" style="visibility: hidden; height: 24px;">
+                                            <span class="badge bg-success discount-badge">&nbsp;</span>
+                                        </div>
                                     </div>
                                 </c:otherwise>
                             </c:choose>
@@ -261,9 +266,9 @@
 <div class="view-all-container text-center my-3">
     <a href="discount_content?id=3" class="btn btn-outline-warning btn-sm view-all-btn" style="
         padding: 6px 15px;
-        border: 1px solid #f39c12;
-        color: #f39c12;
-        background: transparent;
+        border: 1px solid #f39c12 !important;
+        color: #f39c12 !important;
+        background: transparent !important;
         font-weight: 500;
         text-transform: uppercase;
         font-size: 14px;
@@ -340,8 +345,13 @@
                                     </c:when>
                                     <c:otherwise>
                                         <fmt:formatNumber var="regularPrice" value="${p.price}" pattern="#,##0"/>
-                                        <div class="regular-price">
-                                            <span class="fw-bold">${fn:replace(regularPrice, ',', '.')} ₫</span>
+                                        <div class="price-container">
+                                            <div class="sale-price-wrapper">
+                                                <span class="fw-bold">${fn:replace(regularPrice, ',', '.')} ₫</span>
+                                            </div>
+                                            <div class="original-price-wrapper" style="visibility: hidden; height: 24px;">
+                                                <span class="badge bg-success discount-badge">&nbsp;</span>
+                                            </div>
                                         </div>
                                     </c:otherwise>
                                 </c:choose>
@@ -441,8 +451,13 @@
                                 </c:when>
                                 <c:otherwise>
                                     <fmt:formatNumber var="regularPrice" value="${p.price}" pattern="#,##0"/>
-                                    <div class="regular-price">
-                                        <span class="fw-bold">${fn:replace(regularPrice, ',', '.')} ₫</span>
+                                    <div class="price-container">
+                                        <div class="sale-price-wrapper">
+                                            <span class="fw-bold">${fn:replace(regularPrice, ',', '.')} ₫</span>
+                                        </div>
+                                        <div class="original-price-wrapper" style="visibility: hidden; height: 24px;">
+                                            <span class="badge bg-success discount-badge">&nbsp;</span>
+                                        </div>
                                     </div>
                                 </c:otherwise>
                             </c:choose>
@@ -482,9 +497,9 @@
 <div class="view-all-container text-center my-3">
     <a href="artwork?snew=snew" class="btn btn-outline-warning btn-sm view-all-btn" style="
         padding: 6px 15px;
-        border: 1px solid #f39c12;
-        color: #f39c12;
-        background: transparent;
+        border: 1px solid #f39c12 !important;
+        color: #f39c12 !important;
+        background: transparent !important;
         font-weight: 500;
         text-transform: uppercase;
         font-size: 14px;
@@ -560,8 +575,13 @@
                                 </c:when>
                                 <c:otherwise>
                                     <fmt:formatNumber var="regularPrice" value="${p.price}" pattern="#,##0"/>
-                                    <div class="regular-price">
-                                        <span class="fw-bold">${fn:replace(regularPrice, ',', '.')} ₫</span>
+                                    <div class="price-container">
+                                        <div class="sale-price-wrapper">
+                                            <span class="fw-bold">${fn:replace(regularPrice, ',', '.')} ₫</span>
+                                        </div>
+                                        <div class="original-price-wrapper" style="visibility: hidden; height: 24px;">
+                                            <span class="badge bg-success discount-badge">&nbsp;</span>
+                                        </div>
                                     </div>
                                 </c:otherwise>
                             </c:choose>
@@ -601,9 +621,9 @@
 <div class="view-all-container text-center my-3">
     <a href="artwork?sort=rating" class="btn btn-outline-warning btn-sm view-all-btn" style="
         padding: 6px 15px;
-        border: 1px solid #f39c12;
-        color: #f39c12;
-        background: transparent;
+        border: 1px solid #f39c12 !important;
+        color: #f39c12 !important;
+        background: transparent !important;
         font-weight: 500;
         text-transform: uppercase;
         font-size: 14px;
