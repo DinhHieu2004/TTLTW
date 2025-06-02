@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet("/admin/review_admin/delete")
+@WebServlet("/review/delete")
 public class Delete extends HttpServlet {
     private final PrivewService privewService = new PrivewService();
     private final LogService logService = new LogService();
