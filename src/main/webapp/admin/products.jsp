@@ -769,7 +769,7 @@
 
     let table4 = $('#productsD').DataTable({
 
-    })
+    });
   });
 
   document.querySelectorAll('[data-bs-target="#deleteProductModal"]').forEach(button => {
@@ -1062,6 +1062,8 @@
   $(document).ready(function () {
     var table = $('#products').DataTable();
 
+    var table4 = $('#productsD').DataTable();
+
     $(document).on("click", ".delete-painting", function () {
       var paintingId = $(this).data("product-id");
       $("#pidToDelete").val(paintingId);
@@ -1104,7 +1106,7 @@
         success: function (response) {
           if (response.success) {
             var $row = $('[data-product-id="' + paintingId + '"]').closest('tr');
-            table.row($row).remove().draw();
+            table4.row($row).remove().draw();
             $("#restoreProductModal").modal("hide");
           } else {
             alert(response.message);
