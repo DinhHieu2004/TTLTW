@@ -282,7 +282,6 @@
       <div class="card-header bg-success text-white" style="background: #5a5958 !important;">
         <h4>Tranh đã xóa</h4>
 
-        <%-- Thêm tranh--%>
       </div>
       <div class="card-body">
         <table id="productsD" class="table table-bordered display">
@@ -329,10 +328,10 @@
                           data-bs-target="#viewAndEditModal"
                           data-product-id="${p.id}">Xem Chi Tiết</button>
 
-                <button class="btn btn-danger btn-sm delete-painting"
+                <button class="btn btn-primary btn-sm restore-painting"
                         data-bs-toggle="modal"
-                        data-bs-target="#deleteProductModal"
-                        data-product-id="${p.id}">Xóa</button>
+                        data-bs-target="#restoreProductModal"
+                        data-product-id="${p.id}">khôi phục</button>
             </tr>
           </c:forEach>
           </tbody>
@@ -572,6 +571,28 @@
     </div>
   </div>
 
+
+  <div class="modal fade" id="restoreProductModal" tabindex="-1" aria-labelledby="restoreProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="restoreProductModalLabel">Xác nhận khôi phục</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="restorePaintingForm">
+          <div class="modal-body">
+            <p>Bạn có chắc chắn muốn khôi phục sản phẩm này?</p>
+            <input type="hidden" id="pidTorestore" name="pid">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+            <button type="submit" class="btn btn-primary">khôi phục</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 
@@ -745,12 +766,23 @@
 
     let table3 = $('#themes').DataTable({
     });
+
+    let table4 = $('#productsD').DataTable({
+
+    })
   });
 
   document.querySelectorAll('[data-bs-target="#deleteProductModal"]').forEach(button => {
     button.addEventListener('click', function() {
       let pid = this.getAttribute('data-product-id');
       document.getElementById('pidToDelete').value = pid;
+    });
+  });
+
+  document.querySelectorAll('[data-bs-target="#restoreProductModal"]').forEach(button => {
+    button.addEventListener('click', function() {
+      let pid = this.getAttribute('data-product-id');
+      document.getElementById('pidTorestore').value = pid;
     });
   });
   document.querySelectorAll('[data-bs-target="#deleteThemeModal"]').forEach(button => {
@@ -1059,27 +1091,27 @@
         }
       });
     });
-// khoi pu
-    $("#deletePaintingForm").submit(function (event) {
+// khoi phuc
+    $("#restorePaintingForm").submit(function (event) {
       event.preventDefault();
-      var paintingId = $("#pidToDelete").val();
+      var paintingId = $("#pidTorestore").val();
 
       $.ajax({
         type: "POST",
-        url: "products/delete",
+        url: "products/restore",
         data: { pid: paintingId },
         dataType: "json",
         success: function (response) {
           if (response.success) {
             var $row = $('[data-product-id="' + paintingId + '"]').closest('tr');
             table.row($row).remove().draw();
-            $("#deleteProductModal").modal("hide");
+            $("#restoreProductModal").modal("hide");
           } else {
             alert(response.message);
           }
         },
         error: function () {
-          alert("Lỗi khi xóa tranh.");
+          alert("Lỗi khi khôi phục.");
         }
       });
     });

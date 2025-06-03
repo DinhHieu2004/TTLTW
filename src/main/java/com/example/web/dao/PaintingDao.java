@@ -1227,4 +1227,14 @@ public class PaintingDao {
         }
         return 0;
     }
+
+    public boolean restore(int i) throws SQLException {
+        String sql = "UPDATE paintings SET isDelete = 0 WHERE id = ?";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setInt(1, i);
+
+        PaintingCacheManager.clearAll();
+
+        return ps.executeUpdate() > 0;
+    }
 }

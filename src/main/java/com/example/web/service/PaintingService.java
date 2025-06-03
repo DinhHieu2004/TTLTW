@@ -134,4 +134,8 @@ public class PaintingService {
     public List<Painting> getRandomPaintingsByTheme(int themeId, int id) throws SQLException {
         return paintingDao.getRandomPaintingsByTheme(themeId, id);
     }
+
+    public boolean restore(int i)  throws SQLException{
+        return paintingDao.restore(i);
+    }
 }
