@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.List;
 
 @WebServlet("/admin/inventoryTrans")
@@ -33,6 +34,7 @@ public class GetList extends HttpServlet {
             List<Order> o = orderService.getOrderByDelStatus("Chờ");
             req.setAttribute("stockIn", stockIn);
             req.setAttribute("stockOut", stockOut);
+            p.sort(Comparator.comparingInt(Painting::getId));
             req.setAttribute("p", p);
             req.setAttribute("s", s);
             req.setAttribute("o", o);

@@ -39,7 +39,9 @@ public class AuthService {
         String hashedPasswordFromDB = u.getPassword();
         return BCrypt.checkpw(password, hashedPasswordFromDB);
     }
-
+    public boolean updatePassword(int id, String newPassword) throws SQLException {
+        return udao.updatePassword(id, hashPassword(newPassword));
+    }
     public boolean registerUser(String fullName, String username, String password, String email, String phone, String role) throws SQLException {
         if (!udao.registerUser(fullName, username, hashPassword(password), email, phone, role)) {
             return false;
@@ -204,5 +206,4 @@ public class AuthService {
             return "update_failed";
         }
     }
-
 }
