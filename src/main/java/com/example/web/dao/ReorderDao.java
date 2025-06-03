@@ -69,7 +69,7 @@ public class ReorderDao {
         LEFT JOIN order_items oi ON oi.paintingId = ps.paintingId AND oi.sizeId = ps.sizeId
         LEFT JOIN orders o ON oi.orderId = o.id
             AND o.orderDate >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-            AND o.status = 'hoàn thành'
+            AND o.deliveryStatus = 'hoàn thành'
         GROUP BY ps.paintingId, ps.sizeId
         HAVING avgDailySale < 0.3
         ORDER BY avgDailySale ASC
