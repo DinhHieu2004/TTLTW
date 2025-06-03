@@ -19,7 +19,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       - name: Create db.properties
-        run:
+        run: |
           mkdir -p src/main/resources
           echo "db.host=db" >> src/main/resources/db.properties
           echo "db.port=3306" >> src/main/resources/db.properties
@@ -79,7 +79,7 @@ jobs:
           target: /home/haodk/jsp-docker/docker/
           overwrite: true
 
-      - name: Restart Web Container
+      - name: Rebuild Docker Image (web)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -87,5 +87,9 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd ~/jsp-docker
+            cd ~/jsp-docker/docker
+            docker-compose down
+            docker-compose build web
             docker-compose up -d web
+      
+      
