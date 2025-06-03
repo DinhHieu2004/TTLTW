@@ -64,7 +64,8 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: docker/sql/artgallery.sql
-          target: /home/haodk/jsp-docker/docker/sql/artgallery.sql
+          target: /home/haodk/jsp-docker/docker/sql/
+          overwrite: true
 
       - name: Import SQL into MySQL (Docker)
         uses: appleboy/ssh-action@v1.0.3
