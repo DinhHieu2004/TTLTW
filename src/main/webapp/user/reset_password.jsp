@@ -135,7 +135,7 @@
             data: $(this).serialize(),
             success: function (response) {
                 alert("Đổi mật khẩu thành công!")
-                window.location.href = "http://localhost:8080/TTLTW_war/";
+                window.location.href = "https://artgallery.name.vn/";
                 submitButton.prop('disabled', false);
             },
             error: function (xhr) {
@@ -164,7 +164,6 @@
 <!-- Thêm JavaScript của Bootstrap nếu cần -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="${pageContext.request.contextPath}/assets/js/checkSession.js"></script>
 </body>
 </html>
 
