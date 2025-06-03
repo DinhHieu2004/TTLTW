@@ -34,28 +34,6 @@ jobs:
       - name: Rename WAR for Docker
         run: mv target/web-1.0-SNAPSHOT.war myapp.war
 
-      - name: Copy WAR to VPS
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          port: ${{ secrets.VPS_PORT }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: myapp.war
-          target: /home/haodk/jsp-docker/docker/
-
-      - name: Restart Docker on VPS
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          port: ${{ secrets.VPS_PORT }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd ~/jsp-docker
-            docker-compose down
-            docker-compose up -d --build
-
       - name: Copy SQL to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -67,6 +45,19 @@ jobs:
           target: /home/haodk/jsp-docker/docker/sql/
           overwrite: true
 
+      - name: Restart DB Container
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          port: ${{ secrets.VPS_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/jsp-docker
+            docker-compose down
+            docker-compose up -d db
+            sleep 10  
+
       - name: Import SQL into MySQL (Docker)
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -76,3 +67,25 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             docker exec -i mysql_db mysql -u dkhao -p170804 ArtGallery < /home/haodk/jsp-docker/docker/sql/artgallery.sql
+
+      - name: Copy WAR to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          port: ${{ secrets.VPS_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: myapp.war
+          target: /home/haodk/jsp-docker/docker/
+          overwrite: true
+
+      - name: Restart Web Container
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          port: ${{ secrets.VPS_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/jsp-docker
+            docker-compose up -d web
