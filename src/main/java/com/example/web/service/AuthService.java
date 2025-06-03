@@ -67,10 +67,11 @@ public class AuthService {
 
     public boolean passwordRecovery(String email) throws SQLException {
         User user = udao.findByEmail(email);
-        if (user == null || user.getPassword() == null || user.getPassword().isEmpty()) {
+        if (user == null || user.getPassword() == null || user.getPassword().isEmpty() || !user.getStatus().equals("Hoạt động")) {
             return false;
         }
         long time = 15 * 60 * 1000;
+
         String token = UUID.randomUUID().toString();
         udao.deleteActiveTokens(user.getId(), "forgotPass");
         udao.saveTokens(user.getId(), token, "forgotPass", time);
