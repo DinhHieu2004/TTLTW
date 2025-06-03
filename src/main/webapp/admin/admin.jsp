@@ -234,6 +234,20 @@
         <tbody>
         </tbody>
     </table>
+
+    <h2>Danh sách sản phẩm bán chậm</h2>
+    <table id="slowSellingTable" class="display">
+        <thead>
+        <tr>
+            <th>ID Tranh</th>
+            <th>Tên Tranh</th>
+            <th>Size</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 </div>
 
 <script>
