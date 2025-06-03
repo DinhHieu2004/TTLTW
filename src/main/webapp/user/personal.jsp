@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/footer.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/header.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/personal.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/preview.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -29,10 +30,10 @@
 
     <style>
         #nameChange, #phoneChange, #emailChange, #addressChange {
-            color: #000 !important; /* Đảm bảo chữ màu đen */
-            opacity: 1 !important; /* Đảm bảo không trong suốt */
-            visibility: visible !important; /* Đảm bảo hiển thị */
-            font-size: 16px !important; /* Đảm bảo chữ đủ lớn */
+            color: #000 !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            font-size: 16px !important;
         }
     </style>
 </head>
@@ -80,6 +81,48 @@
                             </c:if>
                         </c:forEach>
                     </div>
+                    <c:set var="roleNames" value="" />
+                    <c:forEach var="role" items="${sessionScope.user.roles}">
+                        <c:set var="roleNames" value="${roleNames}${role.name}," />
+                    </c:forEach>
+                    <c:if test="${!fn:contains(roleNames, 'ADMIN')}">
+                        <div class="d-flex justify-content-end mt-4">
+                            <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                                <i class="fas fa-user-times"></i> Xóa tài khoản
+                            </button>
+                        </div>
+
+                    <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title" id="deleteAccountLabel">Xác nhận xóa tài khoản</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Bạn có chắc chắn muốn xóa tài khoản không?</p>
+                                    <p><strong>Lưu ý:</strong> Tài khoản của bạn sẽ được đặt trạng thái chờ xóa trong <strong>3 ngày</strong>. Trong thời gian này bạn sẽ không thể đăng nhập.</p>
+                                    <p>Một email sẽ được gửi đến bạn với link để <strong>hủy bỏ xóa tài khoản</strong> nếu bạn thay đổi ý định.</p>
+                                    <p>Sau 3 ngày, tài khoản sẽ bị xóa vĩnh viễn và không thể khôi phục.</p>
+                                    <input type="hidden" id="hasUsername" name="hasUsername" value="${not empty sessionScope.user.username}" />
+
+                                    <c:if test="${not empty sessionScope.user.username}">
+                                        <div class="mt-3">
+                                            <label for="deleteAccountPassword" class="form-label">Nhập mật khẩu để xác nhận:</label>
+                                            <input type="password" id="deleteAccountPassword" class="form-control" placeholder="Mật khẩu" />
+                                            <div id="passwordError" class="text-danger mt-1" style="display:none;">Mật khẩu không đúng, vui lòng thử lại.</div>
+                                        </div>
+                                    </c:if>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                    <button id="confirmDeleteAccountBtn" type="button" class="btn btn-danger">Xóa tài khoản</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        </c:if>
+
                     <div class="modal fade" id="editPersonalInfoModal" tabindex="-1" aria-labelledby="editPersonalInfoModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -135,14 +178,17 @@
                     <div class="mb-3">
                         <label for="currentPassword" class="form-label">Mật khẩu hiện tại</label>
                         <input type="password" class="form-control" id="currentPassword" name="currentPassword" placeholder="Nhập mật khẩu hiện tại" required>
+                        <div class="text-danger small" id="currentPasswordError"></div>
                     </div>
                     <div class="mb-3">
                         <label for="newPassword" class="form-label">Mật khẩu mới</label>
                         <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Nhập mật khẩu mới" required>
+                        <div class="text-danger small" id="newPasswordError"></div>
                     </div>
                     <div class="mb-3">
                         <label for="confirmPassword" class="form-label">Nhập lại mật khẩu mới</label>
                         <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Nhập lại mật khẩu mới" required>
+                        <div class="text-danger small" id="confirmPasswordError"></div>
                     </div>
                     <button type="submit" class="btn btn-primary" style="background-color: var(--primary-color) !important;">Lưu Thay Đổi</button>
                 </form>
@@ -230,6 +276,47 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reviewModalLabel">Đánh giá sản phẩm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex align-items-center mb-3 border p-2 rounded">
+                    <img id="productImage" src="" alt="Ảnh sản phẩm" width="60" height="60" style="object-fit: cover; border-radius: 4px;">
+                    <div class="ms-3 flex-grow-1">
+                        <div id="productName" class="fw-bold"></div>
+                        <div class="d-flex">
+                            <div class="me-3">Kích thước: <span id="productSize"></span></div>
+                            <div>Số lượng: <span id="productQuantity"></span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="reviewForm">
+                    <input type="hidden" id="paintingId" name="paintingId" value="">
+                    <input type="hidden" id="itemId" name="itemId" value="">
+
+                    <div id="starRating" class="mb-2">
+                        <i class="fa fa-star" data-value="1"></i>
+                        <i class="fa fa-star" data-value="2"></i>
+                        <i class="fa fa-star" data-value="3"></i>
+                        <i class="fa fa-star" data-value="4"></i>
+                        <i class="fa fa-star" data-value="5"></i>
+                    </div>
+
+                    <textarea id="comment" class="form-control mb-2" rows="4" placeholder="Viết đánh giá của bạn..."></textarea>
+                    <input type="hidden" id="rating" value="0">
+                    <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- Address Modal -->
 <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">

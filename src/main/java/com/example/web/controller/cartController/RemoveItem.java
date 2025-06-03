@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.Map;
 
 @WebServlet(name="RemoveFromCart", value = "/remove-from-cart")
 public class RemoveItem extends HttpServlet {
@@ -22,15 +23,31 @@ public class RemoveItem extends HttpServlet {
         HttpSession session = req.getSession();
         Cart cart = (Cart) session.getAttribute("cart");
 
-
         if (cart != null) {
             cart.removeFromCart(productId, sizeId);
             session.setAttribute("cart", cart);
+
+            Map<String, CartPainting> updatedItems = cart.getItemsMap();
+            double updatedTotal = cart.getTotalPrice();
+
+            resp.setContentType("application/json");
+            resp.setCharacterEncoding("UTF-8");
+            resp.getWriter().write(
+                    new Gson().toJson(
+                            Map.of(
+                                    "status", "success",
+                                    "items", updatedItems,
+                                    "totalPrice", updatedTotal
+                            )
+                    )
+            );
+            return;
         }
 
+        // Nếu cart null
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
-        String jsonResponse = new Gson().toJson(cart);
-        resp.getWriter().write("{\"status\": \"success\", \"cart\": " + jsonResponse + "}");
+        resp.getWriter().write("{\"status\":\"error\",\"message\":\"Cart is empty.\"}");
     }
 }
+

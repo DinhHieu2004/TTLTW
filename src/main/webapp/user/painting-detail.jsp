@@ -16,9 +16,6 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/header.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/shopping-cart.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/painting-detail.css">
-    <script src="${pageContext.request.contextPath}/assets/js/header.js"></script>
-    <script src="${pageContext.request.contextPath}/assets/js/painting-detail.js"></script>
-
 </head>
 
 <body>
@@ -26,7 +23,7 @@
 
 <div class="container py-4">
     <c:if test="${not empty message}">
-        <div  id="alertMessage"  class="alert alert-success alert-dismissible fade show" role="alert">
+        <div id="alertMessage" class="alert alert-success alert-dismissible fade show" role="alert">
             <h2>${message}</h2>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -34,7 +31,8 @@
     <div class="row">
         <div class="col-md-6">
             <div class="card">
-                <img loading="lazy" src="${p.imageUrlCloud}?f_auto,q_auto,w_600" alt="${p.title}" class="card-img-top img-fluid">
+                <img loading="lazy" src="${p.imageUrlCloud}?f_auto,q_auto,w_600" alt="${p.title}"
+                     class="card-img-top img-fluid">
             </div>
         </div>
 
@@ -45,13 +43,18 @@
                     <p class="text-muted">Mã sản phẩm: #${p.id}</p>
 
                     <div class="mb-3">
-                        <p><strong>Họa sĩ:</strong> ${p.artistName}</p>
-                        <p><strong>Chủ đề:</strong> ${p.themeName}</p>
-                        <p><strong>Mô tả:</strong> ${p.description}</p>
-
+                        <div class="d-flex flex-wrap align-items-center gap-5">
+                        <p><strong>Họa sĩ:</strong>
+                            <a href="artwork?artist=${p.artistId}" class="link-custom">${p.artistName}</a>
+                        </p>
+                        <p><strong>Chủ đề: </strong>
+                            <a href="artwork?theme=${p.themeId}" class="link-custom">${p.themeName}</a>
+                        </p>
+                        </div>
                         <span class="rating-stars">
                             <c:forEach begin="1" end="5" var="i">
-                                <i class="fas fa-star ${i <= p.averageRating ? 'text-warning' : 'text-gray-200'}" style="${i > p.averageRating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>
+                                <i class="fas fa-star ${i <= p.averageRating ? 'text-warning' : 'text-gray-200'}"
+                                   style="${i > p.averageRating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>
                             </c:forEach>
                         </span>
                         <span class="ms-1">${p.averageRating}</span>
@@ -61,8 +64,9 @@
                     <div class="mb-4">
                         <c:choose>
                             <c:when test="${p.discountPercentage > 0}">
-                                <fmt:formatNumber var="originalPrice" value="${p.price}" pattern="#,##0" />
-                                <fmt:formatNumber var="salePrice" value="${p.price * (1 - p.discountPercentage / 100)}" pattern="#,##0" />
+                                <fmt:formatNumber var="originalPrice" value="${p.price}" pattern="#,##0"/>
+                                <fmt:formatNumber var="salePrice" value="${p.price * (1 - p.discountPercentage / 100)}"
+                                                  pattern="#,##0"/>
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="text-muted text-decoration-line-through">
                                         ${fn:replace(originalPrice, ',', '.')} ₫
@@ -74,7 +78,7 @@
                                 </div>
                             </c:when>
                             <c:otherwise>
-                                <fmt:formatNumber var="normalPrice" value="${p.price}" pattern="#,##0" />
+                                <fmt:formatNumber var="normalPrice" value="${p.price}" pattern="#,##0"/>
                                 <span class="h4">
                                     ${fn:replace(normalPrice, ',', '.')} ₫
                                 </span>
@@ -97,9 +101,11 @@
                                                    value="${size.idSize}"
                                                    data-quantity="${size.displayQuantity}"
                                                 ${size.displayQuantity <= 0 ? 'disabled' : ''}>
-                                            <input type="hidden" name="quantity_${size.idSize}" value="${size.displayQuantity}">
+                                            <input type="hidden" name="quantity_${size.idSize}"
+                                                   value="${size.displayQuantity}">
                                             <label class="form-check-label" for="size_${size.sizeDescriptions}">
-                                                    ${size.sizeDescriptions} <small class="text-muted">(Còn ${size.displayQuantity})</small>
+                                                    ${size.sizeDescriptions} <small
+                                                    class="text-muted">(Còn ${size.displayQuantity})</small>
 
 
                                             </label>
@@ -111,14 +117,20 @@
                         <div class="mb-3">
                             <label for="quantity" class="form-label"><strong>Số lượng:</strong></label>
                             <div class="input-group">
-                                <button type="button" class="btn btn-outline-secondary" onclick="decrementQuantity()">-</button>
-                                <input type="number" class="form-control text-center" id="quantity" name="quantity" value="1" min="1" required>
-                                <button type="button" class="btn btn-outline-secondary" onclick="incrementQuantity()">+</button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="decrementQuantity()">
+                                    -
+                                </button>
+                                <input type="number" class="form-control text-center" id="quantity" name="quantity"
+                                       value="1" min="1" required>
+                                <button type="button" class="btn btn-outline-secondary" onclick="incrementQuantity()">
+                                    +
+                                </button>
                             </div>
                         </div>
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary" style="background: #e7621b !important;">
-                                <i class="fas fa-cart-plus me-2" style="background: #e7621b !important;"></i>Thêm vào giỏ hàng
+                                <i class="fas fa-cart-plus me-2" style="background: #e7621b !important;"></i>Thêm vào
+                                giỏ hàng
                             </button>
                         </div>
                     </form>
@@ -126,37 +138,61 @@
                 </div>
             </div>
         </div>
+        <div class="mt-5 p-4 bg-white border rounded shadow-sm">
+            <h4>Mô tả</h4>
+            <div class="p-3 border rounded">
+                <p class="mb-0 fs-6">${p.description}</p>
+            </div>
+        </div>
+
         <div class="reviews-section mt-4">
-            <h3>Đánh giá sản phẩm</h3>
+            <h4>Đánh giá sản phẩm</h4>
 
-            <c:forEach items="${reviews}" var="review">
-                <div class="review-item mb-3 p-3 border rounded" data-id="${review.id}">
-                    <p><strong>Người dùng:</strong> ${review.userName}</p>
+            <c:choose>
+                <c:when test="${not empty reviews}">
+                    <c:forEach items="${reviews}" var="review">
+                        <div class="review-item mb-3 p-3 border rounded" data-id="${review.id}">
+                            <p><strong>Người dùng:</strong> ${review.userName}</p>
 
-                    <p><strong>Đánh giá:</strong>
-                        <span class="rating-text">${review.rating}</span> / 5
-                        <select class="form-select form-select-sm edit-rating d-none">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                        </select>
-                    </p>
+                            <p><strong>Đánh giá:</strong>
+                                <span class="rating-stars ms-2">
+                            <c:forEach begin="1" end="5" var="i">
+                                <i class="fas fa-star ${i <= review.rating ? 'text-warning' : 'text-gray-200'}"
+                                   style="${i > review.rating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>
+                            </c:forEach>
+                        </span>
 
-                    <p class="comment-text">${review.comment}</p>
-                    <textarea class="form-control d-none edit-comment">${review.comment}</textarea>
+                                <!-- Chọn lại đánh giá -->
+                                <select class="form-select form-select-sm edit-rating d-none">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </p>
 
-                    <p><small>${review.createdAt}</small></p>
+                            <p class="comment-text">${review.comment}</p>
+                            <textarea class="form-control d-none edit-comment">${review.comment}</textarea>
 
-                    <c:if test="${sessionScope.user != null && sessionScope.user.id == review.userId}">
-                        <button class="btn btn-sm btn-primary edit-review-btn" data-id="${review.id}">Chỉnh sửa</button>
-                        <button class="btn btn-sm btn-success save-btn d-none" data-id="${review.id}">Lưu</button>
-                        <button class="btn btn-sm btn-danger cancel-btn d-none" data-id="${review.id}">Hủy</button>
-                        <button class="btn btn-sm btn-outline-danger delete-review-btn" data-id="${review.id}">Xóa</button>
-                    </c:if>
-                </div>
-            </c:forEach>
+                            <p><small>${review.createdAt}</small></p>
+
+                            <c:if test="${sessionScope.user != null && sessionScope.user.id == review.userId}">
+                                <button class="btn btn-sm btn-primary edit-review-btn" data-id="${review.id}">Chỉnh sửa</button>
+                                <button class="btn btn-sm btn-success save-btn d-none" data-id="${review.id}">Lưu</button>
+                                <button class="btn btn-sm btn-danger cancel-btn d-none" data-id="${review.id}">Hủy</button>
+                                <button class="btn btn-sm btn-outline-danger delete-review-btn" data-id="${review.id}">Xóa</button>
+                            </c:if>
+                        </div>
+                    </c:forEach>
+                </c:when>
+
+                <c:otherwise>
+                    <div class="review-item mb-3 p-3 border rounded">
+                        <p class="fst-italic text-muted">Chưa có đánh giá nào cho sản phẩm này.</p>
+                    </div>
+                </c:otherwise>
+            </c:choose>
 
             <!-- Modal Xác Nhận Xóa -->
             <div id="deleteConfirmModal" class="modal fade" tabindex="-1" aria-hidden="true">
@@ -177,19 +213,196 @@
                 </div>
             </div>
         </div>
+        <hr class="my-5">
+        <div class="mt-2 p-4 bg-white border rounded shadow-sm">
+            <h4>Các Tranh cùng tác giả</h4>
+            <div class="container-product mt-4">
+                <div class="row row-cols-2 row-cols-md-5 g-2" id="artworkSameArtist">
+                    <c:forEach var="p" items="${pT}">
+                        <div class="col">
+                            <div class="card artwork-card h-100" style="height: 380px !important;">
+                                <c:choose>
+                                    <c:when test="${not empty p.imageUrlCloud}">
+                                        <a href="<c:url value='/painting-detail?pid=${p.id}'/>">
+                                            <img loading="lazy" src="${p.imageUrlCloud}?f_auto,q_auto,w_400" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                                        </a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="<c:url value='/painting-detail?pid=${p.id}'/>">
+                                            <img loading="lazy" src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                                        </a>
+                                    </c:otherwise>
+                                </c:choose>
+                                <div class="card-body">
+                                    <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="text-decoration-none text-dark">
+                                        <h5 class="card-title">${p.title}</h5>
+                                    </a>
+                                    <p class="card-text">
+                                        <strong>Họa Sĩ:</strong>
+                                        <a href="artwork?artist=${p.artistId}" class="link-custom">${p.artistName}</a><br>
+                                        <strong>Chủ đề:</strong>
+                                        <a href="artwork?theme=${p.themeId}" class="link-custom">${p.themeName}</a><br>
+
+                                        <span class="rating-stars">
+                            <c:forEach begin="1" end="5" var="i">
+                                <i class="fas fa-star ${i <= p.averageRating ? 'text-warning' : 'text-gray-200'}"
+                                   style="${i > p.averageRating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>
+                            </c:forEach>
+                        </span>
+                                        <span class="ms-1">${p.averageRating}</span>
+                                    </p>
+                                    <c:choose>
+                                        <c:when test="${p.discountPercentage > 0}">
+                                            <fmt:formatNumber var="originalPrice" value="${p.price}" pattern="#,##0"/>
+                                            <fmt:formatNumber var="salePrice"
+                                                              value="${p.price * (1 - p.discountPercentage / 100)}"
+                                                              pattern="#,##0"/>
+
+                                            <div class="d-flex align-items-center gap-2">
+                                                <del class="text-muted" style="font-size: 0.8rem;">
+                                                        ${fn:replace(originalPrice, ',', '.')} ₫
+                                                </del>
+                                                <span class="badge bg-success"
+                                                      style="font-size: 0.75rem;">-${p.discountPercentage}%</span>
+                                            </div>
+
+                                            <div class="text-danger fw-bold" style="font-size: 0.925rem;">
+                                                    ${fn:replace(salePrice, ',', '.')} ₫
+                                            </div>
+                                        </c:when>
+
+                                        <c:otherwise>
+                                            <fmt:formatNumber var="normalPrice" value="${p.price}" pattern="#,##0"/>
+                                            <div class="fw-bold" style="font-size: 0.925rem;">
+                                                    ${fn:replace(normalPrice, ',', '.')} ₫
+                                            </div>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                            </div>
+                        </div>
+                    </c:forEach>
+                </div>
+            </div>
+            <div class="view-all-container text-center my-3">
+                <a href="artwork?artist=${p.artistId}" class="btn btn-outline-warning btn-sm view-all-btn" style="
+        padding: 6px 15px;
+        border: 1px solid #f39c12;
+        color: #f39c12;
+        background: transparent;
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    ">
+                    Xem thêm
+                    <i class="fas fa-angle-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+        <div class="mt-2 p-4 bg-white border rounded shadow-sm">
+            <h4>Các Tranh cùng chủ đề</h4>
+            <div class="container-product mt-4">
+                <div class="row row-cols-2 row-cols-md-5 g-3" id="artworkSameTheme">
+                    <c:forEach var="p" items="${pA}">
+                        <div class="col">
+                            <div class="card artwork-card h-100" style="height: 380px !important;">
+                                <c:choose>
+                                    <c:when test="${not empty p.imageUrlCloud}">
+                                        <a href="<c:url value='/painting-detail?pid=${p.id}'/>">
+                                            <img loading="lazy" src="${p.imageUrlCloud}?f_auto,q_auto,w_400" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                                        </a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="<c:url value='/painting-detail?pid=${p.id}'/>">
+                                            <img loading="lazy" src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                                        </a>
+                                    </c:otherwise>
+                                </c:choose>
+                                <div class="card-body">
+                                    <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="text-decoration-none text-dark">
+                                        <h5 class="card-title">${p.title}</h5>
+                                    </a>
+                                    <p class="card-text">
+                                        <strong>Họa Sĩ:</strong>
+                                        <a href="artwork?artist=${p.artistId}" class="link-custom">${p.artistName}</a><br>
+                                        <strong>Chủ đề:</strong>
+                                        <a href="artwork?theme=${p.themeId}" class="link-custom">${p.themeName}</a><br>
+                                        <span class="rating-stars">
+                            <c:forEach begin="1" end="5" var="i">
+                                <i class="fas fa-star ${i <= p.averageRating ? 'text-warning' : 'text-gray-200'}"
+                                   style="${i > p.averageRating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>
+                            </c:forEach>
+                        </span>
+                                        <span class="ms-1">${p.averageRating}</span>
+                                    </p>
+                                    <c:choose>
+                                        <c:when test="${p.discountPercentage > 0}">
+                                            <fmt:formatNumber var="originalPrice" value="${p.price}" pattern="#,##0"/>
+                                            <fmt:formatNumber var="salePrice"
+                                                              value="${p.price * (1 - p.discountPercentage / 100)}"
+                                                              pattern="#,##0"/>
+
+                                            <div class="d-flex align-items-center gap-2">
+                                                <del class="text-muted" style="font-size: 0.8rem;">
+                                                        ${fn:replace(originalPrice, ',', '.')} ₫
+                                                </del>
+                                                <span class="badge bg-success"
+                                                      style="font-size: 0.75rem;">-${p.discountPercentage}%</span>
+                                            </div>
+
+                                            <div class="text-danger fw-bold" style="font-size: 0.925rem;">
+                                                    ${fn:replace(salePrice, ',', '.')} ₫
+                                            </div>
+                                        </c:when>
+
+                                        <c:otherwise>
+                                            <fmt:formatNumber var="normalPrice" value="${p.price}" pattern="#,##0"/>
+                                            <div class="fw-bold" style="font-size: 0.925rem;">
+                                                    ${fn:replace(normalPrice, ',', '.')} ₫
+                                            </div>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                            </div>
+                        </div>
+                    </c:forEach>
+                </div>
+            </div>
+            <div class="view-all-container text-center my-3">
+                <a href="artwork?theme=${p.themeId}" class="btn btn-outline-warning btn-sm view-all-btn" style="
+        padding: 6px 15px;
+        border: 1px solid #f39c12;
+        color: #f39c12;
+        background: transparent;
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    ">
+                    Xem thêm
+                    <i class="fas fa-angle-right ms-1"></i>
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 
 <%@ include file="/partials/footer.jsp" %>
+<%@ include file="/partials/authModal.jsp" %>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('addToCartForm');
         const quantityInput = document.getElementById('quantity');
         const sizeInputs = document.querySelectorAll('input[name="size"]');
 
         sizeInputs.forEach(input => {
-            input.addEventListener('change', function() {
+            input.addEventListener('change', function () {
                 const maxQuantity = parseInt(this.dataset.quantity);
                 quantityInput.max = maxQuantity;
                 quantityInput.value = Math.min(quantityInput.value, maxQuantity);
@@ -197,7 +410,7 @@
         });
 
 
-        form.addEventListener('submit', function(event) {
+        form.addEventListener('submit', function (event) {
             if (!form.checkValidity()) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -230,9 +443,6 @@
             input.value = currentValue - 1;
         }
     }
-</script>
-<%-- chỉnh sửa đánh giá--%>
-<script>
     $(document).ready(function () {
         $('.edit-review-btn').click(function () {
             let reviewItem = $(this).closest('.review-item');
@@ -267,32 +477,38 @@
             let newRating = reviewItem.find('.edit-rating').val();
 
             $.ajax({
-                url: 'admin/reviews/update',
-                method: 'POST',
-                data: { reviewId, newComment, newRating },
+                url: 'review/update',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    id: reviewId,
+                    rating: newRating,
+                    comment: newComment
+                }),
                 success: function (response) {
-                    if (response.status === "success") {
-                        reviewItem.find('.comment-text').text(newComment).removeClass('d-none');
-                        reviewItem.find('.edit-comment').addClass('d-none');
+                    reviewItem.find('.comment-text').text(newComment).removeClass('d-none');
+                    reviewItem.find('.edit-comment').addClass('d-none');
 
-                        reviewItem.find('.rating-text').text(newRating).removeClass('d-none');
-                        reviewItem.find('.edit-rating').addClass('d-none');
+                    reviewItem.find('.rating-text').text(newRating).removeClass('d-none');
+                    const ratingStars = reviewItem.find('.rating-stars');
+                    ratingStars.find('i').each(function(index) {
+                        if (index < newRating) {
+                            $(this).removeClass('text-gray-200').addClass('text-warning').css('color', '');
+                        } else {
+                            $(this).removeClass('text-warning').addClass('text-gray-200').css('color', '#e9ecef');
+                        }
+                    });
+                    reviewItem.find('.edit-rating').addClass('d-none');
 
-                        reviewItem.find('.edit-review-btn').removeClass('d-none');
-                        reviewItem.find('.save-btn, .cancel-btn').addClass('d-none');
-                    } else {
-                        alert("Cập nhật thất bại!");
-                    }
+                    reviewItem.find('.edit-review-btn').removeClass('d-none');
+                    reviewItem.find('.save-btn, .cancel-btn').addClass('d-none');
                 },
-                error: function () {
+                error: function (xhr) {
                     alert('Lỗi khi cập nhật đánh giá.');
                 }
             });
         });
     });
-</script>
-<%-- Xóa đánh giá--%>
-<script>
     $(document).ready(function () {
         let reviewIdToDelete = null;
         $(document).on("click", ".delete-review-btn", function () {
@@ -304,13 +520,13 @@
             if (!reviewIdToDelete) return;
 
             $.ajax({
-                url: "admin/reviews/delete",
+                url: "review/delete",
                 method: "POST",
-                data: { rid: reviewIdToDelete },
+                data: {rid: reviewIdToDelete},
                 dataType: "json",
                 success: function (response) {
                     if (window.reviewElementToDelete && window.reviewElementToDelete.length) {
-                        window.reviewElementToDelete.fadeOut(300, function() {
+                        window.reviewElementToDelete.fadeOut(300, function () {
                             $(this).remove();
                         });
                     } else {
@@ -319,7 +535,7 @@
                     $("#deleteConfirmModal").modal("hide");
                 },
                 error: function (xhr, status, error) {
-                    console.error("Lỗi khi xóa:", xhr.responseText);
+                    console.log("Lỗi khi xóa:", xhr);
                     try {
                         const response = JSON.parse(xhr.responseText);
                         alert(response.message || "Lỗi khi xóa đánh giá!");

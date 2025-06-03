@@ -25,7 +25,7 @@ public class DbConnect {
 
     private static Connection makeConnect() throws ClassNotFoundException, SQLException {
         Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection conn = DriverManager.getConnection(url, DbProperties.Username(), DbProperties.password());
+        Connection conn = DriverManager.getConnection(url, DbProperties.username(), DbProperties.password());
         if (conn != null) {
             System.out.println("Connection established successfully.");
         } else {

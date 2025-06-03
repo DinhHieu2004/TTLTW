@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import javax.mail.Session;
+import jakarta.mail.Session;
 import java.io.IOException;
 
 @WebServlet("/location-servlet")

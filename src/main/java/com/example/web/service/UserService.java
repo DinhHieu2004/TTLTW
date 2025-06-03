@@ -13,7 +13,7 @@ import java.util.Set;
 
 public class UserService {
     private UserDao userDao =  new UserDao();
-    private final UserCacheManager cacheManager = new UserCacheManager();
+    private final UserCacheManager cacheManager = UserCacheManager.getInstance();
 
 
     public boolean registerUser(String fullName, String username, String password, String email, String phone, String role) throws SQLException {
@@ -33,6 +33,7 @@ public class UserService {
         boolean result = userDao.deleteUser(id);
         if (result) {
             cacheManager.invalidateUser(id);
+            cacheManager.invalidateAllUsersList();
         }
         return result;
     }
@@ -100,11 +101,14 @@ public class UserService {
         }
         return userDao.updatePassword(userId, hashPassword(pass));
     }
-
+    public void updateUsersStatusIfTokenExpired() {
+        userDao.updateStatusDeletedForExpiredTokens();
+    }
 
     public static void main(String[] args) throws SQLException {
         UserService userService = new UserService();
         User user = userService.findById(4);
         System.out.println(user.getAllRolePermission());
     }
+
 }

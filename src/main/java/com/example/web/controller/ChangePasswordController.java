@@ -11,61 +11,68 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.sql.SQLException;
 
 @WebServlet(name = "ChangePasswordController", value = "/change-password")
 public class ChangePasswordController extends HttpServlet {
-    AuthService auth = new AuthService();
+    private final AuthService authService = new AuthService();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession(false); // Lấy session nếu có, không tạo mới
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
+        HttpSession session = request.getSession(false);
+        PrintWriter out = response.getWriter();
 
-        // Lấy thông tin từ form
+        if (session == null || session.getAttribute("user") == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            out.write("{\"message\": \"Phiên làm việc đã hết, vui lòng đăng nhập lại.\"}");
+            return;
+        }
+
         String currentPassword = request.getParameter("currentPassword");
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
 
-        // Lấy đối tượng User từ session
-        User currentUser = (User) session.getAttribute("user"); // Đảm bảo dùng đúng tên "user"
-
-
-        UserDao userDao = new UserDao();
+        User currentUser = (User) session.getAttribute("user");
 
         try {
-            // Lấy mật khẩu hiện tại từ cơ sở dữ liệu
-            String storedPassword = userDao.getPasswordByUsername(currentUser.getUsername());
-            if (storedPassword == null || !auth.hashPassword(currentPassword).equals(storedPassword)) {
-                // Mật khẩu hiện tại không đúng
-                request.setAttribute("errorMessage", "Mật khẩu hiện tại không đúng!");
-                request.getRequestDispatcher("/user/personal.jsp").forward(request, response);
+            boolean checkPass = authService.checkPassword(currentUser.getId(), currentPassword);
+            if (!checkPass) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                out.write("{\"field\": \"currentPassword\", \"message\": \"Mật khẩu hiện tại không đúng!\"}");
                 return;
             }
 
-            // Kiểm tra mật khẩu mới và xác nhận mật khẩu
             if (!newPassword.equals(confirmPassword)) {
-                request.setAttribute("errorMessage", "Mật khẩu mới và xác nhận mật khẩu không khớp!");
-                request.getRequestDispatcher("/user/personal.jsp").forward(request, response);
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                out.write("{\"field\": \"confirmPassword\", \"message\": \"Mật khẩu xác nhận không khớp!\"}");
+                return;
+            }
+            if (authService.checkPassword(currentUser.getId(), newPassword)) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                out.write("{\"field\": \"newPassword\", \"message\": \"Mật khẩu mới không được trùng mật khẩu cũ!\"}");
                 return;
             }
 
-            // Cập nhật mật khẩu mới vào cơ sở dữ liệu
-            boolean isUpdated = userDao.updatePassword(currentUser.getId(), newPassword);
+            boolean isUpdated = authService.updatePassword(currentUser.getId(), newPassword);
             if (isUpdated) {
-                request.setAttribute("successMessage", "Thay đổi mật khẩu thành công!");
+                response.setStatus(HttpServletResponse.SC_OK);
+                out.write("{\"message\": \"Đổi mật khẩu thành công!\"}");
             } else {
-                request.setAttribute("errorMessage", "Đã xảy ra lỗi, vui lòng thử lại!");
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                out.write("{\"message\": \"Không thể cập nhật mật khẩu, vui lòng thử lại!\"}");
             }
 
-            request.getRequestDispatcher("/user/personal.jsp").forward(request, response);
-
-        } catch (SQLException | IOException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "Lỗi hệ thống, vui lòng thử lại sau!");
-            request.getRequestDispatcher("/user/personal.jsp").forward(request, response);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            out.write("{\"message\": \"Lỗi hệ thống, vui lòng thử lại sau!\"}");
         }
     }
+
 }
 

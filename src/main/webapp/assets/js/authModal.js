@@ -409,15 +409,14 @@ function handleCredentialResponse(response) {
         // data: { credential: idToken, csrfToken: csrfToken },
         data: { credential: idToken},
         success: function(response) {
-            if (response.success) {
                 location.reload();
-            } else {
-                alert("Đăng nhập bằng Google thất bại.");
-            }
         },
         error: function(xhr) {
-            const errorMessage = xhr.responseJSON?.message || "Lỗi kết nối đến server.";
-            alert(errorMessage);
+            let message = "Đăng nhập thất bại";
+            if (xhr.responseText) {
+                message += ": " + xhr.responseText;
+            }
+            alert(message);
         }
     });
 }

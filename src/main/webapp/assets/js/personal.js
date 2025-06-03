@@ -83,7 +83,7 @@ $(document).ready(function () {
                         <p id="orderDate"><strong>Ngày đặt:</strong> ${formatDate(order.orderDate)}</p>
                         <p ><strong id="statusOrder">Trạng thái thanh toán:</strong>${order.paymentStatus}</p>
                     `);
-                        debugger
+
 
                         const voucherText = appliedVouchers.length > 0 ? appliedVouchers.join(', ') : "Không có";
                         modelPrice.html(`
@@ -92,7 +92,7 @@ $(document).ready(function () {
                         <p><strong>Phuương thức TT:</strong> ${order.paymentMethod}</p>
                         <p><strong>Tổng trả:</strong> ${formatCurrency(order.priceAfterShipping)}</p>
                         <p><strong>Trạng thái:</strong> ${order.deliveryStatus}</p>
-`);                     debugger
+`);
                         if (order.deliveryStatus.trim().toLowerCase()  === 'chờ' ||
                             order.deliveryStatus.trim().toLowerCase()  === 'đang giao') {
                             modelPrice.append(`
@@ -137,23 +137,28 @@ $(document).ready(function () {
                                     modalBody.append('<tr><td colspan="6">Không có chi tiết đơn hàng.</td></tr>');
                                     return;
                                 }
-                                debugger
                                 response.forEach(product => {
                                     const row = `
                                     <tr>
-                                        <td>${product.id}</td>
+                                        <td>${product.paintingId}</td>
                                         <td>${product.name}</td>
-                                        <td><img src="${product.imageUrlCloud}" alt="${product.name}" width="60"></td>
+                                        <td>
+                                        <a href="painting-detail?pid=${product.paintingId}" class="text-decoration-none text-dark">
+                                            <img src="${product.imageUrlCloud}" alt="${product.name}" width="60">
+                                        </a>
+                                        </td>
                                         <td>${product.sizeDescription}</td>
                                         <td>${product.quantity}</td>
                                         <td>${product.price}₫</td>
                                         <td>${(order.deliveryStatus || '').trim().toLowerCase() === "hoàn thành"
-                                        ? `<button class="btn btn-primary btn-sm review-btn" data-product-id="${product.id}">Đánh Giá</button>`
+                                        ? ` <button class="btn btn-sm btn-outline-primary open-review-modal" data-product-name="${product.name}"
+                                              data-painting-id="${product.paintingId}" data-product-image="${product.imageUrlCloud}" 
+                                              data-product-quantity="${product.quantity}" data-product-size="${product.sizeDescription}" 
+                                              data-item-id="${product.id}" > Đánh giá </button>`
                                         : ''}</td>
                                     </tr>`;
                                     modalBody.append(row);
                                 });
-                                debugger
                                 modalBody.find('.review-btn').off('click').on('click', function () {
                                     const productId = $(this).data('product-id');
                                     window.location.href = `review?itemId=${productId}`;
@@ -172,9 +177,183 @@ $(document).ready(function () {
             });
         }
     });
+    $(document).on('click', '.open-review-modal', function() {
+        $('#rating').val(0);
+        $('#starRating i').removeClass('text-warning');
+        const productName = $(this).data('product-name');
+        const paintingId = $(this).data('painting-id');
+        const imageUrlCloud =  $(this).data('product-image');
+        const quantity = $(this).data('product-quantity');
+        const sizeDescription = $(this).data('product-size');
+        const itemId = $(this).data('item-id');
+
+        $('#productName').text(productName);
+        $('#itemId').val(itemId);
+        $('#paintingId').val(paintingId);
+        $('#productImage').attr('src', imageUrlCloud);
+        $('#productQuantity').text(quantity);
+        $('#productSize').text(sizeDescription);
+        $('#comment').val('');
+        $('#rating').val(0);
+        $('#starRating i').removeClass('checked');
+
+        const reviewModal = new bootstrap.Modal(document.getElementById('reviewModal'));
+        reviewModal.show();
+    });
+    $('#starRating i').on('click', function () {
+        const rating = $(this).data('value');
+        $('#rating').val(rating);
+        $('#starRating i').removeClass('text-warning');
+        $('#starRating i').each(function () {
+            if ($(this).data('value') <= rating) {
+                $(this).addClass('text-warning');
+            }
+        });
+    });
+    $('#reviewForm').on('submit', function (e) {
+        e.preventDefault();
+        const rating = $('#rating').val();
+        const comment = $('#comment').val();
+        const paintingId = $('#paintingId').val();
+        const itemId = $('#itemId').val();
+
+
+        if (rating === "0") {
+            alert('Vui lòng chọn số sao.');
+            return;
+        }
+
+        $.ajax({
+            url: 'review',
+            method: 'POST',
+            data: {
+                itemId : itemId,
+                paintingId: paintingId,
+                rating: rating,
+                comment: comment
+            },
+            success: function (response) {
+                alert('Đánh giá của bạn đã được gửi thành công!');
+                $('#reviewModal').modal('hide');
+            },
+            error: function (xhr) {
+                const responseText = xhr.responseText;
+
+                if (responseText.includes("<html")) {
+                    alert("Có lỗi xảy ra, không tìm thấy tài nguyên.");
+                } else {
+                    try {
+                        const error = JSON.parse(responseText);
+                        alert(error.error || 'Có lỗi xảy ra. Vui lòng thử lại.');
+                    } catch (e) {
+                        alert('Có lỗi xảy ra. Vui lòng thử lại.');
+                    }
+                }
+            }
+        });
+    });
+    $('#reviewModal').on('show.bs.modal', function () {
+        $('#orderDetailsModal').css('--bs-modal-zindex', '10').css('opacity', '0.9');
+    });
+
+    $('#reviewModal').on('hidden.bs.modal', function () {
+        $('#orderDetailsModal').css('--bs-modal-zindex', '').css('opacity', '1.0');
+    });
+
 
     $('#orderDetailsModal').on('hidden.bs.modal', function () {
         currentOrderId = null;
+    });
+    $('#changePassword form').on('submit', function (e) {
+        e.preventDefault();
+
+        let isValid = true;
+        const newPassword = $('#newPassword');
+        const confirmPassword = $('#confirmPassword');
+        const newPasswordError = $('#newPasswordError');
+        const confirmPasswordError = $('#confirmPasswordError');
+        const currentPassword = $('#currentPassword');
+        const currentPasswordError = $('#currentPasswordError');
+        const submitButton = $('#changePassword button[type="submit"]');
+        let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+        $('.text-danger').text('');
+        $('.is-invalid').removeClass('is-invalid');
+        submitButton.prop('disabled', false);
+
+        if (currentPassword.val().trim() === '') {
+            currentPasswordError.text('Vui lòng nhập mật khẩu hiện tại!').addClass('text-danger');;
+            currentPassword.addClass('is-invalid');
+            isValid = false;
+        }
+
+        if (newPassword.val().trim() === '') {
+            newPasswordError.text('Vui lòng nhập mật khẩu mới!').addClass('text-danger');;
+            newPassword.addClass('is-invalid');
+            isValid = false;
+        } else if (!passwordRegex.test(newPassword.val())) {
+            newPasswordError.text('Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt!').addClass('text-danger');;
+            newPassword.addClass('is-invalid');
+            isValid = false;
+        }
+
+        if (confirmPassword.val().trim() === '') {
+            confirmPasswordError.text('Vui lòng xác nhận lại mật khẩu!').addClass('text-danger');;
+            confirmPassword.addClass('is-invalid');
+            isValid = false;
+        } else if (newPassword.val() !== confirmPassword.val()) {
+            confirmPasswordError.text('Mật khẩu xác nhận không khớp!').addClass('text-danger');;
+            confirmPassword.addClass('is-invalid');
+            isValid = false;
+        }
+
+        if (!isValid){
+            return;
+        }
+        submitButton.prop('disabled', true);
+
+        $.ajax({
+            type: 'POST',
+            url: "change-password",
+            data: $(this).serialize(),
+            success: function (response) {
+                submitButton.prop('disabled', false);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công',
+                    text: 'Đổi mật khẩu thành công!',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    $('#changePassword').modal('hide');
+                    $('#changePassword form')[0].reset();
+                });
+            },
+            error: function (xhr) {
+                try {
+                    const res = JSON.parse(xhr.responseText);
+                    if (res.field && res.message) {
+                        const input = $('#' + res.field);
+                        const error = $('#' + res.field + 'Error');
+                        input.addClass('is-invalid');
+                        error.text(res.message);
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: res.message || 'Đã xảy ra lỗi!'
+                        });
+                    }
+                    submitButton.prop('disabled', false);
+                } catch (e) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi không xác định',
+                        text: 'Vui lòng thử lại sau!'
+                    });
+                    submitButton.prop('disabled', false);
+                }
+            }
+        });
     });
 });
 function formatDate(dateString) {
@@ -247,7 +426,83 @@ $(document).ready(function(){
             }
         });
     });
+    $('#confirmDeleteAccountBtn').on('click', function() {
+        var $btn = $(this);
+        var password = $('#deleteAccountPassword').val();
+        var hasUsername = $('#hasUsername').val() === 'true';
+
+        $('#passwordError').hide();
+        if (!hasUsername) {
+            confirmAndDelete($btn);
+            return;
+        }
+
+        if (!password) {
+            $('#passwordError').text('Vui lòng nhập mật khẩu').addClass("text-danger").show();
+            $('#deleteAccountPassword').addClass('is-invalid');
+            return;
+        }
+
+        $btn.prop('disabled', true);
+        $.ajax({
+            url: 'verify-password',
+            type: 'POST',
+            data: {password: password} ,
+            success: function(response) {
+                confirmAndDelete($btn);
+            },
+            error: function(xhr, status, error) {
+                $('#passwordError').text('Mật khẩu không đúng, vui lòng thử lại.').show();
+                $btn.prop('disabled', false);
+            }
+        });
+    });
+
+
+
 });
+function confirmAndDelete($btn) {
+    Swal.fire({
+        title: 'Xác nhận xóa tài khoản',
+        text: "Bạn có chắc chắn muốn xóa tài khoản không? Hành động này không thể hoàn tác!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Xóa tài khoản',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: 'delete-customer-account',
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                success: function (response) {
+                    $('#deleteAccountModal').modal('hide');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Tài khoản đã được xóa',
+                        confirmButtonText: 'OK'
+                    })
+                },
+                error: function (xhr, status, error) {
+                    let msg = xhr.responseText ? xhr.responseText.replace(/\s+/g, ' ').trim() : error;
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Xóa tài khoản thất bại',
+                        text: msg,
+                        confirmButtonText: 'Thử lại'
+                    });
+                    $btn.prop('disabled', false);
+                }
+            });
+        } else {
+            $btn.prop('disabled', false);
+        }
+    });
+}
+
 function formatCurrency(value) {
     return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', '₫');
 }

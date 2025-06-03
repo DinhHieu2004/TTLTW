@@ -139,8 +139,11 @@ $(document).ready(function () {
                 },
                 success: function (response) {
                     alert('Cập nhật trạng thái thành công');
-                    modalStatus.text(newStatus);
-                    location.reload();
+                    deliveryStatus.text(newStatus);
+                    // Cập nhật status trong bảng (ngoài modal)
+                    $(`#delivery-status-${orderId}`).text(newStatus);
+                    $('#orderDetailsModal').modal('hide');
+
                 },
                 error: function () {
                     alert('Lỗi khi cập nhật trạng thái đơn hàng');

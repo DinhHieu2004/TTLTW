@@ -3,9 +3,9 @@ package com.example.web.controller.util;
 import com.example.web.dao.model.Order;
 import com.example.web.dao.model.OrderItem;
 
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.*;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import java.util.List;
 import java.util.Properties;
 

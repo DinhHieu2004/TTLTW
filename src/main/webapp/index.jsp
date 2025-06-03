@@ -106,49 +106,49 @@
                     </div>
                 </div>
             </div>
-            <div class="container my-5">
-                <div class="row">
+        </div>
+    </div>
+<div class="container my-5">
+    <div class="row">
 
-                    <!-- Cột bên trái: Hình ảnh -->
-                    <div class="col-md-6">
-                        <div class="embed-responsive embed-responsive-16by9">
-                            <img class="embed-responsive-item" src="https://cdn.baogialai.com.vn/images/b6e9e273388cf373c7197a59d2310437352c2851cd5b8e027e0695c8f296f53a0dee8c8a63898b6a340dd461c8ae966c9252f6b5d04211dd131bd7838ad9cb681db38117083bbcd83eda798a95fb1371/tp-tranhcat-11-3402-5493.jpg"
-                                alt="Giới thiệu tranh cát" class="img-fluid"
-                                style="width: 100%; height: 100%;"></iframe>
-                        </div>
-                    </div>
+        <!-- Cột bên trái: Hình ảnh -->
+        <div class="col-md-6">
+            <div class="embed-responsive embed-responsive-16by9">
+                <img class="embed-responsive-item" src="https://cdn.baogialai.com.vn/images/b6e9e273388cf373c7197a59d2310437352c2851cd5b8e027e0695c8f296f53a0dee8c8a63898b6a340dd461c8ae966c9252f6b5d04211dd131bd7838ad9cb681db38117083bbcd83eda798a95fb1371/tp-tranhcat-11-3402-5493.jpg"
+                     alt="Giới thiệu tranh cát" class="img-fluid"
+                     style="width: 100%; height: 100%;"></iframe>
+            </div>
+        </div>
 
-                    <div class="col-md-6 introduce">
-                        <h2 class="intro-title">Giới thiệu</h2>
+        <div class="col-md-6 introduce">
+            <h2 class="intro-title">Giới thiệu</h2>
 
-                        <div class="intro-section my-3">
-                            <h3 class="subtitle">Nội dung độc đáo</h3>
-                            <div class="d-flex align-items-start">
-                                <div class="vertical-line"
-                                    style="width: 4px; background-color: orange; margin-right: 15px;"></div>
-                                <p class="intro-content">Hơn 150 tác phẩm Tranh cát Cao Cấp chỉ có tại NLUER
-                                    Gallery, độc quyền và độc bản. Đa dạng chủ đề tranh, màu sắc, kích thước phù hợp mọi
-                                    không gian nội thất.</p>
-                            </div>
-                        </div>
+            <div class="intro-section my-3">
+                <h3 class="subtitle">Nội dung độc đáo</h3>
+                <div class="d-flex align-items-start">
+                    <div class="vertical-line"
+                         style="width: 4px; background-color: orange; margin-right: 15px;"></div>
+                    <p class="intro-content">Hơn 150 tác phẩm Tranh cát Cao Cấp chỉ có tại NLUER
+                        Gallery, độc quyền và độc bản. Đa dạng chủ đề tranh, màu sắc, kích thước phù hợp mọi
+                        không gian nội thất.</p>
+                </div>
+            </div>
 
-                        <div class="intro-section my-3">
-                            <h3 class="subtitle">Chất lượng hoàn hảo</h3>
-                            <div class="d-flex align-items-start">
-                                <div class="vertical-line"
-                                    style="width: 4px; background-color: orange; margin-right: 15px;"></div>
-                                <p class="intro-content">Tranh cao cấp sử dụng chất liệu nhập khẩu hoàn toàn khác biệt,
-                                    khung gỗ sồi tự nhiên. Được sáng tác bởi đội ngũ họa sĩ trẻ tràn đầy năng lượng,
-                                    không ngừng sáng tạo theo dòng chảy tư duy kết nối với lớp họa sĩ gạo cội giàu cảm
-                                    xúc.</p>
-                            </div>
-                        </div>
-                    </div>
-
+            <div class="intro-section my-3">
+                <h3 class="subtitle">Chất lượng hoàn hảo</h3>
+                <div class="d-flex align-items-start">
+                    <div class="vertical-line"
+                         style="width: 4px; background-color: orange; margin-right: 15px;"></div>
+                    <p class="intro-content">Tranh cao cấp sử dụng chất liệu nhập khẩu hoàn toàn khác biệt,
+                        khung gỗ sồi tự nhiên. Được sáng tác bởi đội ngũ họa sĩ trẻ tràn đầy năng lượng,
+                        không ngừng sáng tạo theo dòng chảy tư duy kết nối với lớp họa sĩ gạo cội giàu cảm
+                        xúc.</p>
                 </div>
             </div>
         </div>
+
     </div>
+</div>
 
 <c:if test="${not empty flashSaleArtworks}">
 <%-- Flash sale--%>
@@ -167,7 +167,6 @@
         <c:forEach var="p" items="${flashSaleArtworks}">
             <div class="col-6 col-md-3">
                 <div class="card artwork-card">
-<%--                    <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="card-link"></a>--%>
                     <div class="artwork-image-wrapper">
                     <c:choose>
                         <c:when test="${not empty p.imageUrlCloud}">
@@ -183,10 +182,14 @@
                     </c:choose>
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title">${p.title}</h5>
+                        <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="text-decoration-none text-dark">
+                            <h5 class="card-title">${p.title}</h5>
+                        </a>
                         <p class="card-text">
-                            <strong>Họa Sĩ:</strong> ${p.artistName}<br>
-                            <strong>Chủ đề:</strong> ${p.themeName}<br>
+                            <strong>Họa Sĩ:</strong>
+                            <a href="artwork?artist=${p.artistId}" class="link-custom">${p.artistName}</a><br>
+                            <strong>Chủ đề:</strong>
+                            <a href="artwork?theme=${p.themeId}" class="link-custom">${p.themeName}</a><br>
                             <span class="rating-stars">
                             <c:forEach begin="1" end="5" var="i">
                                 <i class="fas fa-star ${i <= p.averageRating ? 'text-warning' : 'text-gray-200'}" style="${i > p.averageRating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>
@@ -216,8 +219,13 @@
                                 </c:when>
                                 <c:otherwise>
                                     <fmt:formatNumber var="regularPrice" value="${p.price}" pattern="#,##0"/>
-                                    <div class="regular-price">
-                                        <span class="fw-bold">${fn:replace(regularPrice, ',', '.')} ₫</span>
+                                    <div class="price-container">
+                                        <div class="sale-price-wrapper">
+                                            <span class="fw-bold">${fn:replace(regularPrice, ',', '.')} ₫</span>
+                                        </div>
+                                        <div class="original-price-wrapper" style="visibility: hidden; height: 24px;">
+                                            <span class="badge bg-success discount-badge">&nbsp;</span>
+                                        </div>
                                     </div>
                                 </c:otherwise>
                             </c:choose>
@@ -258,9 +266,9 @@
 <div class="view-all-container text-center my-3">
     <a href="discount_content?id=3" class="btn btn-outline-warning btn-sm view-all-btn" style="
         padding: 6px 15px;
-        border: 1px solid #f39c12;
-        color: #f39c12;
-        background: transparent;
+        border: 1px solid #f39c12 !important;
+        color: #f39c12 !important;
+        background: transparent !important;
         font-weight: 500;
         text-transform: uppercase;
         font-size: 14px;
@@ -288,20 +296,27 @@
         <c:forEach var="p" items="${featuredArtworks}">
                 <div class="col-6 col-md-3">
                     <div class="card artwork-card">
-<%--                        <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="card-link"></a>--%>
-                        <c:choose>
-                            <c:when test="${not empty p.imageUrlCloud}">
+                    <c:choose>
+                        <c:when test="${not empty p.imageUrlCloud}">
+                            <a href="<c:url value='/painting-detail?pid=${p.id}'/>">
                                 <img loading="lazy" src="${p.imageUrlCloud}?f_auto,q_auto,w_400" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
-                            </c:when>
-                            <c:otherwise>
+                            </a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="<c:url value='/painting-detail?pid=${p.id}'/>">
                                 <img loading="lazy" src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
-                            </c:otherwise>
-                        </c:choose>
+                            </a>
+                        </c:otherwise>
+                    </c:choose>
                         <div class="card-body">
-                            <h5 class="card-title">${p.title}</h5>
+                            <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="text-decoration-none text-dark">
+                                <h5 class="card-title">${p.title}</h5>
+                            </a>
                             <p class="card-text">
-                                <strong>Họa Sĩ:</strong> ${p.artistName}<br>
-                                <strong>Chủ đề:</strong> ${p.themeName}<br>
+                                <strong>Họa Sĩ:</strong>
+                                <a href="artwork?artist=${p.artistId}" class="link-custom">${p.artistName}</a><br>
+                                <strong>Chủ đề:</strong>
+                                <a href="artwork?theme=${p.themeId}" class="link-custom">${p.themeName}</a><br>
                                 <span class="rating-stars">
                             <c:forEach begin="1" end="5" var="i">
                                 <i class="fas fa-star ${i <= p.averageRating ? 'text-warning' : 'text-gray-200'}" style="${i > p.averageRating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>
@@ -330,8 +345,13 @@
                                     </c:when>
                                     <c:otherwise>
                                         <fmt:formatNumber var="regularPrice" value="${p.price}" pattern="#,##0"/>
-                                        <div class="regular-price">
-                                            <span class="fw-bold">${fn:replace(regularPrice, ',', '.')} ₫</span>
+                                        <div class="price-container">
+                                            <div class="sale-price-wrapper">
+                                                <span class="fw-bold">${fn:replace(regularPrice, ',', '.')} ₫</span>
+                                            </div>
+                                            <div class="original-price-wrapper" style="visibility: hidden; height: 24px;">
+                                                <span class="badge bg-success discount-badge">&nbsp;</span>
+                                            </div>
                                         </div>
                                     </c:otherwise>
                                 </c:choose>
@@ -382,20 +402,27 @@
         <c:forEach var="p" items="${newP}">
             <div class="col-6 col-md-3">
                 <div class="card artwork-card">
-                    <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="card-link"></a>
                     <c:choose>
                         <c:when test="${not empty p.imageUrlCloud}">
-                            <img loading="lazy" src="${p.imageUrlCloud}?f_auto,q_auto,w_400" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                            <a href="<c:url value='/painting-detail?pid=${p.id}'/>">
+                                <img loading="lazy" src="${p.imageUrlCloud}?f_auto,q_auto,w_400" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                            </a>
                         </c:when>
                         <c:otherwise>
-                            <img loading="lazy" src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                            <a href="<c:url value='/painting-detail?pid=${p.id}'/>">
+                                <img loading="lazy" src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                            </a>
                         </c:otherwise>
                     </c:choose>
                     <div class="card-body">
-                        <h5 class="card-title">${p.title}</h5>
+                        <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="text-decoration-none text-dark">
+                            <h5 class="card-title">${p.title}</h5>
+                        </a>
                         <p class="card-text">
-                            <strong>Họa Sĩ:</strong> ${p.artistName}<br>
-                            <strong>Chủ đề:</strong> ${p.themeName}<br>
+                            <strong>Họa Sĩ:</strong>
+                            <a href="artwork?artist=${p.artistId}" class="link-custom">${p.artistName}</a><br>
+                            <strong>Chủ đề:</strong>
+                            <a href="artwork?theme=${p.themeId}" class="link-custom">${p.themeName}</a><br>
                             <span class="rating-stars">
                             <c:forEach begin="1" end="5" var="i">
                                 <i class="fas fa-star ${i <= p.averageRating ? 'text-warning' : 'text-gray-200'}" style="${i > p.averageRating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>
@@ -424,8 +451,13 @@
                                 </c:when>
                                 <c:otherwise>
                                     <fmt:formatNumber var="regularPrice" value="${p.price}" pattern="#,##0"/>
-                                    <div class="regular-price">
-                                        <span class="fw-bold">${fn:replace(regularPrice, ',', '.')} ₫</span>
+                                    <div class="price-container">
+                                        <div class="sale-price-wrapper">
+                                            <span class="fw-bold">${fn:replace(regularPrice, ',', '.')} ₫</span>
+                                        </div>
+                                        <div class="original-price-wrapper" style="visibility: hidden; height: 24px;">
+                                            <span class="badge bg-success discount-badge">&nbsp;</span>
+                                        </div>
                                     </div>
                                 </c:otherwise>
                             </c:choose>
@@ -465,9 +497,9 @@
 <div class="view-all-container text-center my-3">
     <a href="artwork?snew=snew" class="btn btn-outline-warning btn-sm view-all-btn" style="
         padding: 6px 15px;
-        border: 1px solid #f39c12;
-        color: #f39c12;
-        background: transparent;
+        border: 1px solid #f39c12 !important;
+        color: #f39c12 !important;
+        background: transparent !important;
         font-weight: 500;
         text-transform: uppercase;
         font-size: 14px;
@@ -494,20 +526,27 @@
         <c:forEach var="p" items="${bp}">
             <div class="col-6 col-md-3">
                 <div class="card artwork-card">
-                    <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="card-link"></a>
                     <c:choose>
                         <c:when test="${not empty p.imageUrlCloud}">
-                            <img loading="lazy" src="${p.imageUrlCloud}?f_auto,q_auto,w_400" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                            <a href="<c:url value='/painting-detail?pid=${p.id}'/>">
+                                <img loading="lazy" src="${p.imageUrlCloud}?f_auto,q_auto,w_400" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                            </a>
                         </c:when>
                         <c:otherwise>
-                            <img loading="lazy" src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                            <a href="<c:url value='/painting-detail?pid=${p.id}'/>">
+                                <img loading="lazy" src="${pageContext.request.contextPath}/${p.imageUrl}" class="card-img-top artwork-image" alt="${p.title}" style="width: 100%; height:180px !important;">
+                            </a>
                         </c:otherwise>
                     </c:choose>
                     <div class="card-body">
-                        <h5 class="card-title">${p.title}</h5>
+                        <a href="<c:url value='/painting-detail?pid=${p.id}'/>" class="text-decoration-none text-dark">
+                            <h5 class="card-title">${p.title}</h5>
+                        </a>
                         <p class="card-text">
-                            <strong>Họa Sĩ:</strong> ${p.artistName}<br>
-                            <strong>Chủ đề:</strong> ${p.themeName}<br>
+                            <strong>Họa Sĩ:</strong>
+                            <a href="artwork?artist=${p.artistId}" class="link-custom">${p.artistName}</a><br>
+                            <strong>Chủ đề:</strong>
+                            <a href="artwork?theme=${p.themeId}" class="link-custom">${p.themeName}</a><br>
                             <span class="rating-stars">
                             <c:forEach begin="1" end="5" var="i">
                                 <i class="fas fa-star ${i <= p.averageRating ? 'text-warning' : 'text-gray-200'}" style="${i > p.averageRating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>
@@ -536,8 +575,13 @@
                                 </c:when>
                                 <c:otherwise>
                                     <fmt:formatNumber var="regularPrice" value="${p.price}" pattern="#,##0"/>
-                                    <div class="regular-price">
-                                        <span class="fw-bold">${fn:replace(regularPrice, ',', '.')} ₫</span>
+                                    <div class="price-container">
+                                        <div class="sale-price-wrapper">
+                                            <span class="fw-bold">${fn:replace(regularPrice, ',', '.')} ₫</span>
+                                        </div>
+                                        <div class="original-price-wrapper" style="visibility: hidden; height: 24px;">
+                                            <span class="badge bg-success discount-badge">&nbsp;</span>
+                                        </div>
                                     </div>
                                 </c:otherwise>
                             </c:choose>
@@ -577,9 +621,9 @@
 <div class="view-all-container text-center my-3">
     <a href="artwork?sort=rating" class="btn btn-outline-warning btn-sm view-all-btn" style="
         padding: 6px 15px;
-        border: 1px solid #f39c12;
-        color: #f39c12;
-        background: transparent;
+        border: 1px solid #f39c12 !important;
+        color: #f39c12 !important;
+        background: transparent !important;
         font-weight: 500;
         text-transform: uppercase;
         font-size: 14px;
@@ -591,9 +635,6 @@
         <i class="fas fa-angle-right ms-1"></i>
     </a>
 </div>
-
-
-
 
 <div id="collection_section">
         <div class="title_container">
