@@ -162,8 +162,11 @@
                         .is-invalid {
                             border: 1px solid red;
                         }
+                        #gsi_845239_141389{
+                            width: 107% !important;
+                        }
                         .g_id_signin{
-                            width: 80%;
+                            width: 80% !important;
                             margin: auto;
                         }
                         .nsm7Bb-HzV7m-LgbsSe .nsm7Bb-HzV7m-LgbsSe-BPrWId{
