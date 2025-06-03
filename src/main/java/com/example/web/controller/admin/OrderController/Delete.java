@@ -25,7 +25,7 @@ public class Delete extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         User user = (User) request.getSession().getAttribute("user");
-        boolean hasDeletePermission = user.hasPermission("DELETE_ORDER");
+        boolean hasDeletePermission = user.hasPermission("DELETE_ORDERS");
 
         if (!hasDeletePermission) {
             out.write("{\"success\": true, \"message\": \"Bạn không có quyền.\"}");
