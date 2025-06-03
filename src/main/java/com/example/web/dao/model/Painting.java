@@ -13,7 +13,9 @@ public class Painting implements Serializable{
         private String imageUrl;
         private String imageUrlCloud;
         private String artistName;
+        private int artistId;
         private String themeName;
+        private int themeId;
         private List<PaintingSize> sizes = new ArrayList<>();
         private String discountName;
         private double discountPercentage;
@@ -23,7 +25,7 @@ public class Painting implements Serializable{
         private Date createDate;
         private double averageRating;
 
-        public Painting(int id, String title, double price, String description, String imageUrl, String imageUrlCloud, String artistName, String themeName, boolean isFeatured, Date createDate, double averageRating) {
+        public Painting(int id, String title, double price, String description, String imageUrl, String imageUrlCloud, int artistId, int themeId, String artistName, String themeName, boolean isFeatured, Date createDate, double averageRating) {
             this.id = id;
             this.title = title;
             this.price = price;
@@ -35,8 +37,10 @@ public class Painting implements Serializable{
             this.isFeatured = isFeatured;
             this.createDate = createDate;
             this.averageRating = averageRating;
+            this.artistId = artistId;
+            this.themeId = themeId;
         }
-    public Painting(int id, String title, double price, String description, String imageUrl, String imageUrlCloud, String artistName, String themeName, boolean isFeatured, Date createDate, double averageRating, boolean isSold) {
+    public Painting(int id, String title, double price, String description, String imageUrl, String imageUrlCloud, int artistId, int themeId, String artistName, String themeName, boolean isFeatured, Date createDate, double averageRating, boolean isSold) {
         this.id = id;
         this.title = title;
         this.price = price;
@@ -49,6 +53,8 @@ public class Painting implements Serializable{
         this.createDate = createDate;
         this.averageRating = averageRating;
         this.available = isSold;
+        this.artistId = artistId;
+        this.themeId = themeId;
     }
 
     public Painting() {
@@ -204,6 +210,21 @@ public class Painting implements Serializable{
         this.discountPercentage = discountPercentage;
     }
 
+    public int getArtistId() {
+        return artistId;
+    }
+
+    public void setArtistId(int artistId) {
+        this.artistId = artistId;
+    }
+
+    public int getThemeId() {
+        return themeId;
+    }
+
+    public void setThemeId(int themeId) {
+        this.themeId = themeId;
+    }
 
     @Override
     public String toString() {

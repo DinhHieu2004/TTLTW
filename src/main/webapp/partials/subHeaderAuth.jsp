@@ -2,6 +2,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix = "f" uri = "http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shopping Cart</title>
@@ -68,18 +69,18 @@
                     <div class="cart-dropdown" id="mini-cart">
                         <div class="cart-header">Sản Phẩm Mới Thêm</div>
                         <div class="cart-items" id="mini-cart-items">
-                        <c:forEach  items="${sessionScope.cart.items}" var="cp">
-                            <div class="cart-item">
-                                <img src="${cp.imageUrlCloud}" alt="${cp.productName}" class="cart-item-image" />
-                                <div class="cart-item-details">
-                                    <div class="cart-item-name-price">
-                                        <span class="cart-item-name">${cp.productName}</span>
-                                        <span class="cart-item-price">${cp.totalPrice}</span>
+                            <c:forEach items="${sessionScope.cart.items}" var="cp">
+                                <fmt:formatNumber var="formattedPrice" value="${cp.totalPrice}" pattern="#,##0" />
+                                <div class="cart-item">
+                                    <img src="${cp.imageUrlCloud}" alt="${cp.productName}" class="cart-item-image" />
+                                    <div class="cart-item-details">
+                                        <div class="cart-item-name-price">
+                                            <span class="cart-item-name">${cp.productName}</span>
+                                            <span class="cart-item-price">${fn:replace(formattedPrice, ',', '.')} ₫</span>
+                                        </div>
+                                        <div class="cart-item-size">${cp.sizeDescriptions}</div>
                                     </div>
-                                    <div class="cart-item-size">${cp.sizeDescriptions}</div>
                                 </div>
-                            </div>
-
                             </c:forEach>
                         </div>
                         <div class="cart-footer">

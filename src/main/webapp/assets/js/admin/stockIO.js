@@ -52,7 +52,7 @@ $(document).ready(function() {
                 $('#createBy').text(response.createdName);
                 $('#detailSup').text(response.supplier);
                 $('#note').text(response.note);
-                $('#totalPrice').text(response.totalPrice.toLocaleString());
+                $('#totalPrice').text(formatCurrencyVND(response.totalPrice));
 
                 $('#stockinItemBody').empty();
 
@@ -62,9 +62,9 @@ $(document).ready(function() {
                         '<td>' + product.productName + '</td>' +
                         '<td>' + product.sizeName + '</td>' +
                         '<td>' + product.quantity + '</td>' +
-                        '<td>' + product.price.toLocaleString() + '</td>' +
-                        '<td>' + product.totalPrice.toLocaleString() + '</td>' +
-                        '<td>' + (product.note ?? '') + '</td>' +
+                        '<td>' + formatCurrencyVND(product.price) + '</td>'+
+                        '<td>' + formatCurrencyVND(product.totalPrice) + '</td>'+
+                    '<td>' + (product.note ?? '') + '</td>' +
                         '</tr>';
                     $('#stockinItemBody').append(productRow);
                 });
@@ -199,8 +199,8 @@ $(document).ready(function() {
                         '<td>' + product.productName + '</td>' +
                         '<td>' + product.sizeName + '</td>' +
                         '<td>' + product.quantity + '</td>' +
-                        '<td>' + product.price.toLocaleString() + '</td>' +
-                        '<td>' + product.totalPrice.toLocaleString() + '</td>' +
+                        '<td>' + formatCurrencyVND(product.price) + '</td>' +
+                        '<td>' + formatCurrencyVND(product.totalPrice) + '</td>' +
                         '<td>' + (product.note ?? '') + '</td>' +
                         '</tr>';
                     $('#stockOutItemBody').append(productRow);
@@ -401,14 +401,13 @@ function submitStockIn() {
                 title: 'Thành công',
                 text: 'Phiếu nhập đã được tạo.',
             });
-            console.log(response.stockIn.transactionDate)
             var importTable = $('#importTable').DataTable();
             importTable.row.add([
                 response.stockIn.id,
                 response.stockIn.transactionDate,
                 response.stockIn.createdName,
                 response.stockIn.supplier,
-                response.stockIn.totalPrice.toLocaleString() + ' VND',
+                formatCurrencyVND(response.stockIn.totalPrice),
                 response.stockIn.note ?? '',
                 '<button class="btn btn-sm btn-info viewDetailSIButton" data-stockin-id="'+ response.stockIn.id +'"  data-bs-toggle="modal" data-bs-target="#detailModal">Chi tiết</button>'+
                 '<button class="btn btn-sm btn-danger deleteStockInButton" data-id="'+ response.stockIn.id +'">Xoá</button>'
@@ -537,7 +536,7 @@ function submitStockOut() {
                 response.stockOut.transactionDate,
                 response.stockOut.createdName,
                 response.stockOut.reason,
-                response.stockOut.totalPrice.toLocaleString() + ' VND',
+                formatCurrencyVND(response.stockOut.totalPrice),
                 response.stockOut.note ?? '',
                 '<button class="btn btn-sm btn-info viewDetailSOButton" data-stockout-id="'+ response.stockOut.id +'"  data-bs-toggle="modal" data-bs-target="#detailModalSo">Chi tiết</button>'+
                 '<button class="btn btn-sm btn-danger deleteStockOButton" data-id="'+ response.stockOut.id +'">Xoá</button>'
@@ -633,4 +632,9 @@ function onOrderChange(select) {
 
 function clearProductTable() {
     $("#productBodySO").empty();
+}
+function formatCurrencyVND(amount) {
+    if (typeof amount !== 'number') amount = parseFloat(amount);
+    if (isNaN(amount)) return '0 ₫';
+    return amount.toLocaleString('vi-VN') + ' ₫';
 }

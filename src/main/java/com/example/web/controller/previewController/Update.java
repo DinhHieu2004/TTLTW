@@ -11,13 +11,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet("/admin/review_admin/update")
+@WebServlet("/review/update")
 public class Update extends HttpServlet {
     private final PrivewService privewService = new PrivewService();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
         PrintWriter out = resp.getWriter();
 
         try {

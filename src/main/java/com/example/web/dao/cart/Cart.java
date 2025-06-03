@@ -29,15 +29,14 @@ public class Cart implements Serializable {
     public void addToCart(CartPainting painting) {
         String key = painting.getProductId() + "_" + painting.getSizeId();
         if (items.containsKey(key)) {
-            getTotalQuantity();
-
             items.get(key).updateQuantityItem(painting.getQuantity());
         } else {
-            getTotalQuantity();
-
             items.put(key, painting);
         }
+        this.totalQuantity = getTotalQuantity();
+        this.totalPrice = getTotalPrice();
     }
+
 
     public void setItems(Map<String, CartPainting> items) {
         this.items = items;
@@ -50,6 +49,10 @@ public class Cart implements Serializable {
     public int getTotalQuantity() {
        return this.totalQuantity = items.values().stream()
                .mapToInt(CartPainting::getQuantity).sum();
+    }
+
+    public int getItemCount() {
+        return items.size();
     }
 
     public void removeFromCart(String productId, String sizeId) {

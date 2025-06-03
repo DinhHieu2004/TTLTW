@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    loadPaintings();
+    loadPaintings($('#filterForm').serialize());
 
     $('#filterForm').submit(function(e) {
         e.preventDefault();
@@ -62,8 +62,10 @@ $(document).ready(function() {
                             <h5 class="card-title">${p.title}</h5>
                         </a>
                         <p class="card-text">
-                            <strong>Họa Sĩ:</strong> ${p.artistName}<br>
-                            <strong>Chủ đề:</strong> ${p.themeName}<br>
+                        <strong>Họa Sĩ:</strong>
+                        <a href="artwork?artist=${p.artistId}" class="link-custom">${p.artistName}</a><br>
+                        <strong>Chủ đề:</strong>
+                        <a href="artwork?theme=${p.themeId}" class="link-custom">${p.themeName}</a><br>
                             <span class="rating-stars">
                                 ${Array(5).fill().map((_, i) => `
                                     <i class="fas fa-star ${i < p.averageRating ? 'text-warning' : 'text-gray-200'}" style="${i >= p.averageRating ? 'color: #e9ecef !important;' : ''}; font-size: 0.875rem;"></i>
@@ -74,12 +76,12 @@ $(document).ready(function() {
                         <div class="d-flex flex-column" style="flex-grow: 1;">
                             ${p.discountPercentage > 0 ? `
                                <div class="d-flex align-items-center gap-2">
-                                    <del class="text-muted" style="font-size: 0.8rem;">${price}₫</del>
+                                    <del class="text-muted" style="font-size: 0.8rem;">${price} ₫</del>
                                     <span class="badge bg-success" style="font-size: 0.75rem;">-${p.discountPercentage}%</span>
                                 </div>
-                                <div class="text-danger fw-bold" style="font-size: 0.925rem;">${discountPrice}₫</div>
+                                <div class="text-danger fw-bold" style="font-size: 0.925rem;">${discountPrice} ₫</div>
                             ` : `
-                                <div class="fw-bold" style="font-size: 0.925rem;">${price}₫</div>
+                                <div class="fw-bold" style="font-size: 0.925rem;">${price} ₫</div>
                             `}
                         </div>
                        <form id="addToCartForm_${p.id}" class="d-flex align-items-center justify-content-between mb-2 mt-2">

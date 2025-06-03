@@ -56,15 +56,63 @@ public class OrderService {
         }
         success = orderDao.updateOrderStatus(orderId, status, recipientName, recipientPhone, deliveryAddress);
 
+        if(success) {
+            Order order = orderDao.getOrder(orderId);
+            if (order != null) {
+                int userId = order.getUserId();
+
+                cacheManager.invalidateCurrentOrders(userId);
+                cacheManager.invalidateHistoryOrders(userId);
+
+                List<Order> newOrders = orderDao.getCurrentOrdersForUser(userId);
+                cacheManager.putCurrentOrders(userId, newOrders);
+            }
+            cacheManager.invalidateAdminCurrentOrders();
+            cacheManager.invalidateAdminHistoryOrders();
+        }
         return success;
     }
 
     public boolean updatePaymentStatus(int orderId, String paymentStatus) {
-        return orderDao.updatePaymentStatus(orderId, paymentStatus);
+        boolean success = orderDao.updatePaymentStatus(orderId, paymentStatus);
+
+        if (success) {
+            try {
+                Order order = orderDao.getOrder(orderId);
+                if (order != null) {
+                    int userId = order.getUserId();
+                    cacheManager.invalidateCurrentOrders(userId);
+                    cacheManager.invalidateHistoryOrders(userId);
+                }
+                cacheManager.invalidateAdminCurrentOrders();
+                cacheManager.invalidateAdminHistoryOrders();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return success;
     }
 
-    public boolean deleteOrder(int i) throws SQLException {
-        return orderDao.deleteOrder(i);
+    public boolean deleteOrder(int orderId) throws SQLException {
+        boolean success = orderDao.deleteOrder(orderId);
+
+        if (success) {
+            try {
+                Order order = orderDao.getOrder(orderId);
+                if (order != null) {
+                    int userId = order.getUserId();
+                    cacheManager.invalidateCurrentOrders(userId);
+                    cacheManager.invalidateHistoryOrders(userId);
+                }
+                cacheManager.invalidateAdminCurrentOrders();
+                cacheManager.invalidateAdminHistoryOrders();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return success;
     }
 
     public List<Order> getOrderCurrentAdmin() throws Exception {

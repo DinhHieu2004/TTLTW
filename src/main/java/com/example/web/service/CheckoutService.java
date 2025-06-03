@@ -1,5 +1,6 @@
 package com.example.web.service;
 
+import com.example.web.controller.util.OrderCacheManager;
 import com.example.web.dao.OrderDao;
 import com.example.web.dao.OrderItemDao;
 import com.example.web.dao.PaintingDao;
@@ -16,9 +17,9 @@ import java.util.List;
 
 public class CheckoutService {
     private final OrderDao orderDao;
-    private final OrderItemDao orderItemDao;
-    private final PaymentDao paymentDao;
+    private final OrderItemDao orderItemDao;    private final PaymentDao paymentDao;
     private final PaintingDao paintingDao;
+    private final OrderCacheManager cacheManager = new OrderCacheManager();
 
     public CheckoutService() {
         orderDao = new OrderDao();
@@ -69,6 +70,10 @@ public class CheckoutService {
         payment.setPaymentStatus(paymentMethodId == 1 ? "đã thanh toán" : "chờ");
         payment.setPaymentDate(LocalDateTime.now());
         paymentDao.createPayment(payment);
+
+        cacheManager.invalidateCurrentOrders(userId);
+        cacheManager.invalidateAdminCurrentOrders();
+
     }
 
     public int processCheckout2(Cart cart, int userId, int paymentMethodId,
@@ -118,6 +123,10 @@ public class CheckoutService {
         payment.setPaymentStatus(paymentMethodId == 1 ? "đã thanh toán" : "chờ");
         payment.setPaymentDate(LocalDateTime.now());
         paymentDao.createPayment(payment);
+
+        cacheManager.invalidateCurrentOrders(userId);
+        cacheManager.invalidateAdminCurrentOrders();
+
 
         return orderId;
     }

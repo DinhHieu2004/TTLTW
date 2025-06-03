@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -171,18 +172,21 @@
                                                 <td>${item.name}</td>
                                                 <td>${item.sizeDescription}</td>
                                                 <td>${item.quantity}</td>
-                                                <td><f:formatNumber value="${item.price}" type="currency" pattern="#,##0"/> ₫</td>
+                                                <f:formatNumber var="formattedPrice" value="${item.price}" pattern="#,##0" />
+                                                <td>${fn:replace(formattedPrice, ',', '.')} ₫</td>
                                             </tr>
                                         </c:forEach>
                                         </tbody>
                                         <tfoot>
                                         <tr>
                                             <th colspan="4" class="text-end">Tổng tiền sản phẩm:</th>
-                                            <th colspan="2"><fmt:formatNumber value="${requestScope.order.totalAmount}" type="currency" pattern="#,##0"/> ₫</th>
+                                            <fmt:formatNumber var="formattedAmount" value="${requestScope.order.totalAmount}" pattern="#,##0" />
+                                            <th colspan="2">${fn:replace(formattedAmount, ',', '.')} ₫</th>
                                         </tr>
                                         <tr>
                                             <th colspan="4" class="text-end">Phí giao hàng:</th>
-                                            <th colspan="2"><fmt:formatNumber value="${requestScope.order.shippingFee}" type="currency" pattern="#,##0"/> ₫</th>
+                                            <fmt:formatNumber var="formattedAmount" value="${requestScope.order.shippingFee}" pattern="#,##0" />
+                                            <th colspan="2">${fn:replace(formattedAmount, ',', '.')} ₫</th>
                                         </tr>
                                         <tr>
                                             <th colspan="4" class="text-end">Voucher đã áp dụng:</th>
@@ -197,7 +201,8 @@
                                         </tr>
                                         <tr>
                                             <th colspan="4" class="text-end">Tổng cộng:</th>
-                                            <th colspan="2"><fmt:formatNumber value="${requestScope.order.priceAfterShipping}" type="currency" pattern="#,##0"/> ₫</th>
+                                            <fmt:formatNumber var="formattedAmount" value="${requestScope.order.priceAfterShipping}" pattern="#,##0" />
+                                            <th colspan="2">${fn:replace(formattedAmount, ',', '.')} ₫</th>
                                         </tr>
                                         </tfoot>
                                     </table>

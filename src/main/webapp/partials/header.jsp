@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shopping Cart</title>
@@ -69,8 +70,8 @@
                         <i class="fa fa-shopping-cart"></i>
                         <span id="cart-item-count" class="cart-badge">
                             <c:choose>
-                                <c:when test="${not empty sessionScope.cart.totalQuantity and sessionScope.cart.totalQuantity > 0}">
-                                    ${sessionScope.cart.totalQuantity}
+                                <c:when test="${not empty sessionScope.cart and sessionScope.cart.itemCount > 0}">
+                                    ${sessionScope.cart.itemCount}
                                 </c:when>
                                 <c:otherwise>0</c:otherwise>
                             </c:choose>
@@ -83,7 +84,7 @@
 
                         <div class="cart-items" id="mini-cart-items">
                             <c:choose>
-                                <c:when test="${empty sessionScope.cart.items || sessionScope.cart.items.size() == 0}">
+                                <c:when test="${empty sessionScope.cart.items }">
                                     <div class="alert alert-info text-center" role="alert">
                                         Giỏ hàng của bạn đang trống.
                                     </div>
@@ -99,11 +100,17 @@
                                                     <span class="cart-item-price">
                                     <c:choose>
                                         <c:when test="${cp.discountPercent > 0}">
-                                            <f:formatNumber value="${cp.discountPrice}" type="currency" currencySymbol="VND"/>
+                                            <f:formatNumber var="discounted" value="${cp.discountPrice}" pattern="#,##0" />
+                                            <span>
+                                                ${fn:replace(discounted, ',', '.')} ₫
+                                            </span>
                                             <span class="badge bg-success ms-2">-${cp.discountPercent}%</span>
                                         </c:when>
                                         <c:otherwise>
-                                            <f:formatNumber value="${cp.totalPrice}" type="currency" currencySymbol="VND"/>
+                                            <f:formatNumber var="total" value="${cp.totalPrice}" pattern="#,##0" />
+                                            <span>
+                                                ${fn:replace(total, ',', '.')} ₫
+                                            </span>
                                         </c:otherwise>
                                     </c:choose>
                                 </span>
@@ -129,9 +136,13 @@
 
                         <div class="cart-footer">
                             <div class="total-price">
-                                Tổng tiền: <span id="total-price">
-                <f:formatNumber value="${sessionScope.cart.totalPrice}" type="currency" currencySymbol="VND"/>
-            </span>
+                                Tổng tiền:
+                                <span id="total-price">
+                                    <span id="total-price-value">
+                                        <f:formatNumber var="totalFormatted" value="${sessionScope.cart.totalPrice != null ? sessionScope.cart.totalPrice : 0}" pattern="#,##0" />
+                                        ${fn:replace(totalFormatted, ',', '.')} ₫
+                                    </span>
+                                </span>
                             </div>
 
                             <button class="btn btn-primary" onclick="window.location.href='show-cart'"
@@ -149,7 +160,7 @@
                         style="background: #e7621b !important; margin-right: 10px;">Đăng nhập
                     </button>
                     <button class="btn register-btn" data-bs-toggle="modal" data-bs-target="#authModal"
-                        data-tab="register" style="background: #e7621b !important;">Đăng ký
+                        data-tab="register" style="background: #e7621b !important; color: white ">Đăng ký
                     </button>
                     </c:when>
                     <c:when test="${not empty sessionScope.user}">

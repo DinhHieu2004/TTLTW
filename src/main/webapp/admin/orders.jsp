@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -75,15 +76,18 @@
       <c:forEach var="order" items="${currentOrder}">
         <tr>
           <td>${order.id}</td>
-          <td><f:formatNumber value="${order.priceAfterShipping}" type="number" groupingUsed="true" maxFractionDigits="0" /> ₫</td>
+          <td>
+            <f:formatNumber var="formattedPrice" value="${order.priceAfterShipping}" pattern="#,##0" />
+              ${fn:replace(formattedPrice, ',', '.')} ₫
+          </td>
           <td>${order.orderDate}</td>
           <td>${order.paymentStatus}</td>
           <td>${order.paymentMethod}</td>
-          <td>${order.deliveryStatus}</td>
+          <td id="delivery-status-${order.id}">${order.deliveryStatus}</td>
           <td><button class="btn btn-info btn-sm" data-bs-toggle="modal"
                       data-bs-target="#orderDetailsModal"
                       data-order-id="${order.id}">Xem Chi Tiết</button>
-              <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+              <button class="btn btn-danger btn-sm delete-order" data-bs-toggle="modal"
                       data-bs-target="#deleteOrderModal"
                       data-order-id="${order.id}">Xóa</button>
           </td>
@@ -116,7 +120,10 @@
       <c:forEach var="order" items="${historyOrder}">
         <tr>
           <td>${order.id}</td>
-          <td><f:formatNumber value="${order.priceAfterShipping}" type="number" groupingUsed="true" maxFractionDigits="0" /> ₫</td>
+          <td>
+            <f:formatNumber var="formattedPrice" value="${order.priceAfterShipping}" pattern="#,##0" />
+              ${fn:replace(formattedPrice, ',', '.')} ₫
+          </td>
           <td>${order.orderDate}</td>
           <td>${order.deliveryDate}</td>
           <td>${order.paymentStatus}</td>
@@ -125,7 +132,7 @@
           <td><button class="btn btn-info btn-sm" data-bs-toggle="modal"
                       data-bs-target="#orderDetailsModal"
                       data-order-id="${order.id}">Xem Chi Tiết</button>
-            <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+            <button class="btn btn-danger btn-sm delete-order" data-bs-toggle="modal"
                     data-bs-target="#deleteOrderModal"
                     data-order-id="${order.id}">Xóa</button>
           </td>
@@ -224,16 +231,8 @@
     initDataTable('#currentOrders', 'Danh sách đơn hàng hiện tại');
     initDataTable('#orderHistory', 'Lịch sử đơn hàng');
   });
-
-
-
-  document.querySelectorAll('[data-bs-target="#deleteOrderModal"]').forEach(button => {
-    button.addEventListener('click', function() {
-      let orderId = this.getAttribute('data-order-id');
-      document.getElementById('orderIdToDelete').value = orderId;
-    });
-  });
 </script>
+
 <script>
   // xóa đơn hàng
   $(document).ready(function () {
@@ -249,12 +248,15 @@
     $("#confirmDeleteOrder").click(function () {
       const orderId = $("#orderIdToDelete").val();
 
+      debugger
+
       $.ajax({
         type: "POST",
         url: "orders/delete",
         data: { orderId: orderId },
         dataType: "json",
         success: function (response) {
+          debugger
           if (response.success) {
             const $row = $('[data-order-id="' + orderId + '"]').closest("tr");
             const tableId = $row.closest("table").attr("id");
