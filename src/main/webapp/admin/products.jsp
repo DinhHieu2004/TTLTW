@@ -277,6 +277,69 @@
         </div>
       </div>
     </div>
+
+    <div class="card mb-4">
+      <div class="card-header bg-success text-white" style="background: #5a5958 !important;">
+        <h4>Tranh đã xóa</h4>
+
+        <%-- Thêm tranh--%>
+      </div>
+      <div class="card-body">
+        <table id="productsD" class="table table-bordered display">
+
+
+          <thead>
+          <tr>
+            <th>Mã sản phẩm</th>
+            <th>Ảnh</th>
+            <th>Tên </th>
+            <th>Giá</th>
+            <th>Ngày tạo</th>
+            <th>Tác giả</th>
+            <th>Hành Động</th>
+          </tr>
+          </thead>
+          <tbody>
+          <c:forEach var="p" items="${productsD}">
+            <tr>
+              <td>${p.id}</td>
+              <td>
+                <c:choose>
+                  <c:when test="${not empty p.imageUrlCloud}">
+                    <img loading="lazy"
+                         src="${p.imageUrlCloud}?f_auto,q_auto,w_60"
+                         alt="${p.imageUrl}"
+                         width="60">
+                  </c:when>
+                  <c:otherwise>
+                    <img loading="lazy"
+                         src="${pageContext.request.contextPath}/${p.imageUrl}"
+                         alt="${p.imageUrl}"
+                         width="60">
+                  </c:otherwise>
+                </c:choose>
+              </td>
+              <td>${p.title}</td>
+              <f:formatNumber var="formattedPrice" value="${p.price}" pattern="#,##0" />
+              <td>${fn:replace(formattedPrice, ',', '.')} ₫</td>
+              <td>${p.createDate}</td>
+              <td>${p.artistName}</td>
+              <td><button class="btn btn-info btn-sm edit-painting"
+                          data-bs-toggle="modal"
+                          data-bs-target="#viewAndEditModal"
+                          data-product-id="${p.id}">Xem Chi Tiết</button>
+
+                <button class="btn btn-danger btn-sm delete-painting"
+                        data-bs-toggle="modal"
+                        data-bs-target="#deleteProductModal"
+                        data-product-id="${p.id}">Xóa</button>
+            </tr>
+          </c:forEach>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
 
   <!-- Modal thêm tranh -->
@@ -973,6 +1036,30 @@
       $("#deleteProductModal").modal("show");
     });
 
+    $("#deletePaintingForm").submit(function (event) {
+      event.preventDefault();
+      var paintingId = $("#pidToDelete").val();
+
+      $.ajax({
+        type: "POST",
+        url: "products/delete",
+        data: { pid: paintingId },
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            var $row = $('[data-product-id="' + paintingId + '"]').closest('tr');
+            table.row($row).remove().draw();
+            $("#deleteProductModal").modal("hide");
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function () {
+          alert("Lỗi khi xóa tranh.");
+        }
+      });
+    });
+// khoi pu
     $("#deletePaintingForm").submit(function (event) {
       event.preventDefault();
       var paintingId = $("#pidToDelete").val();

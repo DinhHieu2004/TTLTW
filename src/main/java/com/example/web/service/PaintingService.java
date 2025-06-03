@@ -60,6 +60,10 @@ public class PaintingService {
         return paintingDao.getNewestPaintings(4);
     }
 
+    public List<Painting> getAllListDelete() throws SQLException {
+        return paintingDao.getAllDelete();
+    }
+
 
     public boolean updatePainting(int id, String title, int themeId, double price, int artistId, String description, String imageUrl, boolean isSold, boolean isFeatured) throws SQLException {
 
