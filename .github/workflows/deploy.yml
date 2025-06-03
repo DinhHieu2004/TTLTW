@@ -1,0 +1,95 @@
+name: CI/CD Deploy
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Set up Java 21 + Maven
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - name: Create db.properties
+        run: |
+          mkdir -p src/main/resources
+          echo "db.host=db" >> src/main/resources/db.properties
+          echo "db.port=3306" >> src/main/resources/db.properties
+          echo "db.user=dkhao" >> src/main/resources/db.properties
+          echo "db.password=170804" >> src/main/resources/db.properties
+          echo "db.dbname=ArtGallery" >> src/main/resources/db.properties
+          echo "db.option=useUnicode=true&characterEncoding=utf-8" >> src/main/resources/db.properties
+
+      - name: Build WAR using Maven
+        run: mvn clean package
+
+      - name: Rename WAR for Docker
+        run: mv target/web-1.0-SNAPSHOT.war myapp.war
+
+      - name: Copy SQL to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          port: ${{ secrets.VPS_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: docker/sql/artgallery.sql
+          target: /home/haodk/jsp-docker/docker/sql/
+          overwrite: true
+
+      - name: Restart DB Container
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          port: ${{ secrets.VPS_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/jsp-docker
+            docker-compose down
+            docker-compose up -d db
+            sleep 10  
+
+      - name: Import SQL into MySQL (Docker)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          port: ${{ secrets.VPS_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker exec -i mysql_db mysql -u dkhao -p170804 ArtGallery < /home/haodk/jsp-docker/docker/sql/artgallery.sql
+
+      - name: Copy WAR to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          port: ${{ secrets.VPS_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: myapp.war
+          target: /home/haodk/jsp-docker/docker/
+          overwrite: true
+
+      - name: Rebuild Docker Image (web)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          port: ${{ secrets.VPS_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/jsp-docker/docker
+            docker-compose down
+            docker-compose build web
+            docker-compose up -d web
+      
+      

@@ -408,13 +408,13 @@ header{
     margin: 10px;
 }
 .link-custom {
-    color: black;
-    text-decoration: none;
+    color: #424242;
+    text-decoration: none !important;
     cursor: pointer;
     transition: color 0.2s ease;
 }
 
 .link-custom:hover {
     color: #007bff;
-    text-decoration: none;
+    text-decoration: none !important;
 }

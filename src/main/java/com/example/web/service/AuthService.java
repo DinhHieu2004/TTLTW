@@ -55,9 +55,10 @@ public class AuthService {
             String subject = "Xác nhận email đăng ký";
             String body = "Xin chào " + fullName + ",\n\nCó phải bạn vừa đăng ký tài khoản? " +
                     "Nếu đúng, vui lòng nhấp vào liên kết dưới đây để xác nhận email của bạn và hoàn tất quá trình đăng ký:\n\n"
-                    + "http://localhost:8080/TTLTW_war/activate_account?token=" + token + "\n\n"
+                    + "https://artgallery.name.vn/activate_account?token=" + token + "\n\n"
                     + "Nếu bạn không thực hiện đăng ký này, vui lòng bỏ qua email này.";
-            return emailService.sendEmail(email, subject, body);
+            emailService.sendEmail(email, subject, body);
+            return true;
         }
         return false;
     }
@@ -79,7 +80,7 @@ public class AuthService {
         String subject = "Gửi lại email xác nhận";
         String body = "Xin chào " + user.getFullName() + ",\n\nCó phải bạn vừa yêu cầu lại liên kết kích hoạt? " +
                 "Nếu đúng, vui lòng nhấp vào liên kết dưới đây để xác nhận email của bạn và hoàn tất quá trình đăng ký:\n\n"
-                + "http://localhost:8080/TTLTW_war/activate_account?token=" + token + "\n\n"
+                + "https://artgallery.name.vn/activate_account?token=" + token + "\n\n"
                 + "Nếu không phải bạn, vui lòng bỏ qua email này.";
         emailService.sendEmail(user.getEmail(), subject, body);
     }
@@ -98,7 +99,7 @@ public class AuthService {
         udao.deleteActiveTokens(user.getId(), "forgotPass");
         udao.saveTokens(conn, user.getId(), token, "forgotPass", time);
 
-        String resetLink = "http://localhost:8080/TTLTW_war/reset_password?token=" + token;
+        String resetLink = "https://artgallery.name.vn/reset_password?token=" + token;
 
         String subject = "Yêu cầu đặt lại mật khẩu";
         String body = "Chào bạn,\n\n"
@@ -120,7 +121,7 @@ public class AuthService {
             udao.saveTokens(conn, user.getId(), undoToken, "undoDelete", threeDaysMillis);
 
             String subject = "Email HỦY xóa tài khoản";
-            String undoLink = "http://localhost:8080/TTLTW_war/undo-delete?token=" + undoToken;
+            String undoLink = "https://artgallery.name.vn/undo-delete?token=" + undoToken;
 
             String content = "Chào bạn,\n\n"
                     + "Bạn đã XÓA tài khoản.\n\n"

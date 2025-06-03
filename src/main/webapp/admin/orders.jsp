@@ -83,11 +83,11 @@
           <td>${order.orderDate}</td>
           <td>${order.paymentStatus}</td>
           <td>${order.paymentMethod}</td>
-          <td>${order.deliveryStatus}</td>
+          <td id="delivery-status-${order.id}">${order.deliveryStatus}</td>
           <td><button class="btn btn-info btn-sm" data-bs-toggle="modal"
                       data-bs-target="#orderDetailsModal"
                       data-order-id="${order.id}">Xem Chi Tiết</button>
-              <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+              <button class="btn btn-danger btn-sm delete-order" data-bs-toggle="modal"
                       data-bs-target="#deleteOrderModal"
                       data-order-id="${order.id}">Xóa</button>
           </td>
@@ -132,7 +132,7 @@
           <td><button class="btn btn-info btn-sm" data-bs-toggle="modal"
                       data-bs-target="#orderDetailsModal"
                       data-order-id="${order.id}">Xem Chi Tiết</button>
-            <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+            <button class="btn btn-danger btn-sm delete-order" data-bs-toggle="modal"
                     data-bs-target="#deleteOrderModal"
                     data-order-id="${order.id}">Xóa</button>
           </td>
@@ -231,16 +231,8 @@
     initDataTable('#currentOrders', 'Danh sách đơn hàng hiện tại');
     initDataTable('#orderHistory', 'Lịch sử đơn hàng');
   });
-
-
-
-  document.querySelectorAll('[data-bs-target="#deleteOrderModal"]').forEach(button => {
-    button.addEventListener('click', function() {
-      let orderId = this.getAttribute('data-order-id');
-      document.getElementById('orderIdToDelete').value = orderId;
-    });
-  });
 </script>
+
 <script>
   // xóa đơn hàng
   $(document).ready(function () {
@@ -256,12 +248,15 @@
     $("#confirmDeleteOrder").click(function () {
       const orderId = $("#orderIdToDelete").val();
 
+      debugger
+
       $.ajax({
         type: "POST",
         url: "orders/delete",
         data: { orderId: orderId },
         dataType: "json",
         success: function (response) {
+          debugger
           if (response.success) {
             const $row = $('[data-order-id="' + orderId + '"]').closest("tr");
             const tableId = $row.closest("table").attr("id");
