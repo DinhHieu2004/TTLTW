@@ -42,7 +42,7 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: myapp.war
-          target: /home/haodk/jsp-docker/docker/myapp.war
+          target: /home/haodk/jsp-docker/docker/
 
       - name: Restart Docker on VPS
         uses: appleboy/ssh-action@v1.0.3
