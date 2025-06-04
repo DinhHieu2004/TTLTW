@@ -143,6 +143,49 @@
   </div>
 </div>
 
+
+  <div class="card mb-4">
+    <div class="card-header bg-success text-white" style="background: #e7621b !important;">
+      <h4>Đơn Hàng đã xóa</h4>
+    </div>
+    <div class="card-body">
+      <table id="orderD" class="table table-bordered display">
+        <thead>
+        <tr>
+          <th>Mã Đơn Hàng</th>
+          <th>Tổng Tiền</th>
+          <th>Ngày Đặt</th>
+          <th>Thanh Toán</th>
+          <th>Phương Thức TT</th>
+          <th>Hành Động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <c:forEach var="order" items="${ordersD}">
+          <tr>
+            <td>${order.id}</td>
+            <td>
+              <f:formatNumber var="formattedPrice" value="${order.priceAfterShipping}" pattern="#,##0" />
+                ${fn:replace(formattedPrice, ',', '.')} ₫
+            </td>
+            <td>${order.orderDate}</td>
+            <td>${order.paymentStatus}</td>
+            <td>${order.paymentMethod}</td>
+            <td>
+              <button class="btn btn-info btn-sm" data-bs-toggle="modal"
+                      data-bs-target="#orderDetailsModal"
+                      data-order-id="${order.id}">Xem Chi Tiết</button>
+              <button class="btn btn-primary btn-sm restore-order" data-bs-toggle="modal"
+                      data-bs-target="#restoreOrderModal"
+                      data-order-id="${order.id}">Khôi phục</button>
+            </td>
+          </tr>
+        </c:forEach>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 <%-- Modal xóa đơn --%>
   <div class="modal fade" id="deleteOrderModal" tabindex="-1" aria-labelledby="deleteOrderModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -159,6 +202,26 @@
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
             <button type="button" id="confirmDeleteOrder" class="btn btn-danger">Xóa</button>
           </div>
+      </div>
+    </div>
+  </div>
+  <%-- Modal khoi p --%>
+
+  <div class="modal fade" id="restoreOrderModal" tabindex="-1" aria-labelledby="restoreOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="restoreOrderModalLabel">Xác nhận khôi phục</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Bạn có chắc chắn muốn khôi phục hàng này?</p>
+          <input type="hidden" id="orderIdToRestore" name="orderId">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="button" id="confirmRestoreOrder" class="btn btn-primary">khôi phục</button>
+        </div>
       </div>
     </div>
   </div>
@@ -213,72 +276,6 @@
 
 
 
-<script>
-  $(document).ready(function () {
-    function initDataTable(selector, title) {
-      $(selector).DataTable({
-        dom: '<"d-flex justify-content-between align-items-center"lfB>rtip',
-        buttons: [
-          { extend: 'copy', title: title },
-          { extend: 'csv', title: title },
-          { extend: 'excel', title: title },
-          { extend: 'pdf', title: title },
-          { extend: 'print', title: title }
-        ]
-      });
-    }
-
-    initDataTable('#currentOrders', 'Danh sách đơn hàng hiện tại');
-    initDataTable('#orderHistory', 'Lịch sử đơn hàng');
-  });
-</script>
-
-<script>
-  // xóa đơn hàng
-  $(document).ready(function () {
-    const tableCurrent = $("#currentOrders").DataTable();
-    const tableHistory = $("#orderHistory").DataTable();
-
-    $(document).on("click", ".delete-order", function () {
-      const orderId = $(this).data("order-id");
-      $("#orderIdToDelete").val(orderId);
-      $("#deleteOrderModal").modal("show");
-    });
-
-    $("#confirmDeleteOrder").click(function () {
-      const orderId = $("#orderIdToDelete").val();
-
-      debugger
-
-      $.ajax({
-        type: "POST",
-        url: "orders/delete",
-        data: { orderId: orderId },
-        dataType: "json",
-        success: function (response) {
-          debugger
-          if (response.success) {
-            const $row = $('[data-order-id="' + orderId + '"]').closest("tr");
-            const tableId = $row.closest("table").attr("id");
-
-            if (tableId === "currentOrders") {
-              tableCurrent.row($row).remove().draw();
-            } else {
-              tableHistory.row($row).remove().draw();
-            }
-
-            $("#deleteOrderModal").modal("hide");
-          } else {
-            alert(response.message);
-          }
-        },
-        error: function () {
-          alert("Lỗi khi xóa đơn hàng.");
-        }
-      });
-    });
-  });
-</script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="${pageContext.request.contextPath}/assets/js/checkSession.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/admin/order.js"></script>

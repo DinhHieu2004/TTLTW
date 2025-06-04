@@ -62,7 +62,7 @@ public class OrderDao {
     }
     public List<Order> getCurrentOrdersForUser(int userId) throws Exception {
         List<Order> orders = new ArrayList<>();
-        String query = "SELECT * FROM orders WHERE userId = ? AND deliveryStatus IN ('chờ', 'đang giao') ORDER BY orderDate DESC";
+        String query = "SELECT * FROM orders WHERE userId = ? AND deliveryStatus IN ('chờ', 'đang giao') AND isDelete = 0 ORDER BY orderDate DESC";
 
         PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, userId);
@@ -77,7 +77,7 @@ public class OrderDao {
     }
     public List<Order> getHistoryOrder(int userId) throws Exception {
         List<Order> orders = new ArrayList<>();
-        String query = "SELECT * FROM orders WHERE userId = ? AND deliveryStatus IN ('hoàn thành', 'giao hàng thất bại','đã hủy giao hàng') ORDER BY orderDate DESC";
+        String query = "SELECT * FROM orders WHERE userId = ? AND deliveryStatus IN ('hoàn thành', 'giao hàng thất bại','đã hủy giao hàng') AND isDelete = 0 ORDER BY orderDate DESC";
 
 
         PreparedStatement ps = conn.prepareStatement(query);
@@ -91,8 +91,11 @@ public class OrderDao {
         }
         return orders;
     }
+
+
+
     public Order getOrder(int orderId) throws Exception {
-        String sql = "SELECT * FROM orders WHERE id = ?";
+        String sql = "SELECT * FROM orders WHERE id = ? AND isDelete = 0 ";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setInt(1, orderId);
         try (ResultSet rs = ps.executeQuery()) {
@@ -125,7 +128,21 @@ public class OrderDao {
     }
     public List<Order> getListAllOrdersCrurrentAdmin() throws Exception {
         List<Order> orders = new ArrayList<>();
-        String query = "SELECT * FROM orders where deliveryStatus IN ('chờ', 'đang giao') ORDER BY orderDate DESC";
+        String query = "SELECT * FROM orders where deliveryStatus IN ('chờ', 'đang giao') AND isDelete = 0 ORDER BY orderDate DESC";
+        PreparedStatement ps = conn.prepareStatement(query);
+
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Order order = extractOrderFromResultSet(rs);
+                orders.add(order);
+            }
+        }
+        return orders;
+    }
+
+    public List<Order> getListOrderDeleted() throws Exception {
+        List<Order> orders = new ArrayList<>();
+        String query = "SELECT * FROM orders where isDelete = 1";
         PreparedStatement ps = conn.prepareStatement(query);
 
         try (ResultSet rs = ps.executeQuery()) {
@@ -139,7 +156,7 @@ public class OrderDao {
 
     public List<Order> getListAllOrdersHistoryAdmin() throws SQLException {
         List<Order> orders = new ArrayList<>();
-        String query = "SELECT * FROM orders  where deliveryStatus IN ('hoàn thành', 'giao hàng thất bại','đã hủy giao hàng') ORDER BY orderDate DESC";
+        String query = "SELECT * FROM orders  where deliveryStatus IN ('hoàn thành', 'giao hàng thất bại','đã hủy giao hàng') AND isDelete = 0 ORDER BY orderDate DESC";
         PreparedStatement ps = conn.prepareStatement(query);
 
         try (ResultSet rs = ps.executeQuery()) {
@@ -190,7 +207,18 @@ public class OrderDao {
         }
     }
     public boolean deleteOrder(int i) throws SQLException {
-        String query = "DELETE FROM orders WHERE id = ?";
+        String query = "UPDATE orders SET isDelete = 1 WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setInt(1, i);
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
+
+    public boolean restoreOrder(int i) throws SQLException {
+        String query = "UPDATE orders SET isDelete = 0 WHERE id = ?";
+
         try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
             preparedStatement.setInt(1, i);
             int rowsAffected = preparedStatement.executeUpdate();
@@ -282,4 +310,7 @@ public class OrderDao {
         }
         return voucherNames;
     }
+
+
+
 }
