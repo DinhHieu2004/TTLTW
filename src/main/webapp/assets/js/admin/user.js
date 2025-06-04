@@ -1,5 +1,6 @@
 $(document).ready(function () {
     var table1 = $('#users').DataTable();
+    var table2 = $('#usersIdDelete').DataTable();
 
     $('#addUserForm').on('submit', function (event) {
         event.preventDefault()
@@ -78,6 +79,7 @@ $(document).ready(function () {
                         response.user.fullName,
                         response.user.email,
                         response.user.phone,
+                        response.user.status,
                         Array.from(response.user.roles).map(r => r.name).join(', '),
                         `<button class="btn btn-info btn-sm" data-bs-toggle="modal"
                                 data-bs-target="#viewEditUserModal" data-user-id="${response.user.id}">
@@ -282,8 +284,7 @@ $(document).ready(function () {
                     let table1 = $('#users').DataTable();
                     let $row = $('button[data-user-id="' + response.user.id + '"]').closest('tr');
 
-                    // Lấy nội dung cột "Hành động" (cột thứ 6, index 6)
-                    let actionColumn = table1.cell($row, 6).data();
+                    let actionColumn = table1.cell($row, 7).data();
 
                     // Cập nhật dữ liệu với 7 cột
                     table1.row($row).data([
@@ -292,8 +293,9 @@ $(document).ready(function () {
                         response.user.fullName,
                         response.user.email,
                         response.user.phone,
-                        response.user.roles.map(r => r.name).join(', '), // Cột Roles
-                        actionColumn // Cột Hành động
+                        response.user.status,
+                        response.user.roles.map(r => r.name).join(', '),
+                        actionColumn
                     ]).draw(false);
 
                     $('#viewEditUserModal').modal('hide');
@@ -303,6 +305,7 @@ $(document).ready(function () {
             error: function(xhr) {
                 if (xhr.status === 400) {
                     let response = JSON.parse(xhr.responseText);
+                    console.log(response);
                     $(".error").text("");
                     $.each(response.errors, function(key, message) {
                         $("#" + key).text(message).addClass('text-danger');
@@ -319,10 +322,6 @@ $(document).ready(function () {
             complete: function() {
                 // Khôi phục nút submit
                 $submitBtn.prop('disabled', false).html('Lưu thay đổi');
-                // Reset form
-                $('#userDetailForm')[0].reset();
-                $('.is-invalid').removeClass('is-invalid');
-                $('.error').text('');
             }
         });
     });
@@ -344,15 +343,44 @@ $(document).ready(function () {
                 success: function (response) {
                     if (response.status === "success") {
                         var $row = $('[data-user-id="' + userId + '"]').closest('tr');
+                        let rowData = table1.row($row).data();
                         table1.row($row).remove().draw(false);
+                        table2.row.add([
+                            rowData[0],
+                            rowData[1],
+                            rowData[2],
+                            rowData[3],
+                            rowData[4],
+                            "Đã xóa",
+                            rowData[6],
+                            `<button class="btn btn-success btn-sm restore-user-btn" data-user-id="${rowData[0]}">
+                                <i class="fas fa-undo"></i> Khôi phục
+                            </button>`
+                        ]).draw(false);
 
                         $('#deleteUsersModal').modal('hide');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công!',
+                            text: response.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+
                     } else {
-                        console.error("Xóa thất bại:", response.message);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi!',
+                            text: response.message
+                        });
                     }
                 },
                 error: function (xhr) {
-                    console.error("Lỗi khi gửi yêu cầu xóa:", xhr.responseText);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi máy chủ!',
+                        text: xhr.responseText
+                    });
                 }
             });
         });
@@ -430,5 +458,58 @@ $(document).ready(function () {
         $(this).find('input').val('').removeClass('is-invalid');
         $('#confirmPasswordE').text('');
     });
+    $(document).on("click", ".restore-user-btn", function () {
+        const userId = $(this).data("user-id");
+
+        Swal.fire({
+            title: "Khôi phục tài khoản?",
+            text: "Bạn có chắc muốn khôi phục người dùng này?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Khôi phục",
+            cancelButtonText: "Hủy"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: "users/restore",
+                    data: { id: userId },
+                    success: function (response) {
+                        if (response.status === "success") {
+                            Swal.fire("Thành công", response.message, "success");
+
+                            var $row = $('[data-user-id="' + userId + '"]').closest('tr');
+                            let rowData = table2.row($row).data();
+                            table2.row($row).remove().draw(false);
+                            table1.row.add([
+                                rowData[0],
+                                rowData[1],
+                                rowData[2],
+                                rowData[3],
+                                rowData[4],
+                                "Hoạt động",
+                                rowData[6],
+                                `<button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#viewEditUserModal" data-user-id="${rowData[0]}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteUsersModal" data-user-id="${rowData[0]}">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                            <button class="btn btn-warning btn-sm change-password-btn" data-bs-toggle="modal" data-bs-target="#changePasswordModal" data-user-id="${rowData[0]}">
+                                <i class="fas fa-key"></i>
+                            </button>`
+                            ]).draw(false);
+                        } else {
+                            Swal.fire("Lỗi", response.message, "error");
+                        }
+                    },
+                    error: function () {
+                        Swal.fire("Lỗi", "Không thể khôi phục người dùng.", "error");
+                    }
+                });
+            }
+        });
+    });
+
 
 });
