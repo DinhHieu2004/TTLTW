@@ -1,7 +1,9 @@
 package com.example.web.controller;
 
+import com.example.web.dao.model.Level;
 import com.example.web.dao.model.User;
 import com.example.web.service.AuthService;
+import com.example.web.service.LogService;
 import com.example.web.utils.SessionManager;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
@@ -22,6 +24,7 @@ import java.util.Collections;
 public class LoginGoogleController extends HttpServlet {
     private static final String CLIENT_ID = "891978819303-g9qeo4mmukj96bfr51iaaeheeqk1t1eo.apps.googleusercontent.com";
     private AuthService service = new AuthService();
+    private final LogService logService = new LogService();
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
@@ -105,6 +108,7 @@ public class LoginGoogleController extends HttpServlet {
 
                 session.setAttribute("uid", String.valueOf(user.getId()));
                 SessionManager.userSessions.put(user.getId()+"", session);
+                logService.addLog(String.valueOf(Level.INFO), request, "Đăng nhập Google", "Success");
 
 
                 response.getWriter().write("{\"success\": true}");

@@ -1,12 +1,15 @@
 package com.example.web.controller.admin.UserController;
 
+import com.example.web.dao.model.User;
 import com.example.web.service.UserService;
+import com.example.web.utils.SessionManager;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -49,6 +52,13 @@ public class ResetPassword extends HttpServlet {
             boolean changed = userService.changePassword(Integer.parseInt(userId), newPass);
 
             if (changed) {
+                User up = userService.getUser(Integer.parseInt(userId));
+
+                HttpSession userSession = SessionManager.userSessions.get(up.getId()+"");
+                if (userSession != null) {
+                    userSession.invalidate();
+                    SessionManager.userSessions.remove(up.getEmail());
+                }
                 resp.setStatus(HttpServletResponse.SC_OK);
                 responseData.put("status", "success");
                 responseData.put("message", "Đổi mật khẩu thành công.");

@@ -82,7 +82,8 @@
                     <th>Tên đầy đủ</th>
                     <th>Email</th>
                     <th>Số điện thoại</th>
-                    <th>quyền</th>
+                    <th>Trạng thái</th>
+                    <th>Quyền</th>
                     <th>Hành Động</th>
                 </tr>
                 </thead>
@@ -94,6 +95,7 @@
                     <td>${u.fullName}</td>
                     <td>${u.email}</td>
                     <td>${u.phone}</td>
+                    <td>${u.status}</td>
                     <td>
                     <c:forEach var="role" items="${u.roles}">
                         ${role.name}
@@ -161,7 +163,7 @@
                             <input type="hidden" id="editUserId" name="id" value="">
                             <div class="col-md-6">
                                 <label for="changUsername" class="form-label">Tên đăng nhập <span style="color: red;">*</span></label>
-                                <input type="text" class="form-control" id="changUsername" name="username" required>
+                                <input type="text" class="form-control" id="changUsername" name="username">
                                 <div class="error" id="changUsernameError"></div>
                             </div>
                         </div>
@@ -320,6 +322,57 @@
             </div>
         </div>
     </div>
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white" style="background: #e7621b !important;">
+            <h4>Các tài khoản đã xóa</h4>
+        </div>
+
+        <div class="card-body">
+            <table id="usersIdDelete" class="table table-bordered display">
+                <div style="padding-bottom: 10px">
+                    <c:if test="${not empty message}">
+                        <div class="alert alert-success">
+                                ${message}
+                        </div>
+                    </c:if>
+                </div>
+                <thead>
+                <tr>
+                    <th>Mã người dùng</th>
+                    <th>Tên đăng nhập</th>
+                    <th>Tên đầy đủ</th>
+                    <th>Email</th>
+                    <th>Số điện thoại</th>
+                    <th>Trạng thái</th>
+                    <th>quyền</th>
+                    <th>Hành Động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <c:forEach var="u" items="${uDelete}">
+                <tr>
+                    <td>${u.id}</td>
+                    <td>${u.username}</td>
+                    <td>${u.fullName}</td>
+                    <td>${u.email}</td>
+                    <td>${u.phone}</td>
+                    <td>${u.status}</td>
+                    <td>
+                        <c:forEach var="role" items="${u.roles}">
+                            ${role.name}
+                        </c:forEach>
+                    </td>
+                    <td>
+                        <button class="btn btn-success btn-sm restore-user-btn"
+                                data-user-id="${u.id}">
+                            <i class="fas fa-undo"></i> Khôi phục
+                        </button>
+                    </td>
+                    </c:forEach>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 
 </div>
@@ -336,6 +389,8 @@
                 { extend: 'pdf', title: 'Danh sách người dùng' },
                 { extend: 'print', title: 'Danh sách người dùng' }
             ]
+        });
+        $('#usersIdDelete').DataTable({
         });
     });
 

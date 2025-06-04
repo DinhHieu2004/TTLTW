@@ -14,12 +14,12 @@ public class UserCacheManager {
 
     public UserCacheManager() {
         userByIdCache = Caffeine.newBuilder()
-                .expireAfterWrite(Duration.ofMinutes(10))
+                .expireAfterWrite(Duration.ofSeconds(10))
                 .maximumSize(1000)
                 .build();
 
         allUsersCache = Caffeine.newBuilder()
-                .expireAfterWrite(Duration.ofMinutes(5))
+                .expireAfterWrite(Duration.ofSeconds(10))
                 .maximumSize(1)
                 .build();
     }

@@ -5,8 +5,8 @@ import com.example.web.dao.model.Painting;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
+import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 
 public class OrderCacheManager {
@@ -18,22 +18,22 @@ public class OrderCacheManager {
 
     public OrderCacheManager() {
         currentOrdersCache = Caffeine.newBuilder()
-                .expireAfterWrite(10, TimeUnit.MINUTES)
+                .expireAfterWrite(Duration.ofMinutes(10))
                 .maximumSize(1000)
                 .build();
 
         historyOrdersCache = Caffeine.newBuilder()
-                .expireAfterWrite(10, TimeUnit.MINUTES)
+                .expireAfterWrite(Duration.ofMinutes(10))
                 .maximumSize(1000)
                 .build();
 
         adminCurrentOrdersCache = Caffeine.newBuilder()
-                .expireAfterWrite(5, TimeUnit.MINUTES)
+                .expireAfterWrite(Duration.ofMinutes(5))
                 .maximumSize(1)
                 .build();
 
         adminHistoryOrdersCache = Caffeine.newBuilder()
-                .expireAfterWrite(10, TimeUnit.MINUTES)
+                .expireAfterWrite(Duration.ofMinutes(10))
                 .maximumSize(1)
                 .build();
     }

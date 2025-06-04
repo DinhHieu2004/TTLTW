@@ -2,13 +2,14 @@ package com.example.web.controller.util;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+
+import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import com.example.web.dao.model.Painting;
 
 public class PaintingCacheManager {
     private static final Cache<String, List<Painting>> paintingListCache = Caffeine.newBuilder()
-            .expireAfterWrite(10, TimeUnit.MINUTES)
+            .expireAfterWrite(Duration.ofMinutes(10))
             .maximumSize(100)
             .build();
 

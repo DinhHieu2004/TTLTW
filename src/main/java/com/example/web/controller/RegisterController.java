@@ -9,8 +9,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +21,7 @@ public class RegisterController extends HttpServlet {
     AuthService auth = new AuthService();
     UserService userService = new UserService();
     Gson gson = new Gson();
+    private final String secretKey = "6LcLlxUrAAAAAPeCdpR_pijtQGuKt_mgFu3-f7PE";
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Lấy thông tin từ form đăng ký
@@ -30,6 +32,15 @@ public class RegisterController extends HttpServlet {
         String phone = getTrimmedParameter(request, "phone");
 
         Map<String, String> responseMap = new HashMap<>();
+        String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+        System.out.println(gRecaptchaResponse);
+
+        if (gRecaptchaResponse == null || !verifyRecaptcha(gRecaptchaResponse)) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            responseMap.put("reCaptchaSError", "Xác thực Captcha thất bại!");
+            sendJsonResponse(response, responseMap);
+            return;
+        }
 
         try {
             if (fullName.isEmpty()) {
@@ -103,5 +114,33 @@ public class RegisterController extends HttpServlet {
             out.write(gson.toJson(responseMap));
             out.flush();
         }
+    }
+    private boolean verifyRecaptcha(String gRecaptchaResponse) throws IOException {
+        if (gRecaptchaResponse == null || gRecaptchaResponse.isEmpty()) {
+            return false;
+        }
+        String url = "https://www.google.com/recaptcha/api/siteverify";
+
+        URL obj = new URL(url);
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+        con.setRequestMethod("POST");
+        con.setDoOutput(true);
+
+        String postParams = "secret=" + secretKey + "&response=" + gRecaptchaResponse;
+        OutputStream os = con.getOutputStream();
+        os.write(postParams.getBytes());
+        os.flush();
+        os.close();
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+        System.out.println("PHẢN HỒI TỪ GOOGLE: " + response.toString());
+
+        return response.toString().contains("\"success\": true");
     }
 }

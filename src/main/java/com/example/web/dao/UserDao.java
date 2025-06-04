@@ -36,6 +36,7 @@ public class UserDao {
             u.setRole(roles);
             u.setAddress(rs.getString("address"));
             u.setPhone(rs.getString("phone"));
+            u.setStatus(rs.getString("status"));
             users.add(u);
         }
         return users;
@@ -59,6 +60,8 @@ public class UserDao {
             u.setPhone(rs.getString("phone"));
             u.setPassword(rs.getString("password"));
             u.setStatus(rs.getString("status"));
+            u.setGg_id(rs.getString("gg_id"));
+            u.setFb_id(rs.getString("fb_id"));
             return u;
         }
         return null;
@@ -618,25 +621,30 @@ public class UserDao {
     }
     public List<User> getListUserIsDelete() throws SQLException {
         List<User> users = new ArrayList<>();
-        String sql = "select * from users WHERE status IN ('Đã xóa')";
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery();
+        String sql = "SELECT * FROM users WHERE status = 'Đã xóa'";
 
-        while (rs.next()) {
-            User u = new User();
-            u.setId(rs.getInt("id"));
-            u.setUsername(rs.getString("username"));
-            u.setFullName(rs.getString("fullName"));
-            u.setEmail(rs.getString("email"));
-            Set<Role> roles = roleDao.getRolesByUserId(u.getId());
-            u.setRole(roles);
-            u.setAddress(rs.getString("address"));
-            u.setPhone(rs.getString("phone"));
-            users.add(u);
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                User u = new User();
+                u.setId(rs.getInt("id"));
+                u.setUsername(rs.getString("username"));
+                u.setFullName(rs.getString("fullName"));
+                u.setEmail(rs.getString("email"));
+                u.setAddress(rs.getString("address"));
+                u.setPhone(rs.getString("phone"));
+                u.setStatus(rs.getString("status"));
+
+                Set<Role> roles = roleDao.getRolesByUserId(u.getId());
+                u.setRole(roles);
+
+                users.add(u);
+            }
         }
         return users;
-
     }
+
     public void updateStatusDeletedForExpiredTokens() {
         String updateSql = "UPDATE users u " +
                 "JOIN tokens t ON u.id = t.userId " +
@@ -656,6 +664,20 @@ public class UserDao {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+    public boolean updateStatusUser(int id, String status){
+        String sql = "UPDATE users SET status = ? WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, id);
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 

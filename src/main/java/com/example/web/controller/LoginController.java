@@ -1,7 +1,9 @@
 package com.example.web.controller;
 
+import com.example.web.dao.model.Level;
 import com.example.web.dao.model.User;
 import com.example.web.service.AuthService;
+import com.example.web.service.LogService;
 import com.example.web.utils.SessionManager;
 import com.google.gson.Gson;
 import jakarta.servlet.*;
@@ -17,6 +19,7 @@ import jakarta.servlet.annotation.WebServlet;
 @WebServlet(name = "LoginController", value = "/login")
 public class LoginController extends HttpServlet {
     AuthService service = new AuthService();
+    private final LogService logService = new LogService();
     int CAPTCHA_EXPIRY_TIME = 2 * 60 * 1000;
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -100,6 +103,7 @@ public class LoginController extends HttpServlet {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 } else {
                     user.setPassword(null);
+                    logService.addLog(String.valueOf(Level.INFO), request, "Đăng nhập", "Success");
                     session.setAttribute("user", user);
                     session.setAttribute("userId", user.getId());
                     session.setAttribute("loginAttempts", 0);
