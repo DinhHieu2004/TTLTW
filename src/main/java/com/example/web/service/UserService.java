@@ -53,8 +53,6 @@ public class UserService {
         return userDao.getUser(i);
     }
 
-
-
     public User findByUsername(String username) throws SQLException {
         return userDao.findByUsername(username);
     }
@@ -111,4 +109,11 @@ public class UserService {
         System.out.println(user.getAllRolePermission());
     }
 
+    public List<User> getListUserIsDelete() throws SQLException {
+        return userDao.getListUserIsDelete();
+    }
+
+    public boolean restoreUser(int id) {
+        return userDao.updateStatusUser(id, "Hoạt động");
+    }
 }

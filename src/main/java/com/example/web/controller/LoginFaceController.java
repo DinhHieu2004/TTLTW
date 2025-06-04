@@ -1,7 +1,9 @@
 package com.example.web.controller;
 
+import com.example.web.dao.model.Level;
 import com.example.web.dao.model.User;
 import com.example.web.service.AuthService;
+import com.example.web.service.LogService;
 import com.example.web.utils.SessionManager;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -22,6 +24,7 @@ import java.sql.SQLException;
 public class LoginFaceController extends HttpServlet {
     private static final String FACEBOOK_GRAPH_URL = "https://graph.facebook.com/me?fields=id,name,email&access_token=";
     private final AuthService service = new AuthService();
+    private final LogService logService = new LogService();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -90,7 +93,7 @@ public class LoginFaceController extends HttpServlet {
                 return;
             }
             session.setAttribute("user", user);
-
+            logService.addLog(String.valueOf(Level.INFO), request, "Đăng nhập facebook", "Success");
 
             HttpSession oldSession = SessionManager.userSessions.get(user.getId() + "");
             if (oldSession != null && oldSession != session) {

@@ -82,15 +82,19 @@ public class Update extends HttpServlet {
                     return;
                 }
 
-
-
                 if (fullName == null || fullName.isEmpty()) {
                     errors.put("changeNameError", "Họ và tên không được để trống!");
                 }
-                if (username == null || username.isEmpty()) {
-                    errors.put("changUsernameError", "Tên đăng nhập không được để trống!");
-                } else if (userService.findByUsername(username) != null && !username.equals(getCurrentUsername(id))) {
-                    errors.put("changUsernameError", "Tên đăng nhập đã tồn tại!");
+                User u = userService.getUser(id);
+                if (u.getGg_id() == null && u.getFb_id() == null) {
+                    if (username == null || username.isEmpty()) {
+                        errors.put("changUsernameError", "Tên đăng nhập không được để trống!");
+                    }
+                }
+                if (username != null && !username.isEmpty()) {
+                    if (userService.findByUsername(username) != null && !username.equals(getCurrentUsername(id))) {
+                        errors.put("changUsernameError", "Tên đăng nhập đã tồn tại!");
+                    }
                 }
 
                 if (email == null || email.isEmpty()) {

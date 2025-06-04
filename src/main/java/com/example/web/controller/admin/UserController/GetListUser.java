@@ -41,9 +41,11 @@ public class GetListUser extends HttpServlet {
         try {
 
             List<User> users = userService.getListUser();
+            List<User> userIsDelete = userService.getListUserIsDelete();
             List<Role> roles = roleService.getAllRoles();
             List<Permission> permissions = permissionService.getAll();
             req.setAttribute("users", users);
+            req.setAttribute("uDelete", userIsDelete);
             req.setAttribute("roles", roles);
             req.setAttribute("permissions", permissions);
          //   System.out.println("roles:"+ roles);
