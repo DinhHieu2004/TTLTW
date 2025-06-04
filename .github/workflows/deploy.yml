@@ -56,7 +56,10 @@ jobs:
             cd ~/jsp-docker
             docker-compose down
             docker-compose up -d db
-            sleep 10  
+            echo "Waiting for mysql_db to be healthy..."
+              until docker exec mysql_db mysqladmin ping -h "localhost" --silent; do
+              sleep 2
+            done 
 
       - name: Import SQL into MySQL (Docker)
         uses: appleboy/ssh-action@v1.0.3
