@@ -1059,65 +1059,7 @@
     });
   });
   // delete
-  $(document).ready(function () {
-    var table = $('#products').DataTable();
 
-    var table4 = $('#productsD').DataTable();
-
-    $(document).on("click", ".delete-painting", function () {
-      var paintingId = $(this).data("product-id");
-      $("#pidToDelete").val(paintingId);
-      $("#deleteProductModal").modal("show");
-    });
-
-    $("#deletePaintingForm").submit(function (event) {
-      event.preventDefault();
-      var paintingId = $("#pidToDelete").val();
-
-      $.ajax({
-        type: "POST",
-        url: "products/delete",
-        data: { pid: paintingId },
-        dataType: "json",
-        success: function (response) {
-          if (response.success) {
-            var $row = $('[data-product-id="' + paintingId + '"]').closest('tr');
-            table.row($row).remove().draw();
-            $("#deleteProductModal").modal("hide");
-          } else {
-            alert(response.message);
-          }
-        },
-        error: function () {
-          alert("Lỗi khi xóa tranh.");
-        }
-      });
-    });
-// khoi phuc
-    $("#restorePaintingForm").submit(function (event) {
-      event.preventDefault();
-      var paintingId = $("#pidTorestore").val();
-
-      $.ajax({
-        type: "POST",
-        url: "products/restore",
-        data: { pid: paintingId },
-        dataType: "json",
-        success: function (response) {
-          if (response.success) {
-            var $row = $('[data-product-id="' + paintingId + '"]').closest('tr');
-            table4.row($row).remove().draw();
-            $("#restoreProductModal").modal("hide");
-          } else {
-            alert(response.message);
-          }
-        },
-        error: function () {
-          alert("Lỗi khi khôi phục.");
-        }
-      });
-    });
-  });
   // update
   $(document).on('click', '.edit-painting', function (event) {
     event.preventDefault();
@@ -1182,7 +1124,161 @@
   });
 </script>
 
+<script>
+  $(document).ready(function () {
+    var table = $('#products').DataTable();
+    var table4 = $('#productsD').DataTable();
 
+    $(document).on("click", ".delete-painting", function () {
+      var paintingId = $(this).data("product-id");
+      $("#pidToDelete").val(paintingId);
+      $("#deleteProductModal").modal("show");
+    });
+
+    $("#deletePaintingForm").submit(function (event) {
+      event.preventDefault();
+      var paintingId = $("#pidToDelete").val();
+
+      $.ajax({
+        type: "POST",
+        url: "products/delete",
+        data: { pid: paintingId },
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            var $row = $('button.delete-painting[data-product-id="' + paintingId + '"]').closest('tr');
+
+            var cells = $row.find('td');
+            var paintingData = {
+              id: cells.eq(0).text().trim(),
+              image: cells.eq(1).html(),
+              title: cells.eq(2).text().trim(),
+              price: cells.eq(4).text().trim(),
+              createDate: cells.eq(5).text().trim(),
+              artistName: cells.eq(6).text().trim()
+            };
+
+            table.row($row).remove().draw();
+
+            var newRowData = [
+              paintingData.id,
+              paintingData.image,
+              paintingData.title,
+              paintingData.price,
+              paintingData.createDate,
+              paintingData.artistName,
+              '<button class="btn btn-info btn-sm edit-painting" data-bs-toggle="modal" data-bs-target="#viewAndEditModal" data-product-id="' + paintingData.id + '">Xem Chi Tiết</button> ' +
+              '<button class="btn btn-primary btn-sm restore-painting" data-bs-toggle="modal" data-bs-target="#restoreProductModal" data-product-id="' + paintingData.id + '">Khôi phục</button>'
+            ];
+
+            var addedRow = table4.row.add(newRowData).draw();
+
+            setTimeout(function() {
+              $(addedRow.node()).addClass('table-success');
+              setTimeout(function() {
+                $(addedRow.node()).removeClass('table-success');
+              }, 3000);
+            }, 100);
+
+            $("#deleteProductModal").modal("hide");
+
+            if (typeof Swal !== 'undefined') {
+              Swal.fire({
+                title: 'Thành công!',
+                text: 'Tranh đã được chuyển vào danh sách đã xóa!',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+              });
+            } else {
+              alert("Tranh đã được xóa thành công!");
+            }
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function () {
+          alert("Lỗi khi xóa tranh.");
+        }
+      });
+    });
+
+    $(document).on("click", ".restore-painting", function () {
+      var paintingId = $(this).data("product-id");
+      $("#pidTorestore").val(paintingId);
+      $("#restoreProductModal").modal("show");
+    });
+
+    $("#restorePaintingForm").submit(function (event) {
+      event.preventDefault();
+      var paintingId = $("#pidTorestore").val();
+
+      $.ajax({
+        type: "POST",
+        url: "products/restore",
+        data: { pid: paintingId },
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            var $row = $('button.restore-painting[data-product-id="' + paintingId + '"]').closest('tr');
+
+            var cells = $row.find('td');
+            var paintingData = {
+              id: cells.eq(0).text().trim(),
+              image: cells.eq(1).html(),
+              title: cells.eq(2).text().trim(),
+              price: cells.eq(3).text().trim(),
+              createDate: cells.eq(4).text().trim(),
+              artistName: cells.eq(5).text().trim()
+            };
+
+            table4.row($row).remove().draw();
+
+            var newRowData = [
+              paintingData.id,
+              paintingData.image,
+              paintingData.title,
+              'Hoạt động',
+              paintingData.price,
+              paintingData.createDate,
+              paintingData.artistName,
+              '<button class="btn btn-info btn-sm edit-painting" data-bs-toggle="modal" data-bs-target="#viewAndEditModal" data-product-id="' + paintingData.id + '">Xem Chi Tiết</button> ' +
+              '<button class="btn btn-danger btn-sm delete-painting" data-bs-toggle="modal" data-bs-target="#deleteProductModal" data-product-id="' + paintingData.id + '">Xóa</button>'
+            ];
+
+            var addedRow = table.row.add(newRowData).draw();
+
+            setTimeout(function() {
+              $(addedRow.node()).addClass('table-success');
+              setTimeout(function() {
+                $(addedRow.node()).removeClass('table-success');
+              }, 3000);
+            }, 100);
+
+            $("#restoreProductModal").modal("hide");
+
+            if (typeof Swal !== 'undefined') {
+              Swal.fire({
+                title: 'Thành công!',
+                text: 'Tranh đã được khôi phục thành công!',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+              });
+            } else {
+              alert("Tranh đã được khôi phục thành công!");
+            }
+          } else {
+            alert(response.message || "Có lỗi xảy ra khi khôi phục tranh");
+          }
+        },
+        error: function () {
+          alert("Lỗi khi khôi phục tranh.");
+        }
+      });
+    });
+  });
+</script>
 
 <script src="${pageContext.request.contextPath}/assets/js/admin/product.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/admin/theme.js"></script>
