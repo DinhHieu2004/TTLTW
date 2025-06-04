@@ -88,7 +88,4 @@ public class Delete extends HttpServlet {
         out.print(gson.toJson(jsonResponse));
         out.flush();
     }
-
-
-
 }

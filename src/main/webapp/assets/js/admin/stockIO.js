@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    let supTable = $('#supTable').DataTable();
     let importTable = $('#importTable').DataTable({
         "order": [[1, "desc"]],
         "columnDefs": [
@@ -316,6 +317,164 @@ $(document).ready(function() {
             }
         });
     });
+    $('#addSupplierForm').submit(function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: 'supplier/add',
+            method: 'POST',
+            data: $(this).serialize(),
+            success: function (response) {
+                if (response.status === 'success') {
+                    const s = response.supplier;
+                    var supTable = $('#supTable').DataTable();
+                    supTable.row.add([
+                        s.id,
+                        s.name,
+                        s.phone,
+                        s.email,
+                        s.address,
+                        '<button class="btn btn-sm btn-warning viewDetailSupButton" data-sup-id="' + s.id + '" data-bs-toggle="modal" data-bs-target="#detailModalSup">Sửa</button>' +
+                        '<button class="btn btn-sm btn-danger deleteSupButton" data-id="' + s.id + '">Xoá</button>'
+                    ]).draw();
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thêm thành công!',
+                        text: 'Nhà cung cấp đã được thêm.'
+                    });
+                    $('#addSupplierModal').modal('hide');
+                    $('#addSupplierForm')[0].reset();
+
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: response.message || 'Không thể thêm nhà cung cấp.'
+                    });
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi kết nối!',
+                    text: 'Vui lòng kiểm tra kết nối hoặc thử lại sau.'
+                });
+            }
+        });
+    });
+    $(document).on('click', '.editSupplierModal', function() {
+        const supplierId = $(this).data('sup-id');
+        console.log('Click sửa NCC id:', supplierId);
+        $.ajax({
+            url: 'supplier/detail',
+            method: 'GET',
+            data: { id: supplierId },
+            success: function (response) {
+                console.log('AJAX response:', response);
+                if (response.status === 'success') {
+                    const s = response.supplier;
+                    $('#editSupplierId').val(s.id);
+                    $('#editSupplierName').val(s.name);
+                    $('#editSupplierEmail').val(s.email);
+                    $('#editSupplierPhone').val(s.phone);
+                    $('#editSupplierAddress').val(s.address);
+                } else {
+                    alert(response.message || 'Không tìm thấy nhà cung cấp.');
+                }
+            },
+            error: function () {
+                alert('Lỗi khi lấy thông tin nhà cung cấp.');
+            }
+        });
+    });
+    $('#editSupplierForm').on('submit', function(e) {
+        e.preventDefault();
+
+        const supplierData = {
+            id: $('#editSupplierId').val(),
+            name: $('#editSupplierName').val(),
+            email: $('#editSupplierEmail').val(),
+            phone: $('#editSupplierPhone').val(),
+            address: $('#editSupplierAddress').val()
+        };
+
+        $.ajax({
+            url: 'supplier/update',
+            method: 'POST',
+            data: supplierData,
+            success: function(response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: 'Cập nhật nhà cung cấp thành công.',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    $('#editSupplierModal').modal('hide');
+
+                    let table1 = $('#supTable').DataTable();
+                    let $row = $('button[data-sup-id="' + response.supplier.id + '"]').closest('tr');
+
+                    let actionColumn = table1.cell($row, 5).data();
+                    table1.row($row).data([
+                        response.supplier.id,
+                        response.supplier.name,
+                        response.supplier.email,
+                        response.supplier.phone,
+                        response.supplier.address,
+                        actionColumn
+                        ]).draw(false);
+                });
+            },
+            error: function(xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    text: 'Cập nhật thất bại: ' + error,
+                    confirmButtonText: 'Thử lại'
+                });
+            }
+        });
+    });
+    $(document).on('click', '.deleteSupButton', function () {
+        const supplierId = $(this).data('id');
+
+        Swal.fire({
+            title: 'Bạn có chắc chắn?',
+            text: "Hành động này không thể hoàn tác!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Xoá',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: 'supplier/delete',
+                    method: 'POST',
+                    data: { id: supplierId },
+                    success: function(response) {
+                        var $row = $('[data-sup-id="' + supplierId + '"]').closest('tr');
+                        supTable.row($row).remove().draw();
+                        Swal.fire({
+                            title: 'Đã xoá!',
+                            text: 'Nhà cung cấp đã được xoá thành công.',
+                            icon: 'success',
+                        });
+
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            title: 'Lỗi!',
+                            text: 'Không thể xoá nhà cung cấp.',
+                            icon: 'error'
+                        });
+                    }
+                });
+            }
+        });
+    });
 });
 function removeRow(btn) {
     const row = btn.closest("tr");
@@ -335,7 +494,7 @@ function submitStockIn() {
 
     $('.error-message').remove();
     if (!supplier) {
-        $('#supplier').after('<div class="error-message" style="color:red;font-size:12px;">Vui lòng nhập nhà cung cấp</div>');
+        $('#supplier').after('<div class="error-message" style="color:red;font-size:12px;">Vui lòng chọn nhà cung cấp</div>');
         isValid = false;
         errorMessages.push("Thiếu nhà cung cấp");
     }

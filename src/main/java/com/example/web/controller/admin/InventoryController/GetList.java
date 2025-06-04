@@ -1,10 +1,7 @@
 package com.example.web.controller.admin.InventoryController;
 
 import com.example.web.dao.model.*;
-import com.example.web.service.OrderService;
-import com.example.web.service.PaintingService;
-import com.example.web.service.SizeService;
-import com.example.web.service.StockIOService;
+import com.example.web.service.*;
 import io.opencensus.common.ServerStatsFieldEnums;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -23,6 +20,7 @@ public class GetList extends HttpServlet {
     private final PaintingService paintingService = new PaintingService();
     private final SizeService sizeService = new SizeService();
     private final OrderService orderService = new OrderService();
+    private final SupplierService supplierService = new SupplierService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -31,11 +29,14 @@ public class GetList extends HttpServlet {
             List<StockOut> stockOut = stockIOService.getAllOut();
             List<Painting> p = paintingService.getAll();
             List<PaintingSize> s = sizeService.getAllSize();
+            List<Supplier> sup = supplierService.getAllSup();
+            System.out.println(sup);
             List<Order> o = orderService.getOrderByDelStatus("Chờ");
             req.setAttribute("stockIn", stockIn);
             req.setAttribute("stockOut", stockOut);
             p.sort(Comparator.comparingInt(Painting::getId));
             req.setAttribute("p", p);
+            req.setAttribute("sup", sup);
             req.setAttribute("s", s);
             req.setAttribute("o", o);
             req.getRequestDispatcher("stockIO.jsp").forward(req, resp);
