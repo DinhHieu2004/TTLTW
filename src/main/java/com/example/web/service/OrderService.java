@@ -150,4 +150,12 @@ public class OrderService {
     public List<String> getVoucherNamesByIds(String[] voucherIdArray) throws SQLException {
         return orderDao.getVoucherNamesByIds(voucherIdArray);
     }
+
+    public List<Order> getOrdersDeleted() throws Exception {
+        return orderDao.getListOrderDeleted();
+    }
+    public boolean restoreOrder(int id) throws Exception {
+        return orderDao.restoreOrder(id);
+    }
+
 }

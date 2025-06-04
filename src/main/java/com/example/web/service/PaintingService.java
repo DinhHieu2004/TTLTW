@@ -60,6 +60,10 @@ public class PaintingService {
         return paintingDao.getNewestPaintings(4);
     }
 
+    public List<Painting> getAllListDelete() throws SQLException {
+        return paintingDao.getAllDelete();
+    }
+
 
     public boolean updatePainting(int id, String title, int themeId, double price, int artistId, String description, String imageUrl, boolean isSold, boolean isFeatured) throws SQLException {
 
@@ -129,5 +133,9 @@ public class PaintingService {
 
     public List<Painting> getRandomPaintingsByTheme(int themeId, int id) throws SQLException {
         return paintingDao.getRandomPaintingsByTheme(themeId, id);
+    }
+
+    public boolean restore(int i)  throws SQLException{
+        return paintingDao.restore(i);
     }
 }

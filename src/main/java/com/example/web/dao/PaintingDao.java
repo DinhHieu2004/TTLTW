@@ -34,7 +34,7 @@ public class PaintingDao {
     }
 
     public boolean deletePainting(int id) throws SQLException {
-        String sql = "DELETE FROM paintings WHERE id = ?";
+        String sql = "UPDATE paintings SET isDelete = 1 WHERE id = ?";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setInt(1, id);
 
@@ -155,7 +155,65 @@ public class PaintingDao {
                         p.isSold
                 FROM paintings p
                 JOIN artists a ON p.artistId = a.id
-                JOIN themes t ON p.themeId = t.id """;
+                JOIN themes t ON p.themeId = t.id 
+                        WHERE p.isDelete = 0
+
+""";
+
+        PreparedStatement stmt = con.prepareStatement(sql);
+        ResultSet rs = stmt.executeQuery();
+        List<Painting> paintingList = new ArrayList<>();
+        while (rs.next()) {
+            Painting painting = new Painting();
+            int paintingId = rs.getInt("id");
+            String title = rs.getString("title");
+            double price = rs.getDouble("price");
+            String imageUrl = rs.getString("imageUrl");
+            String imageUrlCloud = rs.getString("imageUrlCloud");
+            String theme = rs.getString("themeName");
+            int themeId = rs.getInt("themeId");
+            int artistId = rs.getInt("artistId");
+            Date createdAt = rs.getDate("createdAt");
+            String artistName = rs.getString("artistName");
+            boolean available = rs.getBoolean("isSold");
+            painting.setId(paintingId);
+            painting.setTitle(title);
+            painting.setPrice(price);
+            painting.setImageUrl(imageUrl);
+            painting.setImageUrlCloud(imageUrlCloud);
+            painting.setThemeName(theme);
+            painting.setArtistName(artistName);
+            painting.setThemeId(themeId);
+            painting.setArtistId(artistId);
+            painting.setCreateDate(createdAt);
+            painting.setAvailable(available);
+            painting.setDescription(rs.getString("description"));
+            painting.setSizes(getPaintingSizes(paintingId));
+            paintingList.add(painting);
+        }
+        return paintingList;
+    }
+
+    public List<Painting> getAllDelete() throws SQLException {
+        String sql = """ 
+                        SELECT p.id,
+                        p.title,
+                        p.description,
+                        p.imageUrl,
+                        p.imageUrlCloud,
+                        a.name AS artistName,
+                        p.artistId,
+                        t.themeName AS themeName,
+                        p.themeId,
+                        p.price,
+                        p.createdAt,
+                        p.isSold
+                FROM paintings p
+                JOIN artists a ON p.artistId = a.id
+                JOIN themes t ON p.themeId = t.id 
+                        WHERE p.isDelete = 1
+
+""";
 
         PreparedStatement stmt = con.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery();
@@ -1053,7 +1111,7 @@ public class PaintingDao {
         cartPainting.setProductName("Tranh cảnh biển");
         cartPainting.setQuantity(2);
 
-        System.out.println(paintingDao.getInventory(cartPainting));
+        System.out.println(paintingDao.getAllDelete());
     }
 
     public boolean applySI(List<StockInItem> items) throws SQLException {
@@ -1168,5 +1226,15 @@ public class PaintingDao {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public boolean restore(int i) throws SQLException {
+        String sql = "UPDATE paintings SET isDelete = 0 WHERE id = ?";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setInt(1, i);
+
+        PaintingCacheManager.clearAll();
+
+        return ps.executeUpdate() > 0;
     }
 }

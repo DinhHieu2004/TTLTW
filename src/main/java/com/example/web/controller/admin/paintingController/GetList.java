@@ -45,18 +45,26 @@ public class GetList extends HttpServlet {
         List<PaintingSize> listS  ;
         List<Theme> listP2  ;
         List<Artist> a ;
+        //
+        List<Painting> listPDelete  ;
+
         try {
             a = artistService.getAllArtists();
             listS = sizeService.getAllSize();
             listP2 = themeService.getAllTheme();
             listP = paintingService.getAll();
+
+            //
+            listPDelete = paintingService.getAllListDelete();
             req.setAttribute("products", listP);
+            req.setAttribute("productsD", listPDelete);
+
             req.setAttribute("s", listS);
             req.setAttribute("t", listP2);
             req.setAttribute("a", a);
 
 
-            System.out.println(listP);
+         //   System.out.println(listP);
             RequestDispatcher dispatcher = req.getRequestDispatcher("products.jsp");
             dispatcher.forward(req, resp);
         } catch (SQLException e) {
