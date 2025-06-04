@@ -1,10 +1,7 @@
 package com.example.web.dao;
 
 import com.example.web.dao.db.DbConnect;
-import com.example.web.dao.model.StockIn;
-import com.example.web.dao.model.StockInItem;
-import com.example.web.dao.model.StockOut;
-import com.example.web.dao.model.StockOutItem;
+import com.example.web.dao.model.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 public class StockIODao {
-    static Connection conn = DbConnect.getConnection();
+    Connection conn = DbConnect.getConnection();
 
     public int saveStockInWithItems(StockIn stockIn) {
         try {
@@ -49,10 +46,10 @@ public class StockIODao {
         }
     }
     public int addStockInTrans(StockIn stockIn) throws SQLException{
-        String stockInSql = "INSERT INTO stock_in (createdId, supplier, note, totalPrice, importDate, status) VALUES (?, ?, ?, ?, ?, ?)";
+        String stockInSql = "INSERT INTO stock_in (createdId, supplierId, note, totalPrice, importDate, status) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(stockInSql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, stockIn.getCreatedId());
-            ps.setString(2, stockIn.getSupplier());
+            ps.setInt(2, stockIn.getSupplierId());
             ps.setString(3, stockIn.getNote());
             ps.setDouble(4, stockIn.getTotalPrice());
             ps.setDate(5, new java.sql.Date(stockIn.getTransactionDate().getTime()));
@@ -73,7 +70,8 @@ public class StockIODao {
 
     public List<StockIn> getAll() throws SQLException{
         List<StockIn> stockInList = new ArrayList<>();
-        String sql = "SELECT si.*, u.fullName as createdName FROM stock_in si JOIN users u ON si.createdId = u.id";
+        String sql = "SELECT si.*, u.fullName as createdName, sup.name AS supplier FROM stock_in si JOIN users u ON si.createdId = u.id" +
+                " JOIN suppliers sup ON sup.id = si.supplierId";
 
         PreparedStatement ps = conn.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
@@ -122,7 +120,9 @@ public class StockIODao {
     public StockIn getStockInDetail(int id) throws SQLException {
         StockIn stockIn = null;
 
-        String sql = "SELECT si.*, u.fullName FROM stock_in si JOIN users u ON si.createdId = u.id WHERE si.id = ?";
+        String sql = "SELECT si.*, u.fullName, sup.name AS supplier FROM stock_in si JOIN users u ON si.createdId = u.id " +
+                "JOIN suppliers sup ON sup.id = si.supplierId " +
+                "WHERE si.id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
@@ -219,7 +219,8 @@ public class StockIODao {
     }
     public StockIn getSIById(int stockInId) throws SQLException {
         StockIn stockIn = null;
-        String sql = "SELECT si.*, u.fullName as createdName FROM stock_in si JOIN users u ON si.createdId = u.id" +
+        String sql = "SELECT si.*, u.fullName as createdName, sup.name AS supplier FROM stock_in si JOIN users u ON si.createdId = u.id " +
+                "JOIN suppliers sup ON sup.id = si.supplierId" +
                 " WHERE si.id = ?";
 
         PreparedStatement ps = conn.prepareStatement(sql);

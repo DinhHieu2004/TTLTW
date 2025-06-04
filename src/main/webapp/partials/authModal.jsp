@@ -124,6 +124,8 @@
                                     <div class="error" id="confirmPasswordError"></div>
                                 </div>
                             </div>
+                            <div class="g-recaptcha mb-2" data-sitekey="6LcLlxUrAAAAAPXCQ0NU3bAIXe17zjg0aiZhyck-"></div>
+                            <div id="reCaptchaSError" class="text-danger mb-2"></div>
 
                             <button type="submit" class="btn btn-success w-100 login-btn">Đăng Ký</button>
                             <div class="loading-spinner">

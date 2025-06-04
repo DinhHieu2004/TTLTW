@@ -158,6 +158,13 @@ $(document).ready(function () {
         let confirmPassword = $('#ConfirmRegisterPassword').val().trim();
         let fullName = $('#registerName').val().trim();
         let username = $('#registerUsername').val().trim();
+        $('#reCaptchaSError').text('');
+        const captchaResponse = grecaptcha.getResponse();
+
+        if (captchaResponse.length === 0) {
+            $('#reCaptchaSError').text('Vui lòng xác nhận bạn không phải robot!');
+            isValid = false;
+        }
 
         // Kiểm tra email hợp lệ
         let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -204,10 +211,12 @@ $(document).ready(function () {
                 username: username,
                 password: password,
                 email: email,
-                phone: phone
+                phone: phone,
+                'g-recaptcha-response': captchaResponse
             },
             datatype: 'json',
             success: function(response){
+                grecaptcha.reset();
                 if (response.success) {
                     $(".loading-spinner").hide();
                     $(".loading-message").hide();
@@ -216,6 +225,7 @@ $(document).ready(function () {
                 }
             },
             error: function(xhr){
+                grecaptcha.reset();
                 $(".loading-spinner").hide();
                 $(".loading-message").hide();
                 $("button[type='submit']").attr("disabled", false);
