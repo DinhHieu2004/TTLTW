@@ -277,6 +277,68 @@
         </div>
       </div>
     </div>
+
+    <div class="card mb-4">
+      <div class="card-header bg-success text-white" style="background: #5a5958 !important;">
+        <h4>Tranh đã xóa</h4>
+
+      </div>
+      <div class="card-body">
+        <table id="productsD" class="table table-bordered display">
+
+
+          <thead>
+          <tr>
+            <th>Mã sản phẩm</th>
+            <th>Ảnh</th>
+            <th>Tên </th>
+            <th>Giá</th>
+            <th>Ngày tạo</th>
+            <th>Tác giả</th>
+            <th>Hành Động</th>
+          </tr>
+          </thead>
+          <tbody>
+          <c:forEach var="p" items="${productsD}">
+            <tr>
+              <td>${p.id}</td>
+              <td>
+                <c:choose>
+                  <c:when test="${not empty p.imageUrlCloud}">
+                    <img loading="lazy"
+                         src="${p.imageUrlCloud}?f_auto,q_auto,w_60"
+                         alt="${p.imageUrl}"
+                         width="60">
+                  </c:when>
+                  <c:otherwise>
+                    <img loading="lazy"
+                         src="${pageContext.request.contextPath}/${p.imageUrl}"
+                         alt="${p.imageUrl}"
+                         width="60">
+                  </c:otherwise>
+                </c:choose>
+              </td>
+              <td>${p.title}</td>
+              <f:formatNumber var="formattedPrice" value="${p.price}" pattern="#,##0" />
+              <td>${fn:replace(formattedPrice, ',', '.')} ₫</td>
+              <td>${p.createDate}</td>
+              <td>${p.artistName}</td>
+              <td><button class="btn btn-info btn-sm edit-painting"
+                          data-bs-toggle="modal"
+                          data-bs-target="#viewAndEditModal"
+                          data-product-id="${p.id}">Xem Chi Tiết</button>
+
+                <button class="btn btn-primary btn-sm restore-painting"
+                        data-bs-toggle="modal"
+                        data-bs-target="#restoreProductModal"
+                        data-product-id="${p.id}">khôi phục</button>
+            </tr>
+          </c:forEach>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
 
   <!-- Modal thêm tranh -->
@@ -509,6 +571,28 @@
     </div>
   </div>
 
+
+  <div class="modal fade" id="restoreProductModal" tabindex="-1" aria-labelledby="restoreProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="restoreProductModalLabel">Xác nhận khôi phục</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="restorePaintingForm">
+          <div class="modal-body">
+            <p>Bạn có chắc chắn muốn khôi phục sản phẩm này?</p>
+            <input type="hidden" id="pidTorestore" name="pid">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+            <button type="submit" class="btn btn-primary">khôi phục</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 
@@ -682,12 +766,23 @@
 
     let table3 = $('#themes').DataTable({
     });
+
+    let table4 = $('#productsD').DataTable({
+
+    });
   });
 
   document.querySelectorAll('[data-bs-target="#deleteProductModal"]').forEach(button => {
     button.addEventListener('click', function() {
       let pid = this.getAttribute('data-product-id');
       document.getElementById('pidToDelete').value = pid;
+    });
+  });
+
+  document.querySelectorAll('[data-bs-target="#restoreProductModal"]').forEach(button => {
+    button.addEventListener('click', function() {
+      let pid = this.getAttribute('data-product-id');
+      document.getElementById('pidTorestore').value = pid;
     });
   });
   document.querySelectorAll('[data-bs-target="#deleteThemeModal"]').forEach(button => {
@@ -964,39 +1059,7 @@
     });
   });
   // delete
-  $(document).ready(function () {
-    var table = $('#products').DataTable();
 
-    $(document).on("click", ".delete-painting", function () {
-      var paintingId = $(this).data("product-id");
-      $("#pidToDelete").val(paintingId);
-      $("#deleteProductModal").modal("show");
-    });
-
-    $("#deletePaintingForm").submit(function (event) {
-      event.preventDefault();
-      var paintingId = $("#pidToDelete").val();
-
-      $.ajax({
-        type: "POST",
-        url: "products/delete",
-        data: { pid: paintingId },
-        dataType: "json",
-        success: function (response) {
-          if (response.success) {
-            var $row = $('[data-product-id="' + paintingId + '"]').closest('tr');
-            table.row($row).remove().draw();
-            $("#deleteProductModal").modal("hide");
-          } else {
-            alert(response.message);
-          }
-        },
-        error: function () {
-          alert("Lỗi khi xóa tranh.");
-        }
-      });
-    });
-  });
   // update
   $(document).on('click', '.edit-painting', function (event) {
     event.preventDefault();
@@ -1061,7 +1124,161 @@
   });
 </script>
 
+<script>
+  $(document).ready(function () {
+    var table = $('#products').DataTable();
+    var table4 = $('#productsD').DataTable();
 
+    $(document).on("click", ".delete-painting", function () {
+      var paintingId = $(this).data("product-id");
+      $("#pidToDelete").val(paintingId);
+      $("#deleteProductModal").modal("show");
+    });
+
+    $("#deletePaintingForm").submit(function (event) {
+      event.preventDefault();
+      var paintingId = $("#pidToDelete").val();
+
+      $.ajax({
+        type: "POST",
+        url: "products/delete",
+        data: { pid: paintingId },
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            var $row = $('button.delete-painting[data-product-id="' + paintingId + '"]').closest('tr');
+
+            var cells = $row.find('td');
+            var paintingData = {
+              id: cells.eq(0).text().trim(),
+              image: cells.eq(1).html(),
+              title: cells.eq(2).text().trim(),
+              price: cells.eq(4).text().trim(),
+              createDate: cells.eq(5).text().trim(),
+              artistName: cells.eq(6).text().trim()
+            };
+
+            table.row($row).remove().draw();
+
+            var newRowData = [
+              paintingData.id,
+              paintingData.image,
+              paintingData.title,
+              paintingData.price,
+              paintingData.createDate,
+              paintingData.artistName,
+              '<button class="btn btn-info btn-sm edit-painting" data-bs-toggle="modal" data-bs-target="#viewAndEditModal" data-product-id="' + paintingData.id + '">Xem Chi Tiết</button> ' +
+              '<button class="btn btn-primary btn-sm restore-painting" data-bs-toggle="modal" data-bs-target="#restoreProductModal" data-product-id="' + paintingData.id + '">Khôi phục</button>'
+            ];
+
+            var addedRow = table4.row.add(newRowData).draw();
+
+            setTimeout(function() {
+              $(addedRow.node()).addClass('table-success');
+              setTimeout(function() {
+                $(addedRow.node()).removeClass('table-success');
+              }, 3000);
+            }, 100);
+
+            $("#deleteProductModal").modal("hide");
+
+            if (typeof Swal !== 'undefined') {
+              Swal.fire({
+                title: 'Thành công!',
+                text: 'Tranh đã được chuyển vào danh sách đã xóa!',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+              });
+            } else {
+              alert("Tranh đã được xóa thành công!");
+            }
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function () {
+          alert("Lỗi khi xóa tranh.");
+        }
+      });
+    });
+
+    $(document).on("click", ".restore-painting", function () {
+      var paintingId = $(this).data("product-id");
+      $("#pidTorestore").val(paintingId);
+      $("#restoreProductModal").modal("show");
+    });
+
+    $("#restorePaintingForm").submit(function (event) {
+      event.preventDefault();
+      var paintingId = $("#pidTorestore").val();
+
+      $.ajax({
+        type: "POST",
+        url: "products/restore",
+        data: { pid: paintingId },
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            var $row = $('button.restore-painting[data-product-id="' + paintingId + '"]').closest('tr');
+
+            var cells = $row.find('td');
+            var paintingData = {
+              id: cells.eq(0).text().trim(),
+              image: cells.eq(1).html(),
+              title: cells.eq(2).text().trim(),
+              price: cells.eq(3).text().trim(),
+              createDate: cells.eq(4).text().trim(),
+              artistName: cells.eq(5).text().trim()
+            };
+
+            table4.row($row).remove().draw();
+
+            var newRowData = [
+              paintingData.id,
+              paintingData.image,
+              paintingData.title,
+              'Hoạt động',
+              paintingData.price,
+              paintingData.createDate,
+              paintingData.artistName,
+              '<button class="btn btn-info btn-sm edit-painting" data-bs-toggle="modal" data-bs-target="#viewAndEditModal" data-product-id="' + paintingData.id + '">Xem Chi Tiết</button> ' +
+              '<button class="btn btn-danger btn-sm delete-painting" data-bs-toggle="modal" data-bs-target="#deleteProductModal" data-product-id="' + paintingData.id + '">Xóa</button>'
+            ];
+
+            var addedRow = table.row.add(newRowData).draw();
+
+            setTimeout(function() {
+              $(addedRow.node()).addClass('table-success');
+              setTimeout(function() {
+                $(addedRow.node()).removeClass('table-success');
+              }, 3000);
+            }, 100);
+
+            $("#restoreProductModal").modal("hide");
+
+            if (typeof Swal !== 'undefined') {
+              Swal.fire({
+                title: 'Thành công!',
+                text: 'Tranh đã được khôi phục thành công!',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+              });
+            } else {
+              alert("Tranh đã được khôi phục thành công!");
+            }
+          } else {
+            alert(response.message || "Có lỗi xảy ra khi khôi phục tranh");
+          }
+        },
+        error: function () {
+          alert("Lỗi khi khôi phục tranh.");
+        }
+      });
+    });
+  });
+</script>
 
 <script src="${pageContext.request.contextPath}/assets/js/admin/product.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/admin/theme.js"></script>

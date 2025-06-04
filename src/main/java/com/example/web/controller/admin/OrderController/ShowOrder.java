@@ -37,8 +37,13 @@ public class ShowOrder extends HttpServlet {
             List<Order> currentOrder = orderService.getOrderCurrentAdmin();
             List<Order> historyOrder = orderService.getOrderHistoryAdmin();
 
+            List<Order> ordersD = orderService.getOrdersDeleted();
+
             req.setAttribute("currentOrder",currentOrder);
             req.setAttribute("historyOrder",historyOrder);
+
+            req.setAttribute("ordersD",ordersD);
+
             req.getRequestDispatcher("orders.jsp").forward(req, resp);
 
         } catch (Exception e) {

@@ -29,7 +29,7 @@ public class ReorderDao {
             JOIN paintings p ON ps.paintingId = p.id
             JOIN sizes sz ON ps.sizeId = sz.id
             LEFT JOIN order_items oi ON oi.paintingId = ps.paintingId AND oi.sizeId = ps.sizeId
-            LEFT JOIN orders o ON oi.orderId = o.id AND o.orderDate >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) AND o.deliveryStatus = 'Hoàn thành'
+            LEFT JOIN orders o ON oi.orderId = o.id AND o.orderDate >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) AND o.deliveryStatus = 'hoàn thành'
             GROUP BY ps.paintingId, ps.sizeId
             HAVING avaiQuantity < reorderThreshold
             ORDER BY reorderThreshold DESC
@@ -99,6 +99,6 @@ public class ReorderDao {
 
     public static void main(String[] args) throws SQLException {
         ReorderDao reorderDao = new ReorderDao();
-        System.out.println(reorderDao.getSlowSellingProducts());
+        System.out.println(reorderDao.getReorderAlerts());
     }
 }
