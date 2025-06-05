@@ -120,30 +120,29 @@ $(document).ready(function () {
             }
 
         });
-        updateStatusBtn.on('click', function () {
-            const newStatus = statusSelect.val();
+        $('#updateStatusBtn').off('click').on('click', function () {
+            const newStatus = $('#statusSelect').val();
             const recipientName = $('#recipientName').val();
             const recipientPhone = $('#recipientPhone').val();
             const deliveryAddress = $('#deliveryAddress').val();
 
             $.ajax({
-                url: `../update-order-status`,
+                url: '../update-order-status',
                 method: 'POST',
                 data: {
-
                     orderId: orderId,
                     deliveryStatus: newStatus,
-                    recipientName : recipientName,
+                    recipientName: recipientName,
                     deliveryAddress: deliveryAddress,
-                    recipientPhone :recipientPhone
+                    recipientPhone: recipientPhone
                 },
-                success: function (response) {
-                    alert('Cập nhật trạng thái thành công');
-                    deliveryStatus.text(newStatus);
-                    // Cập nhật status trong bảng (ngoài modal)
-                    $(`#delivery-status-${orderId}`).text(newStatus);
-                    $('#orderDetailsModal').modal('hide');
+                success: function () {
+                    $('#orderStatus').text(newStatus);
 
+                    $(`.delivery-status[data-order-id='${orderId}']`).text(newStatus);
+
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('orderDetailsModal'));
+                    modal.hide();
                 },
                 error: function () {
                     alert('Lỗi khi cập nhật trạng thái đơn hàng');

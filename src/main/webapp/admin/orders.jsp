@@ -83,7 +83,7 @@
           <td>${order.orderDate}</td>
           <td>${order.paymentStatus}</td>
           <td>${order.paymentMethod}</td>
-          <td id="delivery-status-${order.id}">${order.deliveryStatus}</td>
+          <td class="delivery-status" data-order-id="${order.id}">${order.deliveryStatus}</td>
           <td><button class="btn btn-info btn-sm" data-bs-toggle="modal"
                       data-bs-target="#orderDetailsModal"
                       data-order-id="${order.id}">Xem Chi Tiết</button>

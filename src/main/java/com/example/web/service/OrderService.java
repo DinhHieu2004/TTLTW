@@ -42,6 +42,10 @@ public class OrderService {
         cacheManager.putHistoryOrders(userId, orders);
         return orders;
     }
+    public List<Order> getOrdersForUser(int userId) throws Exception {
+        return orderDao.getOrdersForUser(userId);
+    }
+
     public Order getOrder(int orderId) throws Exception {
         return orderDao.getOrder(orderId);
     }
@@ -56,20 +60,19 @@ public class OrderService {
         }
         success = orderDao.updateOrderStatus(orderId, status, recipientName, recipientPhone, deliveryAddress);
 
-        if(success) {
+        if (success) {
             Order order = orderDao.getOrder(orderId);
             if (order != null) {
                 int userId = order.getUserId();
 
                 cacheManager.invalidateCurrentOrders(userId);
                 cacheManager.invalidateHistoryOrders(userId);
-
-                List<Order> newOrders = orderDao.getCurrentOrdersForUser(userId);
-                cacheManager.putCurrentOrders(userId, newOrders);
             }
+
             cacheManager.invalidateAdminCurrentOrders();
             cacheManager.invalidateAdminHistoryOrders();
         }
+
         return success;
     }
 

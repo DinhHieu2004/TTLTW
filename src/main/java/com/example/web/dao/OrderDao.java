@@ -92,7 +92,25 @@ public class OrderDao {
         return orders;
     }
 
+    // lấy tất cả đơn của user
+    public List<Order> getOrdersForUser(int userId) throws SQLException {
+        List<Order> orders = new ArrayList<>();
+        String sql = "SELECT * FROM orders WHERE userId = ? AND isDelete = 0 ORDER BY orderDate DESC";
 
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Order order = extractOrderFromResultSet(rs);
+                    orders.add(order);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return orders;
+    }
 
     public Order getOrder(int orderId) throws Exception {
         String sql = "SELECT * FROM orders WHERE id = ? AND isDelete = 0 ";

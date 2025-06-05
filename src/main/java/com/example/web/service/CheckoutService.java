@@ -19,7 +19,6 @@ public class CheckoutService {
     private final OrderDao orderDao;
     private final OrderItemDao orderItemDao;    private final PaymentDao paymentDao;
     private final PaintingDao paintingDao;
-    private final OrderCacheManager cacheManager = new OrderCacheManager();
 
     public CheckoutService() {
         orderDao = new OrderDao();
@@ -71,8 +70,6 @@ public class CheckoutService {
         payment.setPaymentDate(LocalDateTime.now());
         paymentDao.createPayment(payment);
 
-        cacheManager.invalidateCurrentOrders(userId);
-        cacheManager.invalidateAdminCurrentOrders();
 
     }
 
@@ -123,10 +120,6 @@ public class CheckoutService {
         payment.setPaymentStatus(paymentMethodId == 1 ? "đã thanh toán" : "chờ");
         payment.setPaymentDate(LocalDateTime.now());
         paymentDao.createPayment(payment);
-
-        cacheManager.invalidateCurrentOrders(userId);
-        cacheManager.invalidateAdminCurrentOrders();
-
 
         return orderId;
     }
