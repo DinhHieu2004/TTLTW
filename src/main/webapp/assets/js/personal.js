@@ -1,47 +1,62 @@
 $(document).ready(function () {
+    let allOrders = [];
+
+    function renderOrders(statusFilter) {
+        const tableBody = $('#allOrders tbody');
+        tableBody.empty();
+
+        const filtered = allOrders.filter(order => {
+            if (statusFilter === "ALL") return true;
+            return order.deliveryStatus?.trim().toLowerCase() === statusFilter.toLowerCase();
+        });
+
+        if (filtered.length === 0) {
+            tableBody.append('<tr><td colspan="7">Không có đơn hàng phù hợp.</td></tr>');
+            return;
+        }
+
+        filtered.forEach(order => {
+            const row = `
+            <tr>
+                <td>${order.id}</td>
+                <td>${formatCurrency(order.priceAfterShipping)}</td>
+                <td>${formatDate(order.orderDate)}</td>
+                <td>${order.paymentStatus}</td>
+                <td>${order.paymentMethod}</td>
+                <td>${order.deliveryStatus}</td>
+                <td>
+                    <button class="btn btn-info btn-sm"
+                            data-bs-toggle="modal"
+                            data-bs-target="#orderDetailsModal"
+                            data-order-id="${order.id}">
+                        Xem Chi Tiết
+                    </button>
+                </td>
+            </tr>`;
+            tableBody.append(row);
+        });
+    }
 
     $.ajax({
         url: 'user/orders',
         method: 'GET',
         dataType: 'json',
         success: function (response) {
-            const currentOrders = response.currentOrders;
-            const currentTableBody = $('#currentOrders tbody');
-            currentOrders.forEach(order => {
-                const row = `
-                    <tr>
-                        <td>${order.id}</td>
-                        <td>${formatCurrency(order.priceAfterShipping)}</td>
-                        <td>${formatDate(order.orderDate)}</td>
-                        <td>${order.paymentStatus}</td>
-                        <td>${order.paymentMethod}</td>
-                        <td>${order.deliveryStatus}</td>
-                        <td><button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#orderDetailsModal" data-order-id="${order.id}">Xem Chi Tiết</button></td>
-                    </tr>`;
-                currentTableBody.append(row);
-            });
-
-            const previousOrders = response.previousOrders;
-            const previousTableBody = $('#orderHistory tbody');
-            previousOrders.forEach(order => {
-                const row = `
-                    <tr>
-                        <td>${order.id}</td>
-                        <td>${formatCurrency(order.priceAfterShipping)}</td>
-                        <td>${formatDate(order.orderDate)}</td>
-                        <td>${formatDate(order.deliveryDate)}</td>
-                        <td>${order.paymentStatus}</td>
-                        <td>${order.paymentMethod}</td>
-                        <td>${order.deliveryStatus}</td>
-                        <td><button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#orderDetailsModal" data-order-id="${order.id}">Xem Chi Tiết</button></td>
-                    </tr>`;
-                previousTableBody.append(row);
-            });
+            allOrders = response.orders;
+            renderOrders("ALL");
         },
         error: function () {
             alert('Lỗi khi tải dữ liệu đơn hàng.');
         }
     });
+
+    $('#orderStatusTabs .status-tab').click(function () {
+        $('#orderStatusTabs .status-tab').removeClass('active');
+        $(this).addClass('active');
+        const selectedStatus = $(this).data('status');
+        renderOrders(selectedStatus);
+    });
+
 
     let currentOrderId = null;
     let isHistoryOrder = false;
@@ -51,7 +66,8 @@ $(document).ready(function () {
         const orderId = button.data('order-id');
 
         // Kiểm tra modal được mở la lịch sử đơn hàng
-        isHistoryOrder = button.closest('table').attr('id') === 'orderHistory';
+        const deliveryStatus = button.closest('tr').find('td:eq(5)').text().trim().toLowerCase();
+        isHistoryOrder = deliveryStatus === 'hoàn thành' || deliveryStatus === 'giao hàng thất bại' || deliveryStatus === 'đã hủy giao hàng';
 
         if (currentOrderId !== orderId) {
             currentOrderId = orderId;
@@ -81,7 +97,7 @@ $(document).ready(function () {
                         <p id="recipientPhone"><strong>Số điện thoại:</strong> ${order.recipientPhone}</p>
                         <p id="deliveryAddress"><strong>Địa chỉ nhận hàng:</strong> ${order.deliveryAddress}</p>
                         <p id="orderDate"><strong>Ngày đặt:</strong> ${formatDate(order.orderDate)}</p>
-                        <p ><strong id="statusOrder">Trạng thái thanh toán:</strong>${order.paymentStatus}</p>
+                        <p id="statusOrder"><strong>Trạng thái thanh toán:</strong> ${order.paymentStatus}</p>
                     `);
 
 
@@ -91,7 +107,7 @@ $(document).ready(function () {
                         <p><strong>Voucher áp dụng:</strong> ${voucherText}</p>
                         <p><strong>Phuương thức TT:</strong> ${order.paymentMethod}</p>
                         <p><strong>Tổng trả:</strong> ${formatCurrency(order.priceAfterShipping)}</p>
-                        <p><strong>Trạng thái:</strong> ${order.deliveryStatus}</p>
+                        <p id="deliveryStatusText"><strong>Trạng thái:</strong> ${order.deliveryStatus}</p>
 `);
                         if (order.deliveryStatus.trim().toLowerCase()  === 'chờ' ||
                             order.deliveryStatus.trim().toLowerCase()  === 'đang giao') {
@@ -101,9 +117,9 @@ $(document).ready(function () {
                     
                 `)}
                         $('#cancelOrderButton').off('click').on('click', function () {
-                            const recipientName = $('#recipientName').val();
-                            const recipientPhone = $('#recipientPhone').val();
-                            const deliveryAddress = $('#deliveryAddress').val();
+                            const recipientName = $('#recipientName').text().replace('Tên người nhận:', '').trim();
+                            const recipientPhone = $('#recipientPhone').text().replace('Số điện thoại:', '').trim();
+                            const deliveryAddress = $('#deliveryAddress').text().replace('Địa chỉ nhận hàng:', '').trim();
 
                             $.ajax({
                                 url: `update-order-status`,
@@ -116,10 +132,24 @@ $(document).ready(function () {
                                     recipientPhone :recipientPhone
                                 },
                                 success: function () {
-                                    alert('Đơn hàng đã được hủy thành công.');
-                                    $('#statusOrder').text('Trạng thái đơn hàng: đã hủy');
+                                    $('#deliveryStatusText').html('<strong>Trạng thái:</strong> đã hủy giao hàng');
                                     $('#cancelOrderButton').remove();
-                                    location.reload();
+
+                                    allOrders = allOrders.map(order => {
+                                        if (order.id === orderId) {
+                                            return { ...order, deliveryStatus: "đã hủy giao hàng" };
+                                        }
+                                        return order;
+                                    });
+
+                                    const currentTab = $('#orderStatusTabs .status-tab.active').data('status');
+                                    renderOrders(currentTab);
+
+                                    $('#deliveryStatusText').html('<strong>Trạng thái:</strong> đã hủy giao hàng');
+                                    $('#cancelOrderButton').remove();
+
+                                    const modal = bootstrap.Modal.getInstance(document.getElementById('orderDetailsModal'));
+                                    modal.hide();
 
                                 },
                                 error: function () {

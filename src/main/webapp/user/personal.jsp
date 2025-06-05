@@ -201,13 +201,25 @@
     <p>Không tìm thấy thông tin người dùng.</p>
 </c:if>
 
-<!-- Bảng Đơn Hàng Hiện Tại -->
+<!-- Danh sách đơn hàng -->
 <div class="card mb-4" style="margin: 30px">
-    <div class="card-header bg-success text-white" style="background: #e7621b !important;">
-        <h4>Đơn Hàng Hiện Tại</h4>
+    <div class="card-header text-white" style="background: #e7621b !important;">
+        <h4>Đơn Hàng Của Bạn</h4>
     </div>
     <div class="card-body">
-        <table id="currentOrders" class="table table-bordered display">
+
+        <!-- Tabs lọc theo trạng thái -->
+        <div class="order-status-tabs d-flex justify-content-start mb-4" id="orderStatusTabs">
+            <button class="status-tab active" data-status="ALL">Tất cả</button>
+            <button class="status-tab" data-status="chờ">Chờ xác nhận</button>
+            <button class="status-tab" data-status="đang giao">Vận chuyển</button>
+            <button class="status-tab" data-status="hoàn thành">Hoàn thành</button>
+            <button class="status-tab" data-status="đã hủy giao hàng">Đã hủy</button>
+            <button class="status-tab" data-status="giao hàng thất bại">Thất bại</button>
+        </div>
+
+        <!-- Bảng đơn hàng gộp -->
+        <table id="allOrders" class="table table-bordered display">
             <thead>
             <tr>
                 <th>Mã Đơn Hàng</th>
@@ -224,29 +236,6 @@
     </div>
 </div>
 
-<!-- Bảng lịch sử đơn hàng -->
-<div class="card mb-4" style="margin: 30px">
-    <div class="card-header bg-secondary text-white">
-        <h4>Lịch Sử Đơn Hàng</h4>
-    </div>
-    <div class="card-body">
-        <table id="orderHistory" class="table table-bordered display">
-            <thead>
-            <tr>
-                <th>Mã Đơn Hàng</th>
-                <th>Tổng Tiền</th>
-                <th>Ngày Đặt</th>
-                <th>Ngày Giao</th>
-                <th>Thanh Toán</th>
-                <th>Phương thức TT</th>
-                <th>Vận chuyển</th>
-                <th>Hành Động</th>
-            </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
-</div>
 
 <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -457,6 +446,33 @@
         });
     });
 </script>
+<style>
+    .order-status-tabs {
+        border-bottom: 1px solid #eee;
+        overflow-x: auto;
+    }
+
+    .status-tab {
+        background: none;
+        border: none;
+        padding: 12px 18px;
+        font-weight: 500;
+        font-size: 16px;
+        color: #555;
+        border-bottom: 2px solid transparent;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .status-tab:hover {
+        color: #ee4d2d;
+    }
+
+    .status-tab.active {
+        color: #ee4d2d;
+        border-bottom: 2px solid #ee4d2d;
+        font-weight: 600;
+    }
+</style>
 
 <script src="${pageContext.request.contextPath}/assets/js/personal.js"></script>
 <script src="${pageContext.request.contextPath}/assets/js/header.js"></script>
