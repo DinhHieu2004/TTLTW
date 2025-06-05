@@ -17,7 +17,6 @@ import java.sql.SQLException;
 @WebServlet("/update-order-status")
 public class UpdateStatusOrder extends HttpServlet {
     private final OrderService orderService = new OrderService();
-    private final String permission ="UPDATE_ORDERS";
 
 
     @Override
@@ -27,15 +26,6 @@ public class UpdateStatusOrder extends HttpServlet {
 
         PrintWriter out = response.getWriter();
 
-
-        boolean hasPermission = CheckPermission.checkPermission(user, permission, "ADMIN");
-        if (!hasPermission) {
-          //  response.sendRedirect(request.getContextPath() + "/NoPermission.jsp");
-
-            out.write("{\"message\": \"ban không có quyền\"}");
-
-            return;
-        }
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 

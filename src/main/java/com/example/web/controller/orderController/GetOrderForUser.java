@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,10 +28,13 @@ public class GetOrderForUser extends HttpServlet {
 
         List<Order> currentOrders = null;
         List<Order> previousOrders = null;
+        List<Order> allOrders;
         try {
             currentOrders = orderService.getCurrentOrdersForUser(userId);
             previousOrders = orderService.getHistoryOrder(userId);
-
+            allOrders = new ArrayList<>();
+            allOrders.addAll(currentOrders);
+            allOrders.addAll(previousOrders);
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -39,12 +43,10 @@ public class GetOrderForUser extends HttpServlet {
         Map<String, Object> result = new HashMap<>();
         result.put("currentOrders", currentOrders);
         result.put("previousOrders", previousOrders);
+        result.put("orders", allOrders);
 
-        System.out.println(GsonProvider.getGson().toJson(result));
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
         resp.getWriter().write(GsonProvider.getGson().toJson(result));
     }
-
-
 }
