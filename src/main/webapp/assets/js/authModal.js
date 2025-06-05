@@ -1,3 +1,14 @@
+let forgotWidgetId, registerWidgetId;
+
+function renderCaptchas() {
+    forgotWidgetId = grecaptcha.render('forgotRecaptcha', {
+        'sitekey': '6LcLlxUrAAAAAPXCQ0NU3bAIXe17zjg0aiZhyck-'
+    });
+
+    registerWidgetId = grecaptcha.render('registerRecaptcha', {
+        'sitekey': '6LcLlxUrAAAAAPXCQ0NU3bAIXe17zjg0aiZhyck-'
+    });
+}
 $(document).ready(function () {
     initializeErrorClearing()
     const authModal = document.getElementById('authModal');
@@ -159,7 +170,7 @@ $(document).ready(function () {
         let fullName = $('#registerName').val().trim();
         let username = $('#registerUsername').val().trim();
         $('#reCaptchaSError').text('');
-        const captchaResponse = grecaptcha.getResponse();
+        const captchaResponse = grecaptcha.getResponse(registerWidgetId);
 
         if (captchaResponse.length === 0) {
             $('#reCaptchaSError').text('Vui lòng xác nhận bạn không phải robot!');
@@ -254,7 +265,7 @@ $(document).ready(function () {
         loadingText.hide();
         const submitButton = $('#forgotPasswordForm button[type="submit"]');
         $('#reCaptchaError').text('');
-        const captchaResponse = grecaptcha.getResponse();
+        const captchaResponse = grecaptcha.getResponse(forgotWidgetId);
         let isValid = true;
         let email = $('#forgotEmail').val().trim();
 

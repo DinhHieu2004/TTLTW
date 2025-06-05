@@ -124,7 +124,7 @@
                                     <div class="error" id="confirmPasswordError"></div>
                                 </div>
                             </div>
-                            <div class="g-recaptcha mb-2" data-sitekey="6LcLlxUrAAAAAPXCQ0NU3bAIXe17zjg0aiZhyck-"></div>
+                            <div class="mb-2" id="registerRecaptcha"></div>
                             <div id="reCaptchaSError" class="text-danger mb-2"></div>
 
                             <button type="submit" class="btn btn-success w-100 login-btn">Đăng Ký</button>
@@ -213,7 +213,7 @@
                             <input type="email" class="form-control" id="forgotEmail" name="email" placeholder="Nhập email đã đăng ký" required>
                             <div class="error" id="forgotEmailError"></div>
                         </div>
-                        <div class="g-recaptcha mb-2" data-sitekey="6LcLlxUrAAAAAPXCQ0NU3bAIXe17zjg0aiZhyck-"></div>
+                        <div class="mb-2" id="forgotRecaptcha"></div>
                         <div id="reCaptchaError" class="text-danger mb-2"></div>
 
                         <button type="submit" class="btn btn-success w-100 login-btn">Gửi liên kết khôi phục</button>
@@ -229,4 +229,4 @@
 <script src="${pageContext.request.contextPath}/assets/js/authModal.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script src="https://www.google.com/recaptcha/api.js?onload=renderCaptchas&render=explicit" async defer></script>
